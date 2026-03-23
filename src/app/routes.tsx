@@ -18,6 +18,7 @@ import { CertificatePage } from "./pages/CertificatePage";
 import { LegalPage } from "./pages/LegalPage";
 import { Variation2Page } from "./pages/Variation2Page";
 import { Variation3Page } from "./pages/Variation3Page";
+import { HomeNew1 } from "./pages/HomeNew1";
 
 function NotFound() {
   return (
@@ -60,6 +61,7 @@ export const router = createBrowserRouter([
       { path: "terms", Component: LegalPage },
       { path: "cookies", Component: LegalPage },
       { path: "refund", Component: LegalPage },
+      { path: "home-new-1", Component: HomeNew1 },
       { path: "*", Component: NotFound },
     ],
   },
