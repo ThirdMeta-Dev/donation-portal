@@ -6,32 +6,49 @@
 import { Link } from "react-router";
 import { useState, useEffect, useCallback, useRef } from "react";
 
-// ── Figma asset URLs ──────────────────────────────────────────────────────
-const imgHero        = "http://localhost:3845/assets/2ca4cd7fc331c012fd6c3a208d30b67ca94bb02a.png";
-const imgTeacher     = "http://localhost:3845/assets/3b08adbd33c0549761095e0db7549411c51bd4ec.png";
-const imgTexture     = "http://localhost:3845/assets/10c9de2356342a2446587a7242a74b82052060e2.svg";
-const imgEllipse1    = "http://localhost:3845/assets/bfca26775f8ffbbc192c6f8abee068e70d1ec79f.svg";
-const imgEllipse2    = "http://localhost:3845/assets/7d726aa01847c452773e5fbeaccbbfdb8c917a52.svg";
-const imgChevron     = "http://localhost:3845/assets/8d5928d43f1ad11aaebbaf276ef31f030d752d0e.svg";
-const imgChevronGold = "http://localhost:3845/assets/e25a4b39e8a9a67792da4b7be40a5cd1efeff3fd.svg";
-const imgPlayBtn     = "http://localhost:3845/assets/94b7d143f7d79dcee5c3ef4a168888c8f0e66ec9.svg";
-const imgStatBg      = "http://localhost:3845/assets/b33ea922189e2f8727c7c9b20f1df35f797556ff.svg";
-const imgCarousel1   = "http://localhost:3845/assets/b025de5e50e257a2a8382e99cc8bc799d9ebaba4.png";
+// ── Local asset imports (bundled by Vite for production) ─────────────────
+// @ts-ignore
+import imgHero from "@/assets/2ca4cd7fc331c012fd6c3a208d30b67ca94bb02a.png";
+// @ts-ignore
+import imgTeacher from "@/assets/3b08adbd33c0549761095e0db7549411c51bd4ec.png";
+// @ts-ignore
+import imgTexture from "@/assets/10c9de2356342a2446587a7242a74b82052060e2.svg";
+// @ts-ignore
+import imgEllipse1 from "@/assets/bfca26775f8ffbbc192c6f8abee068e70d1ec79f.svg";
+// @ts-ignore
+import imgEllipse2 from "@/assets/7d726aa01847c452773e5fbeaccbbfdb8c917a52.svg";
+// @ts-ignore
+import imgChevron from "@/assets/8d5928d43f1ad11aaebbaf276ef31f030d752d0e.svg";
+// @ts-ignore
+import imgChevronGold from "@/assets/e25a4b39e8a9a67792da4b7be40a5cd1efeff3fd.svg";
+// @ts-ignore
+import imgPlayBtn from "@/assets/94b7d143f7d79dcee5c3ef4a168888c8f0e66ec9.svg";
+// @ts-ignore
+import imgStatBg from "@/assets/b33ea922189e2f8727c7c9b20f1df35f797556ff.svg";
+// @ts-ignore
+import imgCarousel1 from "@/assets/b025de5e50e257a2a8382e99cc8bc799d9ebaba4.png";
 
 // Section 5
-const imgS5Bg        = "http://localhost:3845/assets/b0056acb9228f2476103c32804b577fabdab0b1e.png";
-const imgS5Overlay   = "http://localhost:3845/assets/cf5d7b83739a4d18710739b24fc2b9dcac9c3b9b.svg";
-const imgS5IconSee   = "http://localhost:3845/assets/6239a7c8a74115af9a45427cf8fc07127899149e.svg";
-const imgS5IconHear  = "http://localhost:3845/assets/579a5483fb71d125cee21246fb7e91f5563c4bfd.svg";
-const imgS5IconRead  = "http://localhost:3845/assets/7ad164ba0fa91571a1ae01850abe3826d3f6d73d.svg";
-const imgS5SepLong   = "http://localhost:3845/assets/1b48129b855c986260738411455a70e5f4e4a07e.svg";
-const imgS5SepShort  = "http://localhost:3845/assets/b4a6fb0375bb63074e5712fce882ac829cb825a4.svg";
+// @ts-ignore
+import imgS5Bg from "@/assets/b0056acb9228f2476103c32804b577fabdab0b1e.png";
+// @ts-ignore
+import imgS5Overlay from "@/assets/cf5d7b83739a4d18710739b24fc2b9dcac9c3b9b.svg";
+// @ts-ignore
+import imgS5IconSee from "@/assets/6239a7c8a74115af9a45427cf8fc07127899149e.svg";
+// @ts-ignore
+import imgS5IconHear from "@/assets/579a5483fb71d125cee21246fb7e91f5563c4bfd.svg";
+// @ts-ignore
+import imgS5IconRead from "@/assets/7ad164ba0fa91571a1ae01850abe3826d3f6d73d.svg";
+// @ts-ignore
+import imgS5SepLong from "@/assets/1b48129b855c986260738411455a70e5f4e4a07e.svg";
+// @ts-ignore
+import imgS5SepShort from "@/assets/b4a6fb0375bb63074e5712fce882ac829cb825a4.svg";
 
-// Section 6 — Testimonials local assets
+// Section 6 — Testimonials
 // @ts-ignore
-import imgS6Bg_local from "../../assets/3295e477553d40b1c93909599b04241c3de200a2.png";
+import imgS6Bg_local from "@/assets/3295e477553d40b1c93909599b04241c3de200a2.png";
 // @ts-ignore
-import imgS6Over_local from "../../assets/8255568bbb03a1180ca10eba4f98571a0f552af7.png";
+import imgS6Over_local from "@/assets/8255568bbb03a1180ca10eba4f98571a0f552af7.png";
 
 const imgS6Bg         = imgS6Bg_local;
 const imgS6OverPhoto  = imgS6Over_local;
@@ -54,7 +71,8 @@ const IconQuote = () => (
   </svg>
 );
 
-const imgS6ProgBg     = "http://localhost:3845/assets/03dce0304399973bbcca23766d34a2477e51f79f.svg";
+// @ts-ignore
+import imgS6ProgBg from "@/assets/03dce0304399973bbcca23766d34a2477e51f79f.svg";
 
 type Testimonial = {
   id: string;
