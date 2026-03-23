@@ -20,6 +20,8 @@ function clearOldLocalStorage() {
 function Layout() {
   const location = useLocation();
   const isBare = BARE_PAGES.some(p => location.pathname.startsWith(p));
+  // Blank-canvas pages — have their own nav/layout, skip shared header/footer
+  const isBlankCanvas = location.pathname === "/" || location.pathname === "/home-v2" || location.pathname === "/home-new-1";
   const isAuth = location.pathname === "/auth";
   const isDashboard = ["/dashboard", "/admin", "/lms/dashboard"].some(p => location.pathname.startsWith(p));
 
@@ -27,11 +29,11 @@ function Layout() {
 
   return (
     <div className="flex flex-col min-h-screen">
-      {!isBare && !isAuth && <Navbar />}
+      {!isBare && !isAuth && !isBlankCanvas && <Navbar />}
       <main className="flex-1">
         <Outlet />
       </main>
-      {!isBare && !isAuth && !isDashboard && <Footer />}
+      {!isBare && !isAuth && !isDashboard && !isBlankCanvas && <Footer />}
     </div>
   );
 }

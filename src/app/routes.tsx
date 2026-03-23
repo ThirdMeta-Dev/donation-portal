@@ -19,6 +19,7 @@ import { LegalPage } from "./pages/LegalPage";
 import { Variation2Page } from "./pages/Variation2Page";
 import { Variation3Page } from "./pages/Variation3Page";
 import { HomeNew1 } from "./pages/HomeNew1";
+import { HomeV2Page } from "./pages/HomeV2Page";
 
 function NotFound() {
   return (
@@ -38,7 +39,12 @@ export const router = createBrowserRouter([
     path: "/",
     Component: Root,
     children: [
+      // Primary home
       { index: true, Component: HomePage },
+      // Alternate home pages
+      { path: "home-new-1", Component: HomeNew1 },
+      { path: "home-v2", Component: HomeV2Page },
+      // App routes
       { path: "about", Component: AboutPage },
       { path: "causes", Component: CausesPage },
       { path: "donate", Component: DonatePage },
@@ -46,33 +52,24 @@ export const router = createBrowserRouter([
       { path: "thank-you", Component: ThankYouPage },
       { path: "auth", Component: AuthPage },
       { path: "auth/callback", Component: AuthCallbackPage },
-      // Donor & Admin Dashboards
+      // Dashboards
       { path: "dashboard", Component: DonorDashboard },
       { path: "admin", Component: AdminDashboard },
-      // LMS — public (no login needed to browse)
+      // LMS
       { path: "lms", Component: LMSLandingPage },
       { path: "lms/course/:id", Component: CourseDetailPage },
-      // LMS — authenticated
       { path: "lms/dashboard", Component: LMSDashboard },
       { path: "lms/learn/:courseId", Component: CoursePlayerPage },
       { path: "lms/certificate/:courseId", Component: CertificatePage },
-      // Legal Pages
+      // Legal
       { path: "privacy", Component: LegalPage },
       { path: "terms", Component: LegalPage },
       { path: "cookies", Component: LegalPage },
       { path: "refund", Component: LegalPage },
-      { path: "home-new-1", Component: HomeNew1 },
       { path: "*", Component: NotFound },
     ],
   },
-  // Variation 2 - Standalone page without header/footer
-  {
-    path: "/variation-2",
-    Component: Variation2Page,
-  },
-  // Variation 3 - Standalone black canvas
-  {
-    path: "/variation-3",
-    Component: Variation3Page,
-  },
+  // Standalone pages (no Root layout)
+  { path: "/variation-2", Component: Variation2Page },
+  { path: "/variation-3", Component: Variation3Page },
 ]);

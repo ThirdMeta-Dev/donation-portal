@@ -97,6 +97,9 @@ export function HomeNew1() {
     <div className="min-h-screen font-['Inter',sans-serif] bg-[#0A1B2C] text-white selection:bg-[#F59E0B] selection:text-white">
       <Nav />
       <Hero />
+      <StorySection />
+      <RecognitionCarousel />
+      <MethodCarousel />
     </div>
   );
 }
@@ -255,3 +258,180 @@ function Hero() {
 }
 
 
+function StorySection() {
+  return (
+    <section className="py-32 bg-[#F8F5EF] text-[#0A1B2C] overflow-hidden">
+      <div className="max-w-[1200px] mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-20 items-center">
+        <motion.div 
+          initial={{ opacity: 0, x: -30 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          className="space-y-8"
+        >
+          <div className="inline-flex items-center gap-2 px-4 py-2 bg-[#F59E0B]/10 rounded-full">
+            <span className="w-2 h-2 rounded-full bg-[#F59E0B]"></span>
+            <span className="text-[11px] font-black tracking-[0.2em] uppercase text-[#F59E0B]">The Challenge</span>
+          </div>
+          <h2 className="text-4xl md:text-5xl font-['Lora',serif] font-semibold leading-[1.2]">
+            When a family is choosing <br />
+            <span className="text-[#F59E0B]">between food and fees,</span> <br />
+            education is a luxury.
+          </h2>
+          <p className="text-lg text-slate-600 leading-relaxed max-w-[500px]">
+            In the heart of Jalgaon's rural belt, thousands of children drift away from learning not because they lack potential, but because their parents lack the bridge to keep them engaged. 
+          </p>
+          <div className="flex flex-col gap-6 pt-4">
+            <div className="flex items-start gap-4">
+              <div className="w-10 h-10 rounded-full bg-white shadow-md flex items-center justify-center flex-shrink-0">
+                <ChevronRight size={18} className="text-[#F59E0B]" />
+              </div>
+              <div>
+                <h4 className="font-bold text-lg">Problems we are working on</h4>
+                <p className="text-slate-500 text-sm">Identifying root causes of dropout rates in secondary education.</p>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        <motion.div 
+          initial={{ opacity: 0, scale: 0.9 }}
+          whileInView={{ opacity: 1, scale: 1 }}
+          viewport={{ once: true }}
+          className="relative"
+        >
+          <div className="aspect-[4/5] rounded-[40px] overflow-hidden shadow-2xl skew-y-1">
+             <img src={imgDecorative} alt="Rural Education" className="w-full h-full object-cover" />
+          </div>
+          <div className="absolute -bottom-10 -left-10 p-10 bg-[#0A1B2C] text-white rounded-[32px] shadow-2xl max-w-[280px]">
+            <Quote size={40} className="text-[#F59E0B] mb-4 opacity-50" />
+            <p className="text-lg font-medium leading-snug">"Every child we save from the fields is a victory for the nation."</p>
+            <p className="mt-4 text-[10px] uppercase tracking-widest text-white/40 font-bold">— Ujjwala Wadekar</p>
+          </div>
+        </motion.div>
+      </div>
+    </section>
+  );
+}
+
+function RecognitionCarousel() {
+  const [index, setIndex] = useState(0);
+  const awards = [
+    { title: "National Teacher Award", year: "2018", org: "Govt of India" },
+    { title: "State Merit Recognition", year: "2021", org: "Maharashtra" },
+    { title: "Global Impact Nominee", year: "2023", org: "Edu-Global" }
+  ];
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowLeft") setIndex(prev => (prev === 0 ? awards.length - 1 : prev - 1));
+      if (e.key === "ArrowRight") setIndex(prev => (prev === awards.length - 1 ? 0 : prev + 1));
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  return (
+    <section className="py-32 bg-[#0A1B2C] text-white relative overflow-hidden">
+      <div className="max-w-[1200px] mx-auto px-6">
+        <h3 className="text-[44px] font-['Lora',serif] font-semibold mb-20 text-center tracking-tight">
+          Media & Recognitions
+        </h3>
+
+        <div className="relative group">
+          <div className="flex justify-center items-center gap-8 min-h-[400px]">
+            <AnimatePresence mode="wait">
+              <motion.div 
+                key={index}
+                initial={{ opacity: 0, x: 50, scale: 0.95 }}
+                animate={{ opacity: 1, x: 0, scale: 1 }}
+                exit={{ opacity: 0, x: -50, scale: 0.95 }}
+                className="w-full max-w-[800px] p-12 bg-white/5 border border-white/10 rounded-[40px] flex flex-col md:flex-row items-center gap-12 backdrop-blur-3xl"
+              >
+                <div className="w-48 h-48 rounded-full bg-[#F59E0B]/20 border-4 border-[#F59E0B] flex items-center justify-center shadow-[0_0_40px_rgba(245,158,11,0.2)]">
+                  <Star fill="#F59E0B" className="text-[#F59E0B]" size={64} />
+                </div>
+                <div className="flex-1 text-center md:text-left">
+                  <span className="text-[#F59E0B] font-black tracking-[0.2em] uppercase text-xs">Excellence Award</span>
+                  <h4 className="text-3xl font-bold mt-2 mb-4">{awards[index].title}</h4>
+                  <p className="text-white/40 text-lg">{awards[index].org} · {awards[index].year}</p>
+                </div>
+              </motion.div>
+            </AnimatePresence>
+          </div>
+
+          {/* Navigation Dots / Progress Bar */}
+          <div className="flex justify-center gap-4 mt-20">
+            {awards.map((_, i) => (
+              <button 
+                key={i}
+                onClick={() => setIndex(i)}
+                className="relative h-1 transition-all duration-500 overflow-hidden rounded-full bg-white/10"
+                style={{ width: i === index ? "60px" : "30px" }}
+              >
+                {i === index && (
+                  <motion.div 
+                    layoutId="activeDot"
+                    className="absolute inset-0 bg-[#F59E0B]"
+                  />
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function MethodCarousel() {
+  const cards = [
+    { title: "See", desc: "Visual storytelling through documentary films and live demonstrations.", color: "#BF791D" },
+    { title: "Hear", desc: "Direct interactions and workshops with teacher reformers.", color: "#2E80D0" },
+    { title: "Read", desc: "Access to exhaustive curriculum resources and impact case studies.", color: "#BF791D" },
+    { title: "Do", desc: "Hands-on implementation support for government school teachers.", color: "#2E80D0" },
+    { title: "Support", desc: "Mentorship circles connecting experienced and new teachers.", color: "#BF791D" },
+    { title: "Involve", desc: "Community-driven initiatives for classroom transformation.", color: "#2E80D0" },
+    { title: "Scale", desc: "State-wide adoption of Shiksha Raj pedagogical innovations.", color: "#BF791D" }
+  ];
+
+  return (
+    <section className="py-32 bg-[#FDECCE] overflow-hidden">
+      <div className="px-6 mb-20 text-center max-w-[800px] mx-auto">
+        <span className="text-[#BF791D] font-['Poppins',sans-serif] text-[13px] font-black uppercase tracking-[0.3em]">The Shiksha Raj Method</span>
+        <h2 className="text-5xl font-['Lora',serif] font-bold text-[#112D48] mt-6 leading-tight">
+          Take Children to the World
+        </h2>
+      </div>
+
+      {/* Looping Carousel */}
+      <div className="relative flex overflow-hidden group">
+        <motion.div 
+          animate={{ x: [0, -100 * cards.length + "%"] }}
+          transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+          className="flex whitespace-nowrap"
+        >
+          {[...cards, ...cards].map((card, i) => (
+            <div 
+              key={i}
+              className="inline-block w-[300px] md:w-[450px] p-4 flex-shrink-0"
+            >
+              <div className="bg-white p-10 rounded-[48px] shadow-xl border border-slate-100 flex flex-col h-[400px] transition-transform duration-500 group-hover:pause">
+                <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mb-10 transition-colors`}
+                     style={{ backgroundColor: card.color + "20" }}>
+                  <Play className="fill-current" style={{ color: card.color }} size={24} />
+                </div>
+                <h4 className="text-3xl font-black text-[#112D48] mb-6">{card.title}</h4>
+                <p className="text-slate-500 whitespace-normal leading-relaxed text-lg">
+                  {card.desc}
+                </p>
+                <div className="mt-auto flex items-center gap-3 text-sm font-bold tracking-widest uppercase" style={{ color: card.color }}>
+                  Learn More <ChevronRight size={16} />
+                </div>
+              </div>
+            </div>
+          ))}
+        </motion.div>
+      </div>
+    </section>
+  );
+}
