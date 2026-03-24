@@ -940,19 +940,19 @@ function Section5() {
 
 function Section6() {
   const sectionRef = useFadeInUp();
+  const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
   const [activeTab, setActiveTab] = useState("teachers");
   const [slideIndex, setSlideIndex] = useState(0);
   const [progress, setProgress] = useState(0);
-  const duration = 5000; // 5 seconds per slide
+  const duration = 5000;
   const activeData = S6_DATA[activeTab];
 
-  // Auto-play logic
   useEffect(() => {
     const startTime = Date.now();
     const interval = setInterval(() => {
       const elapsed = Date.now() - startTime;
       const currentProgress = (elapsed / duration) * 100;
-      
       if (currentProgress >= 100) {
         setSlideIndex((prev) => (prev + 1) % activeData.length);
         setProgress(0);
@@ -961,143 +961,97 @@ function Section6() {
         setProgress(currentProgress);
       }
     }, 50);
-
     return () => clearInterval(interval);
   }, [slideIndex, activeTab, activeData.length]);
 
-  const handleNext = () => {
-    setSlideIndex((prev) => (prev + 1) % activeData.length);
-    setProgress(0);
-  };
-
-  const handlePrev = () => {
-    setSlideIndex((prev) => (prev - 1 + activeData.length) % activeData.length);
-    setProgress(0);
-  };
-
+  const handleNext = () => { setSlideIndex((prev) => (prev + 1) % activeData.length); setProgress(0); };
+  const handlePrev = () => { setSlideIndex((prev) => (prev - 1 + activeData.length) % activeData.length); setProgress(0); };
   const currentSlide = activeData[slideIndex];
 
   return (
-    <div ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#fff", padding: "100px 0", isolation: "isolate" }}>
-      <div style={{ maxWidth: 1006, margin: "0 auto" }}>
-        
+    <div ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#fff", padding: isMobile ? "48px 0" : "100px 0", isolation: "isolate" }}>
+      <div style={{ maxWidth: 1006, margin: "0 auto", padding: isMobile ? "0 20px" : isTablet ? "0 32px" : "0" }}>
         {/* Top Header Row */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 48 }}>
-          <h2 style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: 40, color: "#000", margin: 0, textTransform: "capitalize" }}>
+        <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", justifyContent: "space-between", alignItems: isMobile ? "flex-start" : "center", marginBottom: isMobile ? 24 : 48, gap: isMobile ? 8 : 0 }}>
+          <h2 style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: isMobile ? 26 : 40, color: "#000", margin: 0, textTransform: "capitalize" }}>
             Testimonial Lorem Ipsum
           </h2>
-          <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 16, lineHeight: "22px", color: "#686868", margin: 0, width: 206, textAlign: "right" }}>
+          <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: isMobile ? 14 : 16, lineHeight: "22px", color: "#686868", margin: 0, width: isMobile ? "100%" : 206, textAlign: isMobile ? "left" : "right" }}>
             Find your role and see exactly what it means, what you get, and what your
           </p>
         </div>
 
         {/* Navigation & Tabs Row */}
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
+        <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", justifyContent: isMobile ? "flex-start" : "space-between", alignItems: isMobile ? "flex-start" : "center", marginBottom: isMobile ? 16 : 24, gap: isMobile ? 16 : 0 }}>
           {/* Tabs */}
-          <div style={{ display: "flex", gap: 10 }}>
+          <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
             {S6_TABS.map((tab) => {
               const isActive = activeTab === tab.id;
               return (
-                <button
-                  key={tab.id}
-                  onClick={() => { setActiveTab(tab.id); setSlideIndex(0); setProgress(0); }}
-                  style={{
-                    padding: "6px 24px",
-                    borderRadius: 40,
-                    border: isActive ? "none" : "1px solid #e8e8e8",
-                    background: isActive ? "#bf791d" : "#fff",
-                    color: isActive ? "#fff" : "#bf791d",
-                    fontFamily: "'Poppins', sans-serif",
-                    fontSize: 13,
-                    cursor: "pointer",
-                    transition: "all 0.3s"
-                  }}
-                >
-                  {tab.label}
-                </button>
+                <button key={tab.id} onClick={() => { setActiveTab(tab.id); setSlideIndex(0); setProgress(0); }} style={{
+                  padding: isMobile ? "5px 16px" : "6px 24px", borderRadius: 40,
+                  border: isActive ? "none" : "1px solid #e8e8e8",
+                  background: isActive ? "#bf791d" : "#fff",
+                  color: isActive ? "#fff" : "#bf791d",
+                  fontFamily: "'Poppins', sans-serif", fontSize: isMobile ? 12 : 13, cursor: "pointer", transition: "all 0.3s"
+                }}>{tab.label}</button>
               );
             })}
           </div>
 
           {/* Progress & Nav Arrows */}
-          <div style={{ display: "flex", alignItems: "center", gap: 28 }}>
-            {/* Progress Bar Container */}
-            <div style={{ width: 233, height: 1, background: "#e8e8e8", position: "relative" }}>
-              {/* Fill bar */}
-              <div style={{ 
-                position: "absolute", 
-                left: 0, 
-                top: 0, 
-                height: "100%", 
-                width: `${progress}%`, 
-                background: "#bf791d",
-                transition: progress === 0 ? "none" : "width 50ms linear"
-              }} />
-            </div>
-
-            {/* Arrows */}
+          <div style={{ display: "flex", alignItems: "center", gap: isMobile ? 16 : 28 }}>
+            {!isMobile && (
+              <div style={{ width: 233, height: 1, background: "#e8e8e8", position: "relative" }}>
+                <div style={{ position: "absolute", left: 0, top: 0, height: "100%", width: `${progress}%`, background: "#bf791d", transition: progress === 0 ? "none" : "width 50ms linear" }} />
+              </div>
+            )}
             <div style={{ display: "flex", gap: 8 }}>
-              <button 
-                onClick={handlePrev}
-                style={{ width: 40, height: 40, borderRadius: "50%", border: "1px solid #174067", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", background: "none" }}
-              >
-                <IconArrowL />
-              </button>
-              <button 
-                onClick={handleNext}
-                style={{ width: 40, height: 40, borderRadius: "50%", background: "#174067", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", border: "none" }}
-              >
-                <IconArrowR />
-              </button>
+              <button onClick={handlePrev} style={{ width: 40, height: 40, borderRadius: "50%", border: "1px solid #174067", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", background: "none" }}><IconArrowL /></button>
+              <button onClick={handleNext} style={{ width: 40, height: 40, borderRadius: "50%", background: "#174067", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", border: "none" }}><IconArrowR /></button>
             </div>
           </div>
         </div>
 
         {/* Testimonial Card */}
-        <div style={{ 
-          width: 1006, 
-          height: 300, 
-          borderRadius: 20, 
-          background: "linear-gradient(-52.65deg, #BF791D 0.4%, #885615 99.6%)",
-          display: "flex",
-          overflow: "hidden",
-          border: "1px solid #895615"
+        <div style={{
+          width: "100%", minHeight: isMobile ? "auto" : 300,
+          borderRadius: 20, background: "linear-gradient(-52.65deg, #BF791D 0.4%, #885615 99.6%)",
+          display: "flex", flexDirection: isMobile ? "column" : "row",
+          overflow: "hidden", border: "1px solid #895615"
         }}>
-          {/* Left Content Area */}
-          <div style={{ flex: 1, padding: "36px", display: "flex", flexDirection: "column", justifyContent: "flex-end", gap: 20 }}>
+          {/* Content */}
+          <div style={{ flex: 1, padding: isMobile ? "24px" : "36px", display: "flex", flexDirection: "column", justifyContent: "flex-end", gap: isMobile ? 12 : 20 }}>
             <IconQuote />
             <div style={{ display: "flex", flexDirection: "column", gap: 6, color: "#fff" }}>
-              <h3 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 20, margin: 0 }}>
-                {currentSlide.title}
-              </h3>
-              <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 16, lineHeight: "26px", margin: 0, opacity: 0.9 }}>
-                {currentSlide.body}
-              </p>
+              <h3 style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: isMobile ? 17 : 20, margin: 0 }}>{currentSlide.title}</h3>
+              <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: isMobile ? 14 : 16, lineHeight: "26px", margin: 0, opacity: 0.9 }}>{currentSlide.body}</p>
             </div>
           </div>
 
-          {/* Right Image Area */}
-          <div style={{ width: 475, position: "relative" }}>
-            {/* Background blur/gradient layer */}
-            <div style={{ position: "absolute", inset: 0, zIndex: 1, background: "linear-gradient(99.12deg, #A26719 3.4%, rgba(161, 102, 25, 0) 96.6%)" }} />
-            <div style={{ position: "absolute", left: 0, top: 0, width: "176px", height: "100%", zIndex: 2, background: "linear-gradient(93.41deg, #A26719 3.4%, rgba(161, 102, 25, 0) 96.6%)" }} />
-            
-            {/* The actual photo */}
-            <div style={{ width: "100%", height: "100%", position: "relative", zIndex: 0 }}>
-              <img src={imgS6Bg} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", filter: "blur(0.5px)" }} />
-              {/* Foreground cutout photo (optional if matches design) */}
-              <img src={currentSlide.photo} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", zIndex: 1 }} />
+          {/* Right Image — hide on mobile */}
+          {!isMobile && (
+            <div style={{ width: isTablet ? 280 : 475, position: "relative", flexShrink: 0 }}>
+              <div style={{ position: "absolute", inset: 0, zIndex: 1, background: "linear-gradient(99.12deg, #A26719 3.4%, rgba(161, 102, 25, 0) 96.6%)" }} />
+              <div style={{ position: "absolute", left: 0, top: 0, width: "176px", height: "100%", zIndex: 2, background: "linear-gradient(93.41deg, #A26719 3.4%, rgba(161, 102, 25, 0) 96.6%)" }} />
+              <div style={{ width: "100%", height: "100%", position: "relative", zIndex: 0 }}>
+                <img src={imgS6Bg} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", filter: "blur(0.5px)" }} />
+                <img src={currentSlide.photo} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "contain", zIndex: 1 }} />
+              </div>
             </div>
-          </div>
+          )}
         </div>
-
       </div>
     </div>
   );
 }
 
+
 // ── Section 7 — CTA Banner (Figma 276:1757) ─────────────────────────────
+
 function Section7() {
+  const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
   const ArrowIcon = ({ color = "#bf791d" }: { color?: string }) => (
     <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
       <path d="M5 15L15 5" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
@@ -1107,113 +1061,62 @@ function Section7() {
 
   return (
     <div style={{
-      width: "100%",
-      background: "#ffffff",
-      display: "flex",
-      justifyContent: "center",
-      padding: "80px 0 100px",
+      width: "100%", background: "#ffffff",
+      padding: isMobile ? "48px 20px 60px" : isTablet ? "60px 32px 80px" : "80px 0 100px",
+      boxSizing: "border-box",
     }}>
       <div style={{
-        width: 1006,
-        display: "flex",
-        alignItems: "flex-end",
+        maxWidth: 1006, margin: "0 auto",
+        display: "flex", flexDirection: isMobile ? "column" : "row",
+        alignItems: isMobile ? "flex-start" : "flex-end",
         justifyContent: "space-between",
+        gap: isMobile ? 32 : 24,
       }}>
         {/* Left — Large Heading */}
-        <div style={{ paddingBottom: 68, flexShrink: 0 }}>
-          <h2 style={{
-            fontFamily: "'Lora', serif",
-            fontWeight: 600,
-            fontSize: 48,
-            lineHeight: "61.44px",
-            color: "#000",
-            margin: 0,
-            width: 651,
-            textTransform: "capitalize",
-          }}>
-            We Unlock Scale By Fixing What's Leaking Conversion, Retention Repeat
-          </h2>
-        </div>
+        <h2 style={{
+          fontFamily: "'Lora', serif", fontWeight: 600,
+          fontSize: isMobile ? 28 : isTablet ? 36 : 48,
+          lineHeight: 1.28, color: "#000", margin: 0,
+          maxWidth: isMobile ? "100%" : 651,
+          textTransform: "capitalize",
+        }}>
+          We Unlock Scale By Fixing What's Leaking Conversion, Retention Repeat
+        </h2>
 
         {/* Right — Subtext + Buttons */}
         <div style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "flex-end",
-          gap: 40,
-          flexShrink: 0,
+          display: "flex", flexDirection: "column",
+          alignItems: isMobile ? "stretch" : "flex-end",
+          gap: isMobile ? 20 : 40, flexShrink: 0,
+          width: isMobile ? "100%" : undefined,
         }}>
-          {/* Subtext */}
           <p style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontWeight: 300,
-            fontSize: 16,
-            lineHeight: "22px",
-            color: "#686868",
-            textAlign: "right",
-            width: 302,
-            margin: 0,
+            fontFamily: "'DM Sans', sans-serif", fontWeight: 300,
+            fontSize: isMobile ? 14 : 16, lineHeight: "22px", color: "#686868",
+            textAlign: isMobile ? "left" : "right",
+            width: isMobile ? "100%" : 302, margin: 0,
           }}>
             Short explanation that Hexanovate powers two lorem ips specialized domains is simply
           </p>
 
-          {/* Buttons Row */}
-          <div style={{ display: "flex", gap: 12, width: 521 }}>
-            {/* Outline Button */}
-            <Link
-              to="/join"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 20,
-                padding: "12px 24px",
-                borderRadius: 30,
-                border: "1px solid #bf791d",
-                background: "transparent",
-                textDecoration: "none",
-                cursor: "pointer",
-                transition: "all 0.3s",
-              }}
-            >
-              <span style={{
-                fontFamily: "'DM Sans', sans-serif",
-                fontWeight: 600,
-                fontSize: 16,
-                color: "#bf791d",
-                whiteSpace: "nowrap",
-              }}>
-                Join Ujjwala's Mission
-              </span>
+          <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", gap: 12, width: isMobile ? "100%" : undefined }}>
+            <Link to="/join" style={{
+              display: "flex", alignItems: "center", justifyContent: isMobile ? "center" : undefined,
+              gap: 12, padding: "12px 24px", borderRadius: 30,
+              border: "1px solid #bf791d", background: "transparent",
+              textDecoration: "none", cursor: "pointer",
+            }}>
+              <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: isMobile ? 15 : 16, color: "#bf791d", whiteSpace: "nowrap" }}>Join Ujjwala's Mission</span>
               <ArrowIcon color="#bf791d" />
             </Link>
 
-            {/* Solid Button */}
-            <Link
-              to="/donate"
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 20,
-                padding: "12px 24px",
-                borderRadius: 30,
-                background: "#bf791d",
-                border: "none",
-                textDecoration: "none",
-                cursor: "pointer",
-                flex: 1,
-                transition: "all 0.3s",
-              }}
-            >
-              <span style={{
-                fontFamily: "'DM Sans', sans-serif",
-                fontWeight: 600,
-                fontSize: 16,
-                color: "#fff",
-                whiteSpace: "nowrap",
-              }}>
-                Donate Now
-              </span>
+            <Link to="/donate" style={{
+              display: "flex", alignItems: "center", justifyContent: "center",
+              gap: 12, padding: "12px 24px", borderRadius: 30,
+              background: "#bf791d", border: "none",
+              textDecoration: "none", cursor: "pointer", flex: isMobile ? undefined : 1,
+            }}>
+              <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: isMobile ? 15 : 16, color: "#fff", whiteSpace: "nowrap" }}>Donate Now</span>
               <ArrowIcon color="#fff" />
             </Link>
           </div>
@@ -1370,14 +1273,17 @@ const SECTION_8_CARDS: S8Card[] = S8_CARDS_DATA.map((data, i) => ({
 }));
 
 function Section8() {
+  const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const [cardIndex, setCardIndex] = useState(0); // which card is currently on top (0–11)
+  const [cardIndex, setCardIndex] = useState(0);
 
-  const TOTAL        = SECTION_8_CARDS.length; // 12
-  const STEP         = 320;                    // px of scroll per card
-  const RUNWAY       = TOTAL * STEP;           // total extra scroll height
+  const TOTAL = SECTION_8_CARDS.length;
+  const STEP = 320;
+  const RUNWAY = TOTAL * STEP;
 
   useEffect(() => {
+    if (isMobile || isTablet) return; // skip scroll listener on mobile
     const onScroll = () => {
       if (!wrapperRef.current) return;
       const scrolled = Math.max(0, -wrapperRef.current.getBoundingClientRect().top);
@@ -1386,16 +1292,17 @@ function Section8() {
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  }, [isMobile, isTablet]);
 
-  // Active tab = which group of 3 we're in
   const activeTab = Math.floor(cardIndex / 3);
-
-  // Cards visible in the current stack: all cards from group start up to cardIndex
-  const groupStart  = activeTab * 3;
-  const stackCards  = SECTION_8_CARDS.slice(groupStart, cardIndex + 1);
+  const groupStart = activeTab * 3;
+  const stackCards = SECTION_8_CARDS.slice(groupStart, cardIndex + 1);
 
   const handleTabClick = (tabIdx: number) => {
+    if (isMobile || isTablet) {
+      setCardIndex(tabIdx * 3);
+      return;
+    }
     if (!wrapperRef.current) return;
     const wrapperTop = wrapperRef.current.getBoundingClientRect().top + window.scrollY;
     window.scrollTo({ top: wrapperTop + tabIdx * 3 * STEP, behavior: "smooth" });
@@ -1408,21 +1315,84 @@ function Section8() {
     </svg>
   );
 
+  const currentCard = SECTION_8_CARDS[cardIndex];
+
+  // ── Mobile / Tablet: simple paginated card layout ──────────────────────────
+  if (isMobile || isTablet) {
+    return (
+      <div style={{ width: "100%", background: "#fff", padding: isMobile ? "40px 20px 48px" : "48px 32px 60px", boxSizing: "border-box" }}>
+        {/* Header */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 24 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
+            <h2 style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: isMobile ? 26 : 34, lineHeight: 1.28, color: "#000", margin: 0 }}>
+              What the Trust Builds Ground
+            </h2>
+            <div style={{ border: "1px solid #e8e8e8", borderRadius: 40, padding: "5px 16px", flexShrink: 0, alignSelf: "flex-start" }}>
+              <span style={{ fontFamily: "'Poppins', sans-serif", fontSize: 12, color: "#bf791d" }}>On the Ground</span>
+            </div>
+          </div>
+          <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 14, lineHeight: "22px", color: "#686868", margin: 0 }}>
+            Find your role and see exactly what it means, what you get, and what your next step is.
+          </p>
+        </div>
+
+        {/* Tab pills */}
+        <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 20 }}>
+          {SECTION_8_TABS.map((tab, idx) => {
+            const isActive = Math.floor(cardIndex / 3) === idx;
+            return (
+              <button key={idx} onClick={() => handleTabClick(idx)} style={{
+                background: isActive ? "#174067" : "transparent",
+                border: "1px solid #174067", borderRadius: 40,
+                padding: "7px 18px", color: isActive ? "#fff" : "#174067",
+                fontFamily: "'Poppins', sans-serif", fontSize: 13, cursor: "pointer",
+              }}>{tab}</button>
+            );
+          })}
+        </div>
+
+        {/* Card */}
+        <div style={{ background: "#f8f5ef", borderRadius: 16, padding: isMobile ? "20px" : "28px 32px", display: "flex", flexDirection: "column", gap: 16, boxShadow: "0 4px 20px rgba(5,23,42,0.08)" }}>
+          <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 16, color: "#bf791d" }}>{currentCard.programName}</span>
+          <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 14, lineHeight: "24px", color: "#636363", margin: 0 }}>{currentCard.desc}</p>
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <strong style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: 13, color: "#000" }}>{currentCard.title}</strong>
+            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 4 }}>
+              {currentCard.bullets.map((b, bi) => (
+                <li key={bi} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <ArrowIcon color="#174067" />
+                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 13, color: "#636363" }}>{b}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <Link to="/join-network" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 10, background: "#bf791d", border: "1px solid #bf791d", borderRadius: 30, padding: "10px 24px", textDecoration: "none" }}>
+            <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 14, color: "#fff" }}>Join Teacher Network</span>
+            <ArrowIcon color="#fff" />
+          </Link>
+        </div>
+
+        {/* Prev / Next navigation */}
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 16 }}>
+          <button onClick={() => setCardIndex(i => Math.max(0, i - 1))} disabled={cardIndex === 0}
+            style={{ width: 40, height: 40, borderRadius: "50%", border: "1px solid #174067", background: "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: cardIndex === 0 ? "not-allowed" : "pointer", opacity: cardIndex === 0 ? 0.4 : 1 }}>
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M11 4L6 9L11 14" stroke="#174067" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </button>
+          <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: "#686868" }}>{cardIndex + 1} / {TOTAL}</span>
+          <button onClick={() => setCardIndex(i => Math.min(TOTAL - 1, i + 1))} disabled={cardIndex === TOTAL - 1}
+            style={{ width: 40, height: 40, borderRadius: "50%", background: "#174067", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: cardIndex === TOTAL - 1 ? "not-allowed" : "pointer", opacity: cardIndex === TOTAL - 1 ? 0.4 : 1 }}>
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M7 4L12 9L7 14" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // ── Desktop: original scroll-driven sticky stack ────────────────────────────
   return (
-    // Outer wrapper — creates the scroll runway
     <div ref={wrapperRef} style={{ position: "relative", height: `calc(100vh + ${RUNWAY}px)` }}>
-
-      {/* Sticky panel — locks to viewport while user scrolls through runway */}
-      <div style={{
-        position: "sticky", top: 0, height: "100vh",
-        background: "#fff", overflow: "hidden",
-        display: "flex", justifyContent: "center", alignItems: "center",
-      }}>
-
-        {/* 1006px box */}
+      <div style={{ position: "sticky", top: 0, height: "100vh", background: "#fff", overflow: "hidden", display: "flex", justifyContent: "center", alignItems: "center" }}>
         <div style={{ width: 1006, display: "flex", flexDirection: "column", gap: 48 }}>
-
-          {/* Header */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
             <div style={{ display: "flex", flexDirection: "column", gap: 10, maxWidth: 634 }}>
               <h2 style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: 40, lineHeight: "54.4px", color: "#000", margin: 0, textTransform: "capitalize" }}>
@@ -1436,67 +1406,42 @@ function Section8() {
               <span style={{ fontFamily: "'Poppins', sans-serif", fontSize: 13, color: "#bf791d" }}>On the Ground</span>
             </div>
           </div>
-
-          {/* Split: tabs left, card stack right */}
           <div style={{ display: "flex", gap: 32, alignItems: "flex-start" }}>
-
-            {/* Left tabs */}
             <div style={{ display: "flex", flexDirection: "column", gap: 10, width: 212, flexShrink: 0, paddingTop: 24 }}>
               {SECTION_8_TABS.map((tab, idx) => {
                 const isActive = activeTab === idx;
                 return (
                   <button key={idx} onClick={() => handleTabClick(idx)} style={{
-                    background: isActive ? "#174067" : "transparent",
-                    border: "1px solid #174067", borderRadius: 40,
+                    background: isActive ? "#174067" : "transparent", border: "1px solid #174067", borderRadius: 40,
                     padding: "10px 24px", width: "100%", textAlign: "center",
                     color: isActive ? "#fff" : "#174067",
                     fontFamily: "'Poppins', sans-serif", fontWeight: isActive ? 500 : 400, fontSize: 16,
                     cursor: "pointer", transition: "background 0.25s, color 0.25s", outline: "none",
-                  }}>
-                    {tab}
-                  </button>
+                  }}>{tab}</button>
                 );
               })}
             </div>
-
-            {/* Card stack — only current group's revealed cards, stacked */}
             <div style={{ flex: 1, position: "relative", height: 380 }}>
               {stackCards.map((card, stackIdx) => {
-                const isTop        = stackIdx === stackCards.length - 1;
-                const depthFromTop = stackCards.length - 1 - stackIdx; // 0 = top card
+                const isTop = stackIdx === stackCards.length - 1;
+                const depthFromTop = stackCards.length - 1 - stackIdx;
                 return (
-                  <div
-                    key={card.id}
-                    className={isTop ? "s8-card-in" : undefined}
-                    style={{
-                      position: "absolute", top: depthFromTop * 12, left: 0, right: 0,
-                      zIndex: stackIdx + 1,
-                      transform: `scale(${1 - depthFromTop * 0.025})`,
-                      transformOrigin: "top center",
-                      transition: "top 0.35s ease, transform 0.35s ease",
-                      background: "#f8f5ef", borderRadius: 20,
-                      padding: "32px 40px", height: 360,
-                      display: "flex", gap: 36, alignItems: "stretch",
-                      boxShadow: depthFromTop === 0
-                        ? "0 4px 20px rgba(5,23,42,0.1)"
-                        : "0px -4px 10px rgba(5,23,42,0.1)",
-                    }}
-                  >
-                    {/* Text */}
+                  <div key={card.id} className={isTop ? "s8-card-in" : undefined} style={{
+                    position: "absolute", top: depthFromTop * 12, left: 0, right: 0,
+                    zIndex: stackIdx + 1, transform: `scale(${1 - depthFromTop * 0.025})`,
+                    transformOrigin: "top center", transition: "top 0.35s ease, transform 0.35s ease",
+                    background: "#f8f5ef", borderRadius: 20, padding: "32px 40px", height: 360,
+                    display: "flex", gap: 36, alignItems: "stretch",
+                    boxShadow: depthFromTop === 0 ? "0 4px 20px rgba(5,23,42,0.1)" : "0px -4px 10px rgba(5,23,42,0.1)",
+                  }}>
                     <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 22, minWidth: 0 }}>
                       <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
                         <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                          <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 18, color: "#bf791d" }}>
-                            {card.programName}
-                          </span>
-                          <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 15, lineHeight: "24px", color: "#636363", margin: 0 }}>
-                            {card.desc}
-                          </p>
+                          <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 18, color: "#bf791d" }}>{card.programName}</span>
+                          <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 15, lineHeight: "24px", color: "#636363", margin: 0 }}>{card.desc}</p>
                         </div>
                         <div style={{ display: "flex", flexDirection: "column", gap: 5, paddingLeft: 20 }}>
-                          <strong style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: 14, color: "#000" }}>
-                            {card.title}
-                          </strong>
+                          <strong style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: 14, color: "#000" }}>{card.title}</strong>
                           <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 3 }}>
                             {card.bullets.map((b, bi) => (
                               <li key={bi} style={{ display: "flex", alignItems: "center", gap: 10 }}>
@@ -1510,18 +1455,11 @@ function Section8() {
                       <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 14, lineHeight: "22px", color: "#636363", margin: 0 }}>
                         Join a community of 340+ teachers building the future of education.
                       </p>
-                      <Link to="/join-network" style={{
-                        display: "inline-flex", alignItems: "center", gap: 14,
-                        background: "#bf791d", border: "1px solid #bf791d",
-                        borderRadius: 30, padding: "10px 24px",
-                        alignSelf: "flex-start", textDecoration: "none",
-                      }}>
+                      <Link to="/join-network" style={{ display: "inline-flex", alignItems: "center", gap: 14, background: "#bf791d", border: "1px solid #bf791d", borderRadius: 30, padding: "10px 24px", alignSelf: "flex-start", textDecoration: "none" }}>
                         <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 15, color: "#fff" }}>Join Teacher Network</span>
                         <ArrowIcon color="#fff" />
                       </Link>
                     </div>
-
-                    {/* Photo */}
                     <div style={{ width: 250, flexShrink: 0, borderRadius: 16, overflow: "hidden", background: "#ddd4c7" }}>
                       <img src={card.photo} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
                     </div>
@@ -1529,7 +1467,6 @@ function Section8() {
                 );
               })}
             </div>
-
           </div>
         </div>
       </div>
