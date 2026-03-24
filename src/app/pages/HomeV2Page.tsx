@@ -103,6 +103,29 @@ const S6_TABS = [
   { id: "students", label: "Students" },
 ];
 
+// ── Responsive hook ───────────────────────────────────────────────────────
+function useIsMobile(breakpoint = 768) {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < breakpoint);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, [breakpoint]);
+  return isMobile;
+}
+
+function useIsTablet() {
+  const [isTablet, setIsTablet] = useState(false);
+  useEffect(() => {
+    const check = () => setIsTablet(window.innerWidth >= 768 && window.innerWidth < 1024);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
+  return isTablet;
+}
+
 // ── Global animation CSS ──────────────────────────────────────────────────
 const GLOBAL_CSS = `
 @keyframes fadeInUp {
@@ -143,6 +166,15 @@ const GLOBAL_CSS = `
 /* Section 9 — hide scrollbar on card track */
 .s9-track { scrollbar-width: none; -ms-overflow-style: none; }
 .s9-track::-webkit-scrollbar { display: none; }
+
+/* ── Mobile hamburger menu animation ── */
+@keyframes mobileMenuSlideDown {
+  from { opacity: 0; transform: translateY(-10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.v2-mobile-menu {
+  animation: mobileMenuSlideDown 0.25s ease forwards;
+}
 `;
 
 // ── Hooks ─────────────────────────────────────────────────────────────────
@@ -218,8 +250,66 @@ function NavDropdown({ label, gold = false, items }: { label: string; gold?: boo
 
 // ── Navbar ────────────────────────────────────────────────────────────────
 function Navbar() {
+  const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Mobile / Tablet layout
+  if (isMobile || isTablet) {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
+          <div style={{ background: "#d9d9d9", borderRadius: 40, height: 48, width: 140, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: "#000" }}>Home + Logo</span>
+          </div>
+          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+            <Link to="/donate" style={{ textDecoration: "none" }}>
+              <button style={{ display: "flex", alignItems: "center", gap: 8, background: "#bf791d", borderRadius: 30, padding: "10px 18px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 500, whiteSpace: "nowrap" }}>
+                Donate <ArrowIcon size={14} />
+              </button>
+            </Link>
+            <button
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              style={{ background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.25)", borderRadius: 12, width: 44, height: 44, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}
+            >
+              {mobileMenuOpen ? (
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 5L15 15M15 5L5 15" stroke="#fff" strokeWidth="2" strokeLinecap="round" /></svg>
+              ) : (
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 6H17M3 10H17M3 14H17" stroke="#fff" strokeWidth="2" strokeLinecap="round" /></svg>
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile drawer */}
+        {mobileMenuOpen && (
+          <div className="v2-mobile-menu" style={{ marginTop: 16, padding: "20px 16px", borderRadius: 16, background: "rgba(255,255,255,0.1)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.15)", display: "flex", flexDirection: "column", gap: 4 }}>
+            {[
+              { label: "Ujjwala Wadekar", items: ["Her Story", "31 Years of Teaching", "Awards & Recognition"] },
+              { label: "Mission", items: ["Shiksha Raj Method", "Beyond Syllabus", "Impact Reports"] },
+              { label: "Programs", items: ["Programs", "Schools", "Communities"] },
+              { label: "Get Involved", items: ["Donate", "Volunteer", "Partner With Us"] },
+            ].map(group => (
+              <div key={group.label} style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", paddingBottom: 8, marginBottom: 4 }}>
+                <div style={{ color: "#ffa530", fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 600, padding: "8px 0 4px", textTransform: "uppercase", letterSpacing: "0.05em" }}>{group.label}</div>
+                {group.items.map(item => (
+                  <div key={item} style={{ color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 15, padding: "10px 12px", borderRadius: 10, cursor: "pointer", transition: "background 0.15s" }}
+                    onMouseEnter={e => (e.currentTarget.style.background = "rgba(255,255,255,0.1)")}
+                    onMouseLeave={e => (e.currentTarget.style.background = "transparent")}>
+                    {item}
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // Desktop layout (original)
   return (
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: 1008 }}>
+    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: 1008 }}>
       <div style={{ background: "#d9d9d9", borderRadius: 40, height: 60, width: 180, display: "flex", alignItems: "center", justifyContent: "center" }}>
         <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: "#000" }}>Home + Logo</span>
       </div>
@@ -277,86 +367,137 @@ function VideoCards() {
 // ── HeroSection ───────────────────────────────────────────────────────────
 function HeroSection() {
   const ref = useFadeInUp(0.05);
+  const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
+  const isSmall = isMobile || isTablet;
+
   return (
-    <div ref={ref} className="fade-in-up" style={{ width: "100%", minHeight: 724, position: "relative", background: "linear-gradient(114.7deg, #0a2036 0%, #132f4c 100%)", marginBottom: -131, flexShrink: 0 }}>
+    <div ref={ref} className="fade-in-up" style={{ width: "100%", minHeight: isMobile ? "auto" : 724, position: "relative", background: "linear-gradient(114.7deg, #0a2036 0%, #132f4c 100%)", marginBottom: isMobile ? 0 : -131, flexShrink: 0 }}>
 
       {/* ── Decorative layer: overflow:hidden here clips textures/ellipses ── */}
       <div style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none", zIndex: 0 }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", position: "relative", height: 724 }}>
-          <div style={{ position: "absolute", left: 645, top: 0, width: 646, height: 632, overflow: "hidden" }}>
-            <img src={imgHero} alt="" style={{ width: "155.42%", height: "100%", objectFit: "cover", objectPosition: "left center", maxWidth: "none", position: "absolute", left: "-55.42%" }} />
-          </div>
+        <div style={{ maxWidth: 1200, margin: "0 auto", position: "relative", height: isMobile ? "100%" : 724 }}>
+          {/* Hero image — hidden on mobile, positioned on tablet/desktop */}
+          {!isMobile && (
+            <div style={{ position: "absolute", left: isTablet ? "50%" : 645, top: 0, width: isTablet ? "60%" : 646, height: 632, overflow: "hidden" }}>
+              <img src={imgHero} alt="" style={{ width: "155.42%", height: "100%", objectFit: "cover", objectPosition: "left center", maxWidth: "none", position: "absolute", left: "-55.42%" }} />
+            </div>
+          )}
           {Array.from({ length: 7 }).map((_, i) => (
-            <div key={i} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: 632, background: "linear-gradient(to right, #0b223a 30%, rgba(11,34,58,0) 70%)" }} />
+            <div key={i} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: isMobile ? "100%" : 632, background: isMobile ? "linear-gradient(to bottom, #0b223a 60%, rgba(11,34,58,0.8) 100%)" : "linear-gradient(to right, #0b223a 30%, rgba(11,34,58,0) 70%)" }} />
           ))}
           <div style={{ position: "absolute", left: -122, top: -25, width: 653, height: 436, opacity: 0.45 }}>
             <img src={imgTexture} alt="" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
           </div>
-          <div style={{ position: "absolute", left: -122, top: 411, width: 653, height: 436, opacity: 0.35 }}>
-            <img src={imgTexture} alt="" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
-          </div>
-          <div style={{ position: "absolute", left: -822, top: -447, width: 1591, height: 928, transform: "rotate(90deg)", opacity: 0.25 }}>
-            <img src={imgEllipse1} alt="" style={{ width: "100%", height: "100%" }} />
-          </div>
-          <div style={{ position: "absolute", left: 830, top: 110, width: 277, height: 277 }}>
-            <img src={imgEllipse2} alt="" style={{ width: "100%", height: "100%" }} />
-          </div>
-          <div style={{ position: "absolute", left: 785, top: 53, width: 84, height: 6, background: "#ffa530", borderRadius: 3 }} />
+          {!isMobile && (
+            <>
+              <div style={{ position: "absolute", left: -122, top: 411, width: 653, height: 436, opacity: 0.35 }}>
+                <img src={imgTexture} alt="" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+              </div>
+              <div style={{ position: "absolute", left: -822, top: -447, width: 1591, height: 928, transform: "rotate(90deg)", opacity: 0.25 }}>
+                <img src={imgEllipse1} alt="" style={{ width: "100%", height: "100%" }} />
+              </div>
+              <div style={{ position: "absolute", left: 830, top: 110, width: 277, height: 277 }}>
+                <img src={imgEllipse2} alt="" style={{ width: "100%", height: "100%" }} />
+              </div>
+              <div style={{ position: "absolute", left: 785, top: 53, width: 84, height: 6, background: "#ffa530", borderRadius: 3 }} />
+            </>
+          )}
         </div>
       </div>
 
-      {/* ── Content layer: NO overflow restriction so dropdown can escape ── */}
-      <div style={{ maxWidth: 1200, margin: "0 auto", position: "relative", height: 724, zIndex: 2 }}>
-        <div style={{ padding: "28px 96px 60px", display: "flex", flexDirection: "column", gap: 44, alignItems: "center", position: "relative" }}>
+      {/* ── Content layer ── */}
+      <div style={{ maxWidth: 1200, margin: "0 auto", position: "relative", minHeight: isMobile ? "auto" : 724, zIndex: 2 }}>
+        <div style={{ padding: isMobile ? "20px 20px 40px" : isTablet ? "24px 32px 48px" : "28px 96px 60px", display: "flex", flexDirection: "column", gap: isMobile ? 28 : 44, alignItems: isMobile ? "stretch" : "center", position: "relative" }}>
           <div style={{ position: "relative", zIndex: 200, width: "100%" }}>
             <Navbar />
           </div>
-          <div style={{ position: "relative", display: "flex", alignItems: "flex-end", justifyContent: "space-between", width: 1008 }}>
-            <div style={{ position: "absolute", left: 371, top: -31, width: 385, height: 533, pointerEvents: "none" }}>
-              <div style={{ transform: "scaleX(-1)", width: "100%", height: "100%" }}>
-                <div style={{ width: 385, height: 533, overflow: "hidden", opacity: 0.25, position: "relative" }}>
-                  <img src={imgTeacher} alt="" style={{ position: "absolute", height: "108.82%", left: "-0.08%", maxWidth: "none", top: "-8.82%", width: "100.15%" }} />
-                </div>
-              </div>
-            </div>
-            <div style={{ position: "absolute", left: 446, top: 63, width: 315, height: 439, overflow: "hidden", pointerEvents: "none" }}>
-              <img src={imgTeacher} alt="Ujjwala Wadekar" style={{ position: "absolute", height: "107.97%", left: "-0.02%", maxWidth: "none", top: "-7.97%", width: "100.04%" }} />
-            </div>
-            <div style={{ position: "absolute", left: 235, top: -8, zIndex: 5 }}>
-              <StatCard />
-            </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 40, width: 364, flexShrink: 0, position: "relative", zIndex: 2 }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-                <div style={{ display: "flex", gap: 8 }}>
+
+          {/* Hero content — stacked on mobile, side-by-side on desktop */}
+          {isMobile ? (
+            /* ── MOBILE Hero Content ── */
+            <div style={{ display: "flex", flexDirection: "column", gap: 28, position: "relative" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
                   {["Award 1", "Award 2", "Award 3"].map(a => (
-                    <div key={a} style={{ background: "#13304c", borderRadius: 6, height: 40, width: 100, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 200, fontSize: 13, color: "#fff" }}>{a}</span>
+                    <div key={a} style={{ background: "#13304c", borderRadius: 6, height: 32, padding: "0 12px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 200, fontSize: 11, color: "#fff" }}>{a}</span>
                     </div>
                   ))}
                 </div>
-                <h1 style={{ fontFamily: "'Lora', serif", fontWeight: 500, fontSize: 48, lineHeight: 1.2, color: "#fff", textTransform: "capitalize", width: 455, margin: 0 }}>
-                  {"A Teacher's Work, "}<br />{"Scaled Into a Public"}
+                <h1 style={{ fontFamily: "'Lora', serif", fontWeight: 500, fontSize: 30, lineHeight: 1.25, color: "#fff", textTransform: "capitalize", margin: 0 }}>
+                  A Teacher's Work,<br />Scaled Into a Public
                 </h1>
+                <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 14, lineHeight: "22px", color: "rgba(255,255,255,0.8)", margin: 0 }}>
+                  Short explanation that Hexanovate powers two lorem ips specialized domains is simply
+                </p>
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
                 <Link to="/donate" style={{ textDecoration: "none", alignSelf: "flex-start" }}>
-                  <button style={{ display: "flex", alignItems: "center", gap: 20, background: "#bf791d", borderRadius: 30, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 600, boxShadow: "0px 4px 4px 0px rgba(0,0,0,0.3)" }}>
+                  <button style={{ display: "flex", alignItems: "center", gap: 12, background: "#bf791d", borderRadius: 30, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 600, boxShadow: "0px 4px 4px 0px rgba(0,0,0,0.3)" }}>
                     Donate Now <ArrowIcon />
                   </button>
                 </Link>
-                <button style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 16, padding: 0 }}>
-                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 3v12M9 15l-5-5M9 15l5-5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                <button style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 14, padding: 0 }}>
+                  <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M9 3v12M9 15l-5-5M9 15l5-5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
                   Problems we are working on
                 </button>
               </div>
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 36, alignItems: "flex-end", width: 245, flexShrink: 0, position: "relative", zIndex: 2 }}>
-              <VideoCards />
-              <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 15, lineHeight: "22px", color: "#fff", textAlign: "right", width: 245, margin: 0 }}>
-                Short explanation that Hexanovate powers two lorem ips specialized domains is simply
-              </p>
+          ) : (
+            /* ── TABLET / DESKTOP Hero Content ── */
+            <div style={{ position: "relative", display: "flex", alignItems: "flex-end", justifyContent: "space-between", width: "100%", maxWidth: 1008 }}>
+              {/* Teacher images — hidden on tablet */}
+              {!isTablet && (
+                <>
+                  <div style={{ position: "absolute", left: 371, top: -31, width: 385, height: 533, pointerEvents: "none" }}>
+                    <div style={{ transform: "scaleX(-1)", width: "100%", height: "100%" }}>
+                      <div style={{ width: 385, height: 533, overflow: "hidden", opacity: 0.25, position: "relative" }}>
+                        <img src={imgTeacher} alt="" style={{ position: "absolute", height: "108.82%", left: "-0.08%", maxWidth: "none", top: "-8.82%", width: "100.15%" }} />
+                      </div>
+                    </div>
+                  </div>
+                  <div style={{ position: "absolute", left: 446, top: 63, width: 315, height: 439, overflow: "hidden", pointerEvents: "none" }}>
+                    <img src={imgTeacher} alt="Ujjwala Wadekar" style={{ position: "absolute", height: "107.97%", left: "-0.02%", maxWidth: "none", top: "-7.97%", width: "100.04%" }} />
+                  </div>
+                  <div style={{ position: "absolute", left: 235, top: -8, zIndex: 5 }}>
+                    <StatCard />
+                  </div>
+                </>
+              )}
+              <div style={{ display: "flex", flexDirection: "column", gap: 40, width: isTablet ? "50%" : 364, flexShrink: 0, position: "relative", zIndex: 2 }}>
+                <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+                  <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+                    {["Award 1", "Award 2", "Award 3"].map(a => (
+                      <div key={a} style={{ background: "#13304c", borderRadius: 6, height: 40, width: 100, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                        <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 200, fontSize: 13, color: "#fff" }}>{a}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <h1 style={{ fontFamily: "'Lora', serif", fontWeight: 500, fontSize: isTablet ? 36 : 48, lineHeight: 1.2, color: "#fff", textTransform: "capitalize", maxWidth: isTablet ? "100%" : 455, margin: 0 }}>
+                    {"A Teacher's Work, "}<br />{"Scaled Into a Public"}
+                  </h1>
+                </div>
+                <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+                  <Link to="/donate" style={{ textDecoration: "none", alignSelf: "flex-start" }}>
+                    <button style={{ display: "flex", alignItems: "center", gap: 20, background: "#bf791d", borderRadius: 30, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 600, boxShadow: "0px 4px 4px 0px rgba(0,0,0,0.3)" }}>
+                      Donate Now <ArrowIcon />
+                    </button>
+                  </Link>
+                  <button style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 16, padding: 0 }}>
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 3v12M9 15l-5-5M9 15l5-5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                    Problems we are working on
+                  </button>
+                </div>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 36, alignItems: "flex-end", width: isTablet ? "40%" : 245, flexShrink: 0, position: "relative", zIndex: 2 }}>
+                {!isTablet && <VideoCards />}
+                <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 15, lineHeight: "22px", color: "#fff", textAlign: "right", maxWidth: 245, margin: 0 }}>
+                  Short explanation that Hexanovate powers two lorem ips specialized domains is simply
+                </p>
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
@@ -366,6 +507,8 @@ function HeroSection() {
 // ── ProgramBanner ─────────────────────────────────────────────────────────
 function ProgramBanner() {
   const ref = useFadeInUp();
+  const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
   const items = ["Monthly workshops (in-person, Jalgaon)", "Access to shared lesson resource library", "Peer mentoring circles"];
   return (
     <div ref={ref} className="fade-in-up" style={{
@@ -373,21 +516,21 @@ function ProgramBanner() {
       position: "relative",
       zIndex: 10,
       background: "linear-gradient(-79.93deg, #b77607 0.12%, #885615 99.88%)",
-      borderRadius: 30,
+      borderRadius: isMobile ? 16 : 30,
+      margin: isMobile ? "0 0" : undefined,
     }}>
-      {/* 1008px box layout content */}
       <div style={{
         maxWidth: 1008,
         margin: "0 auto",
-        padding: "24px 24px 60px",
+        padding: isMobile ? "20px 16px 24px" : "24px 24px 60px",
         boxSizing: "border-box",
         position: "relative",
       }}>
-        <div style={{ display: "flex", gap: 104, alignItems: "flex-start" }}>
+        <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", gap: isMobile ? 20 : isTablet ? 40 : 104, alignItems: "flex-start" }}>
           {/* Left: program name + description */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 8, width: 488, color: "#fff", flexShrink: 0 }}>
-            <p style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 18, margin: 0 }}>Name of the Program 4</p>
-            <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 15, lineHeight: "24px", margin: 0 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 8, width: isMobile ? "100%" : isTablet ? "55%" : 488, color: "#fff", flexShrink: isMobile ? undefined : 0 }}>
+            <p style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: isMobile ? 16 : 18, margin: 0 }}>Name of the Program 4</p>
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: isMobile ? 14 : 15, lineHeight: "24px", margin: 0 }}>
               Join the Teacher Reformers Network — a community of 340+ teachers sharing methods, resources, and practical innovations.
             </p>
           </div>
@@ -395,21 +538,22 @@ function ProgramBanner() {
           <div style={{ display: "flex", flexDirection: "column", color: "#fff", flexShrink: 0 }}>
             {items.map(item => (
               <div key={item} style={{ display: "flex", alignItems: "center", gap: 10, padding: "4px 0" }}>
-                <div style={{ width: 24, height: 24, display: "flex", alignItems: "center", justifyContent: "center" }}><ArrowIcon size={14} /></div>
-                <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 15, lineHeight: "24px", margin: 0, whiteSpace: "nowrap" }}>{item}</p>
+                <div style={{ width: 24, height: 24, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}><ArrowIcon size={14} /></div>
+                <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: isMobile ? 13 : 15, lineHeight: "24px", margin: 0, whiteSpace: isMobile ? "normal" : "nowrap" }}>{item}</p>
               </div>
             ))}
           </div>
         </div>
 
-        {/* "Join Teacher Network" — pinned to bottom-right of the golden div */}
-        <div style={{ position: "absolute", right: 24, bottom: 24 }}>
+        {/* "Join Teacher Network" button */}
+        <div style={isMobile ? { marginTop: 20 } : { position: "absolute", right: 24, bottom: 24 }}>
           <button style={{
-            display: "flex", alignItems: "center", gap: 20,
-            background: "#0f2a44", borderRadius: 20, padding: "10px 24px",
+            display: "flex", alignItems: "center", gap: isMobile ? 12 : 20,
+            background: "#0f2a44", borderRadius: 20, padding: isMobile ? "10px 20px" : "10px 24px",
             border: "none", cursor: "pointer", color: "#fff",
-            fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 16, whiteSpace: "nowrap",
-            position: "relative", top: 41,
+            fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: isMobile ? 14 : 16, whiteSpace: "nowrap",
+            position: isMobile ? "static" : "relative", top: isMobile ? undefined : 41,
+            width: isMobile ? "100%" : undefined, justifyContent: isMobile ? "center" : undefined,
           }}>
             Join Teacher Network <ArrowIcon />
           </button>
