@@ -569,21 +569,22 @@ const S2_TEXT = "We unlock scale by fixing what's leaking conversion, retention,
 function Section2() {
   const sectionRef = useFadeInUp();
   const textRef = useTextReveal();
+  const isMobile = useIsMobile();
   const words = S2_TEXT.split(" ");
   return (
     <div ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#ffffff" }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "80px 96px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: 48, alignItems: "center", width: "100%" }}>
-          <div style={{ textAlign: "center", width: 960 }}>
-            <p ref={textRef} style={{ margin: 0, fontSize: 52, lineHeight: 1.24, fontFamily: "'Lora', serif", fontWeight: 700 }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: isMobile ? "48px 20px" : "80px 96px", display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: isMobile ? 28 : 48, alignItems: "center", width: "100%" }}>
+          <div style={{ textAlign: "center", width: "100%", maxWidth: 960 }}>
+            <p ref={textRef} style={{ margin: 0, fontSize: isMobile ? 28 : 52, lineHeight: 1.28, fontFamily: "'Lora', serif", fontWeight: 700 }}>
               {words.map((word, i) => (<span key={i} className="trw">{word}{" "}</span>))}
             </p>
           </div>
-          <div style={{ display: "flex", gap: 20, alignItems: "center" }}>
-            <button style={{ display: "flex", alignItems: "center", gap: 20, background: "#bf791d", borderRadius: 30, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 16, whiteSpace: "nowrap" }}>
+          <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", gap: isMobile ? 12 : 20, alignItems: isMobile ? "stretch" : "center", width: isMobile ? "100%" : undefined }}>
+            <button style={{ display: "flex", alignItems: "center", justifyContent: isMobile ? "center" : undefined, gap: 12, background: "#bf791d", borderRadius: 30, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: isMobile ? 15 : 16, whiteSpace: "nowrap" }}>
               About Ujjwala <ArrowIcon />
             </button>
-            <button style={{ display: "flex", alignItems: "center", gap: 20, background: "transparent", borderRadius: 30, padding: "12px 24px", border: "1px solid #bf791d", cursor: "pointer", color: "#bf791d", fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 16, whiteSpace: "nowrap" }}>
+            <button style={{ display: "flex", alignItems: "center", justifyContent: isMobile ? "center" : undefined, gap: 12, background: "transparent", borderRadius: 30, padding: "12px 24px", border: "1px solid #bf791d", cursor: "pointer", color: "#bf791d", fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: isMobile ? 15 : 16, whiteSpace: "nowrap" }}>
               Join Ujjwala's Mission <ArrowIcon color="#bf791d" />
             </button>
           </div>
@@ -604,6 +605,7 @@ const S3_SLIDES = [
 
 function Section3() {
   const sectionRef = useFadeInUp();
+  const isMobile = useIsMobile();
   const [current, setCurrent] = useState(0);
   const total = S3_SLIDES.length;
   const prev = useCallback(() => setCurrent(c => (c === 0 ? total - 1 : c - 1)), [total]);
@@ -615,52 +617,57 @@ function Section3() {
   }, [prev, next]);
 
   return (
-    <div ref={sectionRef} className="fade-in-up" style={{ width: "100%", paddingTop: 80, paddingBottom: 80 }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 51px", position: "relative" }}>
-        <div style={{ position: "relative", width: "100%", maxWidth: 1098, margin: "0 auto", borderRadius: "32px 80px 32px 80px", overflow: "hidden", aspectRatio: "1098 / 565", boxShadow: "0 20px 60px rgba(0,0,0,0.18)" }}>
+    <div ref={sectionRef} className="fade-in-up" style={{ width: "100%", paddingTop: isMobile ? 40 : 80, paddingBottom: isMobile ? 40 : 80 }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: isMobile ? "0 16px" : "0 51px", position: "relative" }}>
+        <div style={{ position: "relative", width: "100%", maxWidth: 1098, margin: "0 auto", borderRadius: isMobile ? "20px 48px 20px 48px" : "32px 80px 32px 80px", overflow: "hidden", aspectRatio: isMobile ? "4 / 5" : "1098 / 565", boxShadow: "0 20px 60px rgba(0,0,0,0.18)" }}>
           <img key={current} src={S3_SLIDES[current].img} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, transparent 35%, rgba(0,0,0,0.55) 100%)", pointerEvents: "none" }} />
-          {/* Bottom-left: frosted caption card */}
-          <div style={{ position: "absolute", left: 45, bottom: 32, width: 528, padding: 28, borderRadius: 20, background: "rgba(13,36,59,0.30)", backdropFilter: "blur(26.5px)", WebkitBackdropFilter: "blur(26.5px)", border: "1px solid rgba(255,255,255,0.5)", display: "flex", flexDirection: "column", gap: 36 }}>
+          <div style={{ position: "absolute", inset: 0, background: isMobile ? "linear-gradient(to bottom, transparent 20%, rgba(0,0,0,0.72) 100%)" : "linear-gradient(to bottom, transparent 35%, rgba(0,0,0,0.55) 100%)", pointerEvents: "none" }} />
+
+          {/* Caption card — bottom overlay on mobile, bottom-left card on desktop */}
+          <div style={{
+            position: "absolute",
+            left: isMobile ? 16 : 45,
+            right: isMobile ? 16 : undefined,
+            bottom: isMobile ? 16 : 32,
+            width: isMobile ? undefined : 528,
+            padding: isMobile ? "16px" : 28,
+            borderRadius: 16,
+            background: "rgba(13,36,59,0.40)",
+            backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)",
+            border: "1px solid rgba(255,255,255,0.3)",
+            display: "flex", flexDirection: "column", gap: isMobile ? 16 : 36,
+          }}>
             {/* Navigation dots */}
             <div style={{ display: "flex", alignItems: "center", gap: 6, height: 3 }}>
               {Array.from({ length: total }).map((_, i) => (
                 <button key={i} onClick={() => setCurrent(i)} style={{ height: 3, width: i === current ? 28 : 14, borderRadius: 9999, background: i === current ? "#f59e0b" : "rgba(255,255,255,0.4)", border: "none", padding: 0, cursor: "pointer", transition: "width 0.3s ease, background 0.3s ease", flexShrink: 0 }} />
               ))}
             </div>
-            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 20, lineHeight: "28px", color: "#fff", margin: 0 }}>{S3_SLIDES[current].caption}</p>
-              <button style={{ display: "inline-flex", alignItems: "center", gap: 20, background: "#bf791d", borderRadius: 30, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 16, whiteSpace: "nowrap", alignSelf: "flex-start" }}>
-                Choose How You Want To Help <ArrowIcon />
+            <div style={{ display: "flex", flexDirection: "column", gap: isMobile ? 12 : 16 }}>
+              <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: isMobile ? 15 : 20, lineHeight: "1.4", color: "#fff", margin: 0 }}>{S3_SLIDES[current].caption}</p>
+              <button style={{ display: "inline-flex", alignItems: "center", gap: isMobile ? 8 : 20, background: "#bf791d", borderRadius: 30, padding: isMobile ? "10px 18px" : "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: isMobile ? 13 : 16, whiteSpace: "nowrap", alignSelf: "flex-start" }}>
+                Choose How You Want To Help <ArrowIcon size={isMobile ? 13 : 16} />
               </button>
             </div>
           </div>
 
-          {/* Bottom-right: pill-shaped nav + slide number — inside the image */}
+          {/* Pill nav + slide counter — top-right on mobile, bottom-right on desktop */}
           <div style={{
-            position: "absolute", right: 28, bottom: 28,
-            display: "flex", alignItems: "center", gap: 12, zIndex: 5,
+            position: "absolute",
+            right: isMobile ? 12 : 28,
+            top: isMobile ? 12 : undefined,
+            bottom: isMobile ? undefined : 28,
+            display: "flex", alignItems: "center", gap: 8, zIndex: 5,
           }}>
-            {/* Pill container for arrows */}
-            <div style={{
-              display: "flex", alignItems: "center", gap: 6,
-              background: "rgba(13,36,59,0.55)",
-              backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)",
-              border: "1px solid rgba(255,255,255,0.2)",
-              borderRadius: 999, padding: "6px 6px",
-            }}>
-              <button onClick={prev} style={{ width: 40, height: 40, borderRadius: "50%", border: "1.5px solid rgba(255,255,255,0.35)", background: "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M11 4L6 9L11 14" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            <div style={{ display: "flex", alignItems: "center", gap: 6, background: "rgba(13,36,59,0.55)", backdropFilter: "blur(12px)", WebkitBackdropFilter: "blur(12px)", border: "1px solid rgba(255,255,255,0.2)", borderRadius: 999, padding: isMobile ? "4px" : "6px" }}>
+              <button onClick={prev} style={{ width: isMobile ? 32 : 40, height: isMobile ? 32 : 40, borderRadius: "50%", border: "1.5px solid rgba(255,255,255,0.35)", background: "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+                <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M11 4L6 9L11 14" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
               </button>
-              <button onClick={next} style={{ width: 40, height: 40, borderRadius: "50%", background: "#174067", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
-                <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M7 4L12 9L7 14" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+              <button onClick={next} style={{ width: isMobile ? 32 : 40, height: isMobile ? 32 : 40, borderRadius: "50%", background: "#174067", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+                <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M7 4L12 9L7 14" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
               </button>
             </div>
-            {/* Slide number */}
-            <span style={{
-              fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: 15,
-              color: "#fff", letterSpacing: "0.02em", minWidth: 32,
-            }}>
+            <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: isMobile ? 12 : 15, color: "#fff", letterSpacing: "0.02em", minWidth: 28 }}>
               {current + 1}/{total}
             </span>
           </div>
@@ -683,16 +690,23 @@ const S4_CARDS = [
 
 function Section4() {
   const sectionRef = useFadeInUp();
+  const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
   const [offset, setOffset] = useState(0);
   const [cardWidth, setCardWidth] = useState(268);
   const GAP = 16;
 
   const updateCardWidth = useCallback(() => {
     const vw = window.innerWidth;
+    if (vw < 768) {
+      // Mobile: cards are ~85% of viewport width
+      setCardWidth(Math.floor(vw * 0.78));
+      return;
+    }
     const leftMargin = Math.max(0, (vw - 1200) / 2);
-    const leftColOffset = leftMargin + 96 + 340 + 48;
-    const trackW = vw - leftColOffset;
-    const targetVisible = vw >= 1100 ? 2.5 : vw >= 700 ? 1.8 : 1.2;
+    const leftColOffset = vw < 1024 ? 0 : leftMargin + 96 + 340 + 48;
+    const trackW = vw < 1024 ? vw - 32 : vw - leftColOffset;
+    const targetVisible = vw >= 1100 ? 2.5 : vw >= 768 ? 2 : 1.2;
     const w = Math.floor((trackW - GAP * (targetVisible - 1)) / targetVisible);
     setCardWidth(Math.max(160, Math.min(420, w)));
   }, []);
@@ -714,6 +728,43 @@ function Section4() {
     return () => window.removeEventListener("keydown", onKey);
   }, [prevSlide, nextSlide]);
 
+  // Mobile/tablet: stacked layout (heading on top, carousel below)
+  if (isMobile || isTablet) {
+    return (
+      <div ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#f8f5ef", paddingTop: isMobile ? 40 : 48, paddingBottom: isMobile ? 40 : 48, overflow: "hidden" }}>
+        {/* Heading block */}
+        <div style={{ padding: isMobile ? "0 20px 24px" : "0 32px 32px", display: "flex", flexDirection: "column", gap: 16 }}>
+          <div style={{ display: "inline-flex", alignItems: "center", padding: "6px 20px", borderRadius: 40, border: "1px solid #e8e8e8", alignSelf: "flex-start" }}>
+            <span style={{ fontFamily: "'Poppins', sans-serif", fontSize: 13, color: "#bf791d" }}>On the Ground</span>
+          </div>
+          <p style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: isMobile ? 28 : 36, lineHeight: 1.24, color: "#000", margin: 0 }}>Media & Recognitions</p>
+          <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 15, lineHeight: "24px", color: "#686868", margin: 0 }}>Find your role and see exactly what it means, what you get, and what your next step is.</p>
+          {/* Arrow buttons */}
+          <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 8 }}>
+            <button onClick={prevSlide} style={{ width: 44, height: 44, borderRadius: 30, border: "1px solid #174067", background: "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 5L7 10L12 15" stroke="#174067" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            </button>
+            <button onClick={nextSlide} style={{ width: 44, height: 44, borderRadius: 30, background: "#174067", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M8 5L13 10L8 15" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+            </button>
+          </div>
+        </div>
+        {/* Card track */}
+        <div style={{ overflow: "hidden", paddingLeft: isMobile ? 20 : 32 }}>
+          <div style={{ display: "flex", gap: GAP, transform: `translateX(-${offset}px)`, transition: "transform 0.5s cubic-bezier(0.22,1,0.36,1)", willChange: "transform", alignItems: "stretch" }}>
+            {S4_CARDS.map((card, i) => (
+              <div key={i} style={{ width: cardWidth, minHeight: isMobile ? 220 : 300, flexShrink: 0, borderRadius: 12, background: card.color, display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: 20, boxSizing: "border-box", cursor: "pointer", boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}>
+                <p style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: 16, color: "#112d48", margin: "0 0 4px" }}>{card.label}</p>
+                <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 12, color: "#686868", margin: 0 }}>{card.sub}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Desktop: original side-by-side layout
   return (
     <div ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#f8f5ef", paddingTop: 48, paddingBottom: 48, overflow: "hidden" }}>
       <div style={{ display: "flex", gap: 48, alignItems: "stretch", width: "100%" }}>
@@ -793,58 +844,53 @@ const S5_ITEMS = [
 
 function Section5() {
   const sectionRef = useFadeInUp();
-  // First item ("See") open by default — matches Figma default state
+  const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
   const [activeId, setActiveId] = useState<string>("see");
 
   return (
     <div ref={sectionRef} className="fade-in-up" style={{
       width: "100%",
-      minHeight: 808,          // Figma frame height
+      minHeight: isMobile ? "auto" : 808,
       background: "#fff",
       position: "relative",
       overflow: "hidden",
-      isolation: "isolate",    // prevents z-index bleeding
+      isolation: "isolate",
     }}>
-      {/* ── Background: pre-faded image (white fade already baked in) ── */}
+      {/* Background image */}
       <div style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)", width: "100%", maxWidth: 1200, height: "100%", pointerEvents: "none", zIndex: 0 }}>
         <img src={imgS5Bg} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center center" }} />
       </div>
 
-      {/* ── Layer 2: Content (1008px wide) ── */}
-      <div style={{ maxWidth: 1200, margin: "0 auto", position: "relative", zIndex: 2 }}>
-        <div style={{ width: 1008, paddingTop: 56, paddingBottom: 80 }}>
+      {/* Content */}
+      <div style={{ maxWidth: 1200, margin: "0 auto", position: "relative", zIndex: 2, padding: isMobile ? "40px 20px 48px" : isTablet ? "48px 32px 60px" : undefined }}>
+        <div style={{ width: isMobile || isTablet ? "100%" : 1008, paddingTop: isMobile ? 0 : 56, paddingBottom: isMobile ? 0 : 80 }}>
 
-          {/* Heading group — precisely pl-[260px] */}
-          <div style={{ paddingLeft: 260, display: "flex", flexDirection: "column", gap: 16 }}>
-
-            {/* Badge — pl-[164px] offset from the 260px content block = 424px total */}
-            <div style={{ paddingLeft: 164 }}>
+          {/* Heading group */}
+          <div style={{ paddingLeft: isMobile ? 0 : isTablet ? 32 : 260, display: "flex", flexDirection: "column", gap: 16 }}>
+            <div style={{ paddingLeft: isMobile ? 0 : isTablet ? 0 : 164 }}>
               <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", padding: "6px 20px", borderRadius: 40, border: "1px solid #e8e8e8", background: "#fff" }}>
                 <span style={{ fontFamily: "'Poppins', sans-serif", fontSize: 13, color: "#bf791d" }}>Beyond Syllabus</span>
               </div>
             </div>
-
-            {/* Heading — Lora SemiBold 36px, 657px wide */}
-            <div style={{ width: 657 }}>
-              <p style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: 36, lineHeight: 1.32, color: "#000", textTransform: "capitalize", margin: 0, whiteSpace: "pre-wrap" }}>
-                {"              Beyond Syllabus simply\n"}{"We unlock scale by fixing dum\n"}{"text of the"}
+            <div style={{ width: isMobile ? "100%" : isTablet ? "100%" : 657 }}>
+              <p style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: isMobile ? 26 : isTablet ? 30 : 36, lineHeight: 1.32, color: "#000", textTransform: "capitalize", margin: 0 }}>
+                Beyond Syllabus simply{"\n"}We unlock scale by fixing dum{"\n"}text of the
               </p>
             </div>
           </div>
 
-          {/* Accordion — pl-[260px], width 562px */}
-          <div style={{ paddingLeft: 260, paddingTop: 44 }}>
-            <div style={{ width: 562, display: "flex", flexDirection: "column" }}>
+          {/* Accordion */}
+          <div style={{ paddingLeft: isMobile ? 0 : isTablet ? 32 : 260, paddingTop: isMobile ? 24 : 44 }}>
+            <div style={{ width: isMobile ? "100%" : isTablet ? "100%" : 562, display: "flex", flexDirection: "column" }}>
               {S5_ITEMS.map((item) => {
                 const isActive = activeId === item.id;
                 return (
                   <div key={item.id}>
-                    {/* Tab trigger */}
                     <button
                       onClick={() => setActiveId(item.id)}
                       style={{ display: "flex", alignItems: "center", gap: 16, width: "100%", background: "none", border: "none", padding: "12px 0", cursor: "pointer", textAlign: "left" }}
                     >
-                      {/* Icon asset — exact 32x32 size */}
                       <div style={{ width: 32, height: 32, flexShrink: 0, position: "relative" }}>
                         <img src={item.icon} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }} />
                       </div>
@@ -855,32 +901,30 @@ function Section5() {
                         lineHeight: "26px",
                         color: isActive ? "#bf791d" : "#000",
                         transition: "color 0.25s",
-                        whiteSpace: "nowrap",
                       }}>
                         {item.label}
                       </span>
                     </button>
 
-                    {/* Expandable Section */}
                     <div className={`accordion-body${isActive ? " open" : ""}`}>
                       <div>
-                        <div style={{ paddingLeft: 48, display: "flex", flexDirection: "column", gap: 24, paddingBottom: 8 }}>
-                          <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 16, lineHeight: "25px", color: "#636363", margin: 0, width: 459 }}>
+                        <div style={{ paddingLeft: isMobile ? 0 : 48, display: "flex", flexDirection: "column", gap: 20, paddingBottom: 8 }}>
+                          <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: isMobile ? 14 : 16, lineHeight: "25px", color: "#636363", margin: 0, maxWidth: isMobile ? "100%" : 459 }}>
                             {item.body}
                           </p>
-                          <button style={{ display: "inline-flex", alignItems: "center", gap: 20, background: "#bf791d", borderRadius: 30, height: 44, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 16, whiteSpace: "nowrap", alignSelf: "flex-start" }}>
+                          <button style={{ display: "inline-flex", alignItems: "center", gap: isMobile ? 10 : 20, background: "#bf791d", borderRadius: 30, height: 44, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: isMobile ? 14 : 16, whiteSpace: "nowrap", alignSelf: isMobile ? "stretch" : "flex-start", justifyContent: isMobile ? "center" : undefined }}>
                             Donate for Cause <ArrowIcon />
                           </button>
                         </div>
                       </div>
                     </div>
 
-                    {/* Separator lines based on item state */}
-                    {item.sepAfter && (
+                    {item.sepAfter && !isMobile && (
                       <div style={{ height: 1, width: item.sepWidth, position: "relative", overflow: "hidden" }}>
                         <img src={item.sepAfter} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }} />
                       </div>
                     )}
+                    {isMobile && <div style={{ height: 1, background: "rgba(0,0,0,0.08)", margin: "4px 0" }} />}
                   </div>
                 );
               })}
@@ -889,7 +933,6 @@ function Section5() {
         </div>
       </div>
 
-      {/* ── Final Layer: Top/Bottom Faders (Blend section with page) ── */}
       <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, #fff 0%, transparent 8%, transparent 92%, #fff 100%)", pointerEvents: "none", zIndex: 4 }} />
     </div>
   );
