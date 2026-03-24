@@ -204,10 +204,10 @@ function NavDropdown({ label, gold = false, items }: { label: string; gold?: boo
         <img src={gold ? imgChevronGold : imgChevron} alt="" style={{ width: 16, height: 16 }} />
       </button>
       {open && (
-        <div onMouseEnter={cancelClose} onMouseLeave={scheduleClose} style={{ position: "absolute", top: "calc(100% + 4px)", left: 0, minWidth: 190, background: "rgba(10,32,54,0.97)", backdropFilter: "blur(16px)", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 12, padding: "8px 0", zIndex: 100, boxShadow: "0 12px 40px rgba(0,0,0,0.4)" }}>
+        <div onMouseEnter={cancelClose} onMouseLeave={scheduleClose} style={{ position: "absolute", top: "calc(100% + 8px)", left: 0, minWidth: 200, background: "rgba(255,255,255,0.96)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(0,0,0,0.08)", borderRadius: 14, padding: "6px 0", zIndex: 9999, boxShadow: "0 8px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.10)" }}>
           {items.map(item => (
-            <div key={item} style={{ padding: "10px 20px", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 14, cursor: "pointer", borderBottom: "1px solid rgba(255,255,255,0.06)" }}
-              onMouseEnter={e => (e.currentTarget.style.background = "rgba(255,255,255,0.06)")}
+            <div key={item} style={{ padding: "10px 20px", color: "#1a2e44", fontFamily: "'DM Sans', sans-serif", fontSize: 14, cursor: "pointer", borderBottom: "1px solid rgba(0,0,0,0.06)", transition: "background 0.15s" }}
+              onMouseEnter={e => (e.currentTarget.style.background = "rgba(23,64,103,0.07)")}
               onMouseLeave={e => (e.currentTarget.style.background = "transparent")}>{item}</div>
           ))}
         </div>
@@ -278,29 +278,39 @@ function VideoCards() {
 function HeroSection() {
   const ref = useFadeInUp(0.05);
   return (
-    <div ref={ref} className="fade-in-up" style={{ width: "100%", minHeight: 724, position: "relative", background: "linear-gradient(114.7deg, #0a2036 0%, #132f4c 100%)", marginBottom: -131, overflow: "hidden", flexShrink: 0 }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto", position: "relative", height: 724 }}>
-        <div style={{ position: "absolute", left: 645, top: 0, width: 646, height: 632, overflow: "hidden", pointerEvents: "none" }}>
-          <img src={imgHero} alt="" style={{ width: "155.42%", height: "100%", objectFit: "cover", objectPosition: "left center", maxWidth: "none", position: "absolute", left: "-55.42%" }} />
+    <div ref={ref} className="fade-in-up" style={{ width: "100%", minHeight: 724, position: "relative", background: "linear-gradient(114.7deg, #0a2036 0%, #132f4c 100%)", marginBottom: -131, flexShrink: 0 }}>
+
+      {/* ── Decorative layer: overflow:hidden here clips textures/ellipses ── */}
+      <div style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none", zIndex: 0 }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto", position: "relative", height: 724 }}>
+          <div style={{ position: "absolute", left: 645, top: 0, width: 646, height: 632, overflow: "hidden" }}>
+            <img src={imgHero} alt="" style={{ width: "155.42%", height: "100%", objectFit: "cover", objectPosition: "left center", maxWidth: "none", position: "absolute", left: "-55.42%" }} />
+          </div>
+          {Array.from({ length: 7 }).map((_, i) => (
+            <div key={i} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: 632, background: "linear-gradient(to right, #0b223a 30%, rgba(11,34,58,0) 70%)" }} />
+          ))}
+          <div style={{ position: "absolute", left: -122, top: -25, width: 653, height: 436, opacity: 0.45 }}>
+            <img src={imgTexture} alt="" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+          </div>
+          <div style={{ position: "absolute", left: -122, top: 411, width: 653, height: 436, opacity: 0.35 }}>
+            <img src={imgTexture} alt="" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+          </div>
+          <div style={{ position: "absolute", left: -822, top: -447, width: 1591, height: 928, transform: "rotate(90deg)", opacity: 0.25 }}>
+            <img src={imgEllipse1} alt="" style={{ width: "100%", height: "100%" }} />
+          </div>
+          <div style={{ position: "absolute", left: 830, top: 110, width: 277, height: 277 }}>
+            <img src={imgEllipse2} alt="" style={{ width: "100%", height: "100%" }} />
+          </div>
+          <div style={{ position: "absolute", left: 785, top: 53, width: 84, height: 6, background: "#ffa530", borderRadius: 3 }} />
         </div>
-        {Array.from({ length: 7 }).map((_, i) => (
-          <div key={i} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: 632, background: "linear-gradient(to right, #0b223a 30%, rgba(11,34,58,0) 70%)", pointerEvents: "none" }} />
-        ))}
-        <div style={{ position: "absolute", left: -122, top: -25, width: 653, height: 436, pointerEvents: "none", opacity: 0.45 }}>
-          <img src={imgTexture} alt="" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
-        </div>
-        <div style={{ position: "absolute", left: -122, top: 411, width: 653, height: 436, pointerEvents: "none", opacity: 0.35 }}>
-          <img src={imgTexture} alt="" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
-        </div>
-        <div style={{ position: "absolute", left: -822, top: -447, width: 1591, height: 928, transform: "rotate(90deg)", pointerEvents: "none", opacity: 0.25 }}>
-          <img src={imgEllipse1} alt="" style={{ width: "100%", height: "100%" }} />
-        </div>
-        <div style={{ position: "absolute", left: 830, top: 110, width: 277, height: 277, pointerEvents: "none" }}>
-          <img src={imgEllipse2} alt="" style={{ width: "100%", height: "100%" }} />
-        </div>
-        <div style={{ position: "absolute", left: 785, top: 53, width: 84, height: 6, background: "#ffa530", borderRadius: 3 }} />
-        <div style={{ padding: "28px 96px 60px", display: "flex", flexDirection: "column", gap: 44, alignItems: "center", position: "relative", zIndex: 2 }}>
-          <Navbar />
+      </div>
+
+      {/* ── Content layer: NO overflow restriction so dropdown can escape ── */}
+      <div style={{ maxWidth: 1200, margin: "0 auto", position: "relative", height: 724, zIndex: 2 }}>
+        <div style={{ padding: "28px 96px 60px", display: "flex", flexDirection: "column", gap: 44, alignItems: "center", position: "relative" }}>
+          <div style={{ position: "relative", zIndex: 200, width: "100%" }}>
+            <Navbar />
+          </div>
           <div style={{ position: "relative", display: "flex", alignItems: "flex-end", justifyContent: "space-between", width: 1008 }}>
             <div style={{ position: "absolute", left: 371, top: -31, width: 385, height: 533, pointerEvents: "none" }}>
               <div style={{ transform: "scaleX(-1)", width: "100%", height: "100%" }}>
