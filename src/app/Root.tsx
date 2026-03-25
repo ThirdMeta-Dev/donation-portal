@@ -1,11 +1,14 @@
 import { useEffect } from "react";
 import { Outlet, useLocation } from "react-router";
-import { Navbar } from "./components/Navbar";
-import { Footer } from "./components/Footer";
+import { Navbar } from "./components/SiteNavbar";
+import { Footer } from "./components/SiteFooter";
 import { AuthProvider } from "./lib/AuthContext";
 
-// Pages that skip global Navbar + Footer (have their own layouts)
-const BARE_PAGES = ["/payment", "/thank-you", "/lms/learn", "/auth/callback"];
+// Pages that skip ALL chrome (payment flow, oauth callback, etc.)
+const BARE_PAGES = ["/payment", "/thank-you", "/auth/callback"];
+
+// Pages that have their own full-page layout (internal nav/footer built in)
+const BLANK_CANVAS = ["/", "/home-v2", "/home-new-1"];
 
 // Clear old localStorage dummy data (one-time migration to Supabase)
 function clearOldLocalStorage() {
@@ -20,20 +23,33 @@ function clearOldLocalStorage() {
 function Layout() {
   const location = useLocation();
   const isBare = BARE_PAGES.some(p => location.pathname.startsWith(p));
-  // Blank-canvas pages — have their own nav/layout, skip shared header/footer
-  const isBlankCanvas = location.pathname === "/" || location.pathname === "/home-v2" || location.pathname === "/home-new-1";
-  const isAuth = location.pathname === "/auth";
-  const isDashboard = ["/dashboard", "/admin", "/lms/dashboard"].some(p => location.pathname.startsWith(p));
+  const isBlankCanvas = BLANK_CANVAS.includes(location.pathname);
 
   useEffect(() => { clearOldLocalStorage(); }, []);
 
+  if (isBare || isBlankCanvas) {
+    return (
+      <main>
+        <Outlet />
+      </main>
+    );
+  }
+
   return (
     <div className="flex flex-col min-h-screen">
-      {!isBare && !isAuth && !isBlankCanvas && <Navbar />}
+      {/* HomeV2 Navbar */}
+      <div style={{ background: "linear-gradient(114.7deg, #0a2036 0%, #132f4c 100%)", padding: "20px 24px" }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto" }}>
+          <Navbar />
+        </div>
+      </div>
+
       <main className="flex-1">
         <Outlet />
       </main>
-      {!isBare && !isAuth && !isDashboard && !isBlankCanvas && <Footer />}
+
+      {/* HomeV2 Footer */}
+      <Footer />
     </div>
   );
 }

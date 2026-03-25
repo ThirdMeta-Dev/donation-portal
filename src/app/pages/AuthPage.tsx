@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link, useLocation } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
-import { Heart, Eye, EyeOff, Mail, Lock, User, Phone, AlertCircle, GraduationCap, Loader2, BookOpen } from "lucide-react";
+import { Heart, Eye, EyeOff, Mail, Lock, User, Phone, AlertCircle, Loader2, BookOpen } from "lucide-react";
 import { useAuth } from "../lib/AuthContext";
 import { supabase } from "../lib/supabase";
 import { FOUNDATION_NAME } from "../lib/constants";
@@ -253,7 +253,7 @@ export function AuthPage() {
             )}
 
             <button type="submit" disabled={loading}
-              className="w-full py-3.5 rounded-xl text-sm transition-all disabled:opacity-60"
+              className="btn-navy w-full py-3.5 rounded-xl text-sm transition-all disabled:opacity-60"
               style={{ fontWeight: 700, background: "#1B2B3A", color: "#F8F5EF" }}>
               {loading ? (
                 <span className="flex items-center gap-2">
@@ -273,16 +273,11 @@ export function AuthPage() {
           </form>
 
           {/* Guest actions */}
-          <div className="px-6 pb-6 space-y-2">
+          <div className="px-6 pb-6">
             <Link to="/donate"
-              className="flex items-center justify-center gap-2 w-full border-2 border-slate-200 text-slate-700 py-3 rounded-xl hover:bg-slate-50 transition-colors text-sm"
+              className="btn-outline-dark flex items-center justify-center gap-2 w-full border-2 border-slate-200 text-slate-700 py-3 rounded-xl hover:bg-slate-50 transition-colors text-sm"
               style={{ fontWeight: 500 }}>
               <Heart size={15} className="text-orange-500" /> Donate without account
-            </Link>
-            <Link to="/lms"
-              className="flex items-center justify-center gap-2 w-full border-2 border-teal-200 text-teal-700 py-3 rounded-xl hover:bg-teal-50 transition-colors text-sm"
-              style={{ fontWeight: 500 }}>
-              <GraduationCap size={15} /> Browse Learning Courses (no login needed)
             </Link>
           </div>
         </div>

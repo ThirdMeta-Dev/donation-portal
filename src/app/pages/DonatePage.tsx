@@ -120,15 +120,6 @@ export function DonatePage() {
   return (
     <div className="min-h-screen py-10" style={{ background: "#F8F5EF" }}>
       <div className="max-w-3xl mx-auto px-4 sm:px-6">
-        {/* Header */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm mb-3" style={{ fontWeight: 600, background: "#F0F4F7", color: "#1B2B3A", border: "1px solid #DBE3E9" }}>
-            <Heart size={14} /> Secure Donation Portal
-          </div>
-          <h1 className="text-3xl mb-2" style={{ fontWeight: 800, fontFamily: "var(--font-heading)", color: "#1C1C1A" }}>Make a Donation</h1>
-          <p className="text-sm" style={{ color: "#6B6B60" }}>100% secure · 80G tax benefits · FCRA compliant · Razorpay protected</p>
-        </div>
-
         {/* Progress Steps */}
         <div className="flex items-center justify-center mb-8 gap-2">
           {([1, 2, 3] as Step[]).map((s, i) => (
@@ -283,7 +274,7 @@ export function DonatePage() {
 
                 <button
                   onClick={() => { if (!finalAmount || finalAmount < 100) { setErrors({ amount: "Minimum donation is ₹100" }); return; } setStep(2); }}
-                   className="w-full text-white py-4 rounded-xl text-base transition-all shadow-sm flex items-center justify-center gap-2"
+                   className="btn-navy w-full text-white py-4 rounded-xl text-base transition-all shadow-sm flex items-center justify-center gap-2"
                    style={{ fontWeight: 700, background: "#1B2B3A" }}
                 >
                   Continue to Donor Details <ChevronRight size={18} />
@@ -387,7 +378,7 @@ export function DonatePage() {
                     <ChevronLeft size={16} /> Back
                   </button>
                   <button onClick={() => { if (validate()) setStep(3); }}
-                   className="flex-1 text-white py-3 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2"
+                   className="btn-navy flex-1 text-white py-3 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2"
                    style={{ fontWeight: 700, background: "#1B2B3A" }}>
                     Review & Pay <ChevronRight size={18} />
                   </button>
@@ -458,7 +449,7 @@ export function DonatePage() {
                     <ChevronLeft size={16} /> Back
                   </button>
                   <button onClick={proceedToPayment}
-                   className="flex-1 text-white py-3 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2"
+                   className="btn-gold flex-1 text-white py-3 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2"
                    style={{ fontWeight: 700, background: "#B07D3A" }}>
                     <CreditCard size={18} /> Pay ₹{finalAmount.toLocaleString()} Securely
                   </button>
@@ -468,13 +459,6 @@ export function DonatePage() {
           )}
         </AnimatePresence>
 
-        {/* Bottom trust */}
-        <div className="mt-6 text-center text-xs text-slate-400 flex items-center justify-center gap-4 flex-wrap">
-          <span>🔒 SSL Secured</span>
-          <span>🏦 Razorpay Protected</span>
-          <span>✅ 80G Eligible</span>
-          <span>🌐 FCRA Registered</span>
-        </div>
       </div>
     </div>
   );

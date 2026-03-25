@@ -3,7 +3,7 @@ import { Link, useNavigate, useLocation } from "react-router";
 import { motion } from "motion/react";
 import {
   Heart, User, CheckCircle2, Award, Shield, BookOpen, Loader2,
-  FileText, IndianRupee, BarChart3, RefreshCw, GraduationCap, Eye,
+  FileText, IndianRupee, BarChart3, RefreshCw, Eye,
   TrendingUp, AlertCircle, Star
 } from "lucide-react";
 import { DonationReceiptModal } from "../components/DonationReceiptModal";
@@ -17,7 +17,7 @@ export function DonorDashboard() {
   const location = useLocation();
   const [donations, setDonations] = useState<Donation[]>([]);
   const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
-  const [activeTab, setActiveTab] = useState<"overview" | "history" | "impact" | "courses" | "profile">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "history" | "impact" | "profile">("overview");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [selectedDonation, setSelectedDonation] = useState<Donation | null>(null);
@@ -147,8 +147,7 @@ export function DonorDashboard() {
             { id: "overview", label: "Overview",    icon: <BarChart3 size={15} /> },
             { id: "history",  label: `Transactions${donations.length > 0 ? ` (${donations.length})` : ""}`, icon: <FileText size={15} /> },
             { id: "impact",   label: "My Impact",   icon: <Star size={15} /> },
-            { id: "courses",  label: "My Courses",  icon: <GraduationCap size={15} /> },
-            { id: "profile",  label: "Profile",     icon: <User size={15} /> },
+{ id: "profile",  label: "Profile",     icon: <User size={15} /> },
           ] as { id: typeof activeTab; label: string; icon: React.ReactNode }[]).map(tab => (
             <button
               key={tab.id}
@@ -229,7 +228,7 @@ export function DonorDashboard() {
                 <div className="text-center py-8">
                   <Heart size={40} className="text-slate-200 mx-auto mb-3" />
                   <p className="text-slate-500 text-sm mb-4">No transactions yet.</p>
-                  <Link to="/donate" className="text-white px-5 py-2.5 rounded-xl text-sm font-semibold" style={{ background: "#B07D3A" }}>Make Your First Donation</Link>
+                  <Link to="/donate" className="btn-gold text-white px-5 py-2.5 rounded-xl text-sm font-semibold" style={{ background: "#B07D3A" }}>Make Your First Donation</Link>
                 </div>
               ) : (
                 <div className="space-y-2">
@@ -264,21 +263,6 @@ export function DonorDashboard() {
               )}
             </div>
 
-            {/* LMS */}
-            <div className="rounded-2xl p-5" style={{ border: "1px solid #DBE3E9", background: "#F0F4F7" }}>
-              <div className="flex items-center justify-between">
-                <div>
-                  <div className="flex items-center gap-2 mb-1">
-                    <BookOpen size={18} style={{ color: "#1B2B3A" }} />
-                    <span className="text-sm font-semibold" style={{ color: "#1B2B3A" }}>Shiksha Raj Learning Centre</span>
-                  </div>
-                  <p className="text-xs" style={{ color: "#6B6B60" }}>{enrollments.length} course{enrollments.length !== 1 ? "s" : ""} enrolled · {completedCourses} completed</p>
-                </div>
-                <Link to="/lms" className="text-white px-4 py-2 rounded-xl text-sm hover:opacity-90 transition-colors font-semibold" style={{ background: "#1B2B3A" }}>
-                  Browse Courses
-                </Link>
-              </div>
-            </div>
           </motion.div>
         )}
 
@@ -381,59 +365,13 @@ export function DonorDashboard() {
               <div className="bg-white rounded-2xl border border-slate-200 p-10 text-center">
                 <TrendingUp size={40} className="text-slate-200 mx-auto mb-3" />
                 <p className="text-slate-500 text-sm mb-4">Make your first donation to see your impact!</p>
-                <Link to="/donate" className="text-white px-6 py-2.5 rounded-xl text-sm font-semibold" style={{ background: "#B07D3A" }}>Donate Now</Link>
+                <Link to="/donate" className="btn-gold text-white px-6 py-2.5 rounded-xl text-sm font-semibold" style={{ background: "#B07D3A" }}>Donate Now</Link>
               </div>
             )}
           </motion.div>
         )}
 
-        {/* ── MY COURSES ── */}
-        {activeTab === "courses" && (
-          <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
-            {enrollments.length === 0 ? (
-              <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-12 text-center">
-                <GraduationCap size={48} className="text-slate-200 mx-auto mb-4" />
-                <h3 className="text-slate-700 text-lg mb-2 font-semibold">No courses enrolled yet</h3>
-                <p className="text-slate-500 text-sm mb-6">Explore our free courses and start learning today!</p>
-                <Link to="/lms" className="text-white px-6 py-3 rounded-xl font-semibold" style={{ background: "#1B2B3A" }}>Browse Courses</Link>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {enrollments.map(e => (
-                  <div key={e.courseId} className="bg-white rounded-2xl border border-slate-200 shadow-sm p-5">
-                    <div className="flex items-start gap-3 mb-4">
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0`}
-                        style={{ background: e.certificateIssued ? "#EDF5EB" : "#F0F4F7" }}>
-                        {e.certificateIssued ? <Award size={20} style={{ color: "#4A6741" }} /> : <BookOpen size={20} style={{ color: "#1B2B3A" }} />}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="text-slate-800 text-sm truncate font-semibold">
-                          {e.courseId.replace("course-", "").replace(/-/g, " ").replace(/\b\w/g, l => l.toUpperCase())}
-                        </div>
-                        <div className="text-slate-500 text-xs">{(e.completedLessons || []).length} lessons completed</div>
-                      </div>
-                      {e.certificateIssued && (
-                        <span className="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-semibold">Certified ✓</span>
-                      )}
-                    </div>
-                    <div className="flex gap-2">
-                      <Link to={`/lms/learn/${e.courseId}`}
-                        className="flex-1 text-white py-2 rounded-lg text-xs text-center hover:opacity-90 transition-colors font-semibold" style={{ background: "#1B2B3A" }}>
-                        Continue Learning
-                      </Link>
-                      {e.certificateIssued && (
-                        <Link to={`/lms/certificate/${e.courseId}`}
-                          className="flex items-center gap-1 border border-green-300 text-green-700 px-3 py-2 rounded-lg text-xs hover:bg-green-50 transition-colors font-semibold">
-                          <Award size={12} /> Certificate
-                        </Link>
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </motion.div>
-        )}
+        {/* ── MY COURSES — hidden until LMS is re-enabled ── */}
 
         {/* ── PROFILE ── */}
         {activeTab === "profile" && (

@@ -5,6 +5,8 @@
  */
 import { Link } from "react-router";
 import { useState, useEffect, useCallback, useRef } from "react";
+import { Navbar } from "../components/SiteNavbar";
+import { Footer } from "../components/SiteFooter";
 
 // ── Local asset imports (bundled by Vite for production) ─────────────────
 // @ts-ignore
@@ -222,114 +224,6 @@ function ArrowIcon({ color = "#fff", size = 16 }: { color?: string; size?: numbe
   );
 }
 
-// ── Dropdown — fixed: setTimeout prevents flicker on mouse travel ─────────
-function NavDropdown({ label, gold = false, items }: { label: string; gold?: boolean; items: string[] }) {
-  const [open, setOpen] = useState(false);
-  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const scheduleClose = () => { closeTimer.current = setTimeout(() => setOpen(false), 150); };
-  const cancelClose  = () => { if (closeTimer.current) clearTimeout(closeTimer.current); };
-
-  return (
-    <div style={{ position: "relative" }} onMouseEnter={() => { cancelClose(); setOpen(true); }} onMouseLeave={scheduleClose}>
-      <button style={{ display: "flex", alignItems: "center", gap: 4, background: "none", border: "none", cursor: "pointer", color: gold ? "#ffa530" : "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: gold ? 600 : 400, padding: "4px 0" }}>
-        {label}
-        <img src={gold ? imgChevronGold : imgChevron} alt="" style={{ width: 16, height: 16 }} />
-      </button>
-      {open && (
-        <div onMouseEnter={cancelClose} onMouseLeave={scheduleClose} style={{ position: "absolute", top: "calc(100% + 8px)", left: 0, minWidth: 200, background: "rgba(255,255,255,0.96)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(0,0,0,0.08)", borderRadius: 14, padding: "6px 0", zIndex: 9999, boxShadow: "0 8px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.10)" }}>
-          {items.map(item => (
-            <div key={item} style={{ padding: "10px 20px", color: "#1a2e44", fontFamily: "'DM Sans', sans-serif", fontSize: 14, cursor: "pointer", borderBottom: "1px solid rgba(0,0,0,0.06)", transition: "background 0.15s" }}
-              onMouseEnter={e => (e.currentTarget.style.background = "rgba(23,64,103,0.07)")}
-              onMouseLeave={e => (e.currentTarget.style.background = "transparent")}>{item}</div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-}
-
-// ── Navbar ────────────────────────────────────────────────────────────────
-function Navbar() {
-  const isMobile = useIsMobile();
-  const isTablet = useIsTablet();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  // Mobile / Tablet layout
-  if (isMobile || isTablet) {
-    return (
-      <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
-        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
-          <div style={{ background: "#d9d9d9", borderRadius: 40, height: 48, width: 140, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-            <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: "#000" }}>Home + Logo</span>
-          </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            <Link to="/donate" style={{ textDecoration: "none" }}>
-              <button style={{ display: "flex", alignItems: "center", gap: 8, background: "#bf791d", borderRadius: 30, padding: "10px 18px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 500, whiteSpace: "nowrap" }}>
-                Donate <ArrowIcon size={14} />
-              </button>
-            </Link>
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              style={{ background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.25)", borderRadius: 12, width: 44, height: 44, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}
-            >
-              {mobileMenuOpen ? (
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M5 5L15 15M15 5L5 15" stroke="#fff" strokeWidth="2" strokeLinecap="round" /></svg>
-              ) : (
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M3 6H17M3 10H17M3 14H17" stroke="#fff" strokeWidth="2" strokeLinecap="round" /></svg>
-              )}
-            </button>
-          </div>
-        </div>
-
-        {/* Mobile drawer */}
-        {mobileMenuOpen && (
-          <div className="v2-mobile-menu" style={{ marginTop: 16, padding: "20px 16px", borderRadius: 16, background: "rgba(255,255,255,0.1)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.15)", display: "flex", flexDirection: "column", gap: 4 }}>
-            {[
-              { label: "Ujjwala Wadekar", items: ["Her Story", "31 Years of Teaching", "Awards & Recognition"] },
-              { label: "Mission", items: ["Shiksha Raj Method", "Beyond Syllabus", "Impact Reports"] },
-              { label: "Programs", items: ["Programs", "Schools", "Communities"] },
-              { label: "Get Involved", items: ["Donate", "Volunteer", "Partner With Us"] },
-            ].map(group => (
-              <div key={group.label} style={{ borderBottom: "1px solid rgba(255,255,255,0.1)", paddingBottom: 8, marginBottom: 4 }}>
-                <div style={{ color: "#ffa530", fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 600, padding: "8px 0 4px", textTransform: "uppercase", letterSpacing: "0.05em" }}>{group.label}</div>
-                {group.items.map(item => (
-                  <div key={item} style={{ color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 15, padding: "10px 12px", borderRadius: 10, cursor: "pointer", transition: "background 0.15s" }}
-                    onMouseEnter={e => (e.currentTarget.style.background = "rgba(255,255,255,0.1)")}
-                    onMouseLeave={e => (e.currentTarget.style.background = "transparent")}>
-                    {item}
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
-        )}
-      </div>
-    );
-  }
-
-  // Desktop layout (original)
-  return (
-    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: 1008 }}>
-      <div style={{ background: "#d9d9d9", borderRadius: 40, height: 60, width: 180, display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: "#000" }}>Home + Logo</span>
-      </div>
-      <div style={{ display: "flex", alignItems: "center", gap: 28, paddingLeft: 28, paddingRight: 6, height: 59, borderRadius: 60, background: "rgba(255,255,255,0.1)", backdropFilter: "blur(15px)" }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 20, paddingLeft: 8 }}>
-          <NavDropdown label="Ujjwala Wadekar" items={["Her Story", "31 Years of Teaching", "Awards & Recognition"]} />
-          <NavDropdown label="Mission" items={["Shiksha Raj Method", "Beyond Syllabus", "Impact Reports"]} />
-          <NavDropdown label="Mission" items={["Programs", "Schools", "Communities"]} />
-          <NavDropdown label="Get Involved" gold items={["Donate", "Volunteer", "Partner With Us"]} />
-        </div>
-        <Link to="/donate" style={{ textDecoration: "none" }}>
-          <button style={{ display: "flex", alignItems: "center", gap: 20, background: "#bf791d", borderRadius: 30, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 500, whiteSpace: "nowrap" }}>
-            Donate Now <ArrowIcon />
-          </button>
-        </Link>
-      </div>
-    </div>
-  );
-}
-
 // ── StatCard ──────────────────────────────────────────────────────────────
 function StatCard() {
   return (
@@ -434,7 +328,7 @@ function HeroSection() {
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
                 <Link to="/donate" style={{ textDecoration: "none", alignSelf: "flex-start" }}>
-                  <button style={{ display: "flex", alignItems: "center", gap: 12, background: "#bf791d", borderRadius: 30, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 600, boxShadow: "0px 4px 4px 0px rgba(0,0,0,0.3)" }}>
+                  <button className="btn-gold" style={{ display: "flex", alignItems: "center", gap: 12, background: "#bf791d", borderRadius: 30, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 600, boxShadow: "0px 4px 4px 0px rgba(0,0,0,0.3)" }}>
                     Donate Now <ArrowIcon />
                   </button>
                 </Link>
@@ -474,13 +368,13 @@ function HeroSection() {
                       </div>
                     ))}
                   </div>
-                  <h1 style={{ fontFamily: "'Lora', serif", fontWeight: 500, fontSize: isTablet ? 36 : 48, lineHeight: 1.2, color: "#fff", textTransform: "capitalize", maxWidth: isTablet ? "100%" : 455, margin: 0 }}>
+                  <h1 style={{ fontFamily: "'Lora', serif", fontWeight: 500, fontSize: isTablet ? 36 : 48, lineHeight: 1.2, color: "#fff", textTransform: "capitalize", width: isTablet ? "100%" : 455, margin: 0 }}>
                     {"A Teacher's Work, "}<br />{"Scaled Into a Public"}
                   </h1>
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
                   <Link to="/donate" style={{ textDecoration: "none", alignSelf: "flex-start" }}>
-                    <button style={{ display: "flex", alignItems: "center", gap: 20, background: "#bf791d", borderRadius: 30, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 600, boxShadow: "0px 4px 4px 0px rgba(0,0,0,0.3)" }}>
+                    <button className="btn-gold" style={{ display: "flex", alignItems: "center", gap: 20, background: "#bf791d", borderRadius: 30, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 600, boxShadow: "0px 4px 4px 0px rgba(0,0,0,0.3)" }}>
                       Donate Now <ArrowIcon />
                     </button>
                   </Link>
@@ -581,7 +475,7 @@ function Section2() {
             </p>
           </div>
           <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", gap: isMobile ? 12 : 20, alignItems: isMobile ? "stretch" : "center", width: isMobile ? "100%" : undefined }}>
-            <button style={{ display: "flex", alignItems: "center", justifyContent: isMobile ? "center" : undefined, gap: 12, background: "#bf791d", borderRadius: 30, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: isMobile ? 15 : 16, whiteSpace: "nowrap" }}>
+            <button className="btn-gold" style={{ display: "flex", alignItems: "center", justifyContent: isMobile ? "center" : undefined, gap: 12, background: "#bf791d", borderRadius: 30, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: isMobile ? 15 : 16, whiteSpace: "nowrap" }}>
               About Ujjwala <ArrowIcon />
             </button>
             <button style={{ display: "flex", alignItems: "center", justifyContent: isMobile ? "center" : undefined, gap: 12, background: "transparent", borderRadius: 30, padding: "12px 24px", border: "1px solid #bf791d", cursor: "pointer", color: "#bf791d", fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: isMobile ? 15 : 16, whiteSpace: "nowrap" }}>
@@ -645,7 +539,7 @@ function Section3() {
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: isMobile ? 12 : 16 }}>
               <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: isMobile ? 15 : 20, lineHeight: "1.4", color: "#fff", margin: 0 }}>{S3_SLIDES[current].caption}</p>
-              <button style={{ display: "inline-flex", alignItems: "center", gap: isMobile ? 8 : 20, background: "#bf791d", borderRadius: 30, padding: isMobile ? "10px 18px" : "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: isMobile ? 13 : 16, whiteSpace: "nowrap", alignSelf: "flex-start" }}>
+              <button className="btn-gold" style={{ display: "inline-flex", alignItems: "center", gap: isMobile ? 8 : 20, background: "#bf791d", borderRadius: 30, padding: isMobile ? "10px 18px" : "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: isMobile ? 13 : 16, whiteSpace: "nowrap", alignSelf: "flex-start" }}>
                 Choose How You Want To Help <ArrowIcon size={isMobile ? 13 : 16} />
               </button>
             </div>
@@ -912,7 +806,7 @@ function Section5() {
                           <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: isMobile ? 14 : 16, lineHeight: "25px", color: "#636363", margin: 0, maxWidth: isMobile ? "100%" : 459 }}>
                             {item.body}
                           </p>
-                          <button style={{ display: "inline-flex", alignItems: "center", gap: isMobile ? 10 : 20, background: "#bf791d", borderRadius: 30, height: 44, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: isMobile ? 14 : 16, whiteSpace: "nowrap", alignSelf: isMobile ? "stretch" : "flex-start", justifyContent: isMobile ? "center" : undefined }}>
+                          <button className="btn-gold" style={{ display: "inline-flex", alignItems: "center", gap: isMobile ? 10 : 20, background: "#bf791d", borderRadius: 30, height: 44, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: isMobile ? 14 : 16, whiteSpace: "nowrap", alignSelf: isMobile ? "stretch" : "flex-start", justifyContent: isMobile ? "center" : undefined }}>
                             Donate for Cause <ArrowIcon />
                           </button>
                         </div>
@@ -1141,18 +1035,6 @@ import imgS10Classroom from "@/assets/s10_card_bg_classroom.jpg";
 import imgS16Youtube from "@/assets/s16_img_youtube.png";
 // @ts-ignore
 import imgS16Instagram from "@/assets/s16_img_instagram.png";
-
-// Footer
-// @ts-ignore
-import imgFooterBg from "@/assets/footer_bg.png";
-// @ts-ignore
-import imgFooterLinkedin from "@/assets/footer_ic_linkedin.png";
-// @ts-ignore
-import imgFooterTwitter from "@/assets/footer_ic_twitter.png";
-// @ts-ignore
-import imgFooterWhatsapp from "@/assets/footer_ic_whatsapp.png";
-// @ts-ignore
-import imgFooterInstagram from "@/assets/footer_ic_instagram.png";
 
 // Section 15 — Team
 // @ts-ignore
@@ -2112,7 +1994,7 @@ function Section10() {
                   </div>
                 ))}
               </div>
-              <button style={{ display: "inline-flex", alignItems: "center", gap: 12, height: 40, padding: "0 20px", background: "#bf791d", border: "none", borderRadius: 30, fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 14, color: "#fff", cursor: "pointer" }}>
+              <button className="btn-gold" style={{ display: "inline-flex", alignItems: "center", gap: 12, height: 40, padding: "0 20px", background: "#bf791d", border: "none", borderRadius: 30, fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 14, color: "#fff", cursor: "pointer" }}>
                 {tab.cta} <span>→</span>
               </button>
             </div>
@@ -2182,6 +2064,7 @@ function Section10() {
                   ))}
                 </div>
                 <button
+                  className="btn-gold"
                   style={{
                     display: "inline-flex", alignItems: "center", gap: 20,
                     height: 44, padding: "10px 24px",
@@ -2298,6 +2181,8 @@ const S12_CARDS = [
 
 function Section12() {
   const sectionRef = useFadeInUp();
+  const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
   const TAG_PILL: React.CSSProperties = {
     border: "1px solid #bf791d",
     borderRadius: 100,
@@ -2310,25 +2195,29 @@ function Section12() {
     background: "transparent",
   };
 
+  const gridCols = isMobile ? "1fr" : isTablet ? "repeat(2, 1fr)" : "repeat(3, 1fr)";
+  const cardPadding = isMobile ? "24px 24px 24px 24px" : "108px 32px 32px 32px";
+  const cardHeight = isMobile ? "auto" : 242;
+
   return (
-    <section ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#fff", padding: "88px 0 0 0" }}>
+    <section ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#fff", padding: isMobile ? "48px 0 0 0" : "88px 0 0 0" }}>
       <div style={{ maxWidth: 1008, margin: "0 auto", padding: "0 16px", boxSizing: "border-box" }}>
 
         {/* Title */}
         <h2 style={{
           fontFamily: "'Lora', serif",
           fontWeight: 600,
-          fontSize: 48,
-          lineHeight: 1.125,
+          fontSize: isMobile ? 28 : isTablet ? 36 : 48,
+          lineHeight: 1.2,
           textAlign: "center",
           color: "#111",
-          margin: "0 0 48px 0",
+          margin: isMobile ? "0 0 32px 0" : "0 0 48px 0",
         }}>
           How Your Support Turns Into Learning
         </h2>
 
         {/* Tag pills — two rows */}
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, marginBottom: 40 }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, marginBottom: isMobile ? 28 : 40 }}>
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center" }}>
             {S12_TAGS_ROW1.map(tag => <span key={tag} style={TAG_PILL}>{tag}</span>)}
           </div>
@@ -2338,29 +2227,31 @@ function Section12() {
         </div>
 
         {/* Process cards */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 16, marginBottom: 24 }}>
+        <div style={{ display: "grid", gridTemplateColumns: gridCols, gap: 16, marginBottom: 24 }}>
           {S12_CARDS.map(card => (
             <div key={card.num} style={{
               position: "relative",
               background: "#f8f5ef",
               borderRadius: 12,
-              height: 242,
+              height: cardHeight,
               overflow: "hidden",
-              padding: "108px 32px 32px 32px",
+              padding: cardPadding,
               boxSizing: "border-box",
             }}>
               {/* Watermark number */}
               <span style={{
-                position: "absolute",
-                top: 18,
-                right: 20,
+                position: isMobile ? "relative" : "absolute",
+                top: isMobile ? undefined : 18,
+                right: isMobile ? undefined : 20,
+                display: isMobile ? "block" : undefined,
                 fontFamily: "'Lora', serif",
                 fontWeight: 700,
-                fontSize: 80,
+                fontSize: isMobile ? 48 : 80,
                 lineHeight: 1,
                 color: "rgba(191,121,29,0.18)",
                 pointerEvents: "none",
                 userSelect: "none",
+                marginBottom: isMobile ? 8 : 0,
               }}>{card.num}</span>
               <div style={{
                 fontFamily: "'DM Sans', sans-serif",
@@ -2384,50 +2275,53 @@ function Section12() {
         <div style={{
           background: "#f8f5ef",
           borderRadius: 16,
-          padding: "32px 36px",
+          padding: isMobile ? "28px 24px" : "32px 36px",
           position: "relative",
           overflow: "hidden",
-          marginBottom: 88,
-          minHeight: 122,
+          marginBottom: isMobile ? 48 : 88,
+          minHeight: isMobile ? "auto" : 122,
           display: "flex",
-          alignItems: "center",
+          flexDirection: isMobile ? "column" : "row",
+          alignItems: isMobile ? "flex-start" : "center",
           justifyContent: "space-between",
-          gap: 32,
+          gap: isMobile ? 24 : 32,
         }}>
           {/* Decorative map — faint SVG dots/lines over right side */}
-          <svg
-            aria-hidden
-            viewBox="0 0 276 435"
-            style={{
-              position: "absolute",
-              right: 160,
-              top: "50%",
-              transform: "translateY(-50%)",
-              height: "240%",
-              width: "auto",
-              opacity: 0.12,
-              pointerEvents: "none",
-            }}
-          >
-            <ellipse cx="138" cy="217" rx="100" ry="150" stroke="#bf791d" strokeWidth="1.5" fill="none" />
-            <ellipse cx="138" cy="217" rx="60" ry="90" stroke="#bf791d" strokeWidth="1" fill="none" />
-            <line x1="38" y1="217" x2="238" y2="217" stroke="#bf791d" strokeWidth="1" />
-            <line x1="138" y1="67" x2="138" y2="367" stroke="#bf791d" strokeWidth="1" />
-            <circle cx="138" cy="217" r="5" fill="#bf791d" />
-            <circle cx="180" cy="170" r="3" fill="#bf791d" />
-            <circle cx="100" cy="260" r="3" fill="#bf791d" />
-            <circle cx="160" cy="280" r="3" fill="#bf791d" />
-            <circle cx="90" cy="180" r="3" fill="#bf791d" />
-          </svg>
+          {!isMobile && (
+            <svg
+              aria-hidden
+              viewBox="0 0 276 435"
+              style={{
+                position: "absolute",
+                right: 160,
+                top: "50%",
+                transform: "translateY(-50%)",
+                height: "240%",
+                width: "auto",
+                opacity: 0.12,
+                pointerEvents: "none",
+              }}
+            >
+              <ellipse cx="138" cy="217" rx="100" ry="150" stroke="#bf791d" strokeWidth="1.5" fill="none" />
+              <ellipse cx="138" cy="217" rx="60" ry="90" stroke="#bf791d" strokeWidth="1" fill="none" />
+              <line x1="38" y1="217" x2="238" y2="217" stroke="#bf791d" strokeWidth="1" />
+              <line x1="138" y1="67" x2="138" y2="367" stroke="#bf791d" strokeWidth="1" />
+              <circle cx="138" cy="217" r="5" fill="#bf791d" />
+              <circle cx="180" cy="170" r="3" fill="#bf791d" />
+              <circle cx="100" cy="260" r="3" fill="#bf791d" />
+              <circle cx="160" cy="280" r="3" fill="#bf791d" />
+              <circle cx="90" cy="180" r="3" fill="#bf791d" />
+            </svg>
+          )}
 
           {/* Left: heading */}
           <div style={{
             fontFamily: "'Lora', serif",
             fontWeight: 700,
-            fontSize: 28,
+            fontSize: isMobile ? 20 : isTablet ? 22 : 28,
             lineHeight: 1.35,
             color: "#111",
-            maxWidth: 500,
+            maxWidth: isMobile ? "100%" : 500,
             position: "relative",
             zIndex: 1,
           }}>
@@ -2435,7 +2329,16 @@ function Section12() {
           </div>
 
           {/* Right: buttons */}
-          <div style={{ display: "flex", gap: 16, alignItems: "center", flexShrink: 0, position: "relative", zIndex: 1 }}>
+          <div style={{
+            display: "flex",
+            flexDirection: isMobile ? "column" : "row",
+            gap: 12,
+            alignItems: isMobile ? "stretch" : "center",
+            flexShrink: 0,
+            position: "relative",
+            zIndex: 1,
+            width: isMobile ? "100%" : "auto",
+          }}>
             <button style={{
               border: "1.5px solid #bf791d",
               background: "transparent",
@@ -2443,29 +2346,31 @@ function Section12() {
               padding: "12px 24px",
               fontFamily: "'DM Sans', sans-serif",
               fontWeight: 600,
-              fontSize: 16,
+              fontSize: isMobile ? 15 : 16,
               color: "#bf791d",
               cursor: "pointer",
               display: "flex",
               alignItems: "center",
+              justifyContent: "center",
               gap: 10,
               whiteSpace: "nowrap",
             }}>
               Sponsor a Learning Kit
               <svg width="23" height="23" viewBox="0 0 23 23" fill="none"><circle cx="11.5" cy="11.5" r="10.5" stroke="#bf791d" strokeWidth="1.5"/><path d="M8 11.5h7M12.5 9l2.5 2.5-2.5 2.5" stroke="#bf791d" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
             </button>
-            <button style={{
+            <button className="btn-gold" style={{
               border: "none",
               background: "#bf791d",
               borderRadius: 100,
               padding: "12px 24px",
               fontFamily: "'DM Sans', sans-serif",
               fontWeight: 600,
-              fontSize: 16,
+              fontSize: isMobile ? 15 : 16,
               color: "#fff",
               cursor: "pointer",
               display: "flex",
               alignItems: "center",
+              justifyContent: "center",
               gap: 10,
               whiteSpace: "nowrap",
             }}>
@@ -2567,10 +2472,13 @@ function HonestGrayBlock({ style }: { style?: React.CSSProperties }) {
 }
 
 function SectionHonestImpact() {
+  const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
   const outerRef = useRef<HTMLDivElement>(null);
   const stripRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    if (isMobile || isTablet) return;
     const outer = outerRef.current;
     const strip = stripRef.current;
     if (!outer || !strip) return;
@@ -2598,7 +2506,53 @@ function SectionHonestImpact() {
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
     };
-  }, []);
+  }, [isMobile, isTablet]);
+
+  // ── Mobile / Tablet: simple vertical layout ──────────────────────────────
+  if (isMobile || isTablet) {
+    return (
+      <div style={{ width: "100%", background: "#fff", padding: isMobile ? "48px 0" : "64px 0" }}>
+        <div style={{ maxWidth: 1008, margin: "0 auto", padding: "0 20px", boxSizing: "border-box" }}>
+
+          {/* Header */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 32 }}>
+            <span style={{
+              border: "1px solid #e8e8e8", borderRadius: 40, padding: "6px 20px",
+              fontFamily: "'Poppins', sans-serif", fontSize: 13, color: "#bf791d",
+              display: "inline-block", width: "fit-content",
+            }}>
+              Honest Impact
+            </span>
+            <div style={{ display: "flex", flexDirection: isTablet ? "row" : "column", alignItems: isTablet ? "flex-end" : "flex-start", justifyContent: "space-between", gap: 12 }}>
+              <h2 style={{
+                fontFamily: "'Lora', serif", fontWeight: 600,
+                fontSize: isMobile ? 26 : 32, lineHeight: 1.36,
+                color: "#000", margin: 0, textTransform: "capitalize",
+              }}>
+                Grid Lorem ipsum is simply
+              </h2>
+              <p style={{
+                fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 15,
+                lineHeight: "22px", color: "#686868",
+                maxWidth: isTablet ? 240 : "100%", margin: 0,
+                textAlign: isTablet ? "right" : "left",
+              }}>
+                We track outcomes that matter in education — not vanity metrics. Four categories we
+              </p>
+            </div>
+          </div>
+
+          {/* Impact cards — vertical stack */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            {HONEST_CARDS_DATA.map((_, idx) => (
+              <HonestImpactCard key={idx} cardIdx={idx} />
+            ))}
+          </div>
+
+        </div>
+      </div>
+    );
+  }
 
   const STRIP_H = "clamp(420px, 55vh, 600px)";
 
@@ -2756,18 +2710,18 @@ const S15_MAP_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 236 28
   <path d="M50 50 Q58 42 68 46 Q76 38 85 42 Q92 35 100 38 L102 52 Q94 58 90 68 Q96 78 88 85 Q80 80 74 90 Q76 100 68 105 Q60 100 56 110 Q48 108 44 98 Q38 93 40 83 Q32 78 36 68 Q40 60 50 50Z" stroke="white" stroke-width="0.6" fill="none" opacity="0.55"/>
 </svg>`;
 
-function S15Card({ member }: { member: typeof S15_TEAM[0] }) {
+function S15Card({ member, cardWidth = 236 }: { member: typeof S15_TEAM[0]; cardWidth?: number | string }) {
   const [hovered, setHovered] = useState(false);
 
   return (
     <div
-      style={{ width: 236, cursor: "pointer", flexShrink: 0 }}
+      style={{ width: cardWidth, cursor: "pointer", flexShrink: 0 }}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
       {/* Card image/content area */}
       <div style={{
-        width: 236,
+        width: "100%",
         height: 324,
         borderRadius: "16px 16px 0 0",
         position: "relative",
@@ -2885,65 +2839,97 @@ function S15Card({ member }: { member: typeof S15_TEAM[0] }) {
 
 function Section15() {
   const sectionRef = useFadeInUp();
+  const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
+
+  // Card width: full fluid on mobile, fixed 236 on desktop
+  const cardWidth = isMobile ? "80vw" : isTablet ? "calc(50% - 10px)" : 236;
+
   return (
-    <section ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#fff", padding: "60px 0 80px" }}>
-      <div style={{ maxWidth: 1008, margin: "0 auto", padding: "0 1px", boxSizing: "border-box" }}>
+    <section ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#fff", padding: isMobile ? "48px 0 56px" : "60px 0 80px" }}>
+      <div style={{ maxWidth: 1008, margin: "0 auto", padding: isMobile ? "0 20px" : "0 1px", boxSizing: "border-box" }}>
 
         {/* Header */}
-        <div style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          marginBottom: 48,
-        }}>
-          <span style={{
-            display: "inline-flex",
-            border: "1px solid #e8e8e8",
-            borderRadius: 40,
-            padding: "6px 20px",
-            fontFamily: "'Poppins', sans-serif",
-            fontWeight: 400,
-            fontSize: 13,
-            color: "#bf791d",
-            whiteSpace: "nowrap",
+        {isMobile ? (
+          <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 32 }}>
+            <span style={{
+              display: "inline-block", border: "1px solid #e8e8e8", borderRadius: 40,
+              padding: "6px 20px", fontFamily: "'Poppins', sans-serif",
+              fontWeight: 400, fontSize: 13, color: "#bf791d", width: "fit-content",
+            }}>
+              Our Team
+            </span>
+            <h2 style={{
+              fontFamily: "'Lora', serif", fontWeight: 600, fontSize: 28,
+              lineHeight: 1.36, color: "#000", margin: 0, textTransform: "capitalize",
+            }}>
+              Meet The Team Lorem
+            </h2>
+            <p style={{
+              fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 15,
+              lineHeight: "22px", color: "#686868", margin: 0,
+            }}>
+              Find your role and see exactly what it means, what you get, and what your
+            </p>
+          </div>
+        ) : (
+          <div style={{
+            display: "flex", alignItems: "center", justifyContent: "space-between",
+            marginBottom: 48,
           }}>
-            Our Team
-          </span>
+            <span style={{
+              display: "inline-flex", border: "1px solid #e8e8e8", borderRadius: 40,
+              padding: "6px 20px", fontFamily: "'Poppins', sans-serif",
+              fontWeight: 400, fontSize: 13, color: "#bf791d", whiteSpace: "nowrap",
+            }}>
+              Our Team
+            </span>
+            <h2 style={{
+              fontFamily: "'Lora', serif", fontWeight: 600,
+              fontSize: isTablet ? 30 : 40, lineHeight: 1.36,
+              color: "#000", margin: 0, textTransform: "capitalize",
+              textAlign: "center", whiteSpace: "nowrap",
+            }}>
+              Meet The Team Lorem
+            </h2>
+            <p style={{
+              fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 15,
+              lineHeight: "22px", color: "#686868",
+              width: isTablet ? 160 : 206, textAlign: "right", margin: 0,
+            }}>
+              Find your role and see exactly what it means, what you get, and what your
+            </p>
+          </div>
+        )}
 
-          <h2 style={{
-            fontFamily: "'Lora', serif",
-            fontWeight: 600,
-            fontSize: 40,
-            lineHeight: 1.36,
-            color: "#000",
-            margin: 0,
-            textTransform: "capitalize",
-            textAlign: "center",
-            whiteSpace: "nowrap",
+        {/* Cards row — scrollable on mobile, wrap on tablet, flex on desktop */}
+        {isMobile ? (
+          <div style={{
+            display: "flex", gap: 16, overflowX: "auto",
+            paddingBottom: 16, marginLeft: -20, marginRight: -20,
+            paddingLeft: 20, paddingRight: 20,
+            scrollSnapType: "x mandatory",
+            WebkitOverflowScrolling: "touch",
           }}>
-            Meet The Team Lorem
-          </h2>
-
-          <p style={{
-            fontFamily: "'DM Sans', sans-serif",
-            fontWeight: 300,
-            fontSize: 16,
-            lineHeight: "22px",
-            color: "#686868",
-            width: 206,
-            textAlign: "right",
-            margin: 0,
-          }}>
-            Find your role and see exactly what it means, what you get, and what your
-          </p>
-        </div>
-
-        {/* Cards row */}
-        <div style={{ display: "flex", gap: 20 }}>
-          {S15_TEAM.map((member, i) => (
-            <S15Card key={i} member={member} />
-          ))}
-        </div>
+            {S15_TEAM.map((member, i) => (
+              <div key={i} style={{ scrollSnapAlign: "start", flexShrink: 0 }}>
+                <S15Card member={member} cardWidth={cardWidth} />
+              </div>
+            ))}
+          </div>
+        ) : isTablet ? (
+          <div style={{ display: "flex", flexWrap: "wrap", gap: 20 }}>
+            {S15_TEAM.map((member, i) => (
+              <S15Card key={i} member={member} cardWidth={cardWidth} />
+            ))}
+          </div>
+        ) : (
+          <div style={{ display: "flex", gap: 20 }}>
+            {S15_TEAM.map((member, i) => (
+              <S15Card key={i} member={member} />
+            ))}
+          </div>
+        )}
 
       </div>
     </section>
@@ -2965,8 +2951,16 @@ const ArrowCircle = ({ color = "#bf791d", bg = "transparent" }: { color?: string
 );
 
 function Section13() {
+  const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
+
   return (
-    <section style={{ width: "100%", position: "relative", height: 600, overflow: "hidden" }}>
+    <section style={{
+      width: "100%", position: "relative",
+      height: isMobile ? "auto" : 600,
+      minHeight: isMobile ? 480 : "auto",
+      overflow: "hidden",
+    }}>
 
       {/* Full-bleed background photo — anchored to bottom */}
       <img
@@ -2993,50 +2987,56 @@ function Section13() {
           left: 0,
           bottom: 0,
           width: "100%",
-          height: "75%",
+          height: isMobile ? "55%" : "75%",
           objectFit: "cover",
           objectPosition: "bottom center",
           pointerEvents: "none",
         }}
       />
 
-      {/* Primary gradient: white top → transparent bottom (image shows through at bottom) */}
+      {/* Primary gradient: white top → transparent bottom */}
       <div style={{
         position: "absolute",
         inset: 0,
-        background: "linear-gradient(to bottom, #ffffff 0%, #ffffff 28%, rgba(255,255,255,0.7) 45%, rgba(255,255,255,0.1) 68%, transparent 85%)",
+        background: isMobile
+          ? "linear-gradient(to bottom, #ffffff 0%, #ffffff 40%, rgba(255,255,255,0.85) 65%, rgba(255,255,255,0.2) 85%, transparent 100%)"
+          : "linear-gradient(to bottom, #ffffff 0%, #ffffff 28%, rgba(255,255,255,0.7) 45%, rgba(255,255,255,0.1) 68%, transparent 85%)",
         pointerEvents: "none",
       }} />
 
-      {/* Secondary gradient: white left → transparent right (keeps left text fully readable) */}
+      {/* Secondary gradient: white left → transparent right */}
       <div style={{
         position: "absolute",
         inset: 0,
-        background: "linear-gradient(to right, #ffffff 0%, #ffffff 32%, rgba(255,255,255,0.6) 50%, transparent 68%)",
+        background: isMobile
+          ? "linear-gradient(to bottom, #ffffff 0%, rgba(255,255,255,0.95) 55%, transparent 100%)"
+          : "linear-gradient(to right, #ffffff 0%, #ffffff 32%, rgba(255,255,255,0.6) 50%, transparent 68%)",
         pointerEvents: "none",
       }} />
 
-      {/* Content container — 1100px fixed width, centered */}
+      {/* Content container */}
       <div style={{
         maxWidth: 1100,
         width: "100%",
         margin: "0 auto",
         position: "relative",
         zIndex: 2,
-        padding: "60px 28px 40px",
+        padding: isMobile ? "48px 20px 200px" : "60px 28px 40px",
         boxSizing: "border-box",
         display: "flex",
+        flexDirection: isMobile ? "column" : "row",
         alignItems: "flex-start",
-        gap: 28,
-        height: "100%",
+        gap: isMobile ? 20 : 28,
+        height: isMobile ? "auto" : "100%",
       }}>
 
         {/* Left column: badge → heading → buttons */}
         <div style={{
           display: "flex",
           flexDirection: "column",
-          gap: 20,
-          flex: "0 0 560px",
+          gap: isMobile ? 16 : 20,
+          flex: isMobile ? "none" : isTablet ? "0 0 420px" : "0 0 560px",
+          width: isMobile ? "100%" : "auto",
         }}>
           {/* Badge pill */}
           <span style={{
@@ -3059,7 +3059,7 @@ function Section13() {
           <h2 style={{
             fontFamily: "'Lora', serif",
             fontWeight: 600,
-            fontSize: 48,
+            fontSize: isMobile ? 28 : isTablet ? 36 : 48,
             lineHeight: 1.28,
             color: "#000",
             margin: 0,
@@ -3068,24 +3068,49 @@ function Section13() {
             One Teacher Started This Lorem Many Can Keep
           </h2>
 
+          {/* Bullets — inline on mobile */}
+          {isMobile && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+              {S13_BULLETS.map(item => (
+                <div key={item} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
+                    <path d="M2 8h12M10 4l4 4-4 4" stroke="#bf791d" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                  <span style={{
+                    fontFamily: "'DM Sans', sans-serif", fontWeight: 300,
+                    fontSize: 14, lineHeight: "24px", color: "#000",
+                  }}>{item}</span>
+                </div>
+              ))}
+            </div>
+          )}
+
           {/* Buttons */}
-          <div style={{ display: "flex", gap: 10, alignItems: "center", marginTop: 20 }}>
-            <button style={{
-              display: "flex", alignItems: "center", gap: 20,
+          <div style={{
+            display: "flex",
+            flexDirection: isMobile ? "column" : "row",
+            gap: 10,
+            alignItems: isMobile ? "stretch" : "center",
+            marginTop: isMobile ? 4 : 20,
+          }}>
+            <button className="btn-gold" style={{
+              display: "flex", alignItems: "center", justifyContent: "center", gap: 20,
               background: "#bf791d", borderRadius: 30, padding: "12px 24px",
               border: "none", cursor: "pointer",
-              fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 16,
+              fontFamily: "'DM Sans', sans-serif", fontWeight: 600,
+              fontSize: isMobile ? 15 : 16,
               color: "#fff", whiteSpace: "nowrap",
             }}>
               Donate Now
               <ArrowCircle color="rgba(255,255,255,0.7)" />
             </button>
 
-            <button style={{
-              display: "flex", alignItems: "center", gap: 20,
+            <button className="btn-white" style={{
+              display: "flex", alignItems: "center", justifyContent: "center", gap: 20,
               background: "#fff", border: "1px solid #bf791d",
               borderRadius: 30, padding: "12px 24px", cursor: "pointer",
-              fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 16,
+              fontFamily: "'DM Sans', sans-serif", fontWeight: 600,
+              fontSize: isMobile ? 15 : 16,
               color: "#bf791d", whiteSpace: "nowrap",
             }}>
               Join Teacher Network
@@ -3093,10 +3118,11 @@ function Section13() {
             </button>
 
             <button style={{
-              display: "flex", alignItems: "center", gap: 20,
+              display: "flex", alignItems: "center", justifyContent: isMobile ? "center" : "flex-start", gap: 20,
               background: "transparent", border: "none",
               padding: "12px 0", cursor: "pointer",
-              fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 16,
+              fontFamily: "'DM Sans', sans-serif", fontWeight: 600,
+              fontSize: isMobile ? 15 : 16,
               color: "#bf791d", whiteSpace: "nowrap",
             }}>
               Partner With Us
@@ -3105,31 +3131,33 @@ function Section13() {
           </div>
         </div>
 
-        {/* Right column: bullet list — vertically centered in the heading area */}
-        <div style={{
-          display: "flex",
-          flexDirection: "column",
-          gap: 4,
-          paddingTop: 44,
-        }}>
-          {S13_BULLETS.map(item => (
-            <div key={item} style={{ display: "flex", alignItems: "center", gap: 10 }}>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
-                <path d="M2 8h12M10 4l4 4-4 4" stroke="#bf791d" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              <span style={{
-                fontFamily: "'DM Sans', sans-serif",
-                fontWeight: 300,
-                fontSize: 15,
-                lineHeight: "24px",
-                color: "#000",
-                whiteSpace: "nowrap",
-              }}>
-                {item}
-              </span>
-            </div>
-          ))}
-        </div>
+        {/* Right column: bullet list — desktop/tablet only */}
+        {!isMobile && (
+          <div style={{
+            display: "flex",
+            flexDirection: "column",
+            gap: 4,
+            paddingTop: isTablet ? 36 : 44,
+          }}>
+            {S13_BULLETS.map(item => (
+              <div key={item} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
+                  <path d="M2 8h12M10 4l4 4-4 4" stroke="#bf791d" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                <span style={{
+                  fontFamily: "'DM Sans', sans-serif",
+                  fontWeight: 300,
+                  fontSize: 15,
+                  lineHeight: "24px",
+                  color: "#000",
+                  whiteSpace: "nowrap",
+                }}>
+                  {item}
+                </span>
+              </div>
+            ))}
+          </div>
+        )}
 
       </div>
     </section>
@@ -3208,55 +3236,61 @@ function SocialIcon({ name, icon }: { name: string; icon: (c: string) => React.R
 
 function Section14() {
   const sectionRef = useFadeInUp();
+  const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
+
   return (
     <section ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#fff", marginTop: 0 }}>
 
-      {/* Decorative pattern strip — full width, two SVG panels side by side */}
-      <div style={{ display: "flex", width: "100%", height: 469, overflow: "hidden", pointerEvents: "none" }}>
+      {/* Decorative pattern strip */}
+      <div style={{
+        display: "flex", width: "100%",
+        height: isMobile ? 180 : isTablet ? 280 : 469,
+        overflow: "hidden", pointerEvents: "none",
+      }}>
         <img src={imgS14PatternA} alt="" aria-hidden style={{ flex: "0 0 50%", width: "50%", height: "100%", objectFit: "cover" }} />
         <img src={imgS14PatternB} alt="" aria-hidden style={{ flex: "0 0 50%", width: "50%", height: "100%", objectFit: "cover" }} />
       </div>
 
-      {/* Main content box — 1008px, centered, pulled up to overlap pattern */}
-      <div style={{ maxWidth: 1008, margin: "-420px auto 0", padding: "0 0 80px", position: "relative", zIndex: 2 }}>
+      {/* Main content box */}
+      <div style={{
+        maxWidth: 1008,
+        margin: isMobile ? "-80px auto 0" : isTablet ? "-220px auto 0" : "-420px auto 0",
+        padding: isMobile ? "0 20px 56px" : "0 0 80px",
+        position: "relative", zIndex: 2,
+        boxSizing: isMobile ? "border-box" : "content-box",
+      }}>
 
-        {/* ── Row 1: left content | teacher photo | right column ── */}
-        <div style={{ display: "flex", gap: 0, alignItems: "flex-start", height: 452 }}>
+        {/* ── Row 1 ── */}
+        {isMobile ? (
+          // Mobile: fully stacked layout
+          <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
 
-          {/* Left column — badge, heading, body, bullets */}
-          <div style={{ flex: "0 0 507px", display: "flex", flexDirection: "column", gap: 36 }}>
-
+            {/* Text content */}
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              {/* Badge pill */}
               <span style={{
                 display: "inline-flex", alignSelf: "flex-start",
                 border: "1px solid #e8e8e8", borderRadius: 40,
                 padding: "6px 20px",
                 fontFamily: "'Poppins', sans-serif", fontWeight: 400, fontSize: 13,
                 color: "#bf791d", whiteSpace: "nowrap",
+                background: "rgba(255,255,255,0.85)",
               }}>
                 About Ujjwal Mam
               </span>
-              {/* Heading */}
               <h2 style={{
                 fontFamily: "'Lora', serif", fontWeight: 600,
-                fontSize: 48, lineHeight: 1.24,
+                fontSize: 28, lineHeight: 1.28,
                 color: "#000", margin: 0, textTransform: "capitalize",
               }}>
-                One Teacher Start{"\n"}This Lorem Many Can
+                One Teacher Start This Lorem Many Can
               </h2>
-            </div>
-
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              {/* Body text */}
               <p style={{
                 fontFamily: "'DM Sans', sans-serif", fontWeight: 300,
-                fontSize: 16, lineHeight: "26px", color: "#636363",
-                margin: 0, width: 392,
+                fontSize: 15, lineHeight: "26px", color: "#636363", margin: 0,
               }}>
-                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley Lorem Ipsum is simply dummy text of the printing
+                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley.
               </p>
-              {/* Bullets */}
               <div style={{ display: "flex", flexDirection: "column" }}>
                 {S14_BULLETS.map(item => (
                   <div key={item} style={{ display: "flex", alignItems: "center", gap: 8 }}>
@@ -3265,82 +3299,147 @@ function Section14() {
                     </svg>
                     <span style={{
                       fontFamily: "'DM Sans', sans-serif", fontWeight: 300,
-                      fontSize: 15, lineHeight: "24px", color: "#636363",
+                      fontSize: 14, lineHeight: "24px", color: "#636363",
                     }}>{item}</span>
                   </div>
                 ))}
               </div>
-            </div>
-          </div>
-
-          {/* Center — teacher photo */}
-          <div style={{ flex: 1, position: "relative", height: "100%", overflow: "visible" }}>
-            <img
-              src={imgS14Teacher}
-              alt="Ujjwal Mam"
-              style={{
-                position: "absolute",
-                left: "50%",
-                bottom: 0,
-                transform: "translateX(-50%)",
-                height: "120%",
-                width: "auto",
-                objectFit: "contain",
-                objectPosition: "bottom center",
-              }}
-            />
-          </div>
-
-          {/* Right column — text + social icons */}
-          <div style={{
-            flex: "0 0 197px",
-            display: "flex", flexDirection: "column",
-            justifyContent: "space-between",
-            height: "100%",
-            paddingTop: 24,
-          }}>
-            {/* Top: right-aligned text */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-              <p style={{
-                fontFamily: "'Poppins', sans-serif", fontWeight: 400,
-                fontSize: 15, color: "#000", textAlign: "right", margin: 0,
-              }}>
-                Lorem ipsum is Strategy
-              </p>
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                {["Monthly workshops #", "Access to shared #", "Peer mentoring circles #", "Access to shared #"].map(t => (
-                  <p key={t} style={{
-                    fontFamily: "'DM Sans', sans-serif", fontWeight: 300,
-                    fontSize: 15, lineHeight: "24px", color: "#636363",
-                    textAlign: "right", margin: 0,
-                  }}>{t}</p>
-                ))}
+              {/* Social icons row */}
+              <div style={{ display: "flex", gap: 10, marginTop: 4 }}>
+                {S14_SOCIAL.map(s => <SocialIcon key={s.name} name={s.name} icon={s.icon} />)}
               </div>
             </div>
-            {/* Bottom: social icons stacked */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 10, alignItems: "flex-end" }}>
-              {S14_SOCIAL.map(s => <SocialIcon key={s.name} name={s.name} icon={s.icon} />)}
+
+            {/* Teacher photo */}
+            <div style={{ width: "100%", display: "flex", justifyContent: "center", marginTop: 32 }}>
+              <img
+                src={imgS14Teacher}
+                alt="Ujjwal Mam"
+                style={{ width: "70%", maxWidth: 280, objectFit: "contain", objectPosition: "bottom center" }}
+              />
             </div>
           </div>
-        </div>
+        ) : (
+          // Tablet / Desktop: 3-column layout
+          <div style={{ display: "flex", gap: 0, alignItems: "flex-start", height: isTablet ? "auto" : 452 }}>
+
+            {/* Left column */}
+            <div style={{ flex: isTablet ? "0 0 340px" : "0 0 507px", display: "flex", flexDirection: "column", gap: isTablet ? 24 : 36 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                <span style={{
+                  display: "inline-flex", alignSelf: "flex-start",
+                  border: "1px solid #e8e8e8", borderRadius: 40,
+                  padding: "6px 20px",
+                  fontFamily: "'Poppins', sans-serif", fontWeight: 400, fontSize: 13,
+                  color: "#bf791d", whiteSpace: "nowrap",
+                  background: "rgba(255,255,255,0.85)",
+                }}>
+                  About Ujjwal Mam
+                </span>
+                <h2 style={{
+                  fontFamily: "'Lora', serif", fontWeight: 600,
+                  fontSize: isTablet ? 32 : 48, lineHeight: 1.24,
+                  color: "#000", margin: 0, textTransform: "capitalize",
+                }}>
+                  One Teacher Start{"\n"}This Lorem Many Can
+                </h2>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                <p style={{
+                  fontFamily: "'DM Sans', sans-serif", fontWeight: 300,
+                  fontSize: 15, lineHeight: "26px", color: "#636363",
+                  margin: 0, width: isTablet ? "100%" : 392,
+                }}>
+                  Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley Lorem Ipsum is simply dummy text of the printing
+                </p>
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  {S14_BULLETS.map(item => (
+                    <div key={item} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
+                        <path d="M2 8h12M10 4l4 4-4 4" stroke="#bf791d" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                      <span style={{
+                        fontFamily: "'DM Sans', sans-serif", fontWeight: 300,
+                        fontSize: 15, lineHeight: "24px", color: "#636363",
+                      }}>{item}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* Center — teacher photo */}
+            <div style={{ flex: 1, position: "relative", height: isTablet ? 400 : "100%", overflow: "visible" }}>
+              <img
+                src={imgS14Teacher}
+                alt="Ujjwal Mam"
+                style={{
+                  position: "absolute",
+                  left: "50%",
+                  bottom: 0,
+                  transform: "translateX(-50%)",
+                  height: isTablet ? "100%" : "120%",
+                  width: "auto",
+                  objectFit: "contain",
+                  objectPosition: "bottom center",
+                }}
+              />
+            </div>
+
+            {/* Right column */}
+            <div style={{
+              flex: isTablet ? "0 0 160px" : "0 0 197px",
+              display: "flex", flexDirection: "column",
+              justifyContent: "space-between",
+              height: isTablet ? 400 : "100%",
+              paddingTop: 24,
+            }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+                <p style={{
+                  fontFamily: "'Poppins', sans-serif", fontWeight: 400,
+                  fontSize: 15, color: "#000", textAlign: "right", margin: 0,
+                }}>
+                  Lorem ipsum is Strategy
+                </p>
+                <div style={{ display: "flex", flexDirection: "column" }}>
+                  {["Monthly workshops #", "Access to shared #", "Peer mentoring circles #", "Access to shared #"].map(t => (
+                    <p key={t} style={{
+                      fontFamily: "'DM Sans', sans-serif", fontWeight: 300,
+                      fontSize: 14, lineHeight: "24px", color: "#636363",
+                      textAlign: "right", margin: 0,
+                    }}>{t}</p>
+                  ))}
+                </div>
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10, alignItems: "flex-end" }}>
+                {S14_SOCIAL.map(s => <SocialIcon key={s.name} name={s.name} icon={s.icon} />)}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* ── Row 2: About Organization ── */}
         <div style={{
-          display: "flex", gap: 68, alignItems: "center",
-          paddingTop: 48, borderTop: "1px solid #f0f0f0",
+          display: "flex",
+          flexDirection: isMobile ? "column" : "row",
+          gap: isMobile ? 24 : 68,
+          alignItems: isMobile ? "flex-start" : "center",
+          paddingTop: isMobile ? 36 : 48,
+          borderTop: "1px solid #f0f0f0",
+          marginTop: isMobile ? 24 : 0,
         }}>
 
           {/* Left: text */}
           <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 12 }}>
             <p style={{
               fontFamily: "'Poppins', sans-serif", fontWeight: 500,
-              fontSize: 17, color: "#000", margin: 0,
+              fontSize: isMobile ? 16 : 17, color: "#000", margin: 0,
             }}>
               About Organization lorem is
             </p>
             <div style={{
               fontFamily: "'DM Sans', sans-serif", fontWeight: 300,
-              fontSize: 16, lineHeight: "26px", color: "#636363",
+              fontSize: isMobile ? 14 : 16, lineHeight: "26px", color: "#636363",
               display: "flex", flexDirection: "column", gap: 2,
             }}>
               <p style={{ margin: 0 }}>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took</p>
@@ -3348,14 +3447,24 @@ function Section14() {
             </div>
           </div>
 
-          {/* Right: photo grid placeholders */}
-          <div style={{ display: "flex", gap: 12, flexShrink: 0, alignItems: "flex-start" }}>
-            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              <div style={{ width: 220, height: 132, background: "#d9d9d9", borderRadius: 12 }} />
-              <div style={{ width: 207, height: 124, background: "#d9d9d9", borderRadius: 12 }} />
+          {/* Right: photo grid */}
+          {isMobile ? (
+            <div style={{ display: "flex", gap: 10, width: "100%" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10, flex: 1 }}>
+                <div style={{ height: 100, background: "#d9d9d9", borderRadius: 10 }} />
+                <div style={{ height: 94, background: "#d9d9d9", borderRadius: 10 }} />
+              </div>
+              <div style={{ flex: 1, background: "#d9d9d9", borderRadius: 10, border: "3px solid #fff", minHeight: 210 }} />
             </div>
-            <div style={{ width: 220, height: 292, background: "#d9d9d9", borderRadius: 12, border: "3px solid #fff" }} />
-          </div>
+          ) : (
+            <div style={{ display: "flex", gap: 12, flexShrink: 0, alignItems: "flex-start" }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+                <div style={{ width: isTablet ? 160 : 220, height: 132, background: "#d9d9d9", borderRadius: 12 }} />
+                <div style={{ width: isTablet ? 150 : 207, height: 124, background: "#d9d9d9", borderRadius: 12 }} />
+              </div>
+              <div style={{ width: isTablet ? 160 : 220, height: 292, background: "#d9d9d9", borderRadius: 12, border: "3px solid #fff" }} />
+            </div>
+          )}
         </div>
 
       </div>
@@ -3427,8 +3536,11 @@ function S16SocialBtn({ name, icon }: { name: string; icon: (c: string) => React
 
 function Section16() {
   const sectionRef = useFadeInUp();
+  const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
+
   return (
-    <section ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#fff", padding: "72px 0 80px" }}>
+    <section ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#fff", padding: isMobile ? "48px 0 56px" : "72px 0 80px" }}>
       <style>{`
         .s16-grid { display: flex; gap: 48px; align-items: flex-start; }
         .s16-left { flex: 0 0 auto; width: 240px; display: flex; flex-direction: column; gap: 20px; padding-top: 24px; }
@@ -3438,20 +3550,21 @@ function Section16() {
         .s16-placeholder { border-radius: 14px; background: #d9d9d9; flex-shrink: 0; }
         @media (max-width: 860px) {
           .s16-grid { flex-direction: column; gap: 32px; }
-          .s16-left { width: 100%; flex-direction: row; align-items: flex-start; flex-wrap: wrap; gap: 24px; padding-top: 0; }
-          .s16-row { flex-wrap: wrap; }
-          .s16-img-wrap { width: 100% !important; }
-          .s16-placeholder { width: 100% !important; }
-        }
-        @media (max-width: 540px) {
-          .s16-row { flex-direction: column; }
+          .s16-left { width: 100%; padding-top: 0; }
         }
       `}</style>
 
       <div style={{ maxWidth: 1008, margin: "0 auto", padding: "0 16px", boxSizing: "border-box" }}>
 
         {/* ── Header ── */}
-        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 32, marginBottom: 44 }}>
+        <div style={{
+          display: "flex",
+          flexDirection: isMobile ? "column" : "row",
+          alignItems: "flex-start",
+          justifyContent: "space-between",
+          gap: isMobile ? 10 : 32,
+          marginBottom: isMobile ? 28 : 44,
+        }}>
           <span style={{
             display: "inline-flex", flexShrink: 0,
             border: "1px solid #e8e8e8", borderRadius: 40,
@@ -3463,9 +3576,9 @@ function Section16() {
           </span>
           <h2 style={{
             fontFamily: "'Lora', serif", fontWeight: 600,
-            fontSize: "clamp(28px, 4vw, 40px)", lineHeight: 1.36,
+            fontSize: isMobile ? 26 : "clamp(28px, 4vw, 40px)", lineHeight: 1.36,
             color: "#000", margin: 0, textTransform: "capitalize",
-            textAlign: "right",
+            textAlign: isMobile ? "left" : "right",
           }}>
             Our Channels Ipsum Is
           </h2>
@@ -3478,7 +3591,7 @@ function Section16() {
           <div className="s16-left">
             <p style={{
               fontFamily: "'DM Sans', sans-serif", fontWeight: 300,
-              fontSize: 16, lineHeight: "26px", color: "#636363",
+              fontSize: 15, lineHeight: "26px", color: "#636363",
               margin: 0,
             }}>
               Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been
@@ -3490,56 +3603,47 @@ function Section16() {
             </div>
           </div>
 
-          {/* Right — 2×2 image grid */}
-          <div className="s16-right">
-
-            {/* Row 1 — real screenshots */}
-            <div className="s16-row">
-              <div
-                className="s16-img-wrap"
-                style={{ flex: "0 0 calc(53% - 8.5px)", height: 200 }}
-              >
-                <img
-                  src={imgS16Youtube}
-                  alt="YouTube channel"
-                  style={{
-                    position: "absolute",
-                    width: "118.06%", height: "120%",
-                    left: 0, top: "-12.5%",
-                    objectFit: "cover",
-                  }}
-                />
+          {/* Right — image grid */}
+          {isMobile || isTablet ? (
+            // Mobile/Tablet: simple 2-column grid with objectFit cover
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <div style={{ borderRadius: 14, overflow: "hidden", border: "1px solid #a1a1a1", height: 170 }}>
+                <img src={imgS16Youtube} alt="YouTube channel" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top left", display: "block" }} />
               </div>
-              <div
-                className="s16-img-wrap"
-                style={{ flex: "1 1 0", height: 200 }}
-              >
-                <img
-                  src={imgS16Instagram}
-                  alt="Instagram profile"
-                  style={{
-                    position: "absolute",
-                    width: "187.12%", height: "162.28%",
-                    left: "-42.88%", top: "-18.81%",
-                    objectFit: "cover",
-                  }}
-                />
+              <div style={{ borderRadius: 14, overflow: "hidden", border: "1px solid #a1a1a1", height: 170 }}>
+                <img src={imgS16Instagram} alt="Instagram profile" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center", display: "block" }} />
+              </div>
+              <div style={{ borderRadius: 14, background: "#d9d9d9", height: 150 }} />
+              <div style={{ borderRadius: 14, background: "#d9d9d9", height: 150 }} />
+            </div>
+          ) : (
+            // Desktop: original absolute-positioned layout
+            <div className="s16-right">
+              {/* Row 1 — real screenshots */}
+              <div className="s16-row">
+                <div className="s16-img-wrap" style={{ flex: "0 0 calc(53% - 8.5px)", height: 200 }}>
+                  <img
+                    src={imgS16Youtube}
+                    alt="YouTube channel"
+                    style={{ position: "absolute", width: "118.06%", height: "120%", left: 0, top: "-12.5%", objectFit: "cover" }}
+                  />
+                </div>
+                <div className="s16-img-wrap" style={{ flex: "1 1 0", height: 200 }}>
+                  <img
+                    src={imgS16Instagram}
+                    alt="Instagram profile"
+                    style={{ position: "absolute", width: "187.12%", height: "162.28%", left: "-42.88%", top: "-18.81%", objectFit: "cover" }}
+                  />
+                </div>
+              </div>
+              {/* Row 2 — placeholders */}
+              <div className="s16-row">
+                <div className="s16-placeholder" style={{ flex: "0 0 calc(39% - 8.5px)", height: 215 }} />
+                <div className="s16-placeholder" style={{ flex: "1 1 0", height: 215 }} />
               </div>
             </div>
+          )}
 
-            {/* Row 2 — placeholders */}
-            <div className="s16-row">
-              <div
-                className="s16-placeholder"
-                style={{ flex: "0 0 calc(39% - 8.5px)", height: 215 }}
-              />
-              <div
-                className="s16-placeholder"
-                style={{ flex: "1 1 0", height: 215 }}
-              />
-            </div>
-
-          </div>
         </div>
 
       </div>
@@ -3574,6 +3678,7 @@ function S17AccordionItem({ q, a, open, onToggle }: { q: string; a: string; open
         /* ── Open state ── */
         <div
           onClick={onToggle}
+          className="s17-accordion-open"
           style={{
             background: "#f9f2e8",
             border: "1px solid #ebd5b9",
@@ -3583,7 +3688,7 @@ function S17AccordionItem({ q, a, open, onToggle }: { q: string; a: string; open
           }}
         >
           <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", gap: 16, marginBottom: 12 }}>
-            <p style={{
+            <p className="s17-accordion-q-open" style={{
               fontFamily: "'DM Sans', sans-serif", fontWeight: 500,
               fontSize: 17, lineHeight: "26px", color: "#bf791d",
               margin: 0, flex: 1,
@@ -3593,7 +3698,7 @@ function S17AccordionItem({ q, a, open, onToggle }: { q: string; a: string; open
               <path d="M6 15l6-6 6 6" stroke="#bf791d" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
           </div>
-          <p style={{
+          <p className="s17-accordion-a" style={{
             fontFamily: "'DM Sans', sans-serif", fontWeight: 400,
             fontSize: 15, lineHeight: "26px", color: "#727272",
             margin: 0,
@@ -3610,7 +3715,7 @@ function S17AccordionItem({ q, a, open, onToggle }: { q: string; a: string; open
             paddingBottom: 20,
           }}
         >
-          <p style={{
+          <p className="s17-accordion-q-closed" style={{
             fontFamily: "'DM Sans', sans-serif", fontWeight: 400,
             fontSize: 16, lineHeight: "28px", color: "#000",
             margin: 0, flex: 1,
@@ -3627,19 +3732,25 @@ function S17AccordionItem({ q, a, open, onToggle }: { q: string; a: string; open
 
 function Section17() {
   const sectionRef = useFadeInUp();
+  const isMobile = useIsMobile();
   const [openIdx, setOpenIdx] = useState<number | null>(null);
 
   const toggle = (i: number) => setOpenIdx(prev => (prev === i ? null : i));
 
   return (
-    <section ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#fff", padding: "80px 0" }}>
+    <section ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#fff", padding: isMobile ? "48px 0" : "80px 0" }}>
       <style>{`
         .s17-wrap { display: flex; gap: 60px; align-items: flex-start; }
         .s17-left { flex: 0 0 316px; padding-top: 20px; display: flex; flex-direction: column; gap: 20px; }
         .s17-right { flex: 1; display: flex; flex-direction: column; gap: 29px; min-width: 0; }
         @media (max-width: 720px) {
-          .s17-wrap { flex-direction: column; gap: 36px; }
+          .s17-wrap { flex-direction: column; gap: 28px; }
           .s17-left { flex: none; width: 100%; padding-top: 0; }
+          .s17-right { gap: 20px; }
+          .s17-accordion-open { padding: 20px !important; }
+          .s17-accordion-q-open { font-size: 15px !important; }
+          .s17-accordion-a { font-size: 14px !important; }
+          .s17-accordion-q-closed { font-size: 15px !important; }
         }
       `}</style>
 
@@ -3706,9 +3817,10 @@ const S18_WORDS: { word: string; weight: 400 | 600 }[] = [
 function Section18() {
   const sectionRef = useFadeInUp();
   const textRef = useTextReveal();
+  const isMobile = useIsMobile();
 
   return (
-    <section ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#fff", padding: "100px 0 96px" }}>
+    <section ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#fff", padding: isMobile ? "56px 0 52px" : "100px 0 96px" }}>
       <div style={{
         maxWidth: 1008,
         margin: "0 auto",
@@ -3717,7 +3829,7 @@ function Section18() {
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
-        gap: 48,
+        gap: isMobile ? 32 : 48,
       }}>
 
         {/* Scroll-reveal heading */}
@@ -3725,8 +3837,8 @@ function Section18() {
           ref={textRef}
           style={{
             fontFamily: "'Lora', serif",
-            fontSize: "clamp(24px, 4.5vw, 52px)",
-            lineHeight: 1.24,
+            fontSize: "clamp(22px, 4.5vw, 52px)",
+            lineHeight: 1.28,
             textAlign: "center",
             margin: 0,
             maxWidth: 960,
@@ -3748,24 +3860,34 @@ function Section18() {
         </p>
 
         {/* CTA buttons */}
-        <div style={{ display: "flex", gap: 20, alignItems: "center", flexWrap: "wrap", justifyContent: "center" }}>
-          <button style={{
-            display: "flex", alignItems: "center", gap: 20,
+        <div style={{
+          display: "flex",
+          flexDirection: isMobile ? "column" : "row",
+          gap: isMobile ? 12 : 20,
+          alignItems: "center",
+          flexWrap: "wrap",
+          justifyContent: "center",
+          width: isMobile ? "100%" : "auto",
+        }}>
+          <button className="btn-gold" style={{
+            display: "flex", alignItems: "center", justifyContent: "center", gap: 20,
             background: "#bf791d", border: "none",
             borderRadius: 30, padding: "12px 24px",
             fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 16,
             color: "#fff", cursor: "pointer", whiteSpace: "nowrap",
+            width: isMobile ? "100%" : "auto",
           }}>
             About Ujjwala
             <ArrowIcon color="#fff" size={16} />
           </button>
 
           <button style={{
-            display: "flex", alignItems: "center", gap: 20,
+            display: "flex", alignItems: "center", justifyContent: "center", gap: 20,
             background: "transparent", border: "1px solid #bf791d",
             borderRadius: 30, padding: "12px 24px",
             fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 16,
             color: "#bf791d", cursor: "pointer", whiteSpace: "nowrap",
+            width: isMobile ? "100%" : "auto",
           }}>
             Join Ujjwala's Mission
             <ArrowIcon color="#bf791d" size={16} />
@@ -3776,182 +3898,6 @@ function Section18() {
     </section>
   );
 }
-
-// ── Footer ────────────────────────────────────────────────────────────────
-const FOOTER_SOCIAL = [
-  { img: imgFooterLinkedin,  filled: false, label: "LinkedIn" },
-  { img: imgFooterTwitter,   filled: true,  label: "Twitter" },
-  { img: imgFooterWhatsapp,  filled: false, label: "WhatsApp" },
-  { img: imgFooterInstagram, filled: false, label: "Instagram" },
-];
-
-const FOOTER_NAV = [
-  {
-    heading: "Shikha Raj Ujjwal Bharat Foundation",
-    links: ["About the trust", "Programs and Initiatives", "Adopt a School"],
-  },
-  {
-    heading: "Ujjwala Wadekar",
-    links: ["About Ujjwala", "Teaching Method", "Founder Story", "News and Talks"],
-  },
-  {
-    heading: "Get Involved",
-    links: ["Retail Donor", "CSR/Businesses", "Volunteers", "Teachers", "Partners (Non CSR)", "Join Community"],
-  },
-];
-
-function Footer() {
-  return (
-    <footer style={{
-      width: "100%",
-      position: "relative",
-      background: "linear-gradient(175.28deg, #0f2a44 1.94%, #174067 80.05%)",
-      borderRadius: "30px 30px 0 0",
-      overflow: "hidden",
-      padding: "68px 96px",
-      boxSizing: "border-box",
-    }}>
-      {/* Background classroom photo with overlay */}
-      <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
-        <img src={imgFooterBg} alt="" aria-hidden style={{
-          width: "100%", height: "100%", objectFit: "cover", objectPosition: "center",
-          display: "block",
-        }} />
-        <div style={{
-          position: "absolute", inset: 0,
-          background: "rgba(15, 42, 68, 0.82)",
-        }} />
-      </div>
-
-      {/* Content */}
-      <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", gap: 68 }}>
-
-        {/* ── Top row: Logo/address + Nav cols ── */}
-        <div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between" }}>
-
-          {/* Left: Logo + address + social */}
-          <div style={{ width: 291, display: "flex", flexDirection: "column", gap: 28, flexShrink: 0 }}>
-            {/* Logo placeholder */}
-            <div style={{
-              width: 180, height: 60, borderRadius: 40,
-              background: "rgba(217,217,217,0.3)",
-              border: "1px solid rgba(255,255,255,0.2)",
-            }} />
-            <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-              <p style={{
-                fontFamily: "'DM Sans', sans-serif", fontWeight: 400, fontSize: 15,
-                lineHeight: "24px", color: "#fff", margin: 0,
-              }}>
-                Arcadion Building, North Main Road, Koregoan Park, Pune, Maharashtra Pin: 411001
-              </p>
-              {/* Social icons */}
-              <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-                {FOOTER_SOCIAL.map((s) => (
-                  <div key={s.label} style={{
-                    width: 32, height: 32, borderRadius: 8,
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    flexShrink: 0, overflow: "hidden",
-                    background: s.filled ? "#2e80d0" : "transparent",
-                    border: s.filled ? "none" : "1.5px solid #2e80d0",
-                    cursor: "pointer",
-                  }}>
-                    <img src={s.img} alt={s.label} style={{ width: 20, height: 20, display: "block" }} />
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Right: Nav columns */}
-          <div style={{ display: "flex", gap: 44, alignItems: "flex-start" }}>
-            {FOOTER_NAV.map((col) => (
-              <div key={col.heading} style={{ display: "flex", flexDirection: "column", gap: 12, alignItems: "flex-end" }}>
-                {/* Heading */}
-                <p style={{
-                  fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: 15,
-                  lineHeight: "1.6", color: "#fff", margin: 0, textAlign: "right",
-                }}>
-                  {col.heading}
-                </p>
-                {/* Divider */}
-                <div style={{ width: 43, height: 1, background: "rgba(255,255,255,0.5)" }} />
-                {/* Links */}
-                <div style={{ display: "flex", flexDirection: "column", gap: 4, alignItems: "flex-end" }}>
-                  {col.links.map((link) => (
-                    <a key={link} href="#" style={{
-                      fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 15,
-                      lineHeight: "1.6", color: "#fff", textDecoration: "none",
-                      textAlign: "right", whiteSpace: "nowrap",
-                    }}>
-                      {link}
-                    </a>
-                  ))}
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* ── Bottom section ── */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 60 }}>
-
-          {/* Quote + buttons row */}
-          <div style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 40 }}>
-            <p style={{
-              fontFamily: "'Lora', serif", fontWeight: 400, fontSize: 40,
-              lineHeight: "52px", color: "#fff", margin: 0, maxWidth: 574,
-            }}>
-              Lorem Ipsum is simply dummy text of the printing and?
-            </p>
-            <div style={{ display: "flex", gap: 10, alignItems: "center", flexShrink: 0 }}>
-              <button style={{
-                display: "flex", alignItems: "center", gap: 20,
-                background: "transparent", border: "1px solid #fff",
-                borderRadius: 30, padding: "12px 24px",
-                fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 16,
-                color: "#fff", cursor: "pointer", whiteSpace: "nowrap",
-              }}>
-                Join With Us
-                <ArrowIcon color="#fff" size={16} />
-              </button>
-              <button style={{
-                display: "flex", alignItems: "center", gap: 20,
-                background: "#fff", border: "none",
-                borderRadius: 30, padding: "12px 24px",
-                fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 16,
-                color: "#bf791d", cursor: "pointer", whiteSpace: "nowrap",
-              }}>
-                Donate Now
-                <ArrowIcon color="#bf791d" size={16} />
-              </button>
-            </div>
-          </div>
-
-          {/* Horizontal divider */}
-          <div style={{ width: "100%", height: 1, background: "rgba(255,255,255,0.25)" }} />
-
-          {/* Bottom bar */}
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <p style={{
-              fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 14,
-              lineHeight: "1.6", color: "#fff", margin: 0,
-            }}>
-              Lorem Ipsum is simply dummy text of the printing and typesetting.
-            </p>
-            <p style={{
-              fontFamily: "'Poppins', sans-serif", fontWeight: 300, fontSize: 13,
-              lineHeight: "24px", color: "#fff", margin: 0, textAlign: "right",
-            }}>
-              CIN:U62013PN2023PTC223154
-            </p>
-          </div>
-        </div>
-
-      </div>
-    </footer>
-  );
-}
-
 // ── Page ──────────────────────────────────────────────────────────────────
 export function HomeV2Page() {
   return (

@@ -10,11 +10,12 @@ import { AuthPage } from "./pages/AuthPage";
 import { AuthCallbackPage } from "./pages/AuthCallbackPage";
 import { DonorDashboard } from "./pages/DonorDashboard";
 import { AdminDashboard } from "./pages/AdminDashboard";
-import { LMSLandingPage } from "./pages/LMSLandingPage";
-import { LMSDashboard } from "./pages/LMSDashboard";
-import { CourseDetailPage } from "./pages/CourseDetailPage";
-import { CoursePlayerPage } from "./pages/CoursePlayerPage";
-import { CertificatePage } from "./pages/CertificatePage";
+// LMS imports — hidden until re-enabled
+// import { LMSLandingPage } from "./pages/LMSLandingPage";
+// import { LMSDashboard } from "./pages/LMSDashboard";
+// import { CourseDetailPage } from "./pages/CourseDetailPage";
+// import { CoursePlayerPage } from "./pages/CoursePlayerPage";
+// import { CertificatePage } from "./pages/CertificatePage";
 import { LegalPage } from "./pages/LegalPage";
 import { Variation2Page } from "./pages/Variation2Page";
 import { Variation3Page } from "./pages/Variation3Page";
@@ -39,11 +40,12 @@ export const router = createBrowserRouter([
     path: "/",
     Component: Root,
     children: [
-      // Primary home
-      { index: true, Component: HomePage },
-      // Alternate home pages
-      { path: "home-new-1", Component: HomeNew1 },
+      // Primary home (HomeV2 is the default)
+      { index: true, Component: HomeV2Page },
       { path: "home-v2", Component: HomeV2Page },
+      // Legacy home pages (kept for reference)
+      { path: "home-new-1", Component: HomeNew1 },
+      { path: "home-legacy", Component: HomePage },
       // App routes
       { path: "about", Component: AboutPage },
       { path: "causes", Component: CausesPage },
@@ -55,12 +57,12 @@ export const router = createBrowserRouter([
       // Dashboards
       { path: "dashboard", Component: DonorDashboard },
       { path: "admin", Component: AdminDashboard },
-      // LMS
-      { path: "lms", Component: LMSLandingPage },
-      { path: "lms/course/:id", Component: CourseDetailPage },
-      { path: "lms/dashboard", Component: LMSDashboard },
-      { path: "lms/learn/:courseId", Component: CoursePlayerPage },
-      { path: "lms/certificate/:courseId", Component: CertificatePage },
+      // LMS — hidden until re-enabled
+      // { path: "lms", Component: LMSLandingPage },
+      // { path: "lms/course/:id", Component: CourseDetailPage },
+      // { path: "lms/dashboard", Component: LMSDashboard },
+      // { path: "lms/learn/:courseId", Component: CoursePlayerPage },
+      // { path: "lms/certificate/:courseId", Component: CertificatePage },
       // Legal
       { path: "privacy", Component: LegalPage },
       { path: "terms", Component: LegalPage },

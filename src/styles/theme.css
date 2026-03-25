@@ -226,3 +226,50 @@
   button { font-size: var(--text-base); font-weight: var(--font-weight-medium); line-height: 1.5; }
   input  { font-size: var(--text-base); font-weight: var(--font-weight-normal); line-height: 1.5; }
 }
+
+/* ── Button hover transitions ──────────────────────────────────────────────
+   Apply .btn-gold / .btn-navy / .btn-white / .btn-outline-white to buttons.
+   The transition is set in the class; hover color uses !important to win
+   over inline style background declarations.
+────────────────────────────────────────────────────────────────────────── */
+@layer components {
+
+  /* Gold CTA buttons (#bf791d) — lighten on hover */
+  .btn-gold {
+    transition: background-color 0.18s ease !important;
+  }
+  .btn-gold:hover {
+    background-color: #d4891f !important;
+  }
+
+  /* Dark navy buttons (#1B2B3A) — lighten on hover */
+  .btn-navy {
+    transition: background-color 0.18s ease !important;
+  }
+  .btn-navy:hover {
+    background-color: #243d57 !important;
+  }
+
+  /* White-filled buttons on dark backgrounds — warm dim on hover */
+  .btn-white {
+    transition: background-color 0.18s ease !important;
+  }
+  .btn-white:hover {
+    background-color: #ece8e1 !important;
+  }
+
+  /* Ghost / outline buttons (transparent bg, white or dark border) */
+  .btn-outline-white {
+    transition: background-color 0.18s ease, border-color 0.18s ease !important;
+  }
+  .btn-outline-white:hover {
+    background-color: rgba(255, 255, 255, 0.14) !important;
+  }
+
+  .btn-outline-dark {
+    transition: background-color 0.18s ease, border-color 0.18s ease !important;
+  }
+  .btn-outline-dark:hover {
+    background-color: #f0ece6 !important;
+  }
+}
