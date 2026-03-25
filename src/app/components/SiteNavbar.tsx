@@ -44,16 +44,16 @@ function NavDropdown({ label, gold = false, items }: { label: string; gold?: boo
 
   return (
     <div style={{ position: "relative" }} onMouseEnter={() => { cancelClose(); setOpen(true); }} onMouseLeave={scheduleClose}>
-      <button style={{ display: "flex", alignItems: "center", gap: 4, background: "none", border: "none", cursor: "pointer", color: gold ? "#ffa530" : "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: gold ? 600 : 400, padding: "4px 0" }}>
+      <button style={{ display: "flex", alignItems: "center", gap: 4, background: "none", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: gold ? 600 : 400, padding: "4px 0" }}>
         {label}
-        <img src={gold ? imgChevronGold : imgChevron} alt="" style={{ width: 16, height: 16 }} />
+        <img src={imgChevron} alt="" style={{ width: 16, height: 16 }} />
       </button>
       {open && (
         <div onMouseEnter={cancelClose} onMouseLeave={scheduleClose} style={{ position: "absolute", top: "calc(100% + 8px)", left: 0, minWidth: 200, background: "rgba(255,255,255,0.96)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(0,0,0,0.08)", borderRadius: 14, padding: "6px 0", zIndex: 9999, boxShadow: "0 8px 32px rgba(0,0,0,0.18), 0 2px 8px rgba(0,0,0,0.10)" }}>
           {items.map(item => (
-            <div key={item} style={{ padding: "10px 20px", color: "#1a2e44", fontFamily: "'DM Sans', sans-serif", fontSize: 14, cursor: "pointer", borderBottom: "1px solid rgba(0,0,0,0.06)", transition: "background 0.15s" }}
-              onMouseEnter={e => (e.currentTarget.style.background = "rgba(23,64,103,0.07)")}
-              onMouseLeave={e => (e.currentTarget.style.background = "transparent")}>{item}</div>
+            <div key={item} style={{ padding: "10px 20px", color: "#1a2e44", fontFamily: "'DM Sans', sans-serif", fontSize: 14, cursor: "pointer", borderBottom: "1px solid rgba(0,0,0,0.06)", transition: "color 0.15s, background 0.15s" }}
+              onMouseEnter={e => { e.currentTarget.style.color = "#bf791d"; e.currentTarget.style.background = "rgba(191,121,29,0.06)"; }}
+              onMouseLeave={e => { e.currentTarget.style.color = "#1a2e44"; e.currentTarget.style.background = "transparent"; }}>{item}</div>
           ))}
         </div>
       )}

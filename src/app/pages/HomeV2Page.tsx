@@ -406,12 +406,12 @@ function ProgramBanner() {
   const items = ["Monthly workshops (in-person, Jalgaon)", "Access to shared lesson resource library", "Peer mentoring circles"];
   return (
     <div ref={ref} className="fade-in-up" style={{
-      width: "100%",
+      width: isMobile ? "97%" : "100%",
       position: "relative",
       zIndex: 10,
       background: "linear-gradient(-79.93deg, #b77607 0.12%, #885615 99.88%)",
       borderRadius: isMobile ? 16 : 30,
-      margin: isMobile ? "0 0" : undefined,
+      margin: isMobile ? "-32px auto 0" : undefined,
     }}>
       <div style={{
         maxWidth: 1008,
@@ -1660,14 +1660,16 @@ function Section9() {
     return () => window.removeEventListener("resize", update);
   }, []);
 
-  // Responsive card geometry
+  // Responsive card geometry — cards bleed to right edge
   const isMobile = winW < 640;
   const isTablet = winW >= 640 && winW < 1024;
   const hPad   = isMobile ? 20 : isTablet ? 40 : 60;
-  const visible = isMobile ? 1.15 : isTablet ? 1.8 : 2.5;
+  const visible = isMobile ? 1.15 : isTablet ? 1.8 : winW >= 1600 ? 4.5 : winW >= 1400 ? 4 : winW >= 1200 ? 3.5 : 2.5;
   const GAP    = 20;
-  const cardW  = Math.round((winW - hPad * 2) / visible - GAP * (visible - 1) / visible);
-  const cardH  = Math.min(540, Math.round(cardW * 1.36));
+  // Available width = full viewport minus left padding only (right side bleeds to edge)
+  const availableW = winW - hPad;
+  const cardW  = Math.round(availableW / visible - GAP * (visible - 1) / visible);
+  const cardH  = Math.min(500, Math.round(cardW * 1.36));
 
   // Drag-to-scroll handlers
   const onMouseDown = (e: React.MouseEvent) => {
@@ -1686,36 +1688,38 @@ function Section9() {
   const stopDrag = () => { dragging.current = false; setIsDragging(false); };
 
   return (
-    <div ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#f8f5ef", borderRadius: 30, padding: `68px ${hPad}px`, boxSizing: "border-box", margin: "40px 0" }}>
+    <div ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#f8f5ef", borderRadius: 30, margin: "40px 0", overflow: "hidden" }}>
 
-      {/* Header */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: 52, flexWrap: "wrap", gap: 24 }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-          <div style={{ border: "1px solid #e8e8e8", borderRadius: 40, padding: "6px 20px", alignSelf: "flex-start" }}>
-            <span style={{ fontFamily: "'Poppins', sans-serif", fontSize: 13, color: "#bf791d" }}>Honest Impact</span>
+      {/* Header — left-aligned with hPad, right side constrained */}
+      <div style={{ paddingTop: 68, paddingBottom: 52, paddingLeft: hPad, paddingRight: hPad, maxWidth: 1100, boxSizing: "border-box" }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 24 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <div style={{ border: "1px solid #e8e8e8", borderRadius: 40, padding: "6px 20px", alignSelf: "flex-start" }}>
+              <span style={{ fontFamily: "'Poppins', sans-serif", fontSize: 13, color: "#bf791d" }}>Honest Impact</span>
+            </div>
+            <h2 style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: isMobile ? 28 : 40, lineHeight: "1.36", color: "#000", margin: 0, textTransform: "capitalize" }}>
+              What Progress Looks Like
+            </h2>
           </div>
-          <h2 style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: isMobile ? 28 : 40, lineHeight: "1.36", color: "#000", margin: 0, textTransform: "capitalize" }}>
-            What Progress Looks Like
-          </h2>
+          {!isMobile && (
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 16, lineHeight: "22px", color: "#686868", margin: 0, maxWidth: 255, textAlign: "right" }}>
+              We track outcomes that matter in education — not vanity metrics. Four categories we measure honestly.
+            </p>
+          )}
         </div>
-        {!isMobile && (
-          <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 16, lineHeight: "22px", color: "#686868", margin: 0, maxWidth: 255, textAlign: "right" }}>
-            We track outcomes that matter in education — not vanity metrics. Four categories we measure honestly.
-          </p>
-        )}
       </div>
 
-      {/* Card track — scrollable + draggable */}
+      {/* Card track — left-padded, bleeds to right screen edge */}
       <div
         ref={trackRef}
         className="s9-track"
-        style={{ overflowX: "auto", cursor: isDragging ? "grabbing" : "grab", userSelect: "none" }}
+        style={{ overflowX: "auto", cursor: isDragging ? "grabbing" : "grab", userSelect: "none", paddingLeft: hPad, paddingBottom: 68 }}
         onMouseDown={onMouseDown}
         onMouseMove={onMouseMove}
         onMouseUp={stopDrag}
         onMouseLeave={stopDrag}
       >
-        <div style={{ display: "flex", gap: GAP, width: "max-content", paddingBottom: 4 }}>
+        <div style={{ display: "flex", gap: GAP, width: "max-content" }}>
           {SECTION_9_CARDS.map(card => (
             <ContentCard9 key={card.id} card={card} width={cardW} height={cardH} />
           ))}
