@@ -1250,14 +1250,30 @@ function Section8() {
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const wrapperAbsTopRef = useRef<number>(0);
   const [cardIndex, setCardIndex] = useState(0);
+  const [photoIdx, setPhotoIdx] = useState(0);
 
   const TOTAL = SECTION_8_CARDS.length;
   const STEP = 320;
   const RUNWAY = TOTAL * STEP;
+  const N_PHOTOS = S8_PHOTOS.length;
 
+  // Store wrapper absolute top once after mount (for stable tab-click scrolling)
   useEffect(() => {
-    if (isMobile || isTablet) return; // skip scroll listener on mobile
+    const compute = () => {
+      if (wrapperRef.current) {
+        wrapperAbsTopRef.current = wrapperRef.current.getBoundingClientRect().top + window.scrollY;
+      }
+    };
+    requestAnimationFrame(compute);
+    window.addEventListener("resize", compute);
+    return () => window.removeEventListener("resize", compute);
+  }, []);
+
+  // Scroll-driven card index update
+  useEffect(() => {
+    if (isMobile || isTablet) return;
     const onScroll = () => {
       if (!wrapperRef.current) return;
       const scrolled = Math.max(0, -wrapperRef.current.getBoundingClientRect().top);
@@ -1266,87 +1282,88 @@ function Section8() {
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
     return () => window.removeEventListener("scroll", onScroll);
-  }, [isMobile, isTablet]);
+  }, [isMobile, isTablet, TOTAL, STEP]);
+
+  // Reset photo index on card change; auto-advance carousel
+  useEffect(() => { setPhotoIdx(0); }, [cardIndex]);
+  useEffect(() => {
+    const t = setInterval(() => setPhotoIdx(i => (i + 1) % N_PHOTOS), 3000);
+    return () => clearInterval(t);
+  }, [cardIndex, N_PHOTOS]);
 
   const activeTab = Math.floor(cardIndex / 3);
-  const groupStart = activeTab * 3;
-  const stackCards = SECTION_8_CARDS.slice(groupStart, cardIndex + 1);
+  const currentCard = SECTION_8_CARDS[cardIndex];
 
   const handleTabClick = (tabIdx: number) => {
-    if (isMobile || isTablet) {
-      setCardIndex(tabIdx * 3);
-      return;
-    }
-    if (!wrapperRef.current) return;
-    const wrapperTop = wrapperRef.current.getBoundingClientRect().top + window.scrollY;
-    window.scrollTo({ top: wrapperTop + tabIdx * 3 * STEP, behavior: "smooth" });
+    if (isMobile || isTablet) { setCardIndex(tabIdx * 3); return; }
+    setCardIndex(tabIdx * 3); // immediate UI update fixes forward-click lag
+    window.scrollTo({ top: wrapperAbsTopRef.current + tabIdx * 3 * STEP, behavior: "smooth" });
   };
 
-  const ArrowIcon = ({ color = "#174067" }: { color?: string }) => (
-    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+  const S8Arrow = ({ color = "#174067" }: { color?: string }) => (
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" style={{ flexShrink: 0 }}>
       <path d="M2.91 7H11.08" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
       <path d="M7 2.91L11.08 7L7 11.08" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
   );
 
-  const currentCard = SECTION_8_CARDS[cardIndex];
-
-  // ── Mobile / Tablet: simple paginated card layout ──────────────────────────
+  // ── Mobile / Tablet ──────────────────────────────────────────────────────────
   if (isMobile || isTablet) {
     return (
       <div style={{ width: "100%", background: "#fff", padding: isMobile ? "40px 20px 48px" : "48px 32px 60px", boxSizing: "border-box" }}>
-        {/* Header */}
         <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 24 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
-            <h2 style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: isMobile ? 26 : 34, lineHeight: 1.28, color: "#000", margin: 0 }}>
-              What the Trust Builds Ground
-            </h2>
-            <div style={{ border: "1px solid #e8e8e8", borderRadius: 40, padding: "5px 16px", flexShrink: 0, alignSelf: "flex-start" }}>
+            <h2 style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: isMobile ? 26 : 34, lineHeight: 1.28, color: "#000", margin: 0 }}>What the Trust Builds Ground</h2>
+            <div style={{ border: "1px solid #e8e8e8", borderRadius: 40, padding: "5px 16px", flexShrink: 0 }}>
               <span style={{ fontFamily: "'Poppins', sans-serif", fontSize: 12, color: "#bf791d" }}>On the Ground</span>
             </div>
           </div>
           <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 14, lineHeight: "22px", color: "#686868", margin: 0 }}>
-            Find your role and see exactly what it means, what you get, and what your next step is.
+            Find your role and see exactly what it means, what you get, and what your next step is. lorem ipsum is simply dummy text
           </p>
         </div>
-
-        {/* Tab pills */}
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 20 }}>
           {SECTION_8_TABS.map((tab, idx) => {
-            const isActive = Math.floor(cardIndex / 3) === idx;
+            const isActive = activeTab === idx;
             return (
               <button key={idx} onClick={() => handleTabClick(idx)} style={{
-                background: isActive ? "#174067" : "transparent",
-                border: "1px solid #174067", borderRadius: 40,
+                background: isActive ? "#174067" : "transparent", border: "1px solid #174067", borderRadius: 40,
                 padding: "7px 18px", color: isActive ? "#fff" : "#174067",
                 fontFamily: "'Poppins', sans-serif", fontSize: 13, cursor: "pointer",
               }}>{tab}</button>
             );
           })}
         </div>
-
-        {/* Card */}
-        <div style={{ background: "#f8f5ef", borderRadius: 16, padding: isMobile ? "20px" : "28px 32px", display: "flex", flexDirection: "column", gap: 16, boxShadow: "0 4px 20px rgba(5,23,42,0.08)" }}>
-          <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 16, color: "#bf791d" }}>{currentCard.programName}</span>
-          <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 14, lineHeight: "24px", color: "#636363", margin: 0 }}>{currentCard.desc}</p>
-          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-            <strong style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: 13, color: "#000" }}>{currentCard.title}</strong>
-            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 4 }}>
-              {currentCard.bullets.map((b, bi) => (
-                <li key={bi} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                  <ArrowIcon color="#174067" />
-                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 13, color: "#636363" }}>{b}</span>
-                </li>
+        <div style={{ background: "#f8f5ef", borderRadius: 16, overflow: "hidden", boxShadow: "0 4px 20px rgba(5,23,42,0.08)" }}>
+          <div style={{ position: "relative", height: 200 }}>
+            {S8_PHOTOS.map((photo, pi) => (
+              <img key={pi} src={photo} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: pi === photoIdx ? 1 : 0, transition: "opacity 0.5s ease" }} />
+            ))}
+            <div style={{ position: "absolute", bottom: 10, right: 10, display: "flex", gap: 5 }}>
+              {S8_PHOTOS.map((_, di) => (
+                <button key={di} onClick={() => setPhotoIdx(di)} style={{ width: di === photoIdx ? 16 : 6, height: 6, borderRadius: 3, background: "#fff", border: "none", padding: 0, cursor: "pointer", opacity: di === photoIdx ? 1 : 0.55, transition: "width 0.2s" }} />
               ))}
-            </ul>
+            </div>
           </div>
-          <Link to="/join-network" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 10, background: "#bf791d", border: "1px solid #bf791d", borderRadius: 30, padding: "10px 24px", textDecoration: "none" }}>
-            <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 14, color: "#fff" }}>Join Teacher Network</span>
-            <ArrowIcon color="#fff" />
-          </Link>
+          <div style={{ padding: "20px" }}>
+            <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 16, color: "#bf791d" }}>{currentCard.programName}</span>
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 14, lineHeight: "24px", color: "#636363", margin: "8px 0" }}>{currentCard.desc}</p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 12 }}>
+              <strong style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: 13, color: "#000" }}>{currentCard.title}</strong>
+              <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 4 }}>
+                {currentCard.bullets.map((b, bi) => (
+                  <li key={bi} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    <S8Arrow /><span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 13, color: "#636363" }}>{b}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <Link to="/join-network" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 10, background: "#bf791d", borderRadius: 30, padding: "10px 24px", textDecoration: "none" }}>
+              <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 14, color: "#fff" }}>Join Teacher Network</span>
+              <S8Arrow color="#fff" />
+            </Link>
+          </div>
         </div>
-
-        {/* Prev / Next navigation */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 16 }}>
           <button onClick={() => setCardIndex(i => Math.max(0, i - 1))} disabled={cardIndex === 0}
             style={{ width: 40, height: 40, borderRadius: "50%", border: "1px solid #174067", background: "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: cardIndex === 0 ? "not-allowed" : "pointer", opacity: cardIndex === 0 ? 0.4 : 1 }}>
@@ -1362,31 +1379,50 @@ function Section8() {
     );
   }
 
-  // ── Desktop: original scroll-driven sticky stack ────────────────────────────
+  // ── Desktop: sticky scroll-driven stack ─────────────────────────────────────
+  // Card container: 764px wide, 511px tall
+  // Back cards (decorative, widths 712/732/752) peek from top-center
+  // Active card (764×448) positioned at top=63 (511-448)
+  const CARD_CONTAINER_H = 511;
+  const FRONT_CARD_H = 448;
+  const FRONT_TOP = CARD_CONTAINER_H - FRONT_CARD_H; // 63px
+  const BACK_CARDS = [
+    { inset: 26, top: 0,  zIndex: 1 }, // w=712
+    { inset: 16, top: 8,  zIndex: 2 }, // w=732
+    { inset: 6,  top: 16, zIndex: 3 }, // w=752
+  ];
+
   return (
     <div ref={wrapperRef} style={{ position: "relative", height: `calc(100vh + ${RUNWAY}px)` }}>
       <div style={{ position: "sticky", top: 0, height: "100vh", background: "#fff", overflow: "hidden", display: "flex", justifyContent: "center", alignItems: "center" }}>
-        <div style={{ width: 1006, display: "flex", flexDirection: "column", gap: 48 }}>
+        <div style={{ width: 1008, display: "flex", flexDirection: "column", gap: 48 }}>
+
+          {/* Header */}
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
             <div style={{ display: "flex", flexDirection: "column", gap: 10, maxWidth: 634 }}>
               <h2 style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: 40, lineHeight: "54.4px", color: "#000", margin: 0, textTransform: "capitalize" }}>
                 What the Trust Builds Ground
               </h2>
               <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 16, lineHeight: "22px", color: "#686868", margin: 0 }}>
-                Find your role and see exactly what it means, what you get, and what your next step is.
+                Find your role and see exactly what it means, what you get, and what your next step is. lorem ipsum is simply dummy text
               </p>
             </div>
             <div style={{ border: "1px solid #e8e8e8", borderRadius: 40, padding: "6px 20px", flexShrink: 0 }}>
               <span style={{ fontFamily: "'Poppins', sans-serif", fontSize: 13, color: "#bf791d" }}>On the Ground</span>
             </div>
           </div>
+
+          {/* Body: tabs + card stack */}
           <div style={{ display: "flex", gap: 32, alignItems: "flex-start" }}>
-            <div style={{ display: "flex", flexDirection: "column", gap: 10, width: 212, flexShrink: 0, paddingTop: 24 }}>
+
+            {/* Left: program tabs — aligned with active card top */}
+            <div style={{ width: 212, display: "flex", flexDirection: "column", gap: 10, flexShrink: 0, paddingTop: FRONT_TOP }}>
               {SECTION_8_TABS.map((tab, idx) => {
                 const isActive = activeTab === idx;
                 return (
                   <button key={idx} onClick={() => handleTabClick(idx)} style={{
-                    background: isActive ? "#174067" : "transparent", border: "1px solid #174067", borderRadius: 40,
+                    background: isActive ? "#174067" : "transparent",
+                    border: "1px solid #174067", borderRadius: 40,
                     padding: "10px 24px", width: "100%", textAlign: "center",
                     color: isActive ? "#fff" : "#174067",
                     fontFamily: "'Poppins', sans-serif", fontWeight: isActive ? 500 : 400, fontSize: 16,
@@ -1395,53 +1431,95 @@ function Section8() {
                 );
               })}
             </div>
-            <div style={{ flex: 1, position: "relative", height: 380 }}>
-              {stackCards.map((card, stackIdx) => {
-                const isTop = stackIdx === stackCards.length - 1;
-                const depthFromTop = stackCards.length - 1 - stackIdx;
-                return (
-                  <div key={card.id} className={isTop ? "s8-card-in" : undefined} style={{
-                    position: "absolute", top: depthFromTop * 12, left: 0, right: 0,
-                    zIndex: stackIdx + 1, transform: `scale(${1 - depthFromTop * 0.025})`,
-                    transformOrigin: "top center", transition: "top 0.35s ease, transform 0.35s ease",
-                    background: "#f8f5ef", borderRadius: 20, padding: "32px 40px", height: 360,
-                    display: "flex", gap: 36, alignItems: "stretch",
-                    boxShadow: depthFromTop === 0 ? "0 4px 20px rgba(5,23,42,0.1)" : "0px -4px 10px rgba(5,23,42,0.1)",
-                  }}>
-                    <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 22, minWidth: 0 }}>
-                      <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
-                        <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
-                          <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 18, color: "#bf791d" }}>{card.programName}</span>
-                          <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 15, lineHeight: "24px", color: "#636363", margin: 0 }}>{card.desc}</p>
-                        </div>
-                        <div style={{ display: "flex", flexDirection: "column", gap: 5, paddingLeft: 20 }}>
-                          <strong style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: 14, color: "#000" }}>{card.title}</strong>
-                          <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 3 }}>
-                            {card.bullets.map((b, bi) => (
-                              <li key={bi} style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                                <ArrowIcon color="#174067" />
-                                <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 14, color: "#636363" }}>{b}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                      </div>
-                      <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 14, lineHeight: "22px", color: "#636363", margin: 0 }}>
-                        Join a community of 340+ teachers building the future of education.
-                      </p>
-                      <Link to="/join-network" style={{ display: "inline-flex", alignItems: "center", gap: 14, background: "#bf791d", border: "1px solid #bf791d", borderRadius: 30, padding: "10px 24px", alignSelf: "flex-start", textDecoration: "none" }}>
-                        <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 15, color: "#fff" }}>Join Teacher Network</span>
-                        <ArrowIcon color="#fff" />
-                      </Link>
-                    </div>
-                    <div style={{ width: 250, flexShrink: 0, borderRadius: 16, overflow: "hidden", background: "#ddd4c7" }}>
-                      <img src={card.photo} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-                    </div>
+
+            {/* Right: card stack */}
+            <div style={{ flex: 1, position: "relative", height: CARD_CONTAINER_H }}>
+
+              {/* Decorative back cards peeking from above */}
+              {BACK_CARDS.map((bc, i) => (
+                <div key={i} style={{
+                  position: "absolute", top: bc.top,
+                  left: bc.inset, right: bc.inset,
+                  height: 411,
+                  background: "#f8f5ef",
+                  borderRadius: 20,
+                  zIndex: bc.zIndex,
+                  boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+                }} />
+              ))}
+
+              {/* Active front card */}
+              <div key={currentCard.id} style={{
+                position: "absolute", top: FRONT_TOP, left: 0, right: 0,
+                height: FRONT_CARD_H,
+                background: "#f8f5ef",
+                borderRadius: 20,
+                zIndex: 10,
+                overflow: "hidden",
+                boxShadow: "0 8px 32px rgba(0,0,0,0.1)",
+                display: "flex",
+                padding: "0 20px",
+                boxSizing: "border-box",
+                gap: 36,
+                alignItems: "stretch",
+              }}>
+                {/* Left content area: w=404, vertically centered */}
+                <div style={{ width: 404, flexShrink: 0, display: "flex", flexDirection: "column", gap: 14, justifyContent: "center", paddingTop: 26, paddingBottom: 26, boxSizing: "border-box" }}>
+                  <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 18, color: "#bf791d" }}>
+                    {currentCard.programName}
+                  </span>
+                  <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 15, lineHeight: "24px", color: "#636363", margin: 0 }}>
+                    {currentCard.desc}
+                  </p>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                    <strong style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: 14, color: "#000" }}>
+                      {currentCard.title}
+                    </strong>
+                    <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 4 }}>
+                      {currentCard.bullets.map((b, bi) => (
+                        <li key={bi} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                          <S8Arrow />
+                          <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 14, color: "#636363" }}>{b}</span>
+                        </li>
+                      ))}
+                    </ul>
                   </div>
-                );
-              })}
-            </div>
-          </div>
+                  <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 14, lineHeight: "22px", color: "#636363", margin: 0 }}>
+                    Join the Teacher Reformers Network - a community of 340+ teachers lorem ipsum is
+                  </p>
+                  <Link to="/join-network" style={{ display: "inline-flex", alignItems: "center", gap: 12, background: "#bf791d", border: "1px solid #bf791d", borderRadius: 30, padding: "10px 24px", alignSelf: "flex-start", textDecoration: "none" }}>
+                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 15, color: "#fff" }}>Join Teacher Network</span>
+                    <S8Arrow color="#fff" />
+                  </Link>
+                </div>
+
+                {/* Right photo panel: w=284, full card height, rounded corners */}
+                <div style={{ width: 284, flexShrink: 0, borderRadius: 20, overflow: "hidden", position: "relative", background: "#ddd4c7" }}>
+                  {S8_PHOTOS.map((photo, pi) => (
+                    <img key={pi} src={photo} alt="" style={{
+                      position: "absolute", inset: 0,
+                      width: "100%", height: "100%",
+                      objectFit: "cover", display: "block",
+                      opacity: pi === photoIdx ? 1 : 0,
+                      transition: "opacity 0.5s ease",
+                    }} />
+                  ))}
+                  {/* Carousel dots */}
+                  <div style={{ position: "absolute", bottom: 14, right: 14, display: "flex", gap: 5, zIndex: 2 }}>
+                    {S8_PHOTOS.map((_, di) => (
+                      <button key={di} onClick={() => setPhotoIdx(di)} style={{
+                        width: di === photoIdx ? 18 : 6, height: 6, borderRadius: 3,
+                        background: "#fff", border: "none", padding: 0, cursor: "pointer",
+                        opacity: di === photoIdx ? 1 : 0.55,
+                        transition: "width 0.2s ease, opacity 0.2s ease",
+                      }} />
+                    ))}
+                  </div>
+                </div>
+
+              </div>{/* end active card */}
+            </div>{/* end card stack */}
+          </div>{/* end body */}
         </div>
       </div>
     </div>
