@@ -270,7 +270,7 @@ function HeroSection() {
 
       {/* ── Decorative layer: overflow:hidden here clips textures/ellipses ── */}
       <div style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none", zIndex: 0 }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", position: "relative", height: isMobile ? "100%" : 724 }}>
+        <div style={{ maxWidth: 1200, margin: "0 auto", position: "relative", height: isMobile ? "100%" : 724, overflow: "hidden" }}>
           {/* Hero image — hidden on mobile, positioned on tablet/desktop */}
           {!isMobile && (
             <div style={{ position: "absolute", left: isTablet ? "50%" : 645, top: 0, width: isTablet ? "60%" : 646, height: 632, overflow: "hidden" }}>
@@ -281,6 +281,10 @@ function HeroSection() {
           {Array.from({ length: 7 }).map((_, i) => (
             <div key={i} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: isMobile ? "100%" : 632, background: isMobile ? "linear-gradient(to bottom, #0b223a 60%, rgba(11,34,58,0.8) 100%)" : "linear-gradient(to right, rgba(11,34,58,1) 0%, rgba(11,34,58,0) 100%)" }} />
           ))}
+          {/* Right gradient — starts transparent at x=830 (right side of image), fades to dark at right edge */}
+          {!isMobile && (
+            <div style={{ position: "absolute", top: 0, left: 830, right: 0, height: 687, background: "linear-gradient(to right, rgba(11,34,58,0) 0%, rgba(11,34,58,1) 100%)" }} />
+          )}
           <div style={{ position: "absolute", left: -122, top: -25, width: 653, height: 436, opacity: 0.45 }}>
             <img src={imgTexture} alt="" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
           </div>
@@ -299,11 +303,6 @@ function HeroSection() {
             </>
           )}
         </div>
-        {/* Right gradient — outside the 1200px container so it covers full viewport width.
-            Starts transparent where photo ends, fades to solid dark navy at the right edge. */}
-        {!isMobile && (
-          <div style={{ position: "absolute", top: 0, right: 0, width: "30%", height: 724, background: "linear-gradient(to right, rgba(11,34,58,0) 0%, rgba(11,34,58,1) 100%)", pointerEvents: "none" }} />
-        )}
       </div>
 
       {/* ── Content layer ── */}
