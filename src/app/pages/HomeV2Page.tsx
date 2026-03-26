@@ -985,7 +985,7 @@ function Section6() {
               </div>
             )}
             <div style={{ display: "flex", gap: 8 }}>
-              {[{ onClick: handlePrev, path: "M22.5 15L17.5 20L22.5 25" }, { onClick: handleNext, path: "M17.5 15L22.5 20L17.5 25" }].map(({ onClick, path }, i) => (
+              {[{ onClick: handlePrev, path: "M11 4L6 9L11 14" }, { onClick: handleNext, path: "M7 4L12 9L7 14" }].map(({ onClick, path }, i) => (
                 <button key={i} onClick={onClick}
                   onMouseEnter={e => { e.currentTarget.style.background = "#174067"; e.currentTarget.style.color = "#fff"; }}
                   onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#174067"; }}
