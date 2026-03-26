@@ -789,47 +789,37 @@ function Section4() {
   );
 }
 
-// ── Section 5: Beyond Syllabus — Figma 294:94 exact implementation ─────────
+// ── Section 5: Beyond Syllabus ────────────────────────────────────────────
 const S5_ITEMS = [
-  {
-    id: "see",
-    icon: imgS5IconSee,
-    label: "See lorem ipsum is",
-    body: "We unlock scale by fixing what's leaking lorem is conversion, retention, repeat simply We unlock scale by fixing",
-    sepAfter: imgS5SepLong,   // 220px separator (Figma: Vector236) — shown after the active (expanded) item
-    sepWidth: 220,
-  },
-  {
-    id: "hear",
-    icon: imgS5IconHear,
-    label: "Hear lorem ipsum is",
-    body: "Hear the stories that shaped the mission — teachers, students, and communities speaking for themselves.",
-    sepAfter: imgS5SepShort,  // 177px separator (Figma: Vector233)
-    sepWidth: 177,
-  },
-  {
-    id: "read",
-    icon: imgS5IconRead,
-    label: "Read lorem ipsu",
-    body: "Read reports, research and on-ground data from Ujjwala Wadekar's 31-year mission across Jalgaon.",
-    sepAfter: imgS5SepShort,
-    sepWidth: 177,
-  },
-  {
-    id: "do",
-    icon: imgS5IconRead,
-    label: "Do lorem ipsu",
-    body: "Join hands — donate, volunteer, or partner with us to extend the reach of quality education.",
-    sepAfter: null,
-    sepWidth: 0,
-  },
+  { id: "see",  label: "See lorem ipsum is",  body: "We unlock scale by fixing what's leaking lorem is conversion, retention, repeat simply We unlock scale by fixing", sepWidth: 220 },
+  { id: "hear", label: "Hear lorem ipsum is", body: "Hear the stories that shaped the mission — teachers, students, and communities speaking for themselves.", sepWidth: 177 },
+  { id: "read", label: "Read lorem ipsu",     body: "Read reports, research and on-ground data from Ujjwala Wadekar's 31-year mission across Jalgaon.", sepWidth: 177 },
+  { id: "do",   label: "Do lorem ipsu",       body: "Join hands — donate, volunteer, or partner with us to extend the reach of quality education.", sepWidth: 0 },
 ];
+
+function S5PlayIcon({ active }: { active: boolean }) {
+  return (
+    <div style={{
+      width: 32, height: 32, borderRadius: "50%", flexShrink: 0,
+      background: active ? "#bf791d" : "#174067",
+      display: "flex", alignItems: "center", justifyContent: "center",
+      transition: "background 0.25s",
+    }}>
+      {/* white play triangle */}
+      <svg width="11" height="13" viewBox="0 0 11 13" fill="none">
+        <path d="M1 1.2L10 6.5L1 11.8V1.2Z" fill="#fff" />
+      </svg>
+    </div>
+  );
+}
 
 function Section5() {
   const sectionRef = useFadeInUp();
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
   const [activeId, setActiveId] = useState<string>("see");
+
+  const hPad = isMobile ? 20 : isTablet ? 32 : 260;
 
   return (
     <div ref={sectionRef} className="fade-in-up" style={{
@@ -840,19 +830,32 @@ function Section5() {
       overflow: "hidden",
       isolation: "isolate",
     }}>
-      {/* Background image */}
-      <div style={{ position: "absolute", top: 0, left: "50%", transform: "translateX(-50%)", width: "100%", maxWidth: 1200, height: "100%", pointerEvents: "none", zIndex: 0 }}>
-        <img src={imgS5Bg} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center center" }} />
-      </div>
+      {/* Background image — full width, covers whole section */}
+      <img src={imgS5Bg} alt="" aria-hidden style={{
+        position: "absolute", top: 0, left: 0, width: "100%", height: "100%",
+        objectFit: "cover", objectPosition: "center",
+        pointerEvents: "none", zIndex: 0,
+      }} />
+
+      {/* Left white fade */}
+      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, #fff 0%, rgba(255,255,255,0.6) 14%, transparent 28%)", pointerEvents: "none", zIndex: 1 }} />
+      {/* Right white fade */}
+      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to left, #fff 0%, rgba(255,255,255,0.6) 14%, transparent 28%)", pointerEvents: "none", zIndex: 1 }} />
+      {/* Top / bottom white fade */}
+      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, #fff 0%, transparent 10%, transparent 88%, #fff 100%)", pointerEvents: "none", zIndex: 2 }} />
 
       {/* Content */}
-      <div style={{ maxWidth: 1200, margin: "0 auto", position: "relative", zIndex: 2, padding: isMobile ? "40px 20px 48px" : isTablet ? "48px 32px 60px" : undefined }}>
+      <div style={{
+        maxWidth: 1200, margin: "0 auto", position: "relative", zIndex: 3,
+        padding: isMobile ? "40px 20px 48px" : isTablet ? "48px 32px 60px" : undefined,
+      }}>
         <div style={{ width: isMobile || isTablet ? "100%" : 1008, paddingTop: isMobile ? 0 : 56, paddingBottom: isMobile ? 0 : 80 }}>
 
           {/* Heading group */}
-          <div style={{ paddingLeft: isMobile ? 0 : isTablet ? 32 : 260, display: "flex", flexDirection: "column", gap: 16 }}>
+          <div style={{ paddingLeft: isMobile ? 0 : hPad, display: "flex", flexDirection: "column", gap: 16 }}>
+            {/* Pill badge — indented another 164px in Figma */}
             <div style={{ paddingLeft: isMobile ? 0 : isTablet ? 0 : 164 }}>
-              <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", padding: "6px 20px", borderRadius: 40, border: "1px solid #e8e8e8", background: "#fff" }}>
+              <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", padding: "6px 20px", borderRadius: 40, border: "1px solid #e8e8e8", background: "rgba(255,255,255,0.9)" }}>
                 <span style={{ fontFamily: "'Poppins', sans-serif", fontSize: 13, color: "#bf791d" }}>Beyond Syllabus</span>
               </div>
             </div>
@@ -864,19 +867,18 @@ function Section5() {
           </div>
 
           {/* Accordion */}
-          <div style={{ paddingLeft: isMobile ? 0 : isTablet ? 32 : 260, paddingTop: isMobile ? 24 : 44 }}>
+          <div style={{ paddingLeft: isMobile ? 0 : hPad, paddingTop: isMobile ? 24 : 44 }}>
             <div style={{ width: isMobile ? "100%" : isTablet ? "100%" : 562, display: "flex", flexDirection: "column" }}>
               {S5_ITEMS.map((item) => {
                 const isActive = activeId === item.id;
                 return (
                   <div key={item.id}>
+                    {/* Row: icon + label */}
                     <button
                       onClick={() => setActiveId(item.id)}
                       style={{ display: "flex", alignItems: "center", gap: 16, width: "100%", background: "none", border: "none", padding: "12px 0", cursor: "pointer", textAlign: "left" }}
                     >
-                      <div style={{ width: 32, height: 32, flexShrink: 0, position: "relative" }}>
-                        <img src={item.icon} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }} />
-                      </div>
+                      <S5PlayIcon active={isActive} />
                       <span style={{
                         fontFamily: "'Rubik', sans-serif",
                         fontWeight: isActive ? 500 : 400,
@@ -889,23 +891,23 @@ function Section5() {
                       </span>
                     </button>
 
+                    {/* Expanded body (active only) */}
                     <div className={`accordion-body${isActive ? " open" : ""}`}>
                       <div>
                         <div style={{ paddingLeft: isMobile ? 0 : 48, display: "flex", flexDirection: "column", gap: 20, paddingBottom: 8 }}>
                           <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: isMobile ? 14 : 16, lineHeight: "25px", color: "#636363", margin: 0, maxWidth: isMobile ? "100%" : 459 }}>
                             {item.body}
                           </p>
-                          <button className="btn-gold" style={{ display: "inline-flex", alignItems: "center", gap: isMobile ? 10 : 20, background: "#bf791d", borderRadius: 30, height: 44, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: isMobile ? 14 : 16, whiteSpace: "nowrap", alignSelf: isMobile ? "stretch" : "flex-start", justifyContent: isMobile ? "center" : undefined }}>
+                          <button className="btn-gold" style={{ display: "inline-flex", alignItems: "center", gap: isMobile ? 10 : 20, background: "#bf791d", borderRadius: 30, height: 44, padding: "0 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: isMobile ? 14 : 16, whiteSpace: "nowrap", alignSelf: isMobile ? "stretch" : "flex-start", justifyContent: isMobile ? "center" : undefined }}>
                             Donate for Cause <ArrowIcon />
                           </button>
                         </div>
                       </div>
                     </div>
 
-                    {item.sepAfter && !isMobile && (
-                      <div style={{ height: 1, width: item.sepWidth, position: "relative", overflow: "hidden" }}>
-                        <img src={item.sepAfter} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }} />
-                      </div>
+                    {/* Separator line */}
+                    {item.sepWidth > 0 && !isMobile && (
+                      <div style={{ height: 1, width: item.sepWidth, background: "rgba(0,0,0,0.15)", margin: "4px 0 4px 0" }} />
                     )}
                     {isMobile && <div style={{ height: 1, background: "rgba(0,0,0,0.08)", margin: "4px 0" }} />}
                   </div>
@@ -913,10 +915,9 @@ function Section5() {
               })}
             </div>
           </div>
+
         </div>
       </div>
-
-      <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, #fff 0%, transparent 8%, transparent 92%, #fff 100%)", pointerEvents: "none", zIndex: 4 }} />
     </div>
   );
 }
