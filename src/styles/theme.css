@@ -232,6 +232,16 @@
    The transition is set in the class; hover color uses !important to win
    over inline style background declarations.
 ────────────────────────────────────────────────────────────────────────── */
+/* ── Arrow bounce animation ────────────────────────────────────────────────── */
+@keyframes arrow-bounce {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(6px); }
+}
+.arrow-bounce {
+  animation: arrow-bounce 1.6s ease-in-out infinite;
+  display: inline-flex;
+}
+
 @layer components {
 
   /* Gold CTA buttons (#bf791d) — lighten on hover */
