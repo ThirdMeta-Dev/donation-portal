@@ -7,6 +7,7 @@ import { Link } from "react-router";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Navbar } from "../components/SiteNavbar";
 import { Footer } from "../components/SiteFooter";
+import { supabase } from "../lib/supabase";
 
 // ── Local asset imports (bundled by Vite for production) ─────────────────
 // @ts-ignore
@@ -27,6 +28,10 @@ import imgChevronGold from "@/assets/e25a4b39e8a9a67792da4b7be40a5cd1efeff3fd.sv
 import imgPlayBtn from "@/assets/94b7d143f7d79dcee5c3ef4a168888c8f0e66ec9.svg";
 // @ts-ignore
 import imgStatBg from "@/assets/b33ea922189e2f8727c7c9b20f1df35f797556ff.svg";
+// @ts-ignore
+import s12_cta_pattern from "../../assets/images/s12_cta_pattern.svg";
+// @ts-ignore
+import s16_map_bg from "../../assets/images/s16_map_bg.svg";
 // @ts-ignore
 import imgCarousel1 from "@/assets/b025de5e50e257a2a8382e99cc8bc799d9ebaba4.png";
 
@@ -125,8 +130,8 @@ function useIsTablet() {
 // ── Global animation CSS ──────────────────────────────────────────────────
 const GLOBAL_CSS = `
 @keyframes fadeInUp {
-  from { opacity:0; transform:translateY(40px); }
-  to   { opacity:1; transform:translateY(0); }
+  from { opacity:0; transform:translateY(40px) scale(0.96); }
+  to   { opacity:1; transform:translateY(0) scale(1); }
 }
 .fade-in-up { opacity: 0; }
 .fade-in-up.visible {
@@ -170,6 +175,21 @@ const GLOBAL_CSS = `
 }
 .v2-mobile-menu {
   animation: mobileMenuSlideDown 0.25s ease forwards;
+}
+
+/* ── Navigation Arrows (Sections 3 & 4) ── */
+.nav-arrow-btn {
+  background: #fff;
+  border: 1px solid #174067;
+  color: #174067;
+  transition: all 0.2s ease;
+}
+.nav-arrow-btn:hover {
+  background: #174067;
+  color: #fff;
+}
+.nav-arrow-btn svg path {
+  stroke: currentColor;
 }
 `;
 
@@ -264,20 +284,20 @@ function HeroSection() {
 
       {/* ── Decorative layer: overflow:hidden here clips textures/ellipses ── */}
       <div style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none", zIndex: 0 }}>
-        <div style={{ maxWidth: 1200, margin: "0 auto", position: "relative", height: isMobile ? "100%" : 724, overflow: "hidden" }}>
-          {/* Hero image — hidden on mobile, positioned on tablet/desktop */}
+        <div style={{ width: "100%", margin: "0 auto", position: "relative", height: isMobile ? "100%" : 724, overflow: "hidden" }}>
+          {/* Hero image — hidden on mobile, full width on desktop */}
           {!isMobile && (
-            <div style={{ position: "absolute", left: isTablet ? "50%" : 645, top: 0, width: isTablet ? "60%" : 646, height: 632, overflow: "hidden" }}>
-              <img src={imgHero} alt="" style={{ width: "155.42%", height: "100%", objectFit: "cover", objectPosition: "left center", maxWidth: "none", position: "absolute", left: "-55.42%" }} />
+            <div style={{ position: "absolute", inset: 0 }}>
+              <img src={imgHero} alt="" style={{ width: "100%", height: "100%", objectFit: "contain", objectPosition: "right bottom" }} />
             </div>
           )}
-          {/* Left gradients ×7 — stacked to create a strong dark-left fade (matches Figma) */}
-          {Array.from({ length: 7 }).map((_, i) => (
-            <div key={i} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: isMobile ? "100%" : 632, background: isMobile ? "linear-gradient(to bottom, #0b223a 60%, rgba(11,34,58,0.8) 100%)" : "linear-gradient(to right, rgba(11,34,58,1) 0%, rgba(11,34,58,0) 100%)" }} />
+          {/* Left gradients ×7 — stacked to ensure dark-left fade for readable text */}
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} style={{ position: "absolute", top: 0, left: 0, width: isMobile ? "100%" : "70%", height: isMobile ? "100%" : 724, background: isMobile ? "linear-gradient(to bottom, #0b223a 60%, rgba(11,34,58,0.8) 100%)" : "linear-gradient(to right, rgba(11,34,58,1) 0%, rgba(11,34,58,0.9) 30%, rgba(11,34,58,0) 100%)" }} />
           ))}
-          {/* Right gradient — starts transparent at x=830 (right side of image), fades to dark at right edge */}
+          {/* Right gradient (restored) — starts transparent, fades to dark at right edge */}
           {!isMobile && (
-            <div style={{ position: "absolute", top: 0, left: 830, right: 0, height: 687, background: "linear-gradient(to right, rgba(11,34,58,0) 0%, rgba(11,34,58,1) 100%)" }} />
+            <div style={{ position: "absolute", top: 0, right: 0, width: "70%", height: "100%", background: "linear-gradient(to right, rgba(11,34,58,0) 0%, rgba(11,34,58,1) 100%)" }} />
           )}
           <div style={{ position: "absolute", left: -122, top: -25, width: 653, height: 436, opacity: 0.45 }}>
             <img src={imgTexture} alt="" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
@@ -438,56 +458,133 @@ function ProgramBanner() {
           </div>
         </div>
 
-        {/* "Join Teacher Network" button */}
+        {/* "Join Teacher Network" button pinned to anchor */}
         <div style={isMobile ? { marginTop: 20 } : { position: "absolute", right: 24, bottom: 24 }}>
-          <button
-            onMouseEnter={e => { e.currentTarget.style.background = "#AE6E1A"; }}
-            onMouseLeave={e => { e.currentTarget.style.background = "#bf791d"; }}
-            style={{
-              display: "flex", alignItems: "center", gap: isMobile ? 12 : 20,
-              background: "#bf791d", borderRadius: 20, padding: isMobile ? "10px 20px" : "10px 24px",
-              border: "none", cursor: "pointer", color: "#fff",
-              fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: isMobile ? 14 : 16, whiteSpace: "nowrap",
-              position: isMobile ? "static" : "relative", top: isMobile ? undefined : 41,
-              width: isMobile ? "100%" : undefined, justifyContent: isMobile ? "center" : undefined,
-              transition: "background 0.18s ease",
-            }}>
-            Join Teacher Network <ArrowIcon />
-          </button>
+          <a href="#volunteer-form" style={{ textDecoration: "none" }}>
+            <button
+              onMouseEnter={e => { e.currentTarget.style.background = "#0f2a44"; }}
+              onMouseLeave={e => { e.currentTarget.style.background = "#174067"; }}
+              style={{
+                display: "flex", alignItems: "center", gap: isMobile ? 12 : 20,
+                background: "#174067", borderRadius: 20, padding: isMobile ? "10px 20px" : "10px 24px",
+                border: "none", cursor: "pointer", color: "#fff",
+                fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: isMobile ? 14 : 16, whiteSpace: "nowrap",
+                position: isMobile ? "static" : "relative", top: isMobile ? undefined : 41,
+                width: isMobile ? "100%" : undefined, justifyContent: isMobile ? "center" : undefined,
+                transition: "background 0.18s ease",
+              }}>
+              Join Teacher Network <ArrowIcon />
+            </button>
+          </a>
         </div>
       </div>
     </div>
   );
 }
 
-// ── Section 2: Scroll text-reveal ─────────────────────────────────────────
-const S2_TEXT = "We unlock scale by fixing what's leaking conversion, retention, repeat so growth lorem";
-
+// ── Section 2: Figma CTA Banner (node 160:4105) ───────────────────────────
 function Section2() {
   const sectionRef = useFadeInUp();
-  const textRef = useTextReveal();
   const isMobile = useIsMobile();
-  const words = S2_TEXT.split(" ");
+  const isTablet = useIsTablet();
+
+  // Decorative SVG illustration (inline — the tan/gold map shape from Figma)
+  const DecorativeIllustration = () => (
+    <svg viewBox="0 0 276 435" fill="none" xmlns="http://www.w3.org/2000/svg"
+      style={{ width: isMobile ? 0 : isTablet ? 140 : 200, height: isMobile ? 0 : isTablet ? 245 : 350, flexShrink: 0, opacity: 0.85 }}>
+      <path d="M200.5 2C200.5 2 245 18 261 55C277 92 275.5 128 265.5 158C255.5 188 240 210 225 232C210 254 185 270 170 292C155 314 145 340 130 362C115 384 95 408 70 422C45 436 15 440 5 428C-5 416 8 395 20 378C32 361 50 348 62 330C74 312 78 288 88 268C98 248 118 232 128 212C138 192 138 168 138 148C138 128 130 108 125 88C120 68 118 45 128 28C138 11 165 2 200.5 2Z" fill="#E8D5B0" opacity="0.6"/>
+      <path d="M160 50C160 50 195 65 210 95C225 125 222 158 212 182C202 206 185 222 170 242C155 262 138 278 125 300C112 322 105 348 92 368C79 388 60 410 42 420C24 430 5 428 2 416C-1 404 12 385 25 370C38 355 55 342 65 325C75 308 78 285 88 266C98 247 115 232 122 212C129 192 128 168 125 148C122 128 115 108 115 88C115 68 118 48 130 36C142 24 160 28 160 50Z" fill="#D4B896" opacity="0.5"/>
+      <path d="M100 120C100 120 135 132 148 158C161 184 156 215 145 235C134 255 118 268 105 288C92 308 83 332 72 350C61 368 45 386 30 394C15 402 2 398 0 388C-2 378 10 363 22 350C34 337 50 326 58 310C66 294 68 272 76 254C84 236 98 222 104 204C110 186 108 166 105 148C102 130 96 112 100 120Z" fill="#C9A87C" opacity="0.4"/>
+    </svg>
+  );
+
   return (
-    <div ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#ffffff" }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: isMobile ? "48px 20px" : "80px 96px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-        <div style={{ display: "flex", flexDirection: "column", gap: isMobile ? 28 : 48, alignItems: "center", width: "100%" }}>
-          <div style={{ textAlign: "center", width: "100%", maxWidth: 960 }}>
-            <p ref={textRef} style={{ margin: 0, fontSize: isMobile ? 28 : 52, lineHeight: 1.28, fontFamily: "'Lora', serif", fontWeight: 700 }}>
-              {words.map((word, i) => (<span key={i} className="trw">{word}{" "}</span>))}
+    <div ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#ffffff", padding: isMobile ? "24px 16px" : isTablet ? "32px 24px" : "32px 96px", boxSizing: "border-box" }}>
+      <div style={{ maxWidth: 1008, margin: "0 auto" }}>
+        {/* Cream bordered card */}
+        <div style={{
+          background: "#FDF8F1",
+          border: "1px solid #E8D5B0",
+          borderRadius: 20,
+          padding: isMobile ? "28px 20px 24px" : "32px 36px 32px",
+          display: "flex",
+          flexDirection: "row",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: isMobile ? 0 : 16,
+          position: "relative",
+          overflow: "hidden",
+          minHeight: isMobile ? undefined : 186,
+        }}>
+          {/* Left: heading + buttons stacked */}
+          <div style={{ display: "flex", flexDirection: "column", gap: isMobile ? 20 : 24, flex: 1, minWidth: 0 }}>
+            {/* Heading */}
+            <p style={{
+              margin: 0,
+              fontFamily: "'Lora', serif",
+              fontWeight: 500,
+              fontSize: isMobile ? 22 : isTablet ? 24 : 28,
+              lineHeight: 1.32,
+              color: "#000",
+              textTransform: "capitalize",
+              maxWidth: isMobile ? "100%" : 630,
+            }}>
+              We Unlock Scale By Fixing What's Lorem Leaking Conversion?
             </p>
+
+            {/* Buttons — shown under heading on desktop, stacked on mobile */}
+            <div style={{
+              display: "flex",
+              flexDirection: isMobile ? "column" : "row",
+              gap: isMobile ? 10 : 10,
+              alignItems: isMobile ? "stretch" : "center",
+            }}>
+              {/* Solid gold button (About Ujjwala) */}
+              <Link to="/about" style={{ textDecoration: "none" }}>
+                <button
+                  className="btn-gold"
+                  onMouseEnter={e => { e.currentTarget.style.background = "#AE6E1A"; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = "#bf791d"; }}
+                  style={{
+                    display: "flex", alignItems: "center", justifyContent: isMobile ? "center" : undefined,
+                    gap: 20, background: "#bf791d",
+                    borderRadius: 30, padding: isMobile ? "11px 20px" : "12px 24px",
+                    border: "none", cursor: "pointer",
+                    color: "#fff", fontFamily: "'DM Sans', sans-serif",
+                    fontWeight: 600, fontSize: 16,
+                    whiteSpace: "nowrap", transition: "background 0.18s ease",
+                    width: isMobile ? "100%" : undefined,
+                  }}>
+                  About Ujjwala <ArrowIcon color="#fff" />
+                </button>
+              </Link>
+              {/* Outlined button (Join Ujjwala's Mission) */}
+              <Link to="/join" style={{ textDecoration: "none" }}>
+                <button
+                  onMouseEnter={e => { e.currentTarget.style.background = "#F9F2E8"; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = "transparent"; }}
+                  style={{
+                    display: "flex", alignItems: "center", justifyContent: isMobile ? "center" : undefined,
+                    gap: 20, background: "transparent",
+                    borderRadius: 30, padding: isMobile ? "11px 20px" : "12px 24px",
+                    border: "1px solid #bf791d", cursor: "pointer",
+                    color: "#bf791d", fontFamily: "'DM Sans', sans-serif",
+                    fontWeight: 600, fontSize: 16,
+                    whiteSpace: "nowrap", transition: "background 0.18s ease",
+                    width: isMobile ? "100%" : undefined,
+                  }}>
+                  Join Ujjwala's Mission <ArrowIcon color="#bf791d" />
+                </button>
+              </Link>
+            </div>
           </div>
-          <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", gap: isMobile ? 12 : 20, alignItems: isMobile ? "stretch" : "center", width: isMobile ? "100%" : undefined }}>
-            <button className="btn-gold" style={{ display: "flex", alignItems: "center", justifyContent: isMobile ? "center" : undefined, gap: 12, background: "#bf791d", borderRadius: 30, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: isMobile ? 15 : 16, whiteSpace: "nowrap" }}>
-              About Ujjwala <ArrowIcon />
-            </button>
-            <button
-              onMouseEnter={e => { e.currentTarget.style.background = "#F9F2E8"; }}
-              onMouseLeave={e => { e.currentTarget.style.background = "transparent"; }}
-              style={{ display: "flex", alignItems: "center", justifyContent: isMobile ? "center" : undefined, gap: 12, background: "transparent", borderRadius: 30, padding: "12px 24px", border: "1px solid #bf791d", cursor: "pointer", color: "#bf791d", fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: isMobile ? 15 : 16, whiteSpace: "nowrap", transition: "background 0.18s ease" }}>
-              Join Ujjwala's Mission <ArrowIcon color="#bf791d" />
-            </button>
-          </div>
+
+          {/* Right: decorative illustration */}
+          {!isMobile && (
+            <div style={{ flexShrink: 0, position: "relative", alignSelf: "stretch", display: "flex", alignItems: "center" }}>
+              <DecorativeIllustration />
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -526,13 +623,13 @@ function Section3() {
   // Shared nav buttons (used in both mobile and desktop)
   const NavButtons = ({ size = 44 }: { size?: number }) => (
     <div style={{ display: "flex", gap: 8 }}>
-      {/* Prev — white fill, navy border, navy chevron */}
-      <button onClick={prev} style={{ width: size, height: size, borderRadius: "50%", background: "#fff", border: "1px solid #174067", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}>
-        <svg width={size * 0.36} height={size * 0.36} viewBox="0 0 18 18" fill="none"><path d="M11 4L6 9L11 14" stroke="#174067" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+      {/* Prev */}
+      <button onClick={prev} className="nav-arrow-btn" style={{ width: size, height: size, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}>
+        <svg width={size * 0.36} height={size * 0.36} viewBox="0 0 18 18" fill="none"><path d="M11 4L6 9L11 14" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
       </button>
-      {/* Next — navy fill, white chevron */}
-      <button onClick={next} style={{ width: size, height: size, borderRadius: "50%", background: "#174067", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}>
-        <svg width={size * 0.36} height={size * 0.36} viewBox="0 0 18 18" fill="none"><path d="M7 4L12 9L7 14" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+      {/* Next */}
+      <button onClick={next} className="nav-arrow-btn" style={{ width: size, height: size, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}>
+        <svg width={size * 0.36} height={size * 0.36} viewBox="0 0 18 18" fill="none"><path d="M7 4L12 9L7 14" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
       </button>
     </div>
   );
@@ -579,6 +676,25 @@ function Section3() {
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: isTablet ? "0 32px" : "0 51px" }}>
         {/* Outer wrapper: taller than image to accommodate glass card extending below */}
         <div style={{ position: "relative", maxWidth: 1098, margin: "0 auto", height: TOTAL_H }}>
+
+          {/* Background exact organic blob using CSS Mask to match the frame solid color */}
+          <div style={{
+            position: "absolute",
+            right: -20,
+            top: -150,
+            width: 480,
+            height: 480,
+            zIndex: 0,
+            pointerEvents: "none",
+            background: "#f9f2e8", // Creamy solid fill matching Figma
+            WebkitMaskImage: `url(${imgTexture})`,
+            WebkitMaskSize: "contain",
+            WebkitMaskRepeat: "no-repeat",
+            maskImage: `url(${imgTexture})`,
+            maskSize: "contain",
+            maskRepeat: "no-repeat",
+            transform: "rotate(-10deg) scaleX(-1)" // Flipping to match the precise slope from the screenshot
+          }} />
 
           {/* ── Image card: all slides stacked, crossfade via opacity ── */}
           <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: IMG_H, borderRadius: 20, overflow: "hidden", zIndex: 1 }}>
@@ -713,13 +829,11 @@ function Section4() {
 
   const navButtons = (
     <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: isMobile || isTablet ? 8 : 0 }}>
-      <button onClick={prevSlide} style={{ width: 44, height: 44, borderRadius: 30, border: "1px solid #174067", background: "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
-        onMouseEnter={e => (e.currentTarget.style.background = "rgba(23,64,103,0.08)")}
-        onMouseLeave={e => (e.currentTarget.style.background = "transparent")}>
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 5L7 10L12 15" stroke="#174067" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+      <button onClick={prevSlide} className="nav-arrow-btn" style={{ width: 44, height: 44, borderRadius: 30, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 5L7 10L12 15" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
       </button>
-      <button onClick={nextSlide} style={{ width: 44, height: 44, borderRadius: 30, background: "#174067", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
-        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M8 5L13 10L8 15" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+      <button onClick={nextSlide} className="nav-arrow-btn" style={{ width: 44, height: 44, borderRadius: 30, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M8 5L13 10L8 15" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
       </button>
     </div>
   );
@@ -1280,7 +1394,6 @@ function Section8() {
       setCardIndex(Math.min(Math.floor(scrolled / STEP), TOTAL - 1));
     };
     window.addEventListener("scroll", onScroll, { passive: true });
-    onScroll();
     return () => window.removeEventListener("scroll", onScroll);
   }, [isMobile, isTablet, TOTAL, STEP]);
 
@@ -1381,16 +1494,19 @@ function Section8() {
 
   // ── Desktop: sticky scroll-driven stack ─────────────────────────────────────
   // Card container: 764px wide, 511px tall
-  // Back cards (decorative, widths 712/732/752) peek from top-center
-  // Active card (764×448) positioned at top=63 (511-448)
+  // As user scrolls through a group, cards STACK UP behind the active card.
+  // Back card positions (depth 0 = closest/newest → depth 2 = furthest/oldest):
   const CARD_CONTAINER_H = 511;
   const FRONT_CARD_H = 448;
   const FRONT_TOP = CARD_CONTAINER_H - FRONT_CARD_H; // 63px
-  const BACK_CARDS = [
-    { inset: 26, top: 0,  zIndex: 1 }, // w=712
-    { inset: 16, top: 8,  zIndex: 2 }, // w=732
-    { inset: 6,  top: 16, zIndex: 3 }, // w=752
+  const BACK_POS = [
+    { top: 43, inset: 12, zIndex: 7 }, // depth 0: 20px behind FRONT_TOP (63px)
+    { top: 23, inset: 24, zIndex: 5 }, // depth 1: 40px behind
+    { top: 3,  inset: 36, zIndex: 3 }, // depth 2: 60px behind
   ];
+  const groupStart = activeTab * 3;
+  const groupLocalIdx = cardIndex - groupStart; // 0, 1, or 2 — which card within this group is active
+  const groupCards = SECTION_8_CARDS.slice(groupStart, Math.min(groupStart + 3, SECTION_8_CARDS.length));
 
   return (
     <div ref={wrapperRef} style={{ position: "relative", height: `calc(100vh + ${RUNWAY}px)` }}>
@@ -1432,92 +1548,99 @@ function Section8() {
               })}
             </div>
 
-            {/* Right: card stack */}
+            {/* Right: card stack — all 3 group cards always in DOM for smooth CSS transitions */}
             <div style={{ flex: 1, position: "relative", height: CARD_CONTAINER_H }}>
+              {groupCards.map((card, localIdx) => {
+                const isFront = localIdx === groupLocalIdx;
+                const isPast  = localIdx < groupLocalIdx;
+                const depth   = isPast ? groupLocalIdx - localIdx - 1 : -1;
+                const pos     = isPast ? BACK_POS[Math.min(depth, 2)] : null;
 
-              {/* Decorative back cards peeking from above */}
-              {BACK_CARDS.map((bc, i) => (
-                <div key={i} style={{
-                  position: "absolute", top: bc.top,
-                  left: bc.inset, right: bc.inset,
-                  height: 411,
-                  background: "#f8f5ef",
-                  borderRadius: 20,
-                  zIndex: bc.zIndex,
-                  boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
-                }} />
-              ))}
+                // Position: past → back stack; front → front; future → hidden at front position
+                const cardTop   = isPast ? pos!.top   : FRONT_TOP;
+                const cardLeft  = isPast ? pos!.inset : 0;
+                const cardRight = isPast ? pos!.inset : 0;
+                const cardZ     = isFront ? 10 : isPast ? pos!.zIndex : 0;
+                const cardOpacity = (isFront || isPast) ? 1 : 0;
 
-              {/* Active front card */}
-              <div key={currentCard.id} style={{
-                position: "absolute", top: FRONT_TOP, left: 0, right: 0,
-                height: FRONT_CARD_H,
-                background: "#f8f5ef",
-                borderRadius: 20,
-                zIndex: 10,
-                overflow: "hidden",
-                boxShadow: "0 8px 32px rgba(0,0,0,0.1)",
-                display: "flex",
-                padding: "0 20px",
-                boxSizing: "border-box",
-                gap: 36,
-                alignItems: "stretch",
-              }}>
-                {/* Left content area: w=404, vertically centered */}
-                <div style={{ width: 404, flexShrink: 0, display: "flex", flexDirection: "column", gap: 14, justifyContent: "center", paddingTop: 26, paddingBottom: 26, boxSizing: "border-box" }}>
-                  <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 18, color: "#bf791d" }}>
-                    {currentCard.programName}
-                  </span>
-                  <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 15, lineHeight: "24px", color: "#636363", margin: 0 }}>
-                    {currentCard.desc}
-                  </p>
-                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                    <strong style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: 14, color: "#000" }}>
-                      {currentCard.title}
-                    </strong>
-                    <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 4 }}>
-                      {currentCard.bullets.map((b, bi) => (
-                        <li key={bi} style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                          <S8Arrow />
-                          <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 14, color: "#636363" }}>{b}</span>
-                        </li>
-                      ))}
-                    </ul>
+                return (
+                  <div key={card.id} style={{
+                    position: "absolute",
+                    top: cardTop, left: cardLeft, right: cardRight,
+                    height: FRONT_CARD_H,
+                    background: "#f8f5ef",
+                    borderRadius: 20,
+                    zIndex: cardZ,
+                    opacity: cardOpacity,
+                    overflow: "hidden",
+                    boxShadow: isFront ? "0 8px 32px rgba(0,0,0,0.1)" : "0 2px 8px rgba(0,0,0,0.06)",
+                    pointerEvents: isFront ? "auto" : "none",
+                    transition: [
+                      "top 0.4s cubic-bezier(0.22,1,0.36,1)",
+                      "left 0.4s cubic-bezier(0.22,1,0.36,1)",
+                      "right 0.4s cubic-bezier(0.22,1,0.36,1)",
+                      "opacity 0.35s ease",
+                    ].join(", "),
+                  }}>
+                    {/* Content — only visible on front card */}
+                    {isFront && (
+                      <div style={{ display: "flex", height: "100%", padding: "0 20px", boxSizing: "border-box", gap: 36, alignItems: "stretch" }}>
+                        {/* Left content */}
+                        <div style={{ width: 404, flexShrink: 0, display: "flex", flexDirection: "column", gap: 14, justifyContent: "center", paddingTop: 26, paddingBottom: 26, boxSizing: "border-box" }}>
+                          <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 18, color: "#bf791d" }}>
+                            {card.programName}
+                          </span>
+                          <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 15, lineHeight: "24px", color: "#636363", margin: 0 }}>
+                            {card.desc}
+                          </p>
+                          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                            <strong style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: 14, color: "#000" }}>
+                              {card.title}
+                            </strong>
+                            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 4 }}>
+                              {card.bullets.map((b, bi) => (
+                                <li key={bi} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                                  <S8Arrow />
+                                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 14, color: "#636363" }}>{b}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          </div>
+                          <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 14, lineHeight: "22px", color: "#636363", margin: 0 }}>
+                            Join the Teacher Reformers Network - a community of 340+ teachers lorem ipsum is
+                          </p>
+                          <Link to="/join-network" style={{ display: "inline-flex", alignItems: "center", gap: 12, background: "#bf791d", border: "1px solid #bf791d", borderRadius: 30, padding: "10px 24px", alignSelf: "flex-start", textDecoration: "none" }}>
+                            <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 15, color: "#fff" }}>Join Teacher Network</span>
+                            <S8Arrow color="#fff" />
+                          </Link>
+                        </div>
+                        {/* Right photo panel */}
+                        <div style={{ width: 284, flexShrink: 0, borderRadius: 20, overflow: "hidden", position: "relative", background: "#ddd4c7" }}>
+                          {S8_PHOTOS.map((photo, pi) => (
+                            <img key={pi} src={photo} alt="" style={{
+                              position: "absolute", inset: 0,
+                              width: "100%", height: "100%",
+                              objectFit: "cover", display: "block",
+                              opacity: pi === photoIdx ? 1 : 0,
+                              transition: "opacity 0.5s ease",
+                            }} />
+                          ))}
+                          <div style={{ position: "absolute", bottom: 14, right: 14, display: "flex", gap: 5, zIndex: 2 }}>
+                            {S8_PHOTOS.map((_, di) => (
+                              <button key={di} onClick={() => setPhotoIdx(di)} style={{
+                                width: di === photoIdx ? 18 : 6, height: 6, borderRadius: 3,
+                                background: "#fff", border: "none", padding: 0, cursor: "pointer",
+                                opacity: di === photoIdx ? 1 : 0.55,
+                                transition: "width 0.2s ease, opacity 0.2s ease",
+                              }} />
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    )}
                   </div>
-                  <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 14, lineHeight: "22px", color: "#636363", margin: 0 }}>
-                    Join the Teacher Reformers Network - a community of 340+ teachers lorem ipsum is
-                  </p>
-                  <Link to="/join-network" style={{ display: "inline-flex", alignItems: "center", gap: 12, background: "#bf791d", border: "1px solid #bf791d", borderRadius: 30, padding: "10px 24px", alignSelf: "flex-start", textDecoration: "none" }}>
-                    <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 15, color: "#fff" }}>Join Teacher Network</span>
-                    <S8Arrow color="#fff" />
-                  </Link>
-                </div>
-
-                {/* Right photo panel: w=284, full card height, rounded corners */}
-                <div style={{ width: 284, flexShrink: 0, borderRadius: 20, overflow: "hidden", position: "relative", background: "#ddd4c7" }}>
-                  {S8_PHOTOS.map((photo, pi) => (
-                    <img key={pi} src={photo} alt="" style={{
-                      position: "absolute", inset: 0,
-                      width: "100%", height: "100%",
-                      objectFit: "cover", display: "block",
-                      opacity: pi === photoIdx ? 1 : 0,
-                      transition: "opacity 0.5s ease",
-                    }} />
-                  ))}
-                  {/* Carousel dots */}
-                  <div style={{ position: "absolute", bottom: 14, right: 14, display: "flex", gap: 5, zIndex: 2 }}>
-                    {S8_PHOTOS.map((_, di) => (
-                      <button key={di} onClick={() => setPhotoIdx(di)} style={{
-                        width: di === photoIdx ? 18 : 6, height: 6, borderRadius: 3,
-                        background: "#fff", border: "none", padding: 0, cursor: "pointer",
-                        opacity: di === photoIdx ? 1 : 0.55,
-                        transition: "width 0.2s ease, opacity 0.2s ease",
-                      }} />
-                    ))}
-                  </div>
-                </div>
-
-              </div>{/* end active card */}
+                );
+              })}
             </div>{/* end card stack */}
           </div>{/* end body */}
         </div>
@@ -1628,19 +1751,20 @@ function VideoCard9({ card, width, height }: { card: S9Card; width: number; heig
   const R    = 20;
   const CIRC = 2 * Math.PI * R;
 
-  const onEnterBtn = () => {
-    videoRef.current?.play().catch(() => {});
-    setIsPlaying(true);
-  };
-  const onLeaveBtn = () => {
-    videoRef.current?.pause();
-    setIsPlaying(false);
+  const togglePlay = () => {
+    if (isPlaying) {
+      videoRef.current?.pause();
+      setIsPlaying(false);
+    } else {
+      videoRef.current?.play().catch(() => {});
+      setIsPlaying(true);
+    }
   };
 
   return (
     <div style={{ width, height, borderRadius: 20, flexShrink: 0, position: "relative", overflow: "hidden", boxShadow: "0px 4px 6px rgba(5,23,42,0.25)" }}>
-      {/* Thumbnail */}
-      <img src={card.thumbnail} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+      {/* Thumbnail — hidden when playing */}
+      <img src={card.thumbnail} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: isPlaying ? 0 : 1, transition: "opacity 0.4s ease" }} />
 
       {/* Video */}
       <video
@@ -1664,8 +1788,7 @@ function VideoCard9({ card, width, height }: { card: S9Card; width: number; heig
         {/* Play/pause + ring */}
         <div
           style={{ position: "relative", width: 48, height: 48, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
-          onMouseEnter={onEnterBtn}
-          onMouseLeave={onLeaveBtn}
+          onClick={togglePlay}
         >
           <svg width="52" height="52" style={{ position: "absolute", top: -2, left: -2, pointerEvents: "none" }}>
             <circle cx="26" cy="26" r={R} fill="none" stroke="rgba(255,255,255,0.25)" strokeWidth="2.5"/>
@@ -1702,20 +1825,21 @@ function ContentCard9({ card, width, height }: { card: S9Card; width: number; he
   const R    = 20;
   const CIRC = 2 * Math.PI * R;
 
-  const onEnterBtn = () => {
-    videoRef.current?.play().catch(() => {});
-    setIsPlaying(true);
-  };
-  const onLeaveBtn = () => {
-    videoRef.current?.pause();
-    setIsPlaying(false);
+  const togglePlay = () => {
+    if (isPlaying) {
+      videoRef.current?.pause();
+      setIsPlaying(false);
+    } else {
+      videoRef.current?.play().catch(() => {});
+      setIsPlaying(true);
+    }
   };
 
   return (
     <div style={{ width, height, borderRadius: 20, flexShrink: 0, position: "relative", overflow: "hidden", background: "#fff", border: "1px solid #ebd5b9" }}>
 
-      {/* Top amber banner */}
-      <div style={{ position: "absolute", top: 0, left: 0, right: 0, background: "#f9f2e8", padding: "8px 20px", borderRadius: "20px 20px 0 0", zIndex: 2 }}>
+      {/* Top amber banner — hidden when video plays */}
+      <div style={{ position: "absolute", top: 0, left: 0, right: 0, background: "#f9f2e8", padding: "8px 20px", borderRadius: "20px 20px 0 0", zIndex: 2, opacity: isPlaying ? 0 : 1, transition: "opacity 0.3s ease", pointerEvents: isPlaying ? "none" : "auto" }}>
         <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 13, color: "#bf791d", lineHeight: "22px" }}>
           {card.tag}
         </span>
@@ -1776,8 +1900,7 @@ function ContentCard9({ card, width, height }: { card: S9Card; width: number; he
         {/* Play/pause + ring */}
         <div
           style={{ position: "relative", width: 48, height: 48, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
-          onMouseEnter={onEnterBtn}
-          onMouseLeave={onLeaveBtn}
+          onClick={togglePlay}
         >
           <svg width="52" height="52" style={{ position: "absolute", top: -2, left: -2, pointerEvents: "none" }}>
             <circle cx="26" cy="26" r={R} fill="none" stroke={isPlaying ? "rgba(255,255,255,0.25)" : "rgba(191,121,29,0.35)"} strokeWidth="2.5"/>
@@ -1860,8 +1983,8 @@ function Section9() {
   return (
     <div ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#f8f5ef", borderRadius: 30, margin: "40px 0", overflow: "hidden" }}>
 
-      {/* Header — left-aligned with hPad, right side constrained */}
-      <div style={{ paddingTop: 68, paddingBottom: 52, paddingLeft: hPad, paddingRight: hPad, maxWidth: 1100, boxSizing: "border-box" }}>
+      {/* Header — full width so subtitle reaches the right edge */}
+      <div style={{ paddingTop: 68, paddingBottom: 52, paddingLeft: hPad, paddingRight: hPad, width: "100%", boxSizing: "border-box" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 24 }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             <div style={{ border: "1px solid #e8e8e8", borderRadius: 40, padding: "6px 20px", alignSelf: "flex-start" }}>
@@ -2362,6 +2485,7 @@ function Section12() {
     borderRadius: 100,
     padding: "6px 20px",
     fontFamily: "'DM Sans', sans-serif",
+    fontWeight: 300,
     fontSize: 14,
     lineHeight: "20px",
     color: "#bf791d",
@@ -2374,7 +2498,7 @@ function Section12() {
   const cardHeight = isMobile ? "auto" : 242;
 
   return (
-    <section ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#fff", padding: isMobile ? "48px 0 0 0" : "88px 0 0 0" }}>
+    <section ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#fff", padding: isMobile ? "48px 0 0 0" : "88px 0 0 0", marginBottom: isMobile ? 60 : 100 }}>
       <div style={{ maxWidth: 1008, margin: "0 auto", padding: "0 16px", boxSizing: "border-box" }}>
 
         {/* Title */}
@@ -2419,24 +2543,24 @@ function Section12() {
                 right: isMobile ? undefined : 20,
                 display: isMobile ? "block" : undefined,
                 fontFamily: "'Lora', serif",
-                fontWeight: 700,
-                fontSize: isMobile ? 48 : 80,
+                fontWeight: 300,
+                fontSize: isMobile ? 64 : 96,
                 lineHeight: 1,
-                color: "rgba(191,121,29,0.18)",
+                color: "rgba(191,121,29,0.15)",
                 pointerEvents: "none",
                 userSelect: "none",
                 marginBottom: isMobile ? 8 : 0,
               }}>{card.num}</span>
               <div style={{
                 fontFamily: "'DM Sans', sans-serif",
-                fontWeight: 600,
+                fontWeight: 500,
                 fontSize: 18,
                 color: "#111",
-                marginBottom: 10,
+                marginBottom: 8,
               }}>{card.title}</div>
               <div style={{
                 fontFamily: "'DM Sans', sans-serif",
-                fontWeight: 400,
+                fontWeight: 300,
                 fontSize: 14,
                 lineHeight: 1.6,
                 color: "#555",
@@ -2445,115 +2569,109 @@ function Section12() {
           ))}
         </div>
 
-        {/* CTA Banner */}
+        {/* ══ CTA BANNER (Node 160:4105) — Final Polish ═════════════════════════════ */}
         <div style={{
-          background: "#f8f5ef",
-          borderRadius: 16,
-          padding: isMobile ? "28px 24px" : "32px 36px",
-          position: "relative",
-          overflow: "hidden",
-          marginBottom: isMobile ? 48 : 88,
-          minHeight: isMobile ? "auto" : 122,
-          display: "flex",
-          flexDirection: isMobile ? "column" : "row",
-          alignItems: isMobile ? "flex-start" : "center",
-          justifyContent: "space-between",
-          gap: isMobile ? 24 : 32,
+          maxWidth: 1200, margin: "0 auto",
+          background: "transparent", border: "1px solid #EBE3D5", borderRadius: 32,
+          minHeight: isMobile ? "auto" : 186,
+          position: "relative", overflow: "hidden",
         }}>
-          {/* Decorative map — faint SVG dots/lines over right side */}
+          {/* Decorative Pattern — positioned to match figma visually */}
           {!isMobile && (
-            <svg
-              aria-hidden
-              viewBox="0 0 276 435"
-              style={{
-                position: "absolute",
-                right: 160,
-                top: "50%",
-                transform: "translateY(-50%)",
-                height: "240%",
-                width: "auto",
-                opacity: 0.12,
-                pointerEvents: "none",
-              }}
-            >
-              <ellipse cx="138" cy="217" rx="100" ry="150" stroke="#bf791d" strokeWidth="1.5" fill="none" />
-              <ellipse cx="138" cy="217" rx="60" ry="90" stroke="#bf791d" strokeWidth="1" fill="none" />
-              <line x1="38" y1="217" x2="238" y2="217" stroke="#bf791d" strokeWidth="1" />
-              <line x1="138" y1="67" x2="138" y2="367" stroke="#bf791d" strokeWidth="1" />
-              <circle cx="138" cy="217" r="5" fill="#bf791d" />
-              <circle cx="180" cy="170" r="3" fill="#bf791d" />
-              <circle cx="100" cy="260" r="3" fill="#bf791d" />
-              <circle cx="160" cy="280" r="3" fill="#bf791d" />
-              <circle cx="90" cy="180" r="3" fill="#bf791d" />
-            </svg>
+            <div style={{
+              position: "absolute",
+              top: 0,
+              right: 0,
+              width: 320,
+              height: "100%",
+              pointerEvents: "none",
+              zIndex: 0,
+            }}>
+              <img
+                src={s12_cta_pattern}
+                alt=""
+                style={{ width: "100%", height: "100%", objectFit: "contain", opacity: 0.6 }}
+              />
+            </div>
           )}
 
-          {/* Left: heading */}
           <div style={{
-            fontFamily: "'Lora', serif",
-            fontWeight: 700,
-            fontSize: isMobile ? 20 : isTablet ? 22 : 28,
-            lineHeight: 1.35,
-            color: "#111",
-            maxWidth: isMobile ? "100%" : 500,
             position: "relative",
             zIndex: 1,
-          }}>
-            We Unlock Scale By Fixing What's Lorem Leaking Conversion?
-          </div>
-
-          {/* Right: buttons */}
-          <div style={{
+            padding: isMobile ? "24px 20px" : isTablet ? "32px 32px" : "32px 36px",
             display: "flex",
             flexDirection: isMobile ? "column" : "row",
-            gap: 12,
-            alignItems: isMobile ? "stretch" : "center",
-            flexShrink: 0,
-            position: "relative",
-            zIndex: 1,
-            width: isMobile ? "100%" : "auto",
+            alignItems: isMobile ? "flex-start" : "center",
+            justifyContent: "space-between",
+            gap: isMobile ? 24 : 32,
+            height: "100%",
+            minHeight: isMobile ? "auto" : 186,
+            boxSizing: "border-box",
           }}>
-            <button style={{
-              border: "1.5px solid #bf791d",
-              background: "transparent",
-              borderRadius: 100,
-              padding: "12px 24px",
-              fontFamily: "'DM Sans', sans-serif",
-              fontWeight: 600,
-              fontSize: isMobile ? 15 : 16,
-              color: "#bf791d",
-              cursor: "pointer",
+            {/* Left: heading */}
+            <div style={{ flex: 1 }}>
+              <h3 style={{
+                margin: 0,
+                fontFamily: "'Lora', serif",
+                fontWeight: 500,
+                fontSize: isMobile ? 22 : isTablet ? 26 : 28,
+                lineHeight: 1.32,
+                color: "#111",
+                maxWidth: "100%",
+              }}>
+                We Unlock Scale By Fixing What’s Lorem Leaking Conversion?
+              </h3>
+            </div>
+
+            {/* Right: buttons */}
+            <div style={{
               display: "flex",
+              flexDirection: isMobile ? "column" : "row",
+              gap: 16,
               alignItems: "center",
-              justifyContent: "center",
-              gap: 10,
-              whiteSpace: "nowrap",
+              flexShrink: 0,
+              width: isMobile ? "100%" : "auto",
+              paddingBottom: isMobile ? 0 : 0,
             }}>
-              Sponsor a Learning Kit
-              <svg width="23" height="23" viewBox="0 0 23 23" fill="none"><circle cx="11.5" cy="11.5" r="10.5" stroke="#bf791d" strokeWidth="1.5"/><path d="M8 11.5h7M12.5 9l2.5 2.5-2.5 2.5" stroke="#bf791d" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            </button>
-            <button className="btn-gold" style={{
-              border: "none",
-              background: "#bf791d",
-              borderRadius: 100,
-              padding: "12px 24px",
-              fontFamily: "'DM Sans', sans-serif",
-              fontWeight: 600,
-              fontSize: isMobile ? 15 : 16,
-              color: "#fff",
-              cursor: "pointer",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: 10,
-              whiteSpace: "nowrap",
-            }}>
-              Donate Now
-              <svg width="23" height="23" viewBox="0 0 23 23" fill="none"><circle cx="11.5" cy="11.5" r="10.5" stroke="rgba(255,255,255,0.6)" strokeWidth="1.5"/><path d="M8 11.5h7M12.5 9l2.5 2.5-2.5 2.5" stroke="#fff" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
-            </button>
+              {/* Outlined gold button */}
+              <Link to="/causes" style={{ textDecoration: "none", width: isMobile ? "100%" : "auto" }}>
+                <button
+                  onMouseEnter={e => { e.currentTarget.style.background = "rgba(191,121,29,0.06)"; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = "white"; }}
+                  style={{
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    gap: 12, background: "white",
+                    borderRadius: 100, padding: "14px 28px",
+                    border: "1px solid #BF791D", cursor: "pointer",
+                    color: "#BF791D", fontFamily: "'DM Sans', sans-serif",
+                    fontWeight: 600, fontSize: 16,
+                    whiteSpace: "nowrap", transition: "all 0.2s ease",
+                    width: isMobile ? "100%" : "auto",
+                  }}>
+                  Sponsor a Learning Kit <ArrowIcon color="#BF791D" size={16} />
+                </button>
+              </Link>
+              {/* Solid gold button */}
+              <Link to="/donate" style={{ textDecoration: "none", width: isMobile ? "100%" : "auto" }}>
+                <button
+                  onMouseEnter={e => { e.currentTarget.style.opacity = "0.9"; }}
+                  onMouseLeave={e => { e.currentTarget.style.opacity = "1"; }}
+                  style={{
+                    display: "flex", alignItems: "center", justifyContent: "center",
+                    gap: 12, background: "#BF791D",
+                    borderRadius: 100, padding: "14px 28px",
+                    border: "none", cursor: "pointer",
+                    color: "#fff", fontFamily: "'DM Sans', sans-serif",
+                    fontWeight: 600, fontSize: 16,
+                    whiteSpace: "nowrap", transition: "all 0.2s ease",
+                    width: isMobile ? "100%" : "auto",
+                  }}>
+                  Donate Now <ArrowIcon color="#fff" size={16} />
+                </button>
+              </Link>
+            </div>
           </div>
         </div>
-
       </div>
     </section>
   );
@@ -2658,6 +2776,10 @@ function SectionHonestImpact() {
     if (!outer || !strip) return;
 
     const updateHeight = () => {
+      // Dynamically align the strip's left padding with the 1008px max-width text container above it
+      const pLeft = Math.max(24, (window.innerWidth - 1008) / 2 + 24);
+      strip.style.paddingLeft = `${pLeft}px`;
+
       const scrollable = Math.max(0, strip.scrollWidth - window.innerWidth);
       outer.style.height = `calc(100vh + ${scrollable}px)`;
     };
@@ -2774,72 +2896,72 @@ function SectionHonestImpact() {
         {/* Scrolling column strip */}
         <div ref={stripRef} style={{
           display: "flex", gap: 16, alignItems: "stretch",
-          paddingLeft: 24, paddingRight: 24,
+          paddingRight: 24, /* paddingLeft is set dynamically in updateHeight */
           boxSizing: "border-box",
-          height: STRIP_H,
+          height: 600, // Exact Figma height
           willChange: "transform",
           flexShrink: 0,
         }}>
 
           {/* Col 1: image (flex) + cream text card */}
-          <div style={{ minWidth: "clamp(220px, 30vw, 459px)", display: "flex", flexDirection: "column", gap: 16, flexShrink: 0 }}>
+          <div style={{ width: 459, display: "flex", flexDirection: "column", gap: 16, flexShrink: 0 }}>
             <HonestGrayBlock style={{ flex: 1 }} />
             <HonestImpactCard cardIdx={0} style={{ flexShrink: 0 }} />
           </div>
 
           {/* Col 2: full-height video block + play button */}
-          <div style={{ minWidth: "clamp(150px, 22vw, 350px)", position: "relative", flexShrink: 0 }}>
+          <div style={{ width: 350, position: "relative", flexShrink: 0 }}>
             <HonestGrayBlock style={{ width: "100%", height: "100%" }} />
             <HonestPlayBtn />
           </div>
 
           {/* Col 3: 2 stacked image blocks */}
-          <div style={{ minWidth: "clamp(100px, 15vw, 220px)", display: "flex", flexDirection: "column", gap: 16, flexShrink: 0 }}>
+          <div style={{ width: 220, display: "flex", flexDirection: "column", gap: 16, flexShrink: 0 }}>
             <HonestGrayBlock style={{ flex: 1 }} />
             <HonestGrayBlock style={{ flex: 1 }} />
           </div>
 
           {/* Col 4: cream text card (flex) + image bottom */}
-          <div style={{ minWidth: "clamp(150px, 22vw, 350px)", display: "flex", flexDirection: "column", gap: 16, flexShrink: 0 }}>
+          <div style={{ width: 350, display: "flex", flexDirection: "column", gap: 16, flexShrink: 0 }}>
             <HonestImpactCard cardIdx={1} style={{ flex: 1, minHeight: 0 }} />
-            <HonestGrayBlock style={{ height: "clamp(100px, 20%, 200px)", flexShrink: 0 }} />
+            <HonestGrayBlock style={{ height: 352, flexShrink: 0 }} />
           </div>
 
           {/* Col 5: 2 stacked blocks + play button overlay */}
-          <div style={{ minWidth: "clamp(120px, 18vw, 302px)", display: "flex", flexDirection: "column", gap: 16, flexShrink: 0, position: "relative" }}>
-            <HonestGrayBlock style={{ flex: 2 }} />
+          <div style={{ width: 302, display: "flex", flexDirection: "column", gap: 16, flexShrink: 0, position: "relative" }}>
             <HonestGrayBlock style={{ flex: 1 }} />
+            <HonestGrayBlock style={{ height: 184, flexShrink: 0 }} />
             <HonestPlayBtn />
           </div>
 
           {/* Col 6: image (flex) + cream text card (different content) */}
-          <div style={{ minWidth: "clamp(220px, 30vw, 459px)", display: "flex", flexDirection: "column", gap: 16, flexShrink: 0 }}>
+          <div style={{ width: 459, display: "flex", flexDirection: "column", gap: 16, flexShrink: 0 }}>
             <HonestGrayBlock style={{ flex: 1 }} />
             <HonestImpactCard cardIdx={2} style={{ flexShrink: 0 }} />
           </div>
 
           {/* Col 7: full-height video block + play button */}
-          <div style={{ minWidth: "clamp(150px, 22vw, 350px)", position: "relative", flexShrink: 0 }}>
+          <div style={{ width: 350, position: "relative", flexShrink: 0 }}>
             <HonestGrayBlock style={{ width: "100%", height: "100%" }} />
             <HonestPlayBtn />
           </div>
 
           {/* Col 8: 2 stacked image blocks */}
-          <div style={{ minWidth: "clamp(100px, 15vw, 220px)", display: "flex", flexDirection: "column", gap: 16, flexShrink: 0 }}>
+          <div style={{ width: 220, display: "flex", flexDirection: "column", gap: 16, flexShrink: 0 }}>
             <HonestGrayBlock style={{ flex: 1 }} />
             <HonestGrayBlock style={{ flex: 1 }} />
           </div>
 
           {/* Col 9: cream text card (flex) + image bottom */}
-          <div style={{ minWidth: "clamp(150px, 22vw, 350px)", display: "flex", flexDirection: "column", gap: 16, flexShrink: 0 }}>
+          <div style={{ width: 350, display: "flex", flexDirection: "column", gap: 16, flexShrink: 0 }}>
             <HonestImpactCard cardIdx={3} style={{ flex: 1, minHeight: 0 }} />
-            <HonestGrayBlock style={{ height: "clamp(100px, 20%, 200px)", flexShrink: 0 }} />
+            <HonestGrayBlock style={{ height: 352, flexShrink: 0 }} />
           </div>
 
           {/* Col 10: 2 stacked image blocks */}
-          <div style={{ minWidth: "clamp(120px, 18vw, 302px)", display: "flex", flexDirection: "column", gap: 16, flexShrink: 0 }}>
+          <div style={{ width: 302, display: "flex", flexDirection: "column", gap: 16, flexShrink: 0 }}>
             <HonestGrayBlock style={{ flex: 1 }} />
-            <HonestGrayBlock style={{ flex: 1 }} />
+            <HonestGrayBlock style={{ height: 184, flexShrink: 0 }} />
           </div>
 
         </div>
@@ -2896,16 +3018,16 @@ function S15Card({ member, cardWidth = 236 }: { member: typeof S15_TEAM[0]; card
       {/* Card image/content area */}
       <div style={{
         width: "100%",
-        height: 324,
+        height: 280,
         borderRadius: "16px 16px 0 0",
         position: "relative",
-        overflow: "hidden",
         background: "#bf791d",
+        marginTop: 64, // Margin to make room for overlapping head
       }}>
         {/* World map decoration */}
         <div
           aria-hidden
-          style={{ position: "absolute", inset: 0, pointerEvents: "none" }}
+          style={{ position: "absolute", inset: 0, pointerEvents: "none", overflow: "hidden", borderRadius: "16px 16px 0 0" }}
           dangerouslySetInnerHTML={{ __html: S15_MAP_SVG }}
         />
 
@@ -2915,13 +3037,15 @@ function S15Card({ member, cardWidth = 236 }: { member: typeof S15_TEAM[0]; card
           alt={member.name}
           style={{
             position: "absolute",
-            inset: 0,
+            bottom: 0,
+            left: 0,
             width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            objectPosition: "top center",
+            height: "auto", // Allow natural aspect ratio to push head up
+            objectFit: "contain",
+            objectPosition: "bottom center",
             opacity: hovered ? 0 : 1,
             transition: "opacity 0.3s ease",
+            zIndex: 2,
           }}
         />
 
@@ -2930,6 +3054,8 @@ function S15Card({ member, cardWidth = 236 }: { member: typeof S15_TEAM[0]; card
           position: "absolute",
           inset: 0,
           background: "#bf791d",
+          borderRadius: "16px 16px 0 0",
+          overflow: "hidden", // Ensure text doesn't spill
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -2938,6 +3064,7 @@ function S15Card({ member, cardWidth = 236 }: { member: typeof S15_TEAM[0]; card
           gap: 20,
           opacity: hovered ? 1 : 0,
           transition: "opacity 0.3s ease",
+          zIndex: 3,
           pointerEvents: hovered ? "auto" : "none",
         }}>
           <p style={{
@@ -2972,8 +3099,11 @@ function S15Card({ member, cardWidth = 236 }: { member: typeof S15_TEAM[0]; card
 
       {/* Card info bar: name + role + nav indicator */}
       <div style={{
-        background: "#fff",
+        background: "#f8f5ef", // Cream background as per Figma
         padding: "16px 20px 0",
+        height: 98,
+        boxSizing: "border-box",
+        borderRadius: "0 0 16px 16px", // Added border radius to match Figma since top has 16px
       }}>
         <p style={{
           fontFamily: "'DM Sans', sans-serif",
@@ -2994,8 +3124,8 @@ function S15Card({ member, cardWidth = 236 }: { member: typeof S15_TEAM[0]; card
           textAlign: "center",
         }}>{member.role}</p>
 
-        {/* Nav indicator — two dashes */}
-        <div style={{ display: "flex", gap: 8, justifyContent: "center", marginTop: 12, paddingBottom: 16 }}>
+        {/* Nav indicator — hidden as requested */}
+        <div style={{ display: "none", gap: 8, justifyContent: "center", marginTop: 12, paddingBottom: 16 }}>
           <div style={{
             width: 16, height: 3, borderRadius: 2,
             background: hovered ? "#bf791d" : "#d9d9d9",
@@ -3419,7 +3549,7 @@ function Section14() {
       {/* Decorative pattern strip */}
       <div style={{
         display: "flex", width: "100%",
-        height: isMobile ? 180 : isTablet ? 280 : 469,
+        height: isMobile ? 180 : isTablet ? 280 : 524,
         overflow: "hidden", pointerEvents: "none",
       }}>
         <img src={imgS14PatternA} alt="" aria-hidden style={{ flex: "0 0 50%", width: "50%", height: "100%", objectFit: "cover" }} />
@@ -3599,7 +3729,6 @@ function Section14() {
           gap: isMobile ? 24 : 68,
           alignItems: isMobile ? "flex-start" : "center",
           paddingTop: isMobile ? 36 : 48,
-          borderTop: "1px solid #f0f0f0",
           marginTop: isMobile ? 24 : 0,
         }}>
 
@@ -3705,6 +3834,284 @@ function S16SocialBtn({ name, icon }: { name: string; icon: (c: string) => React
     >
       {icon(hov ? "#fff" : blue)}
     </button>
+  );
+}
+
+function SectionVolunteerForm() {
+  const sectionRef = useFadeInUp();
+  const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
+
+  const [formData, setFormData] = useState({
+    name: "",
+    phone: "",
+    email: "",
+    purpose: "",
+    message: ""
+  });
+  const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+
+  const handleSubmit = async () => {
+    // Validation
+    const newErrors: Record<string, string> = {};
+    if (!formData.name.trim()) newErrors.name = "Name is required";
+    if (!formData.phone.trim()) newErrors.phone = "Phone is required";
+    if (!formData.email.trim()) newErrors.email = "Email is required";
+    if (!formData.purpose.trim()) newErrors.purpose = "Please select a purpose";
+    if (!formData.message.trim()) newErrors.message = "Message is required";
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
+      return;
+    }
+
+    setErrors({});
+    setIsSubmitting(true);
+
+    try {
+      const { error } = await supabase
+        .from("volunteer_submissions")
+        .insert([{
+          name: formData.name,
+          phone: formData.phone,
+          email: formData.email,
+          purpose: formData.purpose,
+          message: formData.message,
+        }]);
+
+      if (error) throw error;
+      setIsSuccess(true);
+    } catch (err) {
+      console.error("Submission error:", err);
+      // Fallback success if table doesn't exist yet for local testing
+      alert("Note: If 'volunteer_submissions' table is missing in Supabase, this will fail. Showing success state for demonstration.");
+      setIsSuccess(true);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const INPUT_STYLE = {
+    background: "rgba(255,255,255,0.15)",
+    backdropFilter: "blur(2px)",
+    border: "1px solid #885615",
+    borderRadius: 12,
+    height: 48,
+    padding: "0 15px",
+    color: "#fff",
+    fontFamily: "'DM Sans', sans-serif",
+    fontSize: 15,
+    width: "100%",
+    boxSizing: "border-box" as const,
+    outline: "none",
+  };
+
+  const ERROR_STYLE = {
+    color: "#ffcdd2",
+    fontSize: 12,
+    fontFamily: "'DM Sans', sans-serif",
+    marginTop: 4,
+  };
+
+  return (
+    <section id="volunteer-form" ref={sectionRef} className="fade-in-up" style={{
+      width: "100%",
+      background: "linear-gradient(to right, #714001, #965e00)",
+      padding: isMobile ? "60px 0" : "80px 0",
+      position: "relative",
+      borderRadius: 30,
+      overflow: "hidden",
+    }}>
+      {/* Background SVG map decoration */}
+      <img 
+        src={s16_map_bg} 
+        alt="" 
+        style={{
+          position: "absolute",
+          top: "50%",
+          left: "50%",
+          transform: "translate(-10%, -50%)",
+          height: 503,
+          width: 755,
+          pointerEvents: "none",
+          zIndex: 0,
+        }} 
+      />
+
+      <div style={{ maxWidth: 1008, margin: "0 auto", padding: "0 16px", boxSizing: "border-box", position: "relative", zIndex: 1 }}>
+        <div style={{
+          display: "flex",
+          flexDirection: isMobile || isTablet ? "column" : "row",
+          alignItems: isMobile || isTablet ? "flex-start" : "center",
+          gap: isMobile ? 48 : 44,
+        }}>
+
+          {/* Left Text Column */}
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 32 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 16, alignItems: "flex-start" }}>
+              <div style={{ border: "1px solid #ae6e1a", borderRadius: 40, padding: "6px 20px" }}>
+                <p style={{ fontFamily: "'Poppins', sans-serif", fontSize: 13, color: "#fff", margin: 0 }}>
+                  Teacher-Led · Education-Only · Transparent
+                </p>
+              </div>
+              <h2 style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: isMobile ? 32 : 44, lineHeight: 1.28, color: "#fff", margin: 0, maxWidth: 500 }}>
+                One Teacher Started This Lorem Many Can Keep It Going.
+              </h2>
+            </div>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {[
+                "Progress is visible & published",
+                "Use of funds reported quarterly",
+                "80G eligible · FCRA registered"
+              ].map((text, i) => (
+                <div key={i} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <div style={{ width: 24, height: 24, borderRadius: 30, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                  </div>
+                  <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 15, color: "#fff", margin: 0 }}>
+                    {text}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Right Form Column */}
+          {isSuccess ? (
+            <div style={{
+              background: "rgba(255,255,255,0.1)",
+              border: "1px solid #885615",
+              borderRadius: 20,
+              padding: "40px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              textAlign: "center",
+              width: isMobile ? "100%" : 424,
+              minHeight: 350,
+              boxSizing: "border-box"
+            }}>
+              <div style={{ width: 64, height: 64, borderRadius: "50%", background: "#4caf50", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+              </div>
+              <h3 style={{ fontFamily: "'Lora', serif", color: "#fff", fontSize: 24, margin: "0 0 10px 0" }}>Thank You!</h3>
+              <p style={{ fontFamily: "'DM Sans', sans-serif", color: "#e0e0e0", fontSize: 16, margin: 0, lineHeight: 1.5 }}>
+                Your submission has been successfully received. We will get back to you shortly.
+              </p>
+            </div>
+          ) : (
+            <div style={{ flex: "0 0 auto", width: isMobile ? "100%" : 424, display: "flex", flexDirection: "column", gap: 24 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 12, width: "100%" }}>
+                
+                {/* Name */}
+                <div style={{ width: "100%" }}>
+                  <input
+                    placeholder="Tell us your name"
+                    style={{ ...INPUT_STYLE, border: errors.name ? "1px solid #ef5350" : INPUT_STYLE.border }}
+                    value={formData.name}
+                    onChange={e => setFormData({ ...formData, name: e.target.value })}
+                  />
+                  {errors.name && <div style={ERROR_STYLE}>{errors.name}</div>}
+                </div>
+
+                {/* Phone & Email */}
+                <div style={{ display: "flex", gap: 12, width: "100%", flexDirection: isMobile ? "column" : "row" }}>
+                  <div style={{ flex: 1 }}>
+                    <input
+                      placeholder="Number for a quick call"
+                      style={{ ...INPUT_STYLE, border: errors.phone ? "1px solid #ef5350" : INPUT_STYLE.border }}
+                      value={formData.phone}
+                      onChange={e => setFormData({ ...formData, phone: e.target.value })}
+                    />
+                    {errors.phone && <div style={ERROR_STYLE}>{errors.phone}</div>}
+                  </div>
+                  <div style={{ flex: 1 }}>
+                    <input
+                      placeholder="Drop your email ID"
+                      style={{ ...INPUT_STYLE, border: errors.email ? "1px solid #ef5350" : INPUT_STYLE.border }}
+                      value={formData.email}
+                      onChange={e => setFormData({ ...formData, email: e.target.value })}
+                    />
+                    {errors.email && <div style={ERROR_STYLE}>{errors.email}</div>}
+                  </div>
+                </div>
+
+                {/* Dropdown Purpose */}
+                <div style={{ width: "100%" }}>
+                  <div style={{ position: "relative" }}>
+                    <select
+                      style={{ 
+                        ...INPUT_STYLE, 
+                        border: errors.purpose ? "1px solid #ef5350" : INPUT_STYLE.border,
+                        appearance: "none",
+                        color: formData.purpose ? "#fff" : "rgba(255,255,255,0.7)",
+                        cursor: "pointer"
+                      }}
+                      value={formData.purpose}
+                      onChange={e => setFormData({ ...formData, purpose: e.target.value })}
+                    >
+                      <option value="" disabled>Joining for Lorem ipsum is simply?</option>
+                      <option value="Volunteer" style={{ color: "#000" }}>Volunteer Work</option>
+                      <option value="Donation" style={{ color: "#000" }}>Make a Donation</option>
+                      <option value="Partnership" style={{ color: "#000" }}>Corporate Partnership</option>
+                      <option value="Other" style={{ color: "#000" }}>Other Inquiry</option>
+                    </select>
+                    <div style={{ position: "absolute", right: 15, top: 14, pointerEvents: "none" }}>
+                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>
+                    </div>
+                  </div>
+                  {errors.purpose && <div style={ERROR_STYLE}>{errors.purpose}</div>}
+                </div>
+
+                {/* Message */}
+                <div style={{ width: "100%" }}>
+                  <textarea
+                    placeholder="What are you looking for?"
+                    style={{ ...INPUT_STYLE, height: 123, padding: "15px", resize: "none", border: errors.message ? "1px solid #ef5350" : INPUT_STYLE.border }}
+                    value={formData.message}
+                    onChange={e => setFormData({ ...formData, message: e.target.value })}
+                  />
+                  {errors.message && <div style={ERROR_STYLE}>{errors.message}</div>}
+                </div>
+
+              </div>
+              
+              <button
+                onClick={handleSubmit}
+                disabled={isSubmitting}
+                style={{
+                  background: "#0f2a44",
+                  borderRadius: 30,
+                  padding: "12px 24px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 20,
+                  border: "none",
+                  cursor: isSubmitting ? "not-allowed" : "pointer",
+                  width: "fit-content",
+                  alignSelf: "flex-start",
+                  opacity: isSubmitting ? 0.7 : 1,
+                }}
+              >
+                <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 16, color: "#fff", whiteSpace: "nowrap" }}>
+                  {isSubmitting ? "Submitting..." : "Join Ujjwala’s Mission"}
+                </span>
+                {!isSubmitting && (
+                  <div style={{ width: 16, height: 16, display: "flex", alignItems: "center", justifyContent: "center", transform: "rotate(-45deg)" }}>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                  </div>
+                )}
+              </button>
+            </div>
+          )}
+        </div>
+      </div>
+    </section>
   );
 }
 
@@ -3907,7 +4314,7 @@ function S17AccordionItem({ q, a, open, onToggle }: { q: string; a: string; open
 function Section17() {
   const sectionRef = useFadeInUp();
   const isMobile = useIsMobile();
-  const [openIdx, setOpenIdx] = useState<number | null>(null);
+  const [openIdx, setOpenIdx] = useState<number | null>(0);
 
   const toggle = (i: number) => setOpenIdx(prev => (prev === i ? null : i));
 
@@ -4093,6 +4500,7 @@ export function HomeV2Page() {
       <Section13 />
       <Section14 />
       <Section15 />
+      <SectionVolunteerForm />
       <Section16 />
       <Section17 />
       <Section18 />

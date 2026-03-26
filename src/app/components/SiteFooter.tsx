@@ -40,11 +40,24 @@ function ArrowIcon({ color = "#fff", size = 16 }: { color?: string; size?: numbe
   );
 }
 
+// Inline SVG social icons to resolve broken PNGs
 const FOOTER_SOCIAL = [
-  { img: imgFooterLinkedin,  filled: false, label: "LinkedIn" },
-  { img: imgFooterTwitter,   filled: true,  label: "Twitter" },
-  { img: imgFooterWhatsapp,  filled: false, label: "WhatsApp" },
-  { img: imgFooterInstagram, filled: false, label: "Instagram" },
+  {
+    label: "LinkedIn",
+    svg: <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z" stroke="#fff" strokeWidth="1.8" fill="none"/><rect x="2" y="9" width="4" height="12" stroke="#fff" strokeWidth="1.8" fill="none"/><circle cx="4" cy="4" r="2" stroke="#fff" strokeWidth="1.8" fill="none"/></svg>
+  },
+  {
+    label: "Twitter",
+    svg: <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 4l16 16M4 20L20 4" stroke="#fff" strokeWidth="1.9" strokeLinecap="round"/></svg>
+  },
+  {
+    label: "WhatsApp",
+    svg: <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 8.5-8.5h.5a8.48 8.48 0 0 1 8 8v.5z" stroke="#fff" strokeWidth="1.8" fill="none"/></svg>
+  },
+  {
+    label: "Instagram",
+    svg: <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="5" stroke="#fff" strokeWidth="1.8" fill="none"/><circle cx="12" cy="12" r="4" stroke="#fff" strokeWidth="1.8" fill="none"/><circle cx="17.5" cy="6.5" r="1" fill="#fff"/></svg>
+  },
 ];
 
 const FOOTER_NAV = [
@@ -75,20 +88,33 @@ export function Footer() {
       overflow: "hidden",
       boxSizing: "border-box",
     }}>
-      {/* Background classroom photo with overlay */}
-      <div style={{ position: "absolute", inset: 0, pointerEvents: "none" }}>
+      {/* Background classroom photo (full width) with soft top blend */}
+      <div style={{
+        position: "absolute",
+        left: 0,
+        right: 0,
+        height: 686,
+        top: 115,
+        pointerEvents: "none",
+        overflow: "hidden",
+        WebkitMaskImage: "linear-gradient(to bottom, transparent 0%, black 20%)",
+        maskImage: "linear-gradient(to bottom, transparent 0%, black 20%)",
+      }}>
         <img src={imgFooterBg} alt="" aria-hidden style={{
           width: "100%", height: "100%", objectFit: "cover", objectPosition: "center",
           display: "block",
         }} />
-        <div style={{ position: "absolute", inset: 0, background: "rgba(15, 42, 68, 0.82)" }} />
+        <div style={{ position: "absolute", inset: 0, background: "rgba(18, 50, 80, 0.75)" }} />
       </div>
 
       {/* Content — constrained box */}
       <div style={{
         position: "relative", zIndex: 1,
         maxWidth: 1200, margin: "0 auto",
-        padding: isMobile ? "48px 20px" : isTablet ? "56px 40px" : "68px 96px",
+        paddingTop: isMobile ? 48 : isTablet ? 56 : 68,
+        paddingBottom: isMobile ? 96 : isTablet ? 120 : 180, // Increased bottom padding to create a distinct gap below the 686px image
+        paddingLeft: isMobile ? 20 : isTablet ? 40 : 96,
+        paddingRight: isMobile ? 20 : isTablet ? 40 : 96,
         display: "flex", flexDirection: "column", gap: isMobile ? 44 : 68,
       }}>
 
@@ -122,11 +148,11 @@ export function Footer() {
                     width: 32, height: 32, borderRadius: 8,
                     display: "flex", alignItems: "center", justifyContent: "center",
                     flexShrink: 0, overflow: "hidden",
-                    background: s.filled ? "#2e80d0" : "transparent",
-                    border: s.filled ? "none" : "1.5px solid #2e80d0",
+                    background: "transparent",
+                    border: "1.5px solid rgba(255,255,255,0.4)",
                     cursor: "pointer",
                   }}>
-                    <img src={s.img} alt={s.label} style={{ width: 20, height: 20, display: "block" }} />
+                    {s.svg}
                   </div>
                 ))}
               </div>

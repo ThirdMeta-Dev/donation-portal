@@ -196,7 +196,7 @@ export function Navbar() {
             {user ? (
               <ProfileDropdown user={user} onLogout={handleLogout} />
             ) : (
-              <Link to="/auth" state={{ returnTo: "/donate" }} style={{ textDecoration: "none" }}>
+              <Link to="/donate" style={{ textDecoration: "none" }}>
                 <button className="btn-gold" style={{ display: "flex", alignItems: "center", gap: 8, background: "#bf791d", borderRadius: 30, padding: "10px 18px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 500, whiteSpace: "nowrap" }}>
                   Donate <ArrowIcon size={14} />
                 </button>
@@ -267,7 +267,7 @@ export function Navbar() {
 
         {user ? (
           <>
-            <Link to="/auth" state={{ returnTo: "/donate" }} style={{ textDecoration: "none" }}>
+            <Link to="/donate" style={{ textDecoration: "none" }}>
               <button className="btn-gold" style={{ display: "flex", alignItems: "center", gap: 12, background: "#bf791d", borderRadius: 30, padding: "10px 20px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 500, whiteSpace: "nowrap" }}>
                 Donate Now <ArrowIcon />
               </button>
@@ -275,7 +275,7 @@ export function Navbar() {
             <ProfileDropdown user={user} onLogout={handleLogout} />
           </>
         ) : (
-          <Link to="/auth" state={{ returnTo: "/donate" }} style={{ textDecoration: "none" }}>
+          <Link to="/donate" style={{ textDecoration: "none" }}>
             <button className="btn-gold" style={{ display: "flex", alignItems: "center", gap: 20, background: "#bf791d", borderRadius: 30, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 500, whiteSpace: "nowrap" }}>
               Donate Now <ArrowIcon />
             </button>
