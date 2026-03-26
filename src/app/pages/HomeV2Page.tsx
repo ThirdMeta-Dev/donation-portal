@@ -652,18 +652,22 @@ const S4_CARDS = [
   { label: "Digital Learning", sub: "UNESCO Recognition", color: "#d9d9d9" },
 ];
 
+const S4_LOOP = [...S4_CARDS, ...S4_CARDS, ...S4_CARDS];
+const S4_N = S4_CARDS.length;
+
 function Section4() {
   const sectionRef = useFadeInUp();
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
-  const [offset, setOffset] = useState(0);
-  const [cardWidth, setCardWidth] = useState(268);
   const GAP = 16;
+  const [cardWidth, setCardWidth] = useState(268);
+  // idx into S4_LOOP — starts at N (middle copy) so we can go prev and next freely
+  const [idx, setIdx] = useState(S4_N);
+  const [skipAnim, setSkipAnim] = useState(false);
 
   const updateCardWidth = useCallback(() => {
     const vw = window.innerWidth;
     if (vw < 768) {
-      // Mobile: cards are ~85% of viewport width
       setCardWidth(Math.floor(vw * 0.78));
       return;
     }
@@ -682,9 +686,22 @@ function Section4() {
   }, [updateCardWidth]);
 
   const stepSize = cardWidth + GAP;
-  const maxOffset = (S4_CARDS.length - 1) * stepSize;
-  const prevSlide = useCallback(() => setOffset(o => Math.max(0, o - stepSize)), [stepSize]);
-  const nextSlide = useCallback(() => setOffset(o => (o + stepSize > maxOffset ? 0 : o + stepSize)), [stepSize, maxOffset]);
+  const offset = idx * stepSize;
+
+  // After each navigation, if idx drifted outside the middle copy, silently teleport back
+  useEffect(() => {
+    if (idx < S4_N || idx >= 2 * S4_N) {
+      const t = setTimeout(() => {
+        setSkipAnim(true);
+        setIdx(prev => (prev < S4_N ? prev + S4_N : prev - S4_N));
+        requestAnimationFrame(() => requestAnimationFrame(() => setSkipAnim(false)));
+      }, 520);
+      return () => clearTimeout(t);
+    }
+  }, [idx]);
+
+  const prevSlide = useCallback(() => { setSkipAnim(false); setIdx(prev => prev - 1); }, []);
+  const nextSlide = useCallback(() => { setSkipAnim(false); setIdx(prev => prev + 1); }, []);
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => { if (e.key === "ArrowLeft") prevSlide(); if (e.key === "ArrowRight") nextSlide(); };
@@ -692,31 +709,42 @@ function Section4() {
     return () => window.removeEventListener("keydown", onKey);
   }, [prevSlide, nextSlide]);
 
-  // Mobile/tablet: stacked layout (heading on top, carousel below)
+  const trackStyle = {
+    display: "flex" as const, gap: GAP,
+    transform: `translateX(-${offset}px)`,
+    transition: skipAnim ? "none" : "transform 0.5s cubic-bezier(0.22,1,0.36,1)",
+    willChange: "transform" as const,
+    alignItems: "stretch" as const,
+  };
+
+  const navButtons = (
+    <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: isMobile || isTablet ? 8 : 0 }}>
+      <button onClick={prevSlide} style={{ width: 44, height: 44, borderRadius: 30, border: "1px solid #174067", background: "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
+        onMouseEnter={e => (e.currentTarget.style.background = "rgba(23,64,103,0.08)")}
+        onMouseLeave={e => (e.currentTarget.style.background = "transparent")}>
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 5L7 10L12 15" stroke="#174067" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+      </button>
+      <button onClick={nextSlide} style={{ width: 44, height: 44, borderRadius: 30, background: "#174067", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M8 5L13 10L8 15" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+      </button>
+    </div>
+  );
+
+  // Mobile/tablet: stacked layout
   if (isMobile || isTablet) {
     return (
       <div ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#f8f5ef", paddingTop: isMobile ? 40 : 48, paddingBottom: isMobile ? 40 : 48, overflow: "hidden" }}>
-        {/* Heading block */}
         <div style={{ padding: isMobile ? "0 20px 24px" : "0 32px 32px", display: "flex", flexDirection: "column", gap: 16 }}>
           <div style={{ display: "inline-flex", alignItems: "center", padding: "6px 20px", borderRadius: 40, border: "1px solid #e8e8e8", alignSelf: "flex-start" }}>
             <span style={{ fontFamily: "'Poppins', sans-serif", fontSize: 13, color: "#bf791d" }}>On the Ground</span>
           </div>
           <p style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: isMobile ? 28 : 36, lineHeight: 1.24, color: "#000", margin: 0 }}>Media & Recognitions</p>
           <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 15, lineHeight: "24px", color: "#686868", margin: 0 }}>Find your role and see exactly what it means, what you get, and what your next step is.</p>
-          {/* Arrow buttons */}
-          <div style={{ display: "flex", alignItems: "center", gap: 8, marginTop: 8 }}>
-            <button onClick={prevSlide} style={{ width: 44, height: 44, borderRadius: 30, border: "1px solid #174067", background: "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 5L7 10L12 15" stroke="#174067" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-            </button>
-            <button onClick={nextSlide} style={{ width: 44, height: 44, borderRadius: 30, background: "#174067", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M8 5L13 10L8 15" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-            </button>
-          </div>
+          {navButtons}
         </div>
-        {/* Card track */}
         <div style={{ overflow: "hidden", paddingLeft: isMobile ? 20 : 32 }}>
-          <div style={{ display: "flex", gap: GAP, transform: `translateX(-${offset}px)`, transition: "transform 0.5s cubic-bezier(0.22,1,0.36,1)", willChange: "transform", alignItems: "stretch" }}>
-            {S4_CARDS.map((card, i) => (
+          <div style={trackStyle}>
+            {S4_LOOP.map((card, i) => (
               <div key={i} style={{ width: cardWidth, minHeight: isMobile ? 220 : 300, flexShrink: 0, borderRadius: 12, background: card.color, display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: 20, boxSizing: "border-box", cursor: "pointer", boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}>
                 <p style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: 16, color: "#112d48", margin: "0 0 4px" }}>{card.label}</p>
                 <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 12, color: "#686868", margin: 0 }}>{card.sub}</p>
@@ -728,7 +756,7 @@ function Section4() {
     );
   }
 
-  // Desktop: original side-by-side layout
+  // Desktop: side-by-side layout
   return (
     <div ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#f8f5ef", paddingTop: 48, paddingBottom: 48, overflow: "hidden" }}>
       <div style={{ display: "flex", gap: 48, alignItems: "stretch", width: "100%" }}>
@@ -742,20 +770,11 @@ function Section4() {
               <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 16, lineHeight: "24px", color: "#686868", margin: 0 }}>Find your role and see exactly what it means, what you get, and what your next step is.</p>
             </div>
           </div>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <button onClick={prevSlide} style={{ width: 44, height: 44, borderRadius: 30, border: "1px solid #174067", background: "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}
-              onMouseEnter={e => (e.currentTarget.style.background = "rgba(23,64,103,0.08)")}
-              onMouseLeave={e => (e.currentTarget.style.background = "transparent")}>
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M12 5L7 10L12 15" stroke="#174067" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-            </button>
-            <button onClick={nextSlide} style={{ width: 44, height: 44, borderRadius: 30, background: "#174067", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
-              <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><path d="M8 5L13 10L8 15" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-            </button>
-          </div>
+          {navButtons}
         </div>
         <div style={{ flex: 1, overflow: "hidden", minWidth: 0 }}>
-          <div style={{ display: "flex", gap: GAP, transform: `translateX(-${offset}px)`, transition: "transform 0.5s cubic-bezier(0.22,1,0.36,1)", willChange: "transform", alignItems: "stretch" }}>
-            {S4_CARDS.map((card, i) => (
+          <div style={trackStyle}>
+            {S4_LOOP.map((card, i) => (
               <div key={i} style={{ width: cardWidth, minHeight: 386, flexShrink: 0, borderRadius: 12, background: card.color, display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: 24, boxSizing: "border-box", cursor: "pointer", boxShadow: "0 2px 12px rgba(0,0,0,0.06)", transition: "box-shadow 0.2s" }}
                 onMouseEnter={e => (e.currentTarget.style.boxShadow = "0 8px 32px rgba(0,0,0,0.14)")}
                 onMouseLeave={e => (e.currentTarget.style.boxShadow = "0 2px 12px rgba(0,0,0,0.06)")}>
