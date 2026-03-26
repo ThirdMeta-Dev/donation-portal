@@ -53,21 +53,15 @@ import imgS6Over_local from "@/assets/8255568bbb03a1180ca10eba4f98571a0f552af7.p
 const imgS6Bg         = imgS6Bg_local;
 const imgS6OverPhoto  = imgS6Over_local;
 
-const IconArrowL = () => (
-  <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="20" cy="20" r="19.5" stroke="#174067" />
-    <path d="M22.5 15L17.5 20L22.5 25" stroke="#174067" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
-const IconArrowR = () => (
-  <svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect width="40" height="40" rx="20" fill="#174067" />
-    <path d="M17.5 15L22.5 20L17.5 25" stroke="white" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-  </svg>
-);
 const IconQuote = () => (
-  <svg width="101" height="55" viewBox="0 0 101 55" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <path d="M41.246 0.063C18.47 4.545 0 24.327 0 48.016C0 51.878 3.13 55 7 55H34.246C38.116 55 41.246 51.878 41.246 48.016V27.5C41.246 23.638 38.116 20.516 34.246 20.516H18.563C21.782 11.232 30.563 4.545 41.246 0.063ZM101.246 0.063C78.47 4.545 60 24.327 60 48.016C60 51.878 63.13 55 67 55H94.246C98.116 55 101.246 51.878 101.246 48.016V27.5C101.246 23.638 98.116 20.516 94.246 20.516H78.563C81.782 11.232 90.563 4.545 101.246 0.063Z" fill="white" fillOpacity="0.2"/>
+  <svg width="102" height="56" viewBox="0 0 102 56" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M53.2407 55.4729C50.9677 55.4729 49.149 55.2487 47.7851 54.8005C46.4213 54.3522 45.853 53.7919 46.0803 53.1195C48.1261 48.4127 50.8539 43.1456 54.2637 37.3181C57.9008 31.2666 61.9925 25.5512 66.5388 20.172C71.0852 14.5686 75.9724 9.9739 81.2007 6.38779C86.6563 2.57752 92.2256 0.44826 97.9084 0H99.6133C101.205 0 102 0.448267 102 1.3448C102 2.46546 100.182 4.70679 96.5445 8.06878C91.0889 12.9997 87.3382 18.2668 85.2924 23.8702C83.4739 29.4734 82.11 34.5164 81.2007 38.9991C80.5187 43.4818 79.0412 46.6196 76.768 48.4127C73.3582 50.8781 69.3803 52.6712 64.8339 53.7919C60.5149 54.9125 56.6505 55.4729 53.2407 55.4729ZM7.20918 55.4729C4.93601 55.4729 3.11748 55.2487 1.75358 54.8005C0.389685 54.3522 -0.178606 53.7919 0.0487106 53.1195C2.09456 48.4127 4.82236 43.1456 8.23211 37.3181C11.6418 31.2666 15.6199 25.5512 20.1662 20.172C24.9398 14.5686 29.9408 9.9739 35.1691 6.38779C40.3974 2.57752 45.853 0.44826 51.5359 0H53.2407C55.0594 0 55.9685 0.448267 55.9685 1.3448C55.9685 2.91372 54.15 5.15505 50.5129 8.06878C45.0573 12.9997 41.3066 18.2668 39.2608 23.8702C37.2149 29.4734 35.7374 34.5164 34.8281 38.9991C34.1462 43.4818 32.6686 46.6196 30.3954 48.4127C27.213 50.8781 23.3487 52.6712 18.8023 53.7919C14.4834 54.9125 10.6189 55.4729 7.20918 55.4729Z" fill="url(#s6-quote-grad)"/>
+    <defs>
+      <linearGradient id="s6-quote-grad" x1="51" y1="55.4729" x2="51" y2="0" gradientUnits="userSpaceOnUse">
+        <stop stopColor="#F9F2E8"/>
+        <stop offset="1" stopColor="white" stopOpacity="0"/>
+      </linearGradient>
+    </defs>
   </svg>
 );
 
@@ -991,8 +985,16 @@ function Section6() {
               </div>
             )}
             <div style={{ display: "flex", gap: 8 }}>
-              <button onClick={handlePrev} style={{ width: 40, height: 40, borderRadius: "50%", border: "1px solid #174067", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", background: "none" }}><IconArrowL /></button>
-              <button onClick={handleNext} style={{ width: 40, height: 40, borderRadius: "50%", background: "#174067", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", border: "none" }}><IconArrowR /></button>
+              {[{ onClick: handlePrev, path: "M22.5 15L17.5 20L22.5 25" }, { onClick: handleNext, path: "M17.5 15L22.5 20L17.5 25" }].map(({ onClick, path }, i) => (
+                <button key={i} onClick={onClick}
+                  onMouseEnter={e => { e.currentTarget.style.background = "#174067"; e.currentTarget.style.color = "#fff"; }}
+                  onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#174067"; }}
+                  style={{ width: 40, height: 40, borderRadius: "50%", border: "1px solid #174067", background: "transparent", color: "#174067", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "background 0.18s ease, color 0.18s ease" }}>
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+                    <path d={path} stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                </button>
+              ))}
             </div>
           </div>
         </div>
