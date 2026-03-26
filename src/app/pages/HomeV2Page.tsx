@@ -522,19 +522,36 @@ function Section3() {
   const GLASS_OVERLAP = 174; // glass card overlaps bottom of image
   const TOTAL_H = IMG_H + (GLASS_H - GLASS_OVERLAP); // 602px
 
+  // Shared nav buttons (used in both mobile and desktop)
+  const NavButtons = ({ size = 44 }: { size?: number }) => (
+    <div style={{ display: "flex", gap: 8 }}>
+      {/* Prev — white fill, navy border, navy chevron */}
+      <button onClick={prev} style={{ width: size, height: size, borderRadius: "50%", background: "#fff", border: "1px solid #174067", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}>
+        <svg width={size * 0.36} height={size * 0.36} viewBox="0 0 18 18" fill="none"><path d="M11 4L6 9L11 14" stroke="#174067" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+      </button>
+      {/* Next — navy fill, white chevron */}
+      <button onClick={next} style={{ width: size, height: size, borderRadius: "50%", background: "#174067", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}>
+        <svg width={size * 0.36} height={size * 0.36} viewBox="0 0 18 18" fill="none"><path d="M7 4L12 9L7 14" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+      </button>
+    </div>
+  );
+
   if (isMobile) {
     return (
       <div ref={sectionRef} className="fade-in-up" style={{ width: "100%", paddingTop: 40, paddingBottom: 40 }}>
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 20px" }}>
           <div style={{ position: "relative", borderRadius: 20, overflow: "hidden", aspectRatio: "4 / 5" }}>
-            <img key={current} src={S3_SLIDES[current].img} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
-            {/* Glassmorphism card — inside image on mobile */}
+            {/* All slides stacked — opacity crossfade, no remount */}
+            {S3_SLIDES.map((slide, i) => (
+              <img key={i} src={slide.img} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: i === current ? 1 : 0, transition: "opacity 0.5s ease" }} />
+            ))}
+            {/* Glassmorphism card */}
             <div style={{
               position: "absolute", left: 16, right: 16, bottom: 16,
               padding: 16, borderRadius: 16,
               background: "rgba(13,36,59,0.30)", backdropFilter: "blur(53px)", WebkitBackdropFilter: "blur(53px)",
               border: "1px solid rgba(0,0,0,0.15)", boxShadow: "0 -4px 6px rgba(5,23,42,0.25)",
-              display: "flex", flexDirection: "column", gap: 12,
+              display: "flex", flexDirection: "column", gap: 12, zIndex: 2,
             }}>
               <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
                 {Array.from({ length: total }).map((_, i) => (
@@ -548,12 +565,7 @@ function Section3() {
             </div>
             {/* Nav arrows — top-right on mobile */}
             <div style={{ position: "absolute", top: 12, right: 12, display: "flex", gap: 6, zIndex: 5 }}>
-              <button onClick={prev} style={{ width: 36, height: 36, borderRadius: "50%", background: "#f59e0b", border: "1px solid #174067", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
-                <svg width="14" height="14" viewBox="0 0 18 18" fill="none"><path d="M11 4L6 9L11 14" stroke="#174067" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-              </button>
-              <button onClick={next} style={{ width: 36, height: 36, borderRadius: "50%", background: "#174067", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer" }}>
-                <svg width="14" height="14" viewBox="0 0 18 18" fill="none"><path d="M7 4L12 9L7 14" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-              </button>
+              <NavButtons size={36} />
             </div>
           </div>
         </div>
@@ -567,13 +579,14 @@ function Section3() {
         {/* Outer wrapper: taller than image to accommodate glass card extending below */}
         <div style={{ position: "relative", maxWidth: 1098, margin: "0 auto", height: TOTAL_H }}>
 
-          {/* ── Image card: 1098×565, uniform radius 20px ── */}
+          {/* ── Image card: all slides stacked, crossfade via opacity ── */}
           <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: IMG_H, borderRadius: 20, overflow: "hidden", zIndex: 1 }}>
-            <img key={current} src={S3_SLIDES[current].img} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", transition: "opacity 0.4s ease" }} />
+            {S3_SLIDES.map((slide, i) => (
+              <img key={i} src={slide.img} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", display: "block", opacity: i === current ? 1 : 0, transition: "opacity 0.5s ease" }} />
+            ))}
           </div>
 
           {/* ── Glassmorphism card: bottom-left, overlaps image by 174px ── */}
-          {/* Figma: w=528, h=211, left=45, bottom=0 of the 602px container */}
           <div style={{
             position: "absolute",
             left: 45,
@@ -590,16 +603,15 @@ function Section3() {
             display: "flex", flexDirection: "column", justifyContent: "space-between",
             zIndex: 3,
           }}>
-            {/* Progress indicator — dots with active line */}
+            {/* Progress dots */}
             <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
               {Array.from({ length: total }).map((_, i) => (
                 <button key={i} onClick={() => setCurrent(i)} style={{ height: 3, width: i === current ? 25 : 4, borderRadius: 9999, background: i === current ? "#f59e0b" : "rgba(255,255,255,0.5)", border: "none", padding: 0, cursor: "pointer", transition: "width 0.3s ease", flexShrink: 0 }} />
               ))}
             </div>
-
             {/* Quote + CTA */}
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 20, lineHeight: "28px", color: "#fff", margin: 0 }}>
+              <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 20, lineHeight: "28px", color: "#fff", margin: 0, transition: "opacity 0.4s ease" }}>
                 {S3_SLIDES[current].caption}
               </p>
               <button className="btn-gold" style={{ display: "inline-flex", alignItems: "center", gap: 20, background: "#bf791d", borderRadius: 30, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 16, boxShadow: "0 0 8px rgba(0,0,0,0.25)", alignSelf: "flex-start", whiteSpace: "nowrap" }}>
@@ -608,26 +620,9 @@ function Section3() {
             </div>
           </div>
 
-          {/* ── Navigation: bottom-right — two separate circles + counter ── */}
-          {/* Figma: left arrow=gold #f59e0b + navy border, right arrow=navy #174067, counter=navy text */}
-          <div style={{
-            position: "absolute",
-            right: 0,
-            bottom: 4,
-            display: "flex", alignItems: "center", gap: 16,
-            zIndex: 3,
-          }}>
-            <div style={{ display: "flex", gap: 8 }}>
-              {/* Left arrow — gold fill, navy border, navy chevron */}
-              <button onClick={prev} style={{ width: 44, height: 44, borderRadius: "50%", background: "#f59e0b", border: "1px solid #174067", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}>
-                <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M11 4L6 9L11 14" stroke="#174067" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-              </button>
-              {/* Right arrow — navy fill, white chevron */}
-              <button onClick={next} style={{ width: 44, height: 44, borderRadius: "50%", background: "#174067", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}>
-                <svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M7 4L12 9L7 14" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
-              </button>
-            </div>
-            {/* Slide counter — navy, fs=18 fw=400 */}
+          {/* ── Navigation: bottom-right ── */}
+          <div style={{ position: "absolute", right: 0, bottom: 4, display: "flex", alignItems: "center", gap: 16, zIndex: 3 }}>
+            <NavButtons size={44} />
             <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400, fontSize: 18, lineHeight: "22px", color: "#174067" }}>
               {current + 1}/{total}
             </span>
