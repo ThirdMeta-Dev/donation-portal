@@ -446,14 +446,18 @@ function ProgramBanner() {
 
         {/* "Join Teacher Network" button */}
         <div style={isMobile ? { marginTop: 20 } : { position: "absolute", right: 24, bottom: 24 }}>
-          <button style={{
-            display: "flex", alignItems: "center", gap: isMobile ? 12 : 20,
-            background: "#0f2a44", borderRadius: 20, padding: isMobile ? "10px 20px" : "10px 24px",
-            border: "none", cursor: "pointer", color: "#fff",
-            fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: isMobile ? 14 : 16, whiteSpace: "nowrap",
-            position: isMobile ? "static" : "relative", top: isMobile ? undefined : 41,
-            width: isMobile ? "100%" : undefined, justifyContent: isMobile ? "center" : undefined,
-          }}>
+          <button
+            onMouseEnter={e => { e.currentTarget.style.background = "#AE6E1A"; }}
+            onMouseLeave={e => { e.currentTarget.style.background = "#bf791d"; }}
+            style={{
+              display: "flex", alignItems: "center", gap: isMobile ? 12 : 20,
+              background: "#bf791d", borderRadius: 20, padding: isMobile ? "10px 20px" : "10px 24px",
+              border: "none", cursor: "pointer", color: "#fff",
+              fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: isMobile ? 14 : 16, whiteSpace: "nowrap",
+              position: isMobile ? "static" : "relative", top: isMobile ? undefined : 41,
+              width: isMobile ? "100%" : undefined, justifyContent: isMobile ? "center" : undefined,
+              transition: "background 0.18s ease",
+            }}>
             Join Teacher Network <ArrowIcon />
           </button>
         </div>
@@ -483,7 +487,10 @@ function Section2() {
             <button className="btn-gold" style={{ display: "flex", alignItems: "center", justifyContent: isMobile ? "center" : undefined, gap: 12, background: "#bf791d", borderRadius: 30, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: isMobile ? 15 : 16, whiteSpace: "nowrap" }}>
               About Ujjwala <ArrowIcon />
             </button>
-            <button style={{ display: "flex", alignItems: "center", justifyContent: isMobile ? "center" : undefined, gap: 12, background: "transparent", borderRadius: 30, padding: "12px 24px", border: "1px solid #bf791d", cursor: "pointer", color: "#bf791d", fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: isMobile ? 15 : 16, whiteSpace: "nowrap" }}>
+            <button
+              onMouseEnter={e => { e.currentTarget.style.background = "#F9F2E8"; }}
+              onMouseLeave={e => { e.currentTarget.style.background = "transparent"; }}
+              style={{ display: "flex", alignItems: "center", justifyContent: isMobile ? "center" : undefined, gap: 12, background: "transparent", borderRadius: 30, padding: "12px 24px", border: "1px solid #bf791d", cursor: "pointer", color: "#bf791d", fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: isMobile ? 15 : 16, whiteSpace: "nowrap", transition: "background 0.18s ease" }}>
               Join Ujjwala's Mission <ArrowIcon color="#bf791d" />
             </button>
           </div>
