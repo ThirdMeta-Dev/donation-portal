@@ -281,9 +281,9 @@ function HeroSection() {
           {Array.from({ length: 7 }).map((_, i) => (
             <div key={i} style={{ position: "absolute", top: 0, left: 0, width: "100%", height: isMobile ? "100%" : 632, background: isMobile ? "linear-gradient(to bottom, #0b223a 60%, rgba(11,34,58,0.8) 100%)" : "linear-gradient(to right, rgba(11,34,58,1) 0%, rgba(11,34,58,0) 100%)" }} />
           ))}
-          {/* Right gradient — Figma Rectangle 18850: x=830, w=370, h=687, opaque left → transparent right */}
+          {/* Right gradient — dark on far right edge, fading transparent toward center */}
           {!isMobile && (
-            <div style={{ position: "absolute", top: 0, left: 830, width: 370, height: 687, background: "linear-gradient(to right, rgba(11,33,57,1) 0%, rgba(11,33,57,0) 100%)" }} />
+            <div style={{ position: "absolute", top: 0, right: 0, width: 555, height: 687, background: "linear-gradient(to right, rgba(11,34,58,0) 0%, rgba(11,34,58,0.92) 100%)" }} />
           )}
           <div style={{ position: "absolute", left: -122, top: -25, width: 653, height: 436, opacity: 0.45 }}>
             <img src={imgTexture} alt="" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
