@@ -3914,7 +3914,7 @@ export function HomeV2Page() {
       <style>{GLOBAL_CSS}</style>
       <HeroSection />
       <ProgramBanner />
-      <Section2 />
+      <Section18 />
       <Section3 />
       <Section4 />
       <Section5 />
