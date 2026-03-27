@@ -1,3 +1,23 @@
 @import './fonts.css';
 @import './tailwind.css';
 @import './theme.css';
+
+.nav-arrow-btn {
+  transition: all 0.2s ease;
+}
+
+.nav-arrow-btn:hover {
+  background-color: #0b1a30 !important;
+}
+
+.nav-arrow-btn:hover svg path {
+  stroke: #ffffff !important;
+}
+
+.btn-ujjwala-hover {
+  transition: background 0.18s ease !important;
+}
+
+.btn-ujjwala-hover:hover {
+  background: #F9F2E8 !important;
+}

@@ -561,8 +561,9 @@ function Section2() {
               {/* Outlined button (Join Ujjwala's Mission) */}
               <Link to="/join" style={{ textDecoration: "none" }}>
                 <button
-                  onMouseEnter={e => { e.currentTarget.style.background = "#F9F2E8"; }}
-                  onMouseLeave={e => { e.currentTarget.style.background = "transparent"; }}
+                  className="btn-ujjwala-hover"
+                  onMouseEnter={e => { e.currentTarget.style.setProperty("background", "#F9F2E8", "important"); }}
+                  onMouseLeave={e => { e.currentTarget.style.setProperty("background", "transparent", "important"); }}
                   style={{
                     display: "flex", alignItems: "center", justifyContent: isMobile ? "center" : undefined,
                     gap: 20, background: "transparent",
@@ -594,10 +595,10 @@ function Section2() {
 // ── Section 3: Image Carousel ─────────────────────────────────────────────
 const S3_SLIDES = [
   { img: imgCarousel1, caption: "When a family is choosing between food and fees, education starts to feel like a luxury." },
-  { img: imgHero,      caption: "Ujjwala Wadekar has reached 12,400+ children across 120 schools in Jalgaon." },
-  { img: imgCarousel1, caption: "340+ teachers have joined the Shiksha Raj reformers network and changed classrooms." },
-  { img: imgHero,      caption: "Every lesson delivered by a trained teacher is a lifetime impact on a child." },
-  { img: imgCarousel1, caption: "Art, Science & Literature — taken beyond the textbook into the real world." },
+  { img: imgCarousel1, caption: "When a family is choosing between food and fees, education starts to feel like a luxury." },
+  { img: imgCarousel1, caption: "When a family is choosing between food and fees, education starts to feel like a luxury." },
+  { img: imgCarousel1, caption: "When a family is choosing between food and fees, education starts to feel like a luxury." },
+  { img: imgCarousel1, caption: "When a family is choosing between food and fees, education starts to feel like a luxury." },
 ];
 
 function Section3() {
@@ -927,7 +928,7 @@ function Section5() {
   const isTablet = useIsTablet();
   const [activeId, setActiveId] = useState<string>("see");
 
-  const hPad = isMobile ? 20 : isTablet ? 32 : 260;
+  const hPad = isMobile ? 20 : isTablet ? 40 : 350;
 
   return (
     <div ref={sectionRef} className="fade-in-up" style={{
@@ -967,7 +968,7 @@ function Section5() {
                 <span style={{ fontFamily: "'Poppins', sans-serif", fontSize: 13, color: "#bf791d" }}>Beyond Syllabus</span>
               </div>
             </div>
-            <div style={{ width: isMobile ? "100%" : isTablet ? "100%" : 657 }}>
+            <div style={{ width: isMobile || isTablet ? "100%" : "auto", maxWidth: 657 }}>
               <p style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: isMobile ? 26 : isTablet ? 30 : 36, lineHeight: 1.32, color: "#000", textTransform: "capitalize", margin: 0 }}>
                 Beyond Syllabus simply{"\n"}We unlock scale by fixing dum{"\n"}text of the
               </p>
@@ -976,7 +977,7 @@ function Section5() {
 
           {/* Accordion */}
           <div style={{ paddingLeft: isMobile ? 0 : hPad, paddingTop: isMobile ? 24 : 44 }}>
-            <div style={{ width: isMobile ? "100%" : isTablet ? "100%" : 562, display: "flex", flexDirection: "column" }}>
+            <div style={{ width: isMobile || isTablet ? "100%" : "auto", maxWidth: 562, display: "flex", flexDirection: "column" }}>
               {S5_ITEMS.map((item) => {
                 const isActive = activeId === item.id;
                 return (
@@ -1200,14 +1201,19 @@ function Section7() {
           </p>
 
           <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", gap: 12, width: isMobile ? "100%" : undefined }}>
-            <Link to="/join" style={{
+            <Link to="/join" 
+              className="btn-ujjwala-hover" 
+              onMouseEnter={e => { e.currentTarget.style.setProperty("background", "#F9F2E8", "important"); }}
+              onMouseLeave={e => { e.currentTarget.style.setProperty("background", "transparent", "important"); }}
+              style={{
               display: "flex", alignItems: "center", justifyContent: isMobile ? "center" : undefined,
               gap: 12, padding: "12px 24px", borderRadius: 30,
               border: "1px solid #bf791d", background: "transparent",
               textDecoration: "none", cursor: "pointer",
+              transition: "background 0.18s ease",
             }}>
-              <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: isMobile ? 15 : 16, color: "#bf791d", whiteSpace: "nowrap" }}>Join Ujjwala's Mission</span>
-              <ArrowIcon color="#bf791d" />
+              <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: isMobile ? 15 : 16, color: "#bf791d", whiteSpace: "nowrap", pointerEvents: "none" }}>Join Ujjwala's Mission</span>
+              <div style={{ pointerEvents: "none" }}><ArrowIcon color="#bf791d" /></div>
             </Link>
 
             <Link to="/donate" style={{
