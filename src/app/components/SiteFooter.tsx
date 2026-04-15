@@ -216,7 +216,7 @@ export function Footer() {
               color: "#fff", margin: 0,
               maxWidth: isMobile ? "100%" : 574,
             }}>
-              Lorem Ipsum is simply dummy text of the printing and?
+              Where teachers lead and society lifts.
             </p>
             <div style={{
               display: "flex",

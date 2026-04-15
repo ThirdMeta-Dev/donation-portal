@@ -241,12 +241,12 @@ function ArrowIcon({ color = "#fff", size = 16 }: { color?: string; size?: numbe
 // ── StatCard ──────────────────────────────────────────────────────────────
 function StatCard() {
   return (
-    <div style={{ position: "relative", width: 225.924, height: 97 }}>
+    <div style={{ position: "relative", width: 225.924, height: 97, overflow: "hidden" }}>
       <img src={imgStatBg} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "fill" }} />
-      <ul style={{ position: "absolute", left: 8, top: 11, width: 198, fontStyle: "italic", fontSize: 14, color: "#f9c56d", fontFamily: "'DM Sans', sans-serif", lineHeight: "25px", listStyle: "disc", paddingLeft: 21, margin: 0 }}>
+      <ul style={{ position: "absolute", left: 8, top: 9, width: 198, fontStyle: "italic", fontSize: 12, color: "#f9c56d", fontFamily: "'DM Sans', sans-serif", lineHeight: "22px", listStyle: "disc", paddingLeft: 21, margin: 0, whiteSpace: "nowrap" }}>
         <li style={{ fontWeight: 500 }}>Ujjwala Wadekar</li>
-        <li><span style={{ fontWeight: 500 }}>31 yrs</span><span style={{ fontWeight: 300 }}> Teaching Experience</span></li>
-        <li><span style={{ fontWeight: 500 }}>12,400+</span><span style={{ fontWeight: 300 }}> Children Reached</span></li>
+        <li><span style={{ fontWeight: 500 }}>31 years</span><span style={{ fontWeight: 300 }}> in government schools</span></li>
+        <li><span style={{ fontWeight: 500 }}>10k+</span><span style={{ fontWeight: 300 }}> characters shaped</span></li>
       </ul>
     </div>
   );
@@ -339,21 +339,21 @@ function HeroSection() {
                   ))}
                 </div>
                 <h1 style={{ fontFamily: "'Lora', serif", fontWeight: 500, fontSize: 30, lineHeight: 1.25, color: "#fff", textTransform: "capitalize", margin: 0 }}>
-                  A Teacher's Work,<br />Scaled Into a Public
+                  Building Character,<br />Confidence, and Capability in Every Child
                 </h1>
                 <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 14, lineHeight: "22px", color: "rgba(255,255,255,0.8)", margin: 0 }}>
-                  Short explanation that Hexanovate powers two lorem ips specialized domains is simply
+                  Through practical teaching experiences, I bring classrooms closer to life and children learn by seeing, doing, feeling, and understanding.
                 </p>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
                 <Link to="/donate" style={{ textDecoration: "none", alignSelf: "flex-start" }}>
                   <button className="btn-gold" style={{ display: "flex", alignItems: "center", gap: 12, background: "#bf791d", borderRadius: 30, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 600, boxShadow: "0px 4px 4px 0px rgba(0,0,0,0.3)" }}>
-                    Donate Now <ArrowIcon />
+                    Support This Mission <ArrowIcon />
                   </button>
                 </Link>
                 <button style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 14, padding: 0 }}>
                   <span className="arrow-bounce"><svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M9 3v12M9 15l-5-5M9 15l5-5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
-                  Problems we are working on
+                  See My Teaching Method
                 </button>
               </div>
             </div>
@@ -387,26 +387,26 @@ function HeroSection() {
                       </div>
                     ))}
                   </div>
-                  <h1 style={{ fontFamily: "'Lora', serif", fontWeight: 500, fontSize: isTablet ? 36 : 48, lineHeight: 1.2, color: "#fff", textTransform: "capitalize", width: isTablet ? "100%" : 455, margin: 0 }}>
-                    {"A Teacher's Work, "}<br />{"Scaled Into a Public"}
+                  <h1 style={{ fontFamily: "'Lora', serif", fontWeight: 500, fontSize: isTablet ? 32 : 38, lineHeight: 1.2, color: "#fff", textTransform: "capitalize", width: isTablet ? "100%" : 455, margin: 0 }}>
+                    {"Building Character, Confidence, and Capability in Every Child"}
                   </h1>
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
                   <Link to="/donate" style={{ textDecoration: "none", alignSelf: "flex-start" }}>
                     <button className="btn-gold" style={{ display: "flex", alignItems: "center", gap: 20, background: "#bf791d", borderRadius: 30, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 600, boxShadow: "0px 4px 4px 0px rgba(0,0,0,0.3)" }}>
-                      Donate Now <ArrowIcon />
+                      Support This Mission <ArrowIcon />
                     </button>
                   </Link>
                   <button style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 16, padding: 0 }}>
                     <span className="arrow-bounce"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 3v12M9 15l-5-5M9 15l5-5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
-                    Problems we are working on
+                    See My Teaching Method
                   </button>
                 </div>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 36, alignItems: "flex-end", width: isTablet ? "40%" : 245, flexShrink: 0, position: "relative", zIndex: 2 }}>
                 {!isTablet && <VideoCards />}
                 <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 15, lineHeight: "22px", color: "#fff", textAlign: "right", maxWidth: 245, margin: 0 }}>
-                  Short explanation that Hexanovate powers two lorem ips specialized domains is simply
+                  Through practical teaching experiences, I bring classrooms closer to life and children learn by seeing, doing, feeling, and understanding.
                 </p>
               </div>
             </div>
@@ -422,7 +422,7 @@ function ProgramBanner() {
   const ref = useFadeInUp();
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
-  const items = ["Monthly workshops (in-person, Jalgaon)", "Access to shared lesson resource library", "Peer mentoring circles"];
+  const items = ["Open conversations on real classroom struggles", "Learn from Ujjwala's practical guidance", "Build collective action for change"];
   return (
     <div ref={ref} className="fade-in-up" style={{
       width: isMobile ? "97%" : "100%",
@@ -431,6 +431,7 @@ function ProgramBanner() {
       background: "linear-gradient(-79.93deg, #b77607 0.12%, #885615 99.88%)",
       borderRadius: isMobile ? 16 : 30,
       margin: isMobile ? "-32px auto 0" : undefined,
+      marginTop: 37,
     }}>
       <div style={{
         maxWidth: 1008,
@@ -442,9 +443,9 @@ function ProgramBanner() {
         <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", gap: isMobile ? 20 : isTablet ? 40 : 104, alignItems: "flex-start" }}>
           {/* Left: program name + description */}
           <div style={{ display: "flex", flexDirection: "column", gap: 8, width: isMobile ? "100%" : isTablet ? "55%" : 488, color: "#fff", flexShrink: isMobile ? undefined : 0 }}>
-            <p style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: isMobile ? 16 : 18, margin: 0 }}>Name of the Program 4</p>
+            <p style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: isMobile ? 16 : 18, margin: 0 }}>उज्ज्वल संवाद (Ujjwal Sanvaad)</p>
             <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: isMobile ? 14 : 15, lineHeight: "24px", margin: 0 }}>
-              Join the Teacher Reformers Network — a community of 340+ teachers sharing methods, resources, and practical innovations.
+              Come sit with Ujjwala and a growing community of teachers, parents, and supporters who want better education for every child.
             </p>
           </div>
           {/* Right: bullet list */}
@@ -473,7 +474,7 @@ function ProgramBanner() {
                 width: isMobile ? "100%" : undefined, justifyContent: isMobile ? "center" : undefined,
                 transition: "background 0.18s ease",
               }}>
-              Join Teacher Network <ArrowIcon />
+              Let's Rethink Education Together <ArrowIcon />
             </button>
           </a>
         </div>
@@ -594,11 +595,13 @@ function Section2() {
 
 // ── Section 3: Image Carousel ─────────────────────────────────────────────
 const S3_SLIDES = [
-  { img: imgCarousel1, caption: "When a family is choosing between food and fees, education starts to feel like a luxury." },
-  { img: imgCarousel1, caption: "When a family is choosing between food and fees, education starts to feel like a luxury." },
-  { img: imgCarousel1, caption: "When a family is choosing between food and fees, education starts to feel like a luxury." },
-  { img: imgCarousel1, caption: "When a family is choosing between food and fees, education starts to feel like a luxury." },
-  { img: imgCarousel1, caption: "When a family is choosing between food and fees, education starts to feel like a luxury." },
+  { img: imgCarousel1, caption: "Children do not lack intelligence. They lack the chance to be seen and guided." },
+  { img: imgCarousel1, caption: "Education is not a privilege for a few. It is every child's rightful path forward." },
+  { img: imgCarousel1, caption: "When a teacher walks to a child's door, education begins to feel possible again." },
+  { img: imgCarousel1, caption: "The purpose of education is not finishing the syllabus. It's beyond the syllabus to build human beings." },
+  { img: imgCarousel1, caption: "Education is the only way to break the cycle of survival and open the door to dignity." },
+  { img: imgCarousel1, caption: "Education changes faster when teachers lead and the society lifts." },
+  { img: imgCarousel1, caption: "When a teacher walks to a child's door, education begins to feel possible again." },
 ];
 
 function Section3() {
@@ -659,7 +662,7 @@ function Section3() {
               </div>
               <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 15, lineHeight: "1.4", color: "#fff", margin: 0 }}>{S3_SLIDES[current].caption}</p>
               <button className="btn-gold" style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "#bf791d", borderRadius: 30, padding: "10px 18px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 13, alignSelf: "flex-start" }}>
-                Choose How You Want To Help <ArrowIcon size={13} />
+                Read Ujjwala's Story <ArrowIcon size={13} />
               </button>
             </div>
             {/* Nav arrows — top-right on mobile */}
@@ -733,7 +736,7 @@ function Section3() {
                 {S3_SLIDES[current].caption}
               </p>
               <button className="btn-gold" style={{ display: "inline-flex", alignItems: "center", gap: 20, background: "#bf791d", borderRadius: 30, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 16, boxShadow: "0 0 8px rgba(0,0,0,0.25)", alignSelf: "flex-start", whiteSpace: "nowrap" }}>
-                Choose How You Want To Help <ArrowIcon size={16} />
+                Read Ujjwala's Story <ArrowIcon size={16} />
               </button>
             </div>
           </div>
@@ -845,10 +848,10 @@ function Section4() {
       <div ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#f8f5ef", paddingTop: isMobile ? 40 : 48, paddingBottom: isMobile ? 40 : 48, overflow: "hidden" }}>
         <div style={{ padding: isMobile ? "0 20px 24px" : "0 32px 32px", display: "flex", flexDirection: "column", gap: 16 }}>
           <div style={{ display: "inline-flex", alignItems: "center", padding: "6px 20px", borderRadius: 40, border: "1px solid #e8e8e8", alignSelf: "flex-start" }}>
-            <span style={{ fontFamily: "'Poppins', sans-serif", fontSize: 13, color: "#bf791d" }}>On the Ground</span>
+            <span style={{ fontFamily: "'Poppins', sans-serif", fontSize: 13, color: "#bf791d" }}>Seen &amp; acknowledged</span>
           </div>
-          <p style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: isMobile ? 28 : 36, lineHeight: 1.24, color: "#000", margin: 0 }}>Media & Recognitions</p>
-          <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 15, lineHeight: "24px", color: "#686868", margin: 0 }}>Find your role and see exactly what it means, what you get, and what your next step is.</p>
+          <p style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: isMobile ? 28 : 36, lineHeight: 1.24, color: "#000", margin: 0 }}>Finally, My Voice Reached!!</p>
+          <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 15, lineHeight: "24px", color: "#686868", margin: 0 }}>Awards don't define my work. They confirm that someone is watching and believe it mattered.</p>
           {navButtons}
         </div>
         <div style={{ overflow: "hidden", paddingLeft: isMobile ? 20 : 32 }}>
@@ -872,11 +875,11 @@ function Section4() {
         <div style={{ flexShrink: 0, width: "calc(max(96px, (100vw - 1200px) / 2 + 96px) + 340px)", paddingLeft: "max(96px, calc((100vw - 1200px) / 2 + 96px))", display: "flex", flexDirection: "column", gap: 48, paddingTop: 28, boxSizing: "border-box" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
             <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", padding: "6px 20px", borderRadius: 40, border: "1px solid #e8e8e8", alignSelf: "flex-start" }}>
-              <span style={{ fontFamily: "'Poppins', sans-serif", fontSize: 13, color: "#bf791d", whiteSpace: "nowrap" }}>On the Ground</span>
+              <span style={{ fontFamily: "'Poppins', sans-serif", fontSize: 13, color: "#bf791d", whiteSpace: "nowrap" }}>Seen &amp; acknowledged</span>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              <p style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: 44, lineHeight: 1.24, color: "#000", margin: 0, textTransform: "capitalize" }}>Media &amp; Recognitions</p>
-              <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 16, lineHeight: "24px", color: "#686868", margin: 0 }}>Find your role and see exactly what it means, what you get, and what your next step is.</p>
+              <p style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: 44, lineHeight: 1.24, color: "#000", margin: 0 }}>Finally, My Voice Reached!!</p>
+              <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 16, lineHeight: "24px", color: "#686868", margin: 0 }}>Awards don't define my work. They confirm that someone is watching and believe it mattered.</p>
             </div>
           </div>
           {navButtons}
@@ -900,10 +903,10 @@ function Section4() {
 
 // ── Section 5: Beyond Syllabus ────────────────────────────────────────────
 const S5_ITEMS = [
-  { id: "see",  label: "See lorem ipsum is",  body: "We unlock scale by fixing what's leaking lorem is conversion, retention, repeat simply We unlock scale by fixing", sepWidth: 220 },
-  { id: "hear", label: "Hear lorem ipsum is", body: "Hear the stories that shaped the mission — teachers, students, and communities speaking for themselves.", sepWidth: 177 },
-  { id: "read", label: "Read lorem ipsu",     body: "Read reports, research and on-ground data from Ujjwala Wadekar's 31-year mission across Jalgaon.", sepWidth: 177 },
-  { id: "do",   label: "Do lorem ipsu",       body: "Join hands — donate, volunteer, or partner with us to extend the reach of quality education.", sepWidth: 0 },
+  { id: "see",  label: "See • Hear • Read • Do",          body: "Every lesson becomes real when children first observe, listen, read, and then learn by doing.", sepWidth: 220 },
+  { id: "hear", label: "Beyond Syllabus, Closer to Life", body: "Children step beyond textbooks into shops, streets, and spaces where learning meets the real world.", sepWidth: 177 },
+  { id: "read", label: "Read the World",                  body: "Wrappers, signboards, labels, and surroundings become reading lessons when children learn to notice meaning everywhere.", sepWidth: 177 },
+  { id: "do",   label: "Confidence Before Marks",         body: "When children feel seen, understood, and capable, learning begins to stay with them for life.", sepWidth: 0 },
 ];
 
 function S5PlayIcon({ active }: { active: boolean }) {
@@ -965,12 +968,12 @@ function Section5() {
             {/* Pill badge — indented another 164px in Figma */}
             <div style={{ paddingLeft: isMobile ? 0 : isTablet ? 0 : 164 }}>
               <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", padding: "6px 20px", borderRadius: 40, border: "1px solid #e8e8e8", background: "rgba(255,255,255,0.9)" }}>
-                <span style={{ fontFamily: "'Poppins', sans-serif", fontSize: 13, color: "#bf791d" }}>Beyond Syllabus</span>
+                <span style={{ fontFamily: "'Poppins', sans-serif", fontSize: 13, color: "#bf791d" }}>Glimpse of my teaching!</span>
               </div>
             </div>
             <div style={{ width: isMobile || isTablet ? "100%" : "auto", maxWidth: 657 }}>
               <p style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: isMobile ? 26 : isTablet ? 30 : 36, lineHeight: 1.32, color: "#000", textTransform: "capitalize", margin: 0 }}>
-                Beyond Syllabus simply{"\n"}We unlock scale by fixing dum{"\n"}text of the
+                Creating Experiences That Live For Life. Beyond Syllabus, Closer To Life.
               </p>
             </div>
           </div>
@@ -1067,10 +1070,10 @@ function Section6() {
         {/* Top Header Row */}
         <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", justifyContent: "space-between", alignItems: isMobile ? "flex-start" : "center", marginBottom: isMobile ? 24 : 48, gap: isMobile ? 8 : 0 }}>
           <h2 style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: isMobile ? 26 : 40, color: "#000", margin: 0, textTransform: "capitalize" }}>
-            Testimonial Lorem Ipsum
+            When education impacts lives…
           </h2>
           <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: isMobile ? 14 : 16, lineHeight: "22px", color: "#686868", margin: 0, width: isMobile ? "100%" : 206, textAlign: isMobile ? "left" : "right" }}>
-            Find your role and see exactly what it means, what you get, and what your
+            Their voices inspire me.
           </p>
         </div>
 
@@ -1181,7 +1184,7 @@ function Section7() {
           maxWidth: isMobile ? "100%" : 651,
           textTransform: "capitalize",
         }}>
-          We Unlock Scale By Fixing What's Leaking Conversion, Retention Repeat
+          I can teach many children, but creating a lasting impact for Ujjwal Bharat demands a larger mission.
         </h2>
 
         {/* Right — Subtext + Buttons */}
@@ -1197,7 +1200,7 @@ function Section7() {
             textAlign: isMobile ? "left" : "right",
             width: isMobile ? "100%" : 302, margin: 0,
           }}>
-            Short explanation that Hexanovate powers two lorem ips specialized domains is simply
+            This larger mission needs all of us to unite. Teachers, students, parents, and society.
           </p>
 
           <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", gap: 12, width: isMobile ? "100%" : undefined }}>
@@ -1235,6 +1238,10 @@ function Section7() {
 // ── Section 8 — Sticky Card Stack (Figma 329:357) ────────────────────────
 // @ts-ignore
 import imgS8Teacher from "@/assets/fb67f8b019282de8f29678da8c918384c128715b.png";
+// @ts-ignore
+import imgS9IntroBg from "@/assets/s9_intro_bg.png";
+// @ts-ignore
+import imgS9TeacherOverlay from "@/assets/s9_teacher_overlay.png";
 
 // Section 10 — Get Involved, In Detail
 // @ts-ignore
@@ -1270,6 +1277,7 @@ import imgS14PatternA from "@/assets/s14_pattern_a.svg";
 // @ts-ignore
 import imgS14PatternB from "@/assets/s14_pattern_b.svg";
 
+/* ── OLD Section 8 data (backed up) ────────────────────────────────────────
 type S8Card = {
   id: string;
   tabIndex: number;
@@ -1280,143 +1288,353 @@ type S8Card = {
   photo: string;
 };
 
-const SECTION_8_TABS = ["Program 1", "Program 2", "Program 3", "Program 4"];
+const SECTION_8_TABS = ["Ujjwal Sanvaad", "Shikshak Unnati", "Unhali Shala", "ShikshanSaath", "Shala Abhiyan"];
 
 const S8_PHOTOS = [imgS8Teacher, imgTeacher, imgCarousel1];
 
 const S8_CARDS_DATA = [
   {
-    programName: "Teacher Reformers Network",
-    title: "Community & Collaboration",
-    desc: "Join a community of 340+ teachers sharing methods, resources, and practical classroom innovations across districts.",
-    bullets: ["Monthly workshops (in-person, Jalgaon)", "Access to shared lesson resource library", "Peer mentoring circles"],
+    programName: "उज्ज्वल संवाद",
+    title: "Ujjwal Sanvaad",
+    desc: "An open, heartfelt space where Ujjwala listens to real struggles, and people come together to rethink education with honesty.",
+    bullets: ["Hear real pain from teachers and parents", "Bring local education problems into the room", "Openly discuss what children truly need", "Turn concern into community-led next steps"],
   },
   {
-    programName: "Digital Learning Initiative",
-    title: "Technology in Classrooms",
-    desc: "Equip students with 21st-century digital skills through hands-on labs, coding bootcamps, and structured tech curriculum.",
-    bullets: ["Weekly coding & STEM labs", "Device lending program for students", "Digital literacy certification"],
+    programName: "शिक्षक उन्नती मंच",
+    title: "Shikshak Unnati Manch",
+    desc: "A learning space where teachers rediscover purpose, learn practical methods, and grow into the kind of educators children remember.",
+    bullets: ["Train teachers beyond textbook-led teaching", "Demonstrate Ujjwala's real classroom methods", "Help teachers build confidence and clarity", "Grow more life-shaping teachers across schools"],
   },
   {
-    programName: "Parent Engagement Program",
-    title: "Home–School Connection",
-    desc: "Bridge the gap between home and school with structured parent sessions, communication tools, and involvement frameworks.",
-    bullets: ["Bi-monthly parent-teacher forums", "Multilingual resource kits", "Family learning workshops"],
+    programName: "उज्ज्वल उन्हाळी शाळा",
+    title: "Ujjwal Unhali Shala",
+    desc: "A free summer experience where children learn through joy, curiosity, action, and real life instead of routine and pressure.",
+    bullets: ["Group-wise learning for every age band", "Explore life through play and projects", "Meet people, places, and real professions", "Build curiosity, confidence, and expression"],
   },
   {
-    programName: "Science Exploration Labs",
-    title: "Hands-On Science Learning",
-    desc: "Spark curiosity through guided experiments, science fairs, and a rotating mobile lab that visits partner schools.",
-    bullets: ["Monthly mobile science lab visits", "Student-led experiment competitions", "Teacher training in inquiry-based learning"],
+    programName: "उज्ज्वल शिक्षणसाथ",
+    title: "Ujjwal ShikshanSaath",
+    desc: "A caring support journey for bright children whose learning begins to break under the weight of money, need, and circumstance.",
+    bullets: ["Support books, travel, tools, and access", "Protect learning from financial hardship", "Help bright children stay in school", "Restore continuity, dignity, and hope"],
   },
   {
-    programName: "Reading Champions",
-    title: "Literacy & Language",
-    desc: "Build strong readers through structured literacy programs, book clubs, and partnerships with local libraries and publishers.",
-    bullets: ["Daily guided reading circles", "Take-home book library access", "Storytelling & drama integration"],
-  },
-  {
-    programName: "Girls STEM Scholars",
-    title: "Gender-Inclusive Education",
-    desc: "Encourage girls in underserved areas to pursue STEM through mentorship, scholarships, and role-model sessions.",
-    bullets: ["Quarterly STEM career workshops", "Female mentor matching program", "Annual scholarship awards"],
-  },
-  {
-    programName: "Early Childhood Program",
-    title: "Foundation Years Support",
-    desc: "Invest in the earliest years with play-based learning kits, anganwadi partnerships, and caregiver education sessions.",
-    bullets: ["Play-based curriculum kits for ages 3–6", "Caregiver training sessions", "Nutritional awareness workshops"],
-  },
-  {
-    programName: "Sports for Development",
-    title: "Health, Teamwork & Resilience",
-    desc: "Use structured sports programs to build physical health, leadership, and teamwork in primary and secondary students.",
-    bullets: ["After-school sports leagues", "Coach training & certification", "Inter-school tournaments"],
-  },
-  {
-    programName: "Scholarship & Awards",
-    title: "Recognising Excellence",
-    desc: "Reward academic achievement and community contributions through annual scholarships, medals, and recognition events.",
-    bullets: ["Annual merit-based scholarships", "Community contribution awards", "Public recognition ceremonies"],
-  },
-  {
-    programName: "Vocational Skill Builders",
-    title: "Career Readiness",
-    desc: "Prepare secondary students for the workforce with practical vocational training aligned to local industry needs.",
-    bullets: ["Trades & crafts certification courses", "Industry visit & internship program", "Resume & interview workshops"],
-  },
-  {
-    programName: "Mental Health & Wellbeing",
-    title: "Whole-Child Care",
-    desc: "Support students' emotional health with trained counsellors, mindfulness sessions, and teacher wellbeing resources.",
-    bullets: ["On-site counsellor visits (fortnightly)", "Mindfulness & resilience curriculum", "Teacher burnout prevention workshops"],
-  },
-  {
-    programName: "Village Library Network",
-    title: "Access to Knowledge",
-    desc: "Establish and sustain village-level libraries stocked with curated books, digital devices, and learning materials.",
-    bullets: ["200+ books per village library", "Weekly librarian volunteer program", "Digital e-reader lending"],
+    programName: "उज्ज्वल शाळा अभियान",
+    title: "Ujjwal Shala Abhiyan",
+    desc: "A shared school-strengthening journey where people come together to rebuild learning spaces with care, resources, guidance, and dignity.",
+    bullets: ["Strengthen one school in meaningful ways", "Improve resources, learning spaces, and support", "Bring mentors, volunteers, and community together", "Help children return with pride and hope"],
   },
 ];
 
 const SECTION_8_CARDS: S8Card[] = S8_CARDS_DATA.map((data, i) => ({
   id: `s8-card-${i}`,
-  tabIndex: Math.floor(i / 3),
+  tabIndex: i,
   photo: S8_PHOTOS[i % S8_PHOTOS.length],
   ...data,
 }));
+── END OLD Section 8 data ─────────────────────────────────────────────── */
+
+// ── Section 8 data (NEW — 5 tabs, 1 card each, scroll stack) ─────────────
+const S8_PROGRAMS = [
+  {
+    id: "s8-0",
+    tab: "Ujjwal Sanvaad",
+    hindi: "उज्ज्वल संवाद",
+    english: "Ujjwal Sanvaad",
+    desc: "An open, heartfelt space where Ujjwala listens to real struggles, and people come together to rethink education with honesty.",
+    bullets: [
+      "Hear real pain from teachers and parents",
+      "Bring local education problems into the room",
+      "Openly discuss what children truly need",
+      "Turn concern into community-led next steps",
+    ],
+    punchline: "When people finally sit together and speak honestly, education stops feeling helpless and starts feeling possible.",
+    cta: "Join Ujjwal Sanvaad",
+    photo: imgS8Teacher,
+  },
+  {
+    id: "s8-1",
+    tab: "Shikshak Unnati",
+    hindi: "शिक्षक उन्नती मंच",
+    english: "Shikshak Unnati Manch",
+    desc: "A learning space where teachers rediscover purpose, learn practical methods, and grow into the kind of educators children remember.",
+    bullets: [
+      "Train teachers beyond textbook-led teaching",
+      "Demonstrate Ujjwala's real classroom methods",
+      "Help teachers build confidence and clarity",
+      "Grow more life-shaping teachers across schools",
+    ],
+    punchline: "When one teacher changes the way they teach, hundreds of children begin learning differently.",
+    cta: "Grow With Ujjwala",
+    photo: imgTeacher,
+  },
+  {
+    id: "s8-2",
+    tab: "Unhali Shala",
+    hindi: "उज्ज्वल उन्हाळी शाळा",
+    english: "Ujjwal Unhali Shala",
+    desc: "A free summer experience where children learn through joy, curiosity, action, and real life instead of routine and pressure.",
+    bullets: [
+      "Group-wise learning for every age band",
+      "Explore life through play and projects",
+      "Meet people, places, and real professions",
+      "Build curiosity, confidence, and expression",
+    ],
+    punchline: "Sometimes one meaningful summer can awaken the kind of learning school alone could not.",
+    cta: "Enroll A Child",
+    photo: imgCarousel1,
+  },
+  {
+    id: "s8-3",
+    tab: "ShikshanSaath",
+    hindi: "उज्ज्वल शिक्षणसाथ",
+    english: "Ujjwal ShikshanSaath",
+    desc: "A caring support journey for bright children whose learning begins to break under the weight of money, need, and circumstance.",
+    bullets: [
+      "Support books, travel, tools, and access",
+      "Protect learning from financial hardship",
+      "Help bright children stay in school",
+      "Restore continuity, dignity, and hope",
+    ],
+    punchline: "A child should never lose education simply because life at home became heavier than learning.",
+    cta: "Support A Child",
+    photo: imgS8Teacher,
+  },
+  {
+    id: "s8-4",
+    tab: "Shala Abhiyan",
+    hindi: "उज्ज्वल शाळा अभियान",
+    english: "Ujjwal Shala Abhiyan",
+    desc: "A shared school-strengthening journey where people come together to rebuild learning spaces with care, resources, guidance, and dignity.",
+    bullets: [
+      "Strengthen one school in meaningful ways",
+      "Improve resources, learning spaces, and support",
+      "Bring mentors, volunteers, and community together",
+      "Help children return with pride and hope",
+    ],
+    punchline: "A school changes deeply when it stops waiting for help and starts receiving the strength of a whole community.",
+    cta: "Strengthen A School",
+    photo: imgTeacher,
+  },
+];
+
+// ── IntroNGOSection (Figma 773:754) ──────────────────────────────────────
+function IntroNGOSection() {
+  const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
+
+  // Dot-matrix decoration for Mission card (replaces the 600+ Figma vectors)
+  const DotGrid = () => (
+    <svg
+      width="220" height="220" viewBox="0 0 220 220" fill="none"
+      style={{ position: "absolute", top: -40, right: -16, opacity: 0.13, pointerEvents: "none", zIndex: 0 }}
+    >
+      {Array.from({ length: 13 }).map((_, row) =>
+        Array.from({ length: 13 }).map((_, col) => (
+          <circle key={`${row}-${col}`} cx={col * 18 + 9} cy={row * 18 + 9} r="3.2" fill="#5C3D11" />
+        ))
+      )}
+    </svg>
+  );
+
+  if (isMobile || isTablet) {
+    return (
+      <section style={{ width: "100%", background: "#fff", padding: isMobile ? "48px 20px 0" : "60px 32px 0", boxSizing: "border-box" }}>
+        <h2 style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: isMobile ? 26 : 32, lineHeight: 1.3, color: "#000", textAlign: "center", margin: "0 0 32px" }}>
+          Introducing,<br />Shiksha Raj, Ujjwal Bharat Foundation
+        </h2>
+        <div style={{ display: "flex", flexDirection: "column", gap: 16, marginBottom: 24 }}>
+          {/* Vision */}
+          <div style={{ background: "#f8f5ef", borderRadius: 20, border: "1px solid #ebd5b9", padding: "28px 24px", display: "flex", flexDirection: "column", justifyContent: "flex-end", gap: 12 }}>
+            <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 400, fontSize: isMobile ? 40 : 48, lineHeight: 1, background: "linear-gradient(to bottom, #d68a09 0%, #f8f5ef 75%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>Vision</span>
+            <p style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 300, fontSize: 14, lineHeight: "22px", color: "#000", margin: 0 }}>
+              To build education leadership (Shiksha Raj) for a Brighter India (Ujjwal Bharat) where every child receives free, accessible education that shapes confidence, capability, and character.
+            </p>
+          </div>
+          {/* Mission */}
+          <div style={{ background: "linear-gradient(-21deg, #f8f5ef 41%, #fff 106%)", borderRadius: 20, border: "1px solid #ebd5b9", padding: "28px 24px", position: "relative", overflow: "hidden", display: "flex", flexDirection: "column", justifyContent: "flex-end", gap: 12 }}>
+            <DotGrid />
+            <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 400, fontSize: isMobile ? 44 : 52, lineHeight: 1, textAlign: "right", position: "relative", zIndex: 1, background: "linear-gradient(to bottom, #d68a09 0%, #f8f5ef 75%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>Mission</span>
+            <p style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 300, fontSize: 14, lineHeight: "22px", color: "#000", margin: 0, textAlign: "right", position: "relative", zIndex: 1 }}>
+              To transform education into a practical, experiential, life-connected, digitally ready, teacher-led, community-supported system that goes beyond textbooks to give every child free, meaningful learning and prepare them for life.
+            </p>
+          </div>
+        </div>
+        {/* Background image strip at bottom */}
+        <div style={{ width: "100%", height: 200, borderRadius: "20px 20px 0 0", overflow: "hidden" }}>
+          <img src={imgS9IntroBg} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }} />
+        </div>
+      </section>
+    );
+  }
+
+  // ── DESKTOP — pixel-perfect from Figma node 773:754 ──
+  // Section: 1200×954. Background card starts at y=443 (h=511). Content frame 1008px centered.
+  // Cards group 1008×405: Vision (588×250 at left=0,top=0), Mission (751×334 at left=257,top=71).
+  return (
+    <section style={{ width: "100%", background: "#fff", position: "relative", height: 954, overflow: "hidden" }}>
+
+      {/* Layer 1 (back) — background image card */}
+      <div style={{
+        position: "absolute", left: 0, right: 0, top: 443, height: 511,
+        borderRadius: 20,
+        border: "1px solid #ebd5b9",
+        boxShadow: "0 4px 6px rgba(5,23,42,0.7)",
+        overflow: "hidden",
+      }}>
+        <img src={imgS9IntroBg} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }} />
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, rgba(255,255,255,1) 0%, rgba(255,255,255,0.55) 35%, transparent 65%)", pointerEvents: "none" }} />
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(255,255,255,0.75) 0%, transparent 40%)", pointerEvents: "none" }} />
+      </div>
+
+      {/* Layer 2 — teacher photo overlay (removebg PNG, 912×350) */}
+      <img
+        src={imgS9TeacherOverlay}
+        alt="Ujjwala Wadekar"
+        style={{
+          position: "absolute", left: 0, bottom: 0,
+          width: "76%", height: 350,
+          objectFit: "cover", objectPosition: "top center",
+          borderBottomLeftRadius: 20,
+          zIndex: 1, pointerEvents: "none",
+        }}
+      />
+
+      {/* Layer 3 (front) — content: title + two overlapping cards */}
+      <div style={{
+        position: "absolute", top: 0, left: "50%",
+        transform: "translateX(-50%)",
+        width: 1008, zIndex: 2,
+        display: "flex", flexDirection: "column",
+        gap: 52, paddingTop: 60, boxSizing: "border-box",
+      }}>
+        {/* Title: Lora 600 40px centered */}
+        <h2 style={{
+          fontFamily: "'Lora', serif", fontWeight: 600, fontSize: 40,
+          lineHeight: 1.3, color: "#000", textAlign: "center", margin: 0,
+        }}>
+          Introducing,<br />Shiksha Raj, Ujjwal Bharat Foundation
+        </h2>
+
+        {/* Cards group — 1008×405, absolute children */}
+        <div style={{ position: "relative", height: 405, width: "100%" }}>
+
+          {/* Vision card — 588×250, left=0, top=0, z=1 */}
+          <div style={{
+            position: "absolute", left: 0, top: 0,
+            width: 588, height: 250,
+            background: "#f8f5ef", borderRadius: 20,
+            border: "1px solid #ebd5b9",
+            padding: "36px 40px", boxSizing: "border-box",
+            display: "flex", flexDirection: "column", justifyContent: "flex-end", gap: 16,
+            zIndex: 1,
+          }}>
+            <span style={{
+              fontFamily: "'Poppins', sans-serif", fontWeight: 400, fontSize: 56, lineHeight: 1,
+              background: "linear-gradient(to bottom, #d68a09 0%, #f8f5ef 75%)",
+              WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+            }}>
+              Vision
+            </span>
+            <p style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 300, fontSize: 15, lineHeight: "22px", color: "#000", margin: 0 }}>
+              To build education leadership (Shiksha Raj) for a Brighter India (Ujjwal Bharat) where every child receives free, accessible education that shapes confidence, capability, and character.
+            </p>
+          </div>
+
+          {/* Mission card — 751×334, left=257, top=71, overlaps Vision, z=2 */}
+          <div style={{
+            position: "absolute", left: 257, top: 71,
+            width: 751, height: 334,
+            background: "linear-gradient(-21deg, #f8f5ef 41%, #ffffff 106%)",
+            borderRadius: 20,
+            border: "1px solid #ebd5b9",
+            padding: "100px 40px 44px 68px", boxSizing: "border-box",
+            display: "flex", flexDirection: "column", justifyContent: "flex-end", alignItems: "flex-end", gap: 16,
+            zIndex: 2, overflow: "hidden",
+          }}>
+            <DotGrid />
+            <span style={{
+              fontFamily: "'Poppins', sans-serif", fontWeight: 400, fontSize: 64, lineHeight: 1,
+              alignSelf: "flex-end", position: "relative", zIndex: 1,
+              background: "linear-gradient(to bottom, #d68a09 0%, #f8f5ef 75%)",
+              WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
+              backgroundClip: "text",
+            }}>
+              Mission
+            </span>
+            <p style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 300, fontSize: 15, lineHeight: "22px", color: "#000", margin: 0, textAlign: "right", position: "relative", zIndex: 1 }}>
+              To transform education into a practical, experiential, life-connected, digitally ready, teacher-led, community-supported system that goes beyond textbooks to give every child free, meaningful learning and prepare them for life.
+            </p>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  );
+}
 
 function Section8() {
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
   const wrapperRef = useRef<HTMLDivElement>(null);
-  const wrapperAbsTopRef = useRef<number>(0);
-  const [cardIndex, setCardIndex] = useState(0);
-  const [photoIdx, setPhotoIdx] = useState(0);
+  const [activeIdx, setActiveIdx] = useState(0);
+  // Lock scroll-listener while a tab-click navigation is animating
+  const isTabNavRef = useRef(false);
+  const tabNavTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const TOTAL = SECTION_8_CARDS.length;
-  const STEP = 320;
+  const TOTAL = S8_PROGRAMS.length; // 5
+  const STEP = 350; // px of scroll per card advance
   const RUNWAY = TOTAL * STEP;
-  const N_PHOTOS = S8_PHOTOS.length;
 
-  // Store wrapper absolute top once after mount (for stable tab-click scrolling)
-  useEffect(() => {
-    const compute = () => {
-      if (wrapperRef.current) {
-        wrapperAbsTopRef.current = wrapperRef.current.getBoundingClientRect().top + window.scrollY;
-      }
+  // Card dimensions — extra 60px at TOP so stacked edges peek above active card
+  const CARD_H = 460;
+  const PEEK_TOP = 60; // space above active card for peeking stack tops
+  const CONTAINER_H = CARD_H + PEEK_TOP;
+
+  // Stack transform per depth — cards peek from the TOP of the active card
+  // translateY(-N) shifts each past card UP so its top edge is visible above the active card
+  // scaleX narrows slightly to give a perspective / depth illusion
+  // blur increases with depth
+  const getStackStyle = (depth: number): React.CSSProperties => {
+    const ty = -(depth + 1) * 13;   // shift UP: deeper = higher above active card top
+    const sx = 1 - (depth + 1) * 0.025;
+    const blur = (depth + 1) * 2;   // px of blur per depth level
+    return {
+      transform: `translateY(${ty}px) scaleX(${sx})`,
+      transformOrigin: "top center",
+      filter: `blur(${blur}px)`,
+      zIndex: 9 - depth,
+      opacity: Math.max(0.4, 1 - (depth + 1) * 0.15),
     };
-    requestAnimationFrame(compute);
-    window.addEventListener("resize", compute);
-    return () => window.removeEventListener("resize", compute);
-  }, []);
+  };
 
-  // Scroll-driven card index update
+  // Scroll-driven active index (1 step per card) — skipped during tab-click navigation
   useEffect(() => {
     if (isMobile || isTablet) return;
     const onScroll = () => {
+      if (isTabNavRef.current) return; // ignore during tab-click smooth scroll
       if (!wrapperRef.current) return;
       const scrolled = Math.max(0, -wrapperRef.current.getBoundingClientRect().top);
-      setCardIndex(Math.min(Math.floor(scrolled / STEP), TOTAL - 1));
+      setActiveIdx(Math.min(Math.floor(scrolled / STEP), TOTAL - 1));
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, [isMobile, isTablet, TOTAL, STEP]);
 
-  // Reset photo index on card change; auto-advance carousel
-  useEffect(() => { setPhotoIdx(0); }, [cardIndex]);
-  useEffect(() => {
-    const t = setInterval(() => setPhotoIdx(i => (i + 1) % N_PHOTOS), 3000);
-    return () => clearInterval(t);
-  }, [cardIndex, N_PHOTOS]);
-
-  const activeTab = Math.floor(cardIndex / 3);
-  const currentCard = SECTION_8_CARDS[cardIndex];
-
-  const handleTabClick = (tabIdx: number) => {
-    if (isMobile || isTablet) { setCardIndex(tabIdx * 3); return; }
-    setCardIndex(tabIdx * 3); // immediate UI update fixes forward-click lag
-    window.scrollTo({ top: wrapperAbsTopRef.current + tabIdx * 3 * STEP, behavior: "smooth" });
+  const handleTabClick = (idx: number) => {
+    if (isMobile || isTablet) { setActiveIdx(idx); return; }
+    // Immediately show the clicked card — no waiting for scroll to catch up
+    setActiveIdx(idx);
+    // Lock scroll listener so intermediate scroll positions don't fight the click
+    isTabNavRef.current = true;
+    if (tabNavTimerRef.current) clearTimeout(tabNavTimerRef.current);
+    // Compute fresh scroll target (avoids stale wrapperAbsTopRef)
+    if (wrapperRef.current) {
+      const freshTop = wrapperRef.current.getBoundingClientRect().top + window.scrollY;
+      window.scrollTo({ top: freshTop + idx * STEP, behavior: "smooth" });
+    }
+    // Re-enable scroll tracking after smooth scroll finishes (~600ms)
+    tabNavTimerRef.current = setTimeout(() => { isTabNavRef.current = false; }, 700);
   };
 
   const S8Arrow = ({ color = "#174067" }: { color?: string }) => (
@@ -1426,10 +1644,12 @@ function Section8() {
     </svg>
   );
 
-  // ── Mobile / Tablet ──────────────────────────────────────────────────────────
+  // ── Mobile / Tablet ──────────────────────────────────────────────────────
   if (isMobile || isTablet) {
+    const prog = S8_PROGRAMS[activeIdx];
     return (
       <div style={{ width: "100%", background: "#fff", padding: isMobile ? "40px 20px 48px" : "48px 32px 60px", boxSizing: "border-box" }}>
+        {/* Header */}
         <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 24 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
             <h2 style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: isMobile ? 26 : 34, lineHeight: 1.28, color: "#000", margin: 0 }}>What the Trust Builds Ground</h2>
@@ -1438,59 +1658,54 @@ function Section8() {
             </div>
           </div>
           <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 14, lineHeight: "22px", color: "#686868", margin: 0 }}>
-            Find your role and see exactly what it means, what you get, and what your next step is. lorem ipsum is simply dummy text
+            Five programmes built from 31 years of classroom truth — each one addresses a real need.
           </p>
         </div>
+        {/* Tabs */}
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 20 }}>
-          {SECTION_8_TABS.map((tab, idx) => {
-            const isActive = activeTab === idx;
+          {S8_PROGRAMS.map((p, idx) => {
+            const isActive = activeIdx === idx;
             return (
               <button key={idx} onClick={() => handleTabClick(idx)} style={{
                 background: isActive ? "#174067" : "transparent", border: "1px solid #174067", borderRadius: 40,
                 padding: "7px 18px", color: isActive ? "#fff" : "#174067",
                 fontFamily: "'Poppins', sans-serif", fontSize: 13, cursor: "pointer",
-              }}>{tab}</button>
+              }}>{p.tab}</button>
             );
           })}
         </div>
-        <div style={{ background: "#f8f5ef", borderRadius: 16, overflow: "hidden", boxShadow: "0 4px 20px rgba(5,23,42,0.08)" }}>
-          <div style={{ position: "relative", height: 200 }}>
-            {S8_PHOTOS.map((photo, pi) => (
-              <img key={pi} src={photo} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: pi === photoIdx ? 1 : 0, transition: "opacity 0.5s ease" }} />
-            ))}
-            <div style={{ position: "absolute", bottom: 10, right: 10, display: "flex", gap: 5 }}>
-              {S8_PHOTOS.map((_, di) => (
-                <button key={di} onClick={() => setPhotoIdx(di)} style={{ width: di === photoIdx ? 16 : 6, height: 6, borderRadius: 3, background: "#fff", border: "none", padding: 0, cursor: "pointer", opacity: di === photoIdx ? 1 : 0.55, transition: "width 0.2s" }} />
-              ))}
-            </div>
+        {/* Card */}
+        <div style={{ background: "#f8f5ef", borderRadius: 20, overflow: "hidden", boxShadow: "0 4px 20px rgba(5,23,42,0.08)" }}>
+          <div style={{ height: 180, overflow: "hidden" }}>
+            <img src={prog.photo} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
           </div>
           <div style={{ padding: "20px" }}>
-            <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 16, color: "#bf791d" }}>{currentCard.programName}</span>
-            <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 14, lineHeight: "24px", color: "#636363", margin: "8px 0" }}>{currentCard.desc}</p>
-            <div style={{ display: "flex", flexDirection: "column", gap: 4, marginBottom: 12 }}>
-              <strong style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: 13, color: "#000" }}>{currentCard.title}</strong>
-              <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 4 }}>
-                {currentCard.bullets.map((b, bi) => (
-                  <li key={bi} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <S8Arrow /><span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 13, color: "#636363" }}>{b}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <Link to="/join-network" style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 10, background: "#bf791d", borderRadius: 30, padding: "10px 24px", textDecoration: "none" }}>
-              <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 14, color: "#fff" }}>Join Teacher Network</span>
+            <p style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 13, color: "#bf791d", margin: "0 0 2px" }}>{prog.hindi}</p>
+            <p style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: 18, color: "#000", margin: "0 0 10px" }}>{prog.english}</p>
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 14, lineHeight: "24px", color: "#636363", margin: "0 0 12px" }}>{prog.desc}</p>
+            <ul style={{ listStyle: "none", padding: 0, margin: "0 0 12px", display: "flex", flexDirection: "column", gap: 4 }}>
+              {prog.bullets.map((b, bi) => (
+                <li key={bi} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <S8Arrow /><span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 13, color: "#636363" }}>{b}</span>
+                </li>
+              ))}
+            </ul>
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontStyle: "italic", fontWeight: 300, fontSize: 13, lineHeight: "22px", color: "#8a6a2a", margin: "0 0 16px" }}>{prog.punchline}</p>
+            <button style={{ display: "inline-flex", alignItems: "center", gap: 10, background: "#bf791d", borderRadius: 30, padding: "10px 24px", border: "none", cursor: "pointer" }}>
+              <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 14, color: "#fff" }}>{prog.cta}</span>
               <S8Arrow color="#fff" />
-            </Link>
+            </button>
           </div>
         </div>
+        {/* Prev / Next */}
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: 16 }}>
-          <button onClick={() => setCardIndex(i => Math.max(0, i - 1))} disabled={cardIndex === 0}
-            style={{ width: 40, height: 40, borderRadius: "50%", border: "1px solid #174067", background: "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: cardIndex === 0 ? "not-allowed" : "pointer", opacity: cardIndex === 0 ? 0.4 : 1 }}>
+          <button onClick={() => setActiveIdx(i => Math.max(0, i - 1))} disabled={activeIdx === 0}
+            style={{ width: 40, height: 40, borderRadius: "50%", border: "1px solid #174067", background: "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: activeIdx === 0 ? "not-allowed" : "pointer", opacity: activeIdx === 0 ? 0.4 : 1 }}>
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M11 4L6 9L11 14" stroke="#174067" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </button>
-          <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: "#686868" }}>{cardIndex + 1} / {TOTAL}</span>
-          <button onClick={() => setCardIndex(i => Math.min(TOTAL - 1, i + 1))} disabled={cardIndex === TOTAL - 1}
-            style={{ width: 40, height: 40, borderRadius: "50%", background: "#174067", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: cardIndex === TOTAL - 1 ? "not-allowed" : "pointer", opacity: cardIndex === TOTAL - 1 ? 0.4 : 1 }}>
+          <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: "#686868" }}>{activeIdx + 1} / {TOTAL}</span>
+          <button onClick={() => setActiveIdx(i => Math.min(TOTAL - 1, i + 1))} disabled={activeIdx === TOTAL - 1}
+            style={{ width: 40, height: 40, borderRadius: "50%", background: "#174067", border: "none", display: "flex", alignItems: "center", justifyContent: "center", cursor: activeIdx === TOTAL - 1 ? "not-allowed" : "pointer", opacity: activeIdx === TOTAL - 1 ? 0.4 : 1 }}>
             <svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M7 4L12 9L7 14" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
           </button>
         </div>
@@ -1498,22 +1713,7 @@ function Section8() {
     );
   }
 
-  // ── Desktop: sticky scroll-driven stack ─────────────────────────────────────
-  // Card container: 764px wide, 511px tall
-  // As user scrolls through a group, cards STACK UP behind the active card.
-  // Back card positions (depth 0 = closest/newest → depth 2 = furthest/oldest):
-  const CARD_CONTAINER_H = 511;
-  const FRONT_CARD_H = 448;
-  const FRONT_TOP = CARD_CONTAINER_H - FRONT_CARD_H; // 63px
-  const BACK_POS = [
-    { top: 43, inset: 12, zIndex: 7 }, // depth 0: 20px behind FRONT_TOP (63px)
-    { top: 23, inset: 24, zIndex: 5 }, // depth 1: 40px behind
-    { top: 3,  inset: 36, zIndex: 3 }, // depth 2: 60px behind
-  ];
-  const groupStart = activeTab * 3;
-  const groupLocalIdx = cardIndex - groupStart; // 0, 1, or 2 — which card within this group is active
-  const groupCards = SECTION_8_CARDS.slice(groupStart, Math.min(groupStart + 3, SECTION_8_CARDS.length));
-
+  // ── Desktop: sticky scroll-driven card stack ─────────────────────────────
   return (
     <div ref={wrapperRef} style={{ position: "relative", height: `calc(100vh + ${RUNWAY}px)` }}>
       <div style={{ position: "sticky", top: 0, height: "100vh", background: "#fff", overflow: "hidden", display: "flex", justifyContent: "center", alignItems: "center" }}>
@@ -1526,7 +1726,7 @@ function Section8() {
                 What the Trust Builds Ground
               </h2>
               <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 16, lineHeight: "22px", color: "#686868", margin: 0 }}>
-                Find your role and see exactly what it means, what you get, and what your next step is. lorem ipsum is simply dummy text
+                Five programmes built from 31 years of classroom truth — each one addresses a real need.
               </p>
             </div>
             <div style={{ border: "1px solid #e8e8e8", borderRadius: 40, padding: "6px 20px", flexShrink: 0 }}>
@@ -1537,117 +1737,95 @@ function Section8() {
           {/* Body: tabs + card stack */}
           <div style={{ display: "flex", gap: 32, alignItems: "flex-start" }}>
 
-            {/* Left: program tabs — aligned with active card top */}
-            <div style={{ width: 212, display: "flex", flexDirection: "column", gap: 10, flexShrink: 0, paddingTop: FRONT_TOP }}>
-              {SECTION_8_TABS.map((tab, idx) => {
-                const isActive = activeTab === idx;
+            {/* Left: programme tabs */}
+            <div style={{ width: 212, display: "flex", flexDirection: "column", gap: 10, flexShrink: 0 }}>
+              {S8_PROGRAMS.map((p, idx) => {
+                const isActive = activeIdx === idx;
                 return (
                   <button key={idx} onClick={() => handleTabClick(idx)} style={{
                     background: isActive ? "#174067" : "transparent",
                     border: "1px solid #174067", borderRadius: 40,
                     padding: "10px 24px", width: "100%", textAlign: "center",
                     color: isActive ? "#fff" : "#174067",
-                    fontFamily: "'Poppins', sans-serif", fontWeight: isActive ? 500 : 400, fontSize: 16,
+                    fontFamily: "'Poppins', sans-serif", fontWeight: isActive ? 500 : 400, fontSize: 15,
                     cursor: "pointer", transition: "background 0.25s, color 0.25s", outline: "none",
-                  }}>{tab}</button>
+                  }}>{p.tab}</button>
                 );
               })}
             </div>
 
-            {/* Right: card stack — all 3 group cards always in DOM for smooth CSS transitions */}
-            <div style={{ flex: 1, position: "relative", height: CARD_CONTAINER_H }}>
-              {groupCards.map((card, localIdx) => {
-                const isFront = localIdx === groupLocalIdx;
-                const isPast  = localIdx < groupLocalIdx;
-                const depth   = isPast ? groupLocalIdx - localIdx - 1 : -1;
-                const pos     = isPast ? BACK_POS[Math.min(depth, 2)] : null;
+            {/* Right: card stack — all 5 cards in DOM, past ones peek from the TOP */}
+            <div style={{ flex: 1, position: "relative", height: CONTAINER_H }}>
+              {S8_PROGRAMS.map((prog, idx) => {
+                const isActive = idx === activeIdx;
+                const isPast   = idx < activeIdx;
+                const isFuture = idx > activeIdx;
+                const depth    = isPast ? activeIdx - idx - 1 : -1;
 
-                // Position: past → back stack; front → front; future → hidden at front position
-                const cardTop   = isPast ? pos!.top   : FRONT_TOP;
-                const cardLeft  = isPast ? pos!.inset : 0;
-                const cardRight = isPast ? pos!.inset : 0;
-                const cardZ     = isFront ? 10 : isPast ? pos!.zIndex : 0;
-                const cardOpacity = (isFront || isPast) ? 1 : 0;
+                const stackStyle = isPast ? getStackStyle(depth) : {};
+                const zIndex     = isActive ? 10 : isPast ? (9 - depth) : 0;
+                const opacity    = isFuture ? 0 : (isPast ? (stackStyle as React.CSSProperties).opacity : 1);
+                const transform  = isPast
+                  ? (stackStyle as React.CSSProperties).transform as string
+                  : "translateY(0px) scaleX(1)";
+                const filterVal  = isPast ? (stackStyle as React.CSSProperties).filter as string : "none";
 
                 return (
-                  <div key={card.id} style={{
-                    position: "absolute",
-                    top: cardTop, left: cardLeft, right: cardRight,
-                    height: FRONT_CARD_H,
-                    background: "#f8f5ef",
-                    borderRadius: 20,
-                    zIndex: cardZ,
-                    opacity: cardOpacity,
-                    overflow: "hidden",
-                    boxShadow: isFront ? "0 8px 32px rgba(0,0,0,0.1)" : "0 2px 8px rgba(0,0,0,0.06)",
-                    pointerEvents: isFront ? "auto" : "none",
-                    transition: [
-                      "top 0.4s cubic-bezier(0.22,1,0.36,1)",
-                      "left 0.4s cubic-bezier(0.22,1,0.36,1)",
-                      "right 0.4s cubic-bezier(0.22,1,0.36,1)",
-                      "opacity 0.35s ease",
-                    ].join(", "),
-                  }}>
-                    {/* Content — only visible on front card */}
-                    {isFront && (
-                      <div style={{ display: "flex", height: "100%", padding: "0 20px", boxSizing: "border-box", gap: 36, alignItems: "stretch" }}>
-                        {/* Left content */}
-                        <div style={{ width: 404, flexShrink: 0, display: "flex", flexDirection: "column", gap: 14, justifyContent: "center", paddingTop: 26, paddingBottom: 26, boxSizing: "border-box" }}>
-                          <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 18, color: "#bf791d" }}>
-                            {card.programName}
-                          </span>
-                          <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 15, lineHeight: "24px", color: "#636363", margin: 0 }}>
-                            {card.desc}
-                          </p>
-                          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-                            <strong style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: 14, color: "#000" }}>
-                              {card.title}
-                            </strong>
-                            <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 4 }}>
-                              {card.bullets.map((b, bi) => (
-                                <li key={bi} style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                                  <S8Arrow />
-                                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 14, color: "#636363" }}>{b}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                          <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 14, lineHeight: "22px", color: "#636363", margin: 0 }}>
-                            Join the Teacher Reformers Network - a community of 340+ teachers lorem ipsum is
-                          </p>
-                          <Link to="/join-network" style={{ display: "inline-flex", alignItems: "center", gap: 12, background: "#bf791d", border: "1px solid #bf791d", borderRadius: 30, padding: "10px 24px", alignSelf: "flex-start", textDecoration: "none" }}>
-                            <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 15, color: "#fff" }}>Join Teacher Network</span>
-                            <S8Arrow color="#fff" />
-                          </Link>
-                        </div>
-                        {/* Right photo panel */}
-                        <div style={{ width: 284, flexShrink: 0, borderRadius: 20, overflow: "hidden", position: "relative", background: "#ddd4c7" }}>
-                          {S8_PHOTOS.map((photo, pi) => (
-                            <img key={pi} src={photo} alt="" style={{
-                              position: "absolute", inset: 0,
-                              width: "100%", height: "100%",
-                              objectFit: "cover", display: "block",
-                              opacity: pi === photoIdx ? 1 : 0,
-                              transition: "opacity 0.5s ease",
-                            }} />
+                  <div
+                    key={prog.id}
+                    style={{
+                      position: "absolute",
+                      // All cards sit at PEEK_TOP offset so there's room above for stack tops to show
+                      top: PEEK_TOP, left: 0, right: 0,
+                      height: CARD_H,
+                      background: "#f8f5ef",
+                      borderRadius: 20,
+                      overflow: "hidden",
+                      zIndex,
+                      opacity: opacity as number,
+                      transform,
+                      transformOrigin: "top center",
+                      filter: filterVal,
+                      boxShadow: isActive ? "0 8px 32px rgba(0,0,0,0.10)" : "0 2px 8px rgba(0,0,0,0.06)",
+                      pointerEvents: isActive ? "auto" : "none",
+                      transition: [
+                        "transform 0.45s cubic-bezier(0.22,1,0.36,1)",
+                        "filter 0.35s ease",
+                        "opacity 0.35s ease",
+                        "box-shadow 0.35s ease",
+                      ].join(", "),
+                    }}
+                  >
+                    <div style={{ display: "flex", height: "100%", boxSizing: "border-box" }}>
+                      {/* Left content */}
+                      <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 12, justifyContent: "center", padding: "28px 32px", boxSizing: "border-box", minWidth: 0 }}>
+                        <p style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: 13, color: "#bf791d", margin: 0 }}>{prog.hindi}</p>
+                        <h3 style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: 24, lineHeight: 1.28, color: "#000", margin: 0 }}>{prog.english}</h3>
+                        <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 14, lineHeight: "24px", color: "#636363", margin: 0 }}>{prog.desc}</p>
+                        <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 5 }}>
+                          {prog.bullets.map((b, bi) => (
+                            <li key={bi} style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                              <S8Arrow />
+                              <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 13, color: "#636363" }}>{b}</span>
+                            </li>
                           ))}
-                          <div style={{ position: "absolute", bottom: 14, right: 14, display: "flex", gap: 5, zIndex: 2 }}>
-                            {S8_PHOTOS.map((_, di) => (
-                              <button key={di} onClick={() => setPhotoIdx(di)} style={{
-                                width: di === photoIdx ? 18 : 6, height: 6, borderRadius: 3,
-                                background: "#fff", border: "none", padding: 0, cursor: "pointer",
-                                opacity: di === photoIdx ? 1 : 0.55,
-                                transition: "width 0.2s ease, opacity 0.2s ease",
-                              }} />
-                            ))}
-                          </div>
-                        </div>
+                        </ul>
+                        <p style={{ fontFamily: "'DM Sans', sans-serif", fontStyle: "italic", fontWeight: 300, fontSize: 13, lineHeight: "22px", color: "#8a6a2a", margin: 0 }}>{prog.punchline}</p>
+                        <button style={{ display: "inline-flex", alignItems: "center", gap: 12, background: "#bf791d", border: "none", borderRadius: 30, padding: "10px 24px", cursor: "pointer", alignSelf: "flex-start" }}>
+                          <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 14, color: "#fff" }}>{prog.cta}</span>
+                          <S8Arrow color="#fff" />
+                        </button>
                       </div>
-                    )}
+                      {/* Right photo */}
+                      <div style={{ width: 260, flexShrink: 0, overflow: "hidden", position: "relative", background: "#ddd4c7" }}>
+                        <img src={prog.photo} alt={prog.english} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                      </div>
+                    </div>
                   </div>
                 );
               })}
             </div>{/* end card stack */}
+
           </div>{/* end body */}
         </div>
       </div>
@@ -1671,43 +1849,51 @@ type S9Card = {
 const SECTION_9_CARDS: S9Card[] = [
   {
     id: "s9-0", type: "content",
-    tag: "Foundational skills improving across grade levels",
-    title: "Teachers Leading Change",
-    desc: "A network of 340+ teachers sharing methods and innovations to reshape education in rural Maharashtra.",
-    bullets: ["Structured professional development", "Cross-school resource sharing", "Reflective teaching practice"],
+    tag: "They stop feeling small inside.",
+    title: "Children Return With Confidence Again",
+    desc: "Meaningful learning helps children speak, try, ask, and see themselves with pride.",
+    bullets: ["Stronger classroom participation", "Steadier school attendance", "More confident speaking", "Greater willingness to try"],
     thumbnail: imgS8Teacher,
   },
   {
     id: "s9-1", type: "content",
-    tag: "Early results show improvement in 6 pilot schools",
-    title: "Reading & Comprehension",
-    desc: "Grade-level reading assessments conducted each term by teacher facilitators across 120 schools.",
-    bullets: ["Monthly workshops in-person", "Access to shared lesson resources", "Peer mentoring circles"],
+    tag: "Lessons finally meet real life.",
+    title: "Learning Starts Making Sense In Life",
+    desc: "Children begin connecting words, numbers, and ideas with the world they actually live in.",
+    bullets: ["Real-world understanding grows", "Projects show deeper learning", "Concepts connect with daily life", "Fear of textbooks reduces"],
     thumbnail: imgTeacher,
   },
   {
     id: "s9-2", type: "content",
-    tag: "6 months in — enrolment growing steadily",
-    title: "Student Attendance Rate",
-    desc: "Consistent daily attendance tracking across partner schools using mobile-first tools and teacher reports.",
-    bullets: ["Automated attendance reminders", "Parent SMS notifications", "Monthly attendance review"],
+    tag: "Classrooms feel human and alive.",
+    title: "Teaching Begins To Feel Alive",
+    desc: "Teaching moves beyond rote delivery and becomes practical, engaging, responsive, and full of meaning.",
+    bullets: ["More active classrooms", "Practical methods replace routine", "Teachers lead with confidence", "Children participate more freely"],
     thumbnail: imgCarousel1,
   },
   {
     id: "s9-3", type: "content",
-    tag: "Community response has been overwhelmingly positive",
-    title: "Parent Engagement Score",
-    desc: "Bi-monthly parent-school forums and structured home learning kits improve household learning time.",
-    bullets: ["Home learning kit distribution", "Parent forum participation", "Caregiver feedback loops"],
+    tag: "Home stops pulling learning apart.",
+    title: "Families Start Believing In School Again",
+    desc: "Parents feel included, trusted, and better able to support children without fear or pressure.",
+    bullets: ["Stronger parent-school trust", "More regular school attendance", "Less pressure at home", "Children feel supported both sides"],
     thumbnail: imgS8Teacher,
   },
   {
     id: "s9-4", type: "content",
-    tag: "Teachers report measurable confidence gains",
-    title: "Teacher Capability Index",
-    desc: "Structured peer coaching and reflective practice journals build long-term teaching excellence.",
-    bullets: ["Peer observation cycles", "Reflective practice journals", "Skill certification pathway"],
+    tag: "Children want to come back.",
+    title: "Schools Become Places Of Pride",
+    desc: "Schools feel more alive, respected, and worth returning to for children and families.",
+    bullets: ["Improved attendance and retention", "More joyful school spaces", "Stronger school-community bond", "Learning feels meaningful"],
     thumbnail: imgTeacher,
+  },
+  {
+    id: "s9-5", type: "content",
+    tag: "One classroom begins changing many.",
+    title: "One Teacher's Work Starts Travelling",
+    desc: "What worked for one teacher begins reaching more classrooms, schools, communities, and children.",
+    bullets: ["Teacher models travel further", "Programmes reach new places", "Communities carry the mission", "Support grows with trust"],
+    thumbnail: imgCarousel1,
   },
 ];
 
@@ -1994,15 +2180,15 @@ function Section9() {
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 24 }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             <div style={{ border: "1px solid #e8e8e8", borderRadius: 40, padding: "6px 20px", alignSelf: "flex-start" }}>
-              <span style={{ fontFamily: "'Poppins', sans-serif", fontSize: 13, color: "#bf791d" }}>Honest Impact</span>
+              <span style={{ fontFamily: "'Poppins', sans-serif", fontSize: 13, color: "#bf791d" }}>Real change!</span>
             </div>
             <h2 style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: isMobile ? 28 : 40, lineHeight: "1.36", color: "#000", margin: 0, textTransform: "capitalize" }}>
-              What Progress Looks Like
+              What Real Progress Feels Like
             </h2>
           </div>
           {!isMobile && (
             <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 16, lineHeight: "22px", color: "#686868", margin: 0, maxWidth: 255, textAlign: "right" }}>
-              We track outcomes that matter in education — not vanity metrics. Four categories we measure honestly.
+              Changes that begin when learning becomes meaningful and alive.
             </p>
           )}
         </div>
@@ -2043,13 +2229,14 @@ interface S10TabData {
 const S10_TABS: S10TabData[] = [
   {
     label: "Teachers",
-    forLabel: "Government school teachers looking to grow",
-    desc: "Join the Teacher Reformers Network — a community of 340+ teachers sharing methods, resources, and practical innovations.",
+    forLabel: "For Teachers who want to be part of something larger",
+    desc: "You already show up every day. The Teacher Reformers Network gives the methods, the tools, infrastructure and the community which powers the ignited and passionate teacher within you. A space built by teachers, for teachers.",
     bullets: [
-      "Monthly workshops (in-person, Jalgaon)",
-      "Access to shared lesson resource library",
-      "Peer mentoring circles",
-      "Recognition in annual teacher summit",
+      "Peer mentoring circles across schools",
+      "Structured professional development sessions",
+      "Direct access to Ujjwala's methods and guidance",
+      "Community recognition for teachers driving change",
+      "Providing tools, shared resources and infrastructure to your school",
     ],
     cta: "Join Teacher Network",
     photo: imgS10TeacherRmBg,
@@ -2057,41 +2244,44 @@ const S10_TABS: S10TabData[] = [
   },
   {
     label: "Volunteers",
-    forLabel: "Passionate individuals ready to make a difference",
-    desc: "Join our volunteer corps — support classroom learning, community programs, and administrative initiatives across Jalgaon.",
+    forLabel: "For People who want to give their time or skill",
+    desc: "A designer can create learning materials. A doctor can run a health awareness session. A local business can host an exposure visit. Whether you have a skill to teach, time to give or energy to contribute on the ground, bring your world to a child's education.",
     bullets: [
-      "Weekend workshop facilitation",
-      "Mentoring underprivileged students",
-      "Community outreach campaigns",
-      "Certificate of recognition",
+      "Meaningful work tied directly to program outcomes",
+      "Skill-based roles matched to your background",
+      "A coordinator who stays in touch throughout",
+      "Flexible time commitments, no rigid obligations",
+      "A reference and recognition letter on request",
     ],
-    cta: "Volunteer with Us",
+    cta: "Offer My Skills",
     photo: imgTeacher,
   },
   {
     label: "Partners",
-    forLabel: "NGOs and institutions aligned with our mission",
-    desc: "Collaborate with URW — co-design programs, share resources, and amplify collective impact in government school education.",
+    forLabel: "For Businesses that want to offer real-world learning experiences",
+    desc: "Children learn best when learning connects to life. If your business or workplace can give a child a real glimpse of how the world works, you are already a potential partner in this mission. These visits become lessons no textbook can replicate.",
     bullets: [
-      "Co-branded program delivery",
-      "Shared monitoring & evaluation",
-      "Access to our school network",
-      "Annual partner summit invitation",
+      "Clear structure for every visit so your time is respected",
+      "No financial obligation, your time and space is the contribution",
+      "Community recognition for businesses that open their doors",
+      "Teacher present throughout every visit",
+      "Child consent and safety fully managed",
     ],
-    cta: "Become a Partner",
+    cta: "I want to show the world to every child",
     photo: imgCarousel1,
   },
   {
     label: "CSR / Business",
-    forLabel: "Corporates looking to invest in education impact",
-    desc: "Channel your CSR funds towards high-accountability programs in government school education — with full transparent reporting.",
+    forLabel: "For Companies ready to invest in change that lasts",
+    desc: "The trust works with businesses who want their education investment to connect directly to a child's learning. Your company's contribution goes into specific programs, is tracked against defined outcomes and is reported back to you honestly, whether the results are strong or still growing.",
     bullets: [
-      "Tax-exempted contributions (80G)",
-      "Quarterly impact reports",
-      "Site visits and school access",
-      "Brand visibility in annual reports",
+      "Detailed CSR proposal aligned to your focus area",
+      "80G compliance documentation where applicable",
+      "Employee volunteering integration into the partnership",
+      "Public acknowledgement in reports and communications",
+      "Transparent financial reporting and audit access",
     ],
-    cta: "Start CSR Conversation",
+    cta: "Request CSR Proposal",
     photo: imgS6Bg,
   },
 ];
@@ -2109,8 +2299,8 @@ const S10ArrowRight = () => (
  *
  * Coordinates are in the 1008 × 477 card viewport.
  */
-function getS10CardPath(N: number): string {
-  const W = 1008, H = 477;
+function getS10CardPath(N: number, H = 477): string {
+  const W = 1008;
   const TW = 244.5, GAP = 10;
   const BH = 56;     // bump height (top of card to top of body)
   const R = 20;      // standard corner radius
@@ -2198,12 +2388,23 @@ function Section10() {
   const [activeTab, setActiveTab] = useState(0);
   const [fading, setFading] = useState(false);
   const [winW, setWinW] = useState(typeof window !== "undefined" ? window.innerWidth : 1200);
+  const [cardH, setCardH] = useState(477);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const onResize = () => setWinW(window.innerWidth);
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
+
+  // Measure content height after each tab switch (after fade-in completes) and
+  // expand the card so the CTA is never clipped by the fixed-H clipPath.
+  useEffect(() => {
+    if (!contentRef.current) return;
+    // 100 = top offset of content inside card, 48 = bottom padding
+    const needed = 100 + contentRef.current.offsetHeight + 48;
+    setCardH(Math.max(477, needed));
+  }, [activeTab, fading]);
 
   const isMobile = winW < 640;
   const isTablet = winW >= 640 && winW < 1100;
@@ -2220,13 +2421,13 @@ function Section10() {
   const tab    = S10_TABS[activeTab];
   const TAB_W  = 244.5;
   const GAP    = 10;
-  const CARD_H = 477;
+  const CARD_H = cardH;
   const CARD_W = 1008;
   const BH     = 56;   // bump height in SVG path (tab sits inside this)
   const TAB_H  = 44;   // actual tab button height
   const TAB_TOP = Math.round((BH - TAB_H) / 2); // 6px — centres tab inside bump
 
-  const cardPath = getS10CardPath(activeTab);
+  const cardPath = getS10CardPath(activeTab, CARD_H);
 
   // Gradient: starts #174067 at the bump's centre-top, fades to cream — matches Figma
   const tx1     = activeTab * (TAB_W + GAP);
@@ -2246,14 +2447,14 @@ function Section10() {
             fontSize: isMobile ? 28 : 40, lineHeight: "1.36",
             color: "#000", margin: "0 0 12px", textTransform: "capitalize",
           }}>
-            Get Involved, In Detail
+            Find Your Role In This Mission
           </h2>
           <p style={{
             fontFamily: "'DM Sans', sans-serif", fontWeight: 300,
             fontSize: 16, lineHeight: "22px", color: "#686868",
             margin: "0 auto", maxWidth: 556,
           }}>
-            Find your role and see exactly what it means, what you get, and what your next step is. lorem ipsum is simply dummy text
+            Choose what fits your life and your capacity. Every role here connects directly to the way India educates.
           </p>
         </div>
 
@@ -2339,7 +2540,7 @@ function Section10() {
               </div>
 
               {/* Content: 100px from card top, 47px left padding — matches Figma */}
-              <div style={{
+              <div ref={contentRef} style={{
                 position: "absolute", top: 100, left: 47, maxWidth: 520, zIndex: 1,
                 opacity: fading ? 0 : 1,
                 transform: fading ? "translateY(10px)" : "none",
@@ -2467,18 +2668,18 @@ const S12_TAGS_ROW2 = ["Books & Reading Materials", "Learning Kits & Lab Supplie
 const S12_CARDS = [
   {
     num: "01",
-    title: "Support Received",
-    desc: "Your contribution is acknowledged immediately. A receipt and 80G certificate are generated",
+    title: "Receive With Care",
+    desc: "Every contribution begins with trust, and is received with clarity, purpose, and responsibility.",
   },
   {
     num: "02",
-    title: "Allocated to a Defined Need",
-    desc: "Funds are assigned to specific programme budgets — not pooled into a general fund without purpose.",
+    title: "Direct With Purpose",
+    desc: "Your support is placed where children, schools, or programmes need it most.",
   },
   {
     num: "03",
-    title: "Allocated to a Defined Need",
-    desc: "Funds are assigned to specific programme budgets — not pooled into a general fund without purpose.",
+    title: "Show The Change",
+    desc: "We share how your support helped learning grow, with visible progress and honest updates.",
   },
 ];
 
@@ -2625,7 +2826,7 @@ function Section12() {
                 color: "#111",
                 maxWidth: "100%",
               }}>
-                We Unlock Scale By Fixing What’s Lorem Leaking Conversion?
+                Stand with a mission where every contribution is valued, placed with care, and reflected in real change.
               </h3>
             </div>
 
@@ -2654,7 +2855,7 @@ function Section12() {
                     whiteSpace: "nowrap", transition: "all 0.2s ease",
                     width: isMobile ? "100%" : "auto",
                   }}>
-                  Sponsor a Learning Kit <ArrowIcon color="#BF791D" size={16} />
+                  Support This Mission <ArrowIcon color="#BF791D" size={16} />
                 </button>
               </Link>
               {/* Solid gold button */}
@@ -2831,7 +3032,7 @@ function SectionHonestImpact() {
                 fontSize: isMobile ? 26 : 32, lineHeight: 1.36,
                 color: "#000", margin: 0, textTransform: "capitalize",
               }}>
-                Grid Lorem ipsum is simply
+                What Changed When We Showed Up
               </h2>
               <p style={{
                 fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 15,
@@ -2839,7 +3040,7 @@ function SectionHonestImpact() {
                 maxWidth: isTablet ? 240 : "100%", margin: 0,
                 textAlign: isTablet ? "right" : "left",
               }}>
-                We track outcomes that matter in education — not vanity metrics. Four categories we
+                Real stories, real changes — from classrooms where Ujjwala's methods were applied.
               </p>
             </div>
           </div>
@@ -2895,7 +3096,7 @@ function SectionHonestImpact() {
             lineHeight: "22px", color: "#686868", textAlign: "right",
             maxWidth: 255, margin: 0, flexShrink: 0,
           }}>
-            We track outcomes that matter in education — not vanity metrics. Four categories we
+            Real stories, real changes — from classrooms where Ujjwala's methods were applied.
           </p>
         </div>
 
@@ -3167,19 +3368,19 @@ function Section15() {
               padding: "6px 20px", fontFamily: "'Poppins', sans-serif",
               fontWeight: 400, fontSize: 13, color: "#bf791d", width: "fit-content",
             }}>
-              Our Team
+              My support system
             </span>
             <h2 style={{
               fontFamily: "'Lora', serif", fontWeight: 600, fontSize: 28,
               lineHeight: 1.36, color: "#000", margin: 0, textTransform: "capitalize",
             }}>
-              Meet The Team Lorem
+              Meet the faces that keep the mission alive
             </h2>
             <p style={{
               fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 15,
               lineHeight: "22px", color: "#686868", margin: 0,
             }}>
-              Find your role and see exactly what it means, what you get, and what your
+              The first ones to inspire &amp; believe in me. The first ones to carry the mission on their shoulders.
             </p>
           </div>
         ) : (
@@ -3192,22 +3393,22 @@ function Section15() {
               padding: "6px 20px", fontFamily: "'Poppins', sans-serif",
               fontWeight: 400, fontSize: 13, color: "#bf791d", whiteSpace: "nowrap",
             }}>
-              Our Team
+              My support system
             </span>
             <h2 style={{
               fontFamily: "'Lora', serif", fontWeight: 600,
               fontSize: isTablet ? 30 : 40, lineHeight: 1.36,
               color: "#000", margin: 0, textTransform: "capitalize",
-              textAlign: "center", whiteSpace: "nowrap",
+              textAlign: "center",
             }}>
-              Meet The Team Lorem
+              Meet the faces that keep the mission alive
             </h2>
             <p style={{
               fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 15,
               lineHeight: "22px", color: "#686868",
               width: isTablet ? 160 : 206, textAlign: "right", margin: 0,
             }}>
-              Find your role and see exactly what it means, what you get, and what your
+              The first ones to inspire &amp; believe in me. The first ones to carry the mission on their shoulders.
             </p>
           </div>
         )}
@@ -3362,7 +3563,7 @@ function Section13() {
             whiteSpace: "nowrap",
             background: "rgba(255,255,255,0.6)",
           }}>
-            Teacher-Led · Education-Only · Transparent
+            One Mission · Many Hands ·
           </span>
 
           {/* Heading */}
@@ -3375,7 +3576,7 @@ function Section13() {
             margin: 0,
             textTransform: "capitalize",
           }}>
-            One Teacher Started This Lorem Many Can Keep
+            One Teacher Started This. Many Can Keep It Going.
           </h2>
 
           {/* Bullets — inline on mobile */}
@@ -3441,14 +3642,21 @@ function Section13() {
           </div>
         </div>
 
-        {/* Right column: bullet list — desktop/tablet only */}
+        {/* Right column: description + bullet list — desktop/tablet only */}
         {!isMobile && (
           <div style={{
             display: "flex",
             flexDirection: "column",
-            gap: 4,
+            gap: 16,
             paddingTop: isTablet ? 36 : 44,
           }}>
+            <p style={{
+              fontFamily: "'DM Sans', sans-serif", fontWeight: 300,
+              fontSize: 15, lineHeight: "26px", color: "#636363",
+              margin: 0, maxWidth: 380,
+            }}>
+              What Ujjwala built inside her classroom over 31 years is now a structure that can travel — to other schools, other teachers, and other children who deserve the same quality of care and learning.
+            </p>
             {S13_BULLETS.map(item => (
               <div key={item} style={{ display: "flex", alignItems: "center", gap: 10 }}>
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
@@ -3475,11 +3683,7 @@ function Section13() {
 }
 
 // ── Section 14 ─────────────────────────────────────────────────────────────
-const S14_BULLETS = [
-  "Monthly workshops in-person",
-  "Access to shared lesson resources",
-  "Peer mentoring circles",
-];
+
 
 const S14_SOCIAL = [
   {
@@ -3593,26 +3797,16 @@ function Section14() {
                 fontSize: 28, lineHeight: 1.28,
                 color: "#000", margin: 0, textTransform: "capitalize",
               }}>
-                One Teacher Start This Lorem Many Can
+                After 31 years, I still feel like a young teacher joined on 5th July, 1995.
               </h2>
-              <p style={{
+              <div style={{
                 fontFamily: "'DM Sans', sans-serif", fontWeight: 300,
-                fontSize: 15, lineHeight: "26px", color: "#636363", margin: 0,
+                fontSize: 15, lineHeight: "26px", color: "#636363",
+                display: "flex", flexDirection: "column", gap: 12,
               }}>
-                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley.
-              </p>
-              <div style={{ display: "flex", flexDirection: "column" }}>
-                {S14_BULLETS.map(item => (
-                  <div key={item} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
-                      <path d="M2 8h12M10 4l4 4-4 4" stroke="#bf791d" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                    </svg>
-                    <span style={{
-                      fontFamily: "'DM Sans', sans-serif", fontWeight: 300,
-                      fontSize: 14, lineHeight: "24px", color: "#636363",
-                    }}>{item}</span>
-                  </div>
-                ))}
+                <p style={{ margin: 0 }}>Teaching found me because my family had always been teachers. My father, my mother, my grandmother. When I walked into my first government school classroom in 1995, I felt like I was continuing the family legacy.</p>
+                <p style={{ margin: 0 }}>I have taught children who could not afford ten rupees for a school fee. I have gone to their homes at night without telling anyone. I have helped families get the documents that opened doors their children would otherwise never have found. I have done all of this because a teacher's job does not end when the bell rings.</p>
+                <p style={{ margin: 0 }}>Its selfless service to the powerhouse of my country. No better satisfaction than shaping the bright minds of this country.</p>
               </div>
               {/* Social icons row */}
               <div style={{ display: "flex", gap: 10, marginTop: 4 }}>
@@ -3631,7 +3825,7 @@ function Section14() {
           </div>
         ) : (
           // Tablet / Desktop: 3-column layout
-          <div style={{ display: "flex", gap: 0, alignItems: "flex-start", height: isTablet ? "auto" : 452 }}>
+          <div style={{ display: "flex", gap: 0, alignItems: "flex-start" }}>
 
             {/* Left column */}
             <div style={{ flex: isTablet ? "0 0 340px" : "0 0 507px", display: "flex", flexDirection: "column", gap: isTablet ? 24 : 36 }}>
@@ -3644,42 +3838,32 @@ function Section14() {
                   color: "#bf791d", whiteSpace: "nowrap",
                   background: "rgba(255,255,255,0.85)",
                 }}>
-                  About Ujjwal Mam
+                  More about me!
                 </span>
                 <h2 style={{
                   fontFamily: "'Lora', serif", fontWeight: 600,
                   fontSize: isTablet ? 32 : 48, lineHeight: 1.24,
                   color: "#000", margin: 0, textTransform: "capitalize",
                 }}>
-                  One Teacher Start{"\n"}This Lorem Many Can
+                  After 31 Years, I Still Feel Like A Young Teacher
                 </h2>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                <p style={{
+                <div style={{
                   fontFamily: "'DM Sans', sans-serif", fontWeight: 300,
                   fontSize: 15, lineHeight: "26px", color: "#636363",
-                  margin: 0, width: isTablet ? "100%" : 392,
+                  width: isTablet ? "100%" : 392,
+                  display: "flex", flexDirection: "column", gap: 12,
                 }}>
-                  Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley Lorem Ipsum is simply dummy text of the printing
-                </p>
-                <div style={{ display: "flex", flexDirection: "column" }}>
-                  {S14_BULLETS.map(item => (
-                    <div key={item} style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
-                        <path d="M2 8h12M10 4l4 4-4 4" stroke="#bf791d" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
-                      </svg>
-                      <span style={{
-                        fontFamily: "'DM Sans', sans-serif", fontWeight: 300,
-                        fontSize: 15, lineHeight: "24px", color: "#636363",
-                      }}>{item}</span>
-                    </div>
-                  ))}
+                  <p style={{ margin: 0 }}>Teaching found me because my family had always been teachers. My father, my mother, my grandmother. When I walked into my first government school classroom in 1995, I felt like I was continuing the family legacy.</p>
+                  <p style={{ margin: 0 }}>I have taught children who could not afford ten rupees for a school fee. I have gone to their homes at night without telling anyone. I have helped families get the documents that opened doors their children would otherwise never have found. I have done all of this because a teacher's job does not end when the bell rings.</p>
+                  <p style={{ margin: 0 }}>Its selfless service to the powerhouse of my country. No better satisfaction than shaping the bright minds of this country.</p>
                 </div>
               </div>
             </div>
 
             {/* Center — teacher photo */}
-            <div style={{ flex: 1, position: "relative", height: isTablet ? 400 : "100%", overflow: "visible" }}>
+            <div style={{ flex: 1, position: "relative", height: isTablet ? 400 : 560, overflow: "visible" }}>
               <img
                 src={imgS14Teacher}
                 alt="Ujjwal Mam"
@@ -3701,7 +3885,7 @@ function Section14() {
               flex: isTablet ? "0 0 160px" : "0 0 197px",
               display: "flex", flexDirection: "column",
               justifyContent: "space-between",
-              height: isTablet ? 400 : "100%",
+              height: isTablet ? 400 : 560,
               paddingTop: 24,
             }}>
               <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
@@ -3709,15 +3893,15 @@ function Section14() {
                   fontFamily: "'Poppins', sans-serif", fontWeight: 400,
                   fontSize: 15, color: "#000", textAlign: "right", margin: 0,
                 }}>
-                  Lorem ipsum is Strategy
+                  Guiding rural generations
                 </p>
-                <div style={{ display: "flex", flexDirection: "column" }}>
-                  {["Monthly workshops #", "Access to shared #", "Peer mentoring circles #", "Access to shared #"].map(t => (
+                <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                  {["12,400+ children taught directly", "31 years in government schools", "150,000+ community who believe in the change"].map(t => (
                     <p key={t} style={{
                       fontFamily: "'DM Sans', sans-serif", fontWeight: 300,
                       fontSize: 14, lineHeight: "24px", color: "#636363",
                       textAlign: "right", margin: 0,
-                    }}>{t}</p>
+                    }}>→ {t}</p>
                   ))}
                 </div>
               </div>
@@ -3744,15 +3928,15 @@ function Section14() {
               fontFamily: "'Poppins', sans-serif", fontWeight: 500,
               fontSize: isMobile ? 16 : 17, color: "#000", margin: 0,
             }}>
-              About Organization lorem is
+              A Trust Built Because One Classroom Was Never Going To Be Enough
             </p>
             <div style={{
               fontFamily: "'DM Sans', sans-serif", fontWeight: 300,
               fontSize: isMobile ? 14 : 16, lineHeight: "26px", color: "#636363",
               display: "flex", flexDirection: "column", gap: 2,
             }}>
-              <p style={{ margin: 0 }}>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took</p>
-              <p style={{ margin: 0, maxWidth: 394 }}>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has Lorem</p>
+              <p style={{ margin: 0 }}>For 31 years, I saw bright, curious children slowly grow distant from learning. Not because they were weak, but because the system around them stopped speaking to their life, their struggle, and their reality.</p>
+              <p style={{ margin: 0, maxWidth: 394 }}>Shiksha Raj Ujjwal Bharat Foundation was born from that journey — an education-only trust created to carry practical, teacher-led learning into schools and communities that need it most, with full transparency on every contribution and every change it helps bring.</p>
             </div>
           </div>
 
@@ -4159,7 +4343,7 @@ function Section16() {
             fontFamily: "'Poppins', sans-serif", fontWeight: 400, fontSize: 13,
             color: "#bf791d", whiteSpace: "nowrap",
           }}>
-            Our channels
+            In my words
           </span>
           <h2 style={{
             fontFamily: "'Lora', serif", fontWeight: 600,
@@ -4167,7 +4351,7 @@ function Section16() {
             color: "#000", margin: 0, textTransform: "capitalize",
             textAlign: isMobile ? "left" : "right",
           }}>
-            Our Channels Ipsum Is
+            See The Work, Feel The Journey
           </h2>
         </div>
 
@@ -4181,7 +4365,7 @@ function Section16() {
               fontSize: 15, lineHeight: "26px", color: "#636363",
               margin: 0,
             }}>
-              Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been
+              The full stories, lessons, and lived moments continue across every channel I share.
             </p>
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
               {S16_SOCIALS.map((s) => (
@@ -4240,21 +4424,53 @@ function Section16() {
 
 // ── Section 17 ─────────────────────────────────────────────────────────────
 const S17_FAQS = [
+  // About Ujjwala
   {
-    q: "Lorem Ipsum is simply dummy text of the printing and?",
-    a: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type.",
+    q: "Who is Ujjwala Sharma and what does she do?",
+    a: "Ujjwala Sharma is a government school teacher from Rajasthan with 31 years of experience. She teaches children who come from the most marginalised communities — families of daily-wage labourers, farmers, and migrant workers. She has built a full learning ecosystem inside her classroom: libraries, science kits, art corners, and child-led activities — all without requesting additional government funds.",
   },
   {
-    q: "Lorem Ipsum is simply dummy text of the printing and typesettin?",
-    a: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type.",
+    q: "Is this a registered organisation?",
+    a: "Yes. The work operates under Shiksha Raj, a registered trust that provides the legal and financial structure for receiving donations and managing the programme transparently.",
   },
   {
-    q: "Lorem Ipsum is simply dummy text of the printing and typesettin?",
-    a: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type.",
+    q: "Why is she called Ujjwala Bharat Foundation?",
+    a: "Ujjwala Bharat Foundation is the public-facing identity of her mission — named after her personal belief that a truly bright (Ujjwala) India begins with educating every child with dignity. The foundation reflects her long-term vision beyond a single classroom.",
+  },
+  // Support, Donations & Transparency
+  {
+    q: "Where does the donated money go?",
+    a: "Every rupee donated is used directly for: classroom materials (books, stationery, science tools), child nutrition (mid-day meal supplements), infrastructure for the learning library, and teacher-community outreach events. No amount is used for admin salaries or overhead. A monthly expense report is shared with donors.",
   },
   {
-    q: "Lorem Ipsum is simply dummy text of the printing?",
-    a: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type.",
+    q: "How transparent is the use of funds?",
+    a: "Complete receipts and utilisation reports are shared with every donor. You will receive a donation receipt, a quarterly impact report, and access to real-time updates via our WhatsApp donor group. We believe your trust is earned — not assumed.",
+  },
+  {
+    q: "Can I donate in kind instead of cash?",
+    a: "Yes! Books, stationery, science kits, art supplies, and sports equipment are always welcome. Please reach out via the contact form or WhatsApp to coordinate a kind donation. We will confirm the items needed and arrange logistics.",
+  },
+  // Participation
+  {
+    q: "Can I volunteer with Ujjwala's programme?",
+    a: "Yes. We welcome volunteers who can contribute in areas like: teaching support or tutoring, content creation (writing, photography, video), fundraising or community outreach, and digital skills or IT support. Fill in the volunteer form on this page and our team will reach out within 5 working days.",
+  },
+  {
+    q: "Can organisations partner with this programme?",
+    a: "Absolutely. We are open to partnerships with CSR arms, educational NGOs, media organisations, and government bodies. A partnership can be in the form of funding, content collaboration, infrastructure support, or programme co-design. Write to us at the contact address shared on this page.",
+  },
+  // Programmes & Scale
+  {
+    q: "What age group does the programme serve?",
+    a: "The programme currently serves children between the ages of 6 and 14 — Classes 1 through 8. These are the foundational years where learning habits, curiosity, and self-worth are shaped. Reaching children at this stage is the most impactful intervention possible.",
+  },
+  {
+    q: "Does Ujjwala train other teachers too?",
+    a: "Yes. A core part of the long-term mission is to train government school teachers across Rajasthan using the same methods Ujjwala developed over 31 years. Workshops, peer-learning sessions, and digital training modules are being developed as part of this scale plan.",
+  },
+  {
+    q: "How many children has this programme reached?",
+    a: "Over the past 31 years, Ujjwala has directly impacted 1,400+ children through her classroom. With the structured Shiksha Raj model, the goal is to reach 10,000 children across 50 government schools in the next 3 years through teacher training and resource distribution.",
   },
 ];
 
@@ -4353,15 +4569,22 @@ function Section17() {
               fontFamily: "'Poppins', sans-serif", fontWeight: 400, fontSize: 13,
               color: "#bf791d", whiteSpace: "nowrap",
             }}>
-              FAQ's Lorem ipsum
+              FAQs
             </span>
             <h2 style={{
               fontFamily: "'Lora', serif", fontWeight: 600,
               fontSize: "clamp(30px, 3.5vw, 40px)", lineHeight: 1.24,
-              color: "#000", margin: 0, textTransform: "capitalize",
+              color: "#000", margin: 0,
             }}>
-              Frequently Asked Questions
+              Before You Walk Further
             </h2>
+            <p style={{
+              fontFamily: "'DM Sans', sans-serif", fontWeight: 300,
+              fontSize: 15, lineHeight: "26px", color: "#636363",
+              margin: 0,
+            }}>
+              From donations to teaching to transparency, here are the answers that bring more clarity.
+            </p>
           </div>
 
           {/* Right — accordion */}
@@ -4384,21 +4607,12 @@ function Section17() {
 }
 
 // ── Section 18 ─────────────────────────────────────────────────────────────
-// Words + their weight — SemiBold for "We unlock scale by fixing", Regular for the rest
+// Words + their weight — bold for key phrases, light for connective words
 const S18_WORDS: { word: string; weight: 400 | 600 }[] = [
-  { word: "We",           weight: 600 },
-  { word: "unlock",       weight: 600 },
-  { word: "scale",        weight: 600 },
-  { word: "by",           weight: 600 },
-  { word: "fixing",       weight: 600 },
-  { word: "what's",       weight: 400 },
-  { word: "leaking",      weight: 400 },
-  { word: "conversion,",  weight: 400 },
-  { word: "retention,",   weight: 400 },
-  { word: "repeat",       weight: 400 },
-  { word: "so",           weight: 400 },
-  { word: "growth",       weight: 400 },
-  { word: "lorem",        weight: 400 },
+  { word: "Let's",       weight: 400 },
+  { word: "Rethink",     weight: 600 },
+  { word: "Education",   weight: 600 },
+  { word: "Together",    weight: 400 },
 ];
 
 function Section18() {
@@ -4464,7 +4678,7 @@ function Section18() {
             color: "#fff", cursor: "pointer", whiteSpace: "nowrap",
             width: isMobile ? "100%" : "auto",
           }}>
-            About Ujjwala
+            I Commit To Education
             <ArrowIcon color="#fff" size={16} />
           </button>
 
@@ -4498,6 +4712,7 @@ export function HomeV2Page() {
       <Section5 />
       <Section6 />
       <Section7 />
+      <IntroNGOSection />
       <Section8 />
       <Section9 />
       <Section10 />
