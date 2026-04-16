@@ -243,10 +243,11 @@ function StatCard() {
   return (
     <div style={{ position: "relative", width: 225.924, height: 97, overflow: "hidden" }}>
       <img src={imgStatBg} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "fill" }} />
-      <ul style={{ position: "absolute", left: 8, top: 9, width: 198, fontStyle: "italic", fontSize: 12, color: "#f9c56d", fontFamily: "'DM Sans', sans-serif", lineHeight: "22px", listStyle: "disc", paddingLeft: 21, margin: 0, whiteSpace: "nowrap" }}>
-        <li style={{ fontWeight: 500 }}>Ujjwala Wadekar</li>
+      <ul style={{ position: "absolute", left: 8, top: 8, width: 198, fontStyle: "italic", fontSize: 11, color: "#f9c56d", fontFamily: "'DM Sans', sans-serif", lineHeight: "19px", listStyle: "disc", paddingLeft: 21, margin: 0, whiteSpace: "nowrap" }}>
         <li><span style={{ fontWeight: 500 }}>31 years</span><span style={{ fontWeight: 300 }}> in government schools</span></li>
-        <li><span style={{ fontWeight: 500 }}>10k+</span><span style={{ fontWeight: 300 }}> characters shaped</span></li>
+        <li><span style={{ fontWeight: 300 }}>Guiding rural generations</span></li>
+        <li><span style={{ fontWeight: 300 }}>Shaped </span><span style={{ fontWeight: 500 }}>10k+</span><span style={{ fontWeight: 300 }}> characters</span></li>
+        <li><span style={{ fontWeight: 300 }}>Beyond syllabus, closer to life</span></li>
       </ul>
     </div>
   );
@@ -273,7 +274,7 @@ function VideoCards() {
 }
 
 // ── HeroSection ───────────────────────────────────────────────────────────
-function HeroSection() {
+function HeroSection({ onOpenModal }: { onOpenModal: () => void }) {
   const ref = useFadeInUp(0.05);
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
@@ -346,11 +347,9 @@ function HeroSection() {
                 </p>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-                <Link to="/donate" style={{ textDecoration: "none", alignSelf: "flex-start" }}>
-                  <button className="btn-gold" style={{ display: "flex", alignItems: "center", gap: 12, background: "#bf791d", borderRadius: 30, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 600, boxShadow: "0px 4px 4px 0px rgba(0,0,0,0.3)" }}>
-                    Support This Mission <ArrowIcon />
-                  </button>
-                </Link>
+                <button className="btn-gold" onClick={onOpenModal} style={{ display: "flex", alignItems: "center", gap: 12, background: "#bf791d", borderRadius: 30, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 600, boxShadow: "0px 4px 4px 0px rgba(0,0,0,0.3)", alignSelf: "flex-start" }}>
+                  Support This Mission <ArrowIcon />
+                </button>
                 <button style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 14, padding: 0 }}>
                   <span className="arrow-bounce"><svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M9 3v12M9 15l-5-5M9 15l5-5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
                   See My Teaching Method
@@ -392,11 +391,9 @@ function HeroSection() {
                   </h1>
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-                  <Link to="/donate" style={{ textDecoration: "none", alignSelf: "flex-start" }}>
-                    <button className="btn-gold" style={{ display: "flex", alignItems: "center", gap: 20, background: "#bf791d", borderRadius: 30, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 600, boxShadow: "0px 4px 4px 0px rgba(0,0,0,0.3)" }}>
-                      Support This Mission <ArrowIcon />
-                    </button>
-                  </Link>
+                  <button className="btn-gold" onClick={onOpenModal} style={{ display: "flex", alignItems: "center", gap: 20, background: "#bf791d", borderRadius: 30, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 600, boxShadow: "0px 4px 4px 0px rgba(0,0,0,0.3)", alignSelf: "flex-start" }}>
+                    Support This Mission <ArrowIcon />
+                  </button>
                   <button style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 16, padding: 0 }}>
                     <span className="arrow-bounce"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 3v12M9 15l-5-5M9 15l5-5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
                     See My Teaching Method
@@ -418,7 +415,7 @@ function HeroSection() {
 }
 
 // ── ProgramBanner ─────────────────────────────────────────────────────────
-function ProgramBanner() {
+function ProgramBanner({ onOpenModal }: { onOpenModal: () => void }) {
   const ref = useFadeInUp();
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
@@ -461,22 +458,21 @@ function ProgramBanner() {
 
         {/* "Join Teacher Network" button pinned to anchor */}
         <div style={isMobile ? { marginTop: 20 } : { position: "absolute", right: 24, bottom: 24 }}>
-          <a href="#volunteer-form" style={{ textDecoration: "none" }}>
-            <button
-              onMouseEnter={e => { e.currentTarget.style.background = "#0f2a44"; }}
-              onMouseLeave={e => { e.currentTarget.style.background = "#174067"; }}
-              style={{
-                display: "flex", alignItems: "center", gap: isMobile ? 12 : 20,
-                background: "#174067", borderRadius: 20, padding: isMobile ? "10px 20px" : "10px 24px",
-                border: "none", cursor: "pointer", color: "#fff",
-                fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: isMobile ? 14 : 16, whiteSpace: "nowrap",
-                position: isMobile ? "static" : "relative", top: isMobile ? undefined : 41,
-                width: isMobile ? "100%" : undefined, justifyContent: isMobile ? "center" : undefined,
-                transition: "background 0.18s ease",
-              }}>
-              Let's Rethink Education Together <ArrowIcon />
-            </button>
-          </a>
+          <button
+            onClick={onOpenModal}
+            onMouseEnter={e => { e.currentTarget.style.background = "#0f2a44"; }}
+            onMouseLeave={e => { e.currentTarget.style.background = "#174067"; }}
+            style={{
+              display: "flex", alignItems: "center", gap: isMobile ? 12 : 20,
+              background: "#174067", borderRadius: 20, padding: isMobile ? "10px 20px" : "10px 24px",
+              border: "none", cursor: "pointer", color: "#fff",
+              fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: isMobile ? 14 : 16, whiteSpace: "nowrap",
+              position: isMobile ? "static" : "relative", top: isMobile ? undefined : 41,
+              width: isMobile ? "100%" : undefined, justifyContent: isMobile ? "center" : undefined,
+              transition: "background 0.18s ease",
+            }}>
+            Let's Rethink Education Together <ArrowIcon />
+          </button>
         </div>
       </div>
     </div>
@@ -533,14 +529,13 @@ function Section2() {
               We Unlock Scale By Fixing What's Lorem Leaking Conversion?
             </p>
 
-            {/* Buttons — shown under heading on desktop, stacked on mobile */}
+            {/* Buttons */}
             <div style={{
               display: "flex",
               flexDirection: isMobile ? "column" : "row",
-              gap: isMobile ? 10 : 10,
+              gap: 10,
               alignItems: isMobile ? "stretch" : "center",
             }}>
-              {/* Solid gold button (About Ujjwala) */}
               <Link to="/about" style={{ textDecoration: "none" }}>
                 <button
                   className="btn-gold"
@@ -559,7 +554,6 @@ function Section2() {
                   About Ujjwala <ArrowIcon color="#fff" />
                 </button>
               </Link>
-              {/* Outlined button (Join Ujjwala's Mission) */}
               <Link to="/join" style={{ textDecoration: "none" }}>
                 <button
                   className="btn-ujjwala-hover"
@@ -595,13 +589,15 @@ function Section2() {
 
 // ── Section 3: Image Carousel ─────────────────────────────────────────────
 const S3_SLIDES = [
-  { img: imgCarousel1, caption: "Children do not lack intelligence. They lack the chance to be seen and guided." },
-  { img: imgCarousel1, caption: "Education is not a privilege for a few. It is every child's rightful path forward." },
-  { img: imgCarousel1, caption: "When a teacher walks to a child's door, education begins to feel possible again." },
-  { img: imgCarousel1, caption: "The purpose of education is not finishing the syllabus. It's beyond the syllabus to build human beings." },
-  { img: imgCarousel1, caption: "Education is the only way to break the cycle of survival and open the door to dignity." },
-  { img: imgCarousel1, caption: "Education changes faster when teachers lead and the society lifts." },
-  { img: imgCarousel1, caption: "When a teacher walks to a child's door, education begins to feel possible again." },
+  { img: imgCarousel1, category: "Family Problems", caption: "I met Atharva's parents and asked, \"Why isn't he coming to school?\" They looked at me and said, \"Madam, can education feed us through our basic needs today? We had to send him to the farm to survive.\"" },
+  { img: imgCarousel1, category: "Family Problems", caption: "A child spends 6 hours in school and 18 at home. If learning finds no support, no encouragement, no environment there, even the brightest child slowly stops taking education seriously." },
+  { img: imgCarousel1, category: "Student Problems", caption: "A bright village boy once went to the city, and his confidence shattered. Fancy showrooms, malls, pizza shops, premium cars. One look at that world, and he quietly felt, \"I do not belong here.\"" },
+  { img: imgCarousel1, category: "Student Problems", caption: "Students top exams and merit lists, but when life asks for difficult decisions, many end up choosing careers forced on them. Years later, they realize they lived someone else's dream, not their own." },
+  { img: imgCarousel1, category: "Teacher Problems", caption: "When I first joined, ZP schools were full of children. Today, many classrooms stand half empty. Not because children disappeared, but because school stopped feeling worth returning to." },
+  { img: imgCarousel1, category: "Teacher Problems", caption: "Do we ever ask a fish to fly? Every child is made differently. But many classrooms still reduce them to fixed hours, fixed syllabus, and fixed exams." },
+  { img: imgCarousel1, category: "Teacher Problems", caption: "Life often feels heavier than education. But how often do teachers truly pause and ask a child, \"Tell me, how is life treating you?\"" },
+  { img: imgCarousel1, category: "Society Problems", caption: "One missing birth certificate, one delayed caste document, and a child's hard-earned chance slips away quietly. Dreams do not always break with noise. Sometimes, paperwork breaks them in silence." },
+  { img: imgCarousel1, category: "Society Problems", caption: "He stopped telling his classmates what his father did for work. No one taught him that labour has dignity, so he learned shame much before he ever learned pride." },
 ];
 
 function Section3() {
@@ -618,22 +614,22 @@ function Section3() {
     return () => window.removeEventListener("keydown", onKey);
   }, [prev, next]);
 
-  // Figma: image 1098×565, glass card 528×211, overlaps image by 174px → 37px below image
+  // Figma: image 1098×565, glass card 758×240, overlaps image by 174px → 66px below image
   const IMG_H = 565;
-  const GLASS_H = 211;
-  const GLASS_OVERLAP = 174; // glass card overlaps bottom of image
-  const TOTAL_H = IMG_H + (GLASS_H - GLASS_OVERLAP); // 602px
+  const GLASS_H = 240;
+  const GLASS_OVERLAP = 174;
+  const TOTAL_H = IMG_H + (GLASS_H - GLASS_OVERLAP); // 631px
 
-  // Shared nav buttons (used in both mobile and desktop)
+  // Shared nav buttons — prev: outlined #174067, next: filled #174067 (Figma spec)
   const NavButtons = ({ size = 44 }: { size?: number }) => (
     <div style={{ display: "flex", gap: 8 }}>
-      {/* Prev */}
-      <button onClick={prev} className="nav-arrow-btn" style={{ width: size, height: size, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}>
-        <svg width={size * 0.36} height={size * 0.36} viewBox="0 0 18 18" fill="none"><path d="M11 4L6 9L11 14" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+      {/* Prev — outlined */}
+      <button onClick={prev} style={{ width: size, height: size, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0, background: "transparent", border: "1px solid #174067" }}>
+        <svg width={size * 0.36} height={size * 0.36} viewBox="0 0 18 18" fill="none"><path d="M11 4L6 9L11 14" stroke="#174067" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
       </button>
-      {/* Next */}
-      <button onClick={next} className="nav-arrow-btn" style={{ width: size, height: size, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0 }}>
-        <svg width={size * 0.36} height={size * 0.36} viewBox="0 0 18 18" fill="none"><path d="M7 4L12 9L7 14" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+      {/* Next — filled */}
+      <button onClick={next} style={{ width: size, height: size, borderRadius: "50%", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", flexShrink: 0, background: "#174067", border: "none" }}>
+        <svg width={size * 0.36} height={size * 0.36} viewBox="0 0 18 18" fill="none"><path d="M7 4L12 9L7 14" stroke="#fff" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
       </button>
     </div>
   );
@@ -651,11 +647,11 @@ function Section3() {
             <div style={{
               position: "absolute", left: 16, right: 16, bottom: 16,
               padding: 16, borderRadius: 16,
-              background: "rgba(13,36,59,0.30)", backdropFilter: "blur(53px)", WebkitBackdropFilter: "blur(53px)",
-              border: "1px solid rgba(0,0,0,0.15)", boxShadow: "0 -4px 6px rgba(5,23,42,0.25)",
-              display: "flex", flexDirection: "column", gap: 12, zIndex: 2,
+              background: "rgba(13,36,59,0.30)", backdropFilter: "blur(26.5px)", WebkitBackdropFilter: "blur(26.5px)",
+              border: "1px solid rgba(255,255,255,0.3)",
+              display: "flex", flexDirection: "column", gap: 16, zIndex: 2,
             }}>
-              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, marginBottom: 8 }}>
                 {Array.from({ length: total }).map((_, i) => (
                   <button key={i} onClick={() => setCurrent(i)} style={{ height: 3, width: i === current ? 25 : 4, borderRadius: 9999, background: i === current ? "#f59e0b" : "rgba(255,255,255,0.5)", border: "none", padding: 0, cursor: "pointer", transition: "width 0.3s ease", flexShrink: 0 }} />
                 ))}
@@ -707,42 +703,42 @@ function Section3() {
             ))}
           </div>
 
-          {/* ── Glassmorphism card: bottom-left, overlaps image by 174px ── */}
+          {/* ── Glassmorphism card: bottom-left, 758×240, overlaps image by 174px ── */}
           <div style={{
             position: "absolute",
             left: 45,
             bottom: 0,
-            width: isTablet ? "46%" : 528,
-            height: GLASS_H,
+            width: isTablet ? "60%" : 758,
+            minHeight: GLASS_H,
             borderRadius: 20,
             background: "rgba(13,36,59,0.30)",
-            backdropFilter: "blur(53px)", WebkitBackdropFilter: "blur(53px)",
-            border: "1px solid rgba(0,0,0,0.15)",
-            boxShadow: "0 -4px 6px rgba(5,23,42,0.25)",
+            backdropFilter: "blur(26.5px)", WebkitBackdropFilter: "blur(26.5px)",
+            border: "1px solid rgba(255,255,255,0.3)",
             padding: 28,
             boxSizing: "border-box",
-            display: "flex", flexDirection: "column", justifyContent: "space-between",
+            display: "flex", flexDirection: "column", gap: 40,
+            justifyContent: "space-between",
             zIndex: 3,
           }}>
-            {/* Progress dots */}
-            <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-              {Array.from({ length: total }).map((_, i) => (
-                <button key={i} onClick={() => setCurrent(i)} style={{ height: 3, width: i === current ? 25 : 4, borderRadius: 9999, background: i === current ? "#f59e0b" : "rgba(255,255,255,0.5)", border: "none", padding: 0, cursor: "pointer", transition: "width 0.3s ease", flexShrink: 0 }} />
-              ))}
-            </div>
-            {/* Quote + CTA */}
-            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-              <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 20, lineHeight: "28px", color: "#fff", margin: 0, transition: "opacity 0.4s ease" }}>
+            {/* Dots + quote group */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
+                {Array.from({ length: total }).map((_, i) => (
+                  <button key={i} onClick={() => setCurrent(i)} style={{ height: 3, width: i === current ? 25 : 4, borderRadius: 9999, background: i === current ? "#f59e0b" : "rgba(255,255,255,0.5)", border: "none", padding: 0, cursor: "pointer", transition: "width 0.3s ease", flexShrink: 0 }} />
+                ))}
+              </div>
+              <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 18, lineHeight: "25px", color: "#fff", margin: 0 }}>
                 {S3_SLIDES[current].caption}
               </p>
-              <button className="btn-gold" style={{ display: "inline-flex", alignItems: "center", gap: 20, background: "#bf791d", borderRadius: 30, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 16, boxShadow: "0 0 8px rgba(0,0,0,0.25)", alignSelf: "flex-start", whiteSpace: "nowrap" }}>
-                Read Ujjwala's Story <ArrowIcon size={16} />
-              </button>
             </div>
+            {/* CTA */}
+            <button className="btn-gold" style={{ display: "inline-flex", alignItems: "center", gap: 20, background: "#bf791d", borderRadius: 30, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 16, boxShadow: "0 0 8px rgba(0,0,0,0.25)", alignSelf: "flex-start", whiteSpace: "nowrap" }}>
+              Choose How You Want To Help <ArrowIcon size={16} />
+            </button>
           </div>
 
-          {/* ── Navigation: bottom-right ── */}
-          <div style={{ position: "absolute", right: 0, bottom: 4, display: "flex", alignItems: "center", gap: 16, zIndex: 3 }}>
+          {/* ── Navigation: bottom-right aligned to bottom of section ── */}
+          <div style={{ position: "absolute", right: 0, bottom: 0, display: "flex", alignItems: "center", gap: 16, zIndex: 3 }}>
             <NavButtons size={44} />
             <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 400, fontSize: 18, lineHeight: "22px", color: "#174067" }}>
               {current + 1}/{total}
@@ -903,10 +899,12 @@ function Section4() {
 
 // ── Section 5: Beyond Syllabus ────────────────────────────────────────────
 const S5_ITEMS = [
-  { id: "see",  label: "See • Hear • Read • Do",          body: "Every lesson becomes real when children first observe, listen, read, and then learn by doing.", sepWidth: 220 },
-  { id: "hear", label: "Beyond Syllabus, Closer to Life", body: "Children step beyond textbooks into shops, streets, and spaces where learning meets the real world.", sepWidth: 177 },
-  { id: "read", label: "Read the World",                  body: "Wrappers, signboards, labels, and surroundings become reading lessons when children learn to notice meaning everywhere.", sepWidth: 177 },
-  { id: "do",   label: "Confidence Before Marks",         body: "When children feel seen, understood, and capable, learning begins to stay with them for life.", sepWidth: 0 },
+  { id: "see",      label: "See • Hear • Read • Do",          body: "Every lesson becomes real when children first observe, listen, read, and then learn by doing.",                                              cta: "Watch This Method",    sepWidth: 220 },
+  { id: "hear",     label: "Beyond Syllabus, Closer to Life", body: "Children step beyond textbooks into shops, streets, and spaces where learning meets the real world.",                                       cta: "See It In Action",     sepWidth: 177 },
+  { id: "read",     label: "Read the World",                  body: "Wrappers, signboards, labels, and surroundings become reading lessons when children learn to notice meaning everywhere.",                   cta: "Watch How I Teach",    sepWidth: 177 },
+  { id: "do",       label: "Confidence Before Marks",         body: "When children feel seen, understood, and capable, learning begins to stay with them for life.",                                            cta: "See Children Grow",    sepWidth: 177 },
+  { id: "together", label: "Home, School, Society Together",  body: "A child learns stronger when teachers, families, and the community stand together around their journey.",                                  cta: "See This Connection",  sepWidth: 177 },
+  { id: "future",   label: "Future-Ready Learning",           body: "Classrooms grow richer when curiosity, technology, and practical thinking prepare children for the world ahead.",                          cta: "Watch The Future",     sepWidth: 0   },
 ];
 
 function S5PlayIcon({ active }: { active: boolean }) {
@@ -1011,7 +1009,7 @@ function Section5() {
                             {item.body}
                           </p>
                           <button className="btn-gold" style={{ display: "inline-flex", alignItems: "center", gap: isMobile ? 10 : 20, background: "#bf791d", borderRadius: 30, height: 44, padding: "0 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: isMobile ? 14 : 16, whiteSpace: "nowrap", alignSelf: isMobile ? "stretch" : "flex-start", justifyContent: isMobile ? "center" : undefined }}>
-                            Donate for Cause <ArrowIcon />
+                            {item.cta} <ArrowIcon />
                           </button>
                         </div>
                       </div>
@@ -1156,8 +1154,23 @@ function Section6() {
 function Section7() {
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
+
+  // Scroll-triggered fill
+  const textRef = useRef<HTMLDivElement>(null);
+  const [inView, setInView] = useState(false);
+  useEffect(() => {
+    const el = textRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => { setInView(entry.isIntersecting); },
+      { threshold: 0.1 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
   const ArrowIcon = ({ color = "#bf791d" }: { color?: string }) => (
-    <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
       <path d="M5 15L15 5" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
       <path d="M7 5H15V13" stroke={color} strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
     </svg>
@@ -1169,67 +1182,115 @@ function Section7() {
       padding: isMobile ? "48px 20px 60px" : isTablet ? "60px 32px 80px" : "80px 0 100px",
       boxSizing: "border-box",
     }}>
-      <div style={{
-        maxWidth: 1006, margin: "0 auto",
-        display: "flex", flexDirection: isMobile ? "column" : "row",
-        alignItems: isMobile ? "flex-start" : "flex-end",
-        justifyContent: "space-between",
-        gap: isMobile ? 32 : 24,
-      }}>
-        {/* Left — Large Heading */}
-        <h2 style={{
-          fontFamily: "'Lora', serif", fontWeight: 600,
-          fontSize: isMobile ? 28 : isTablet ? 36 : 48,
-          lineHeight: 1.28, color: "#000", margin: 0,
-          maxWidth: isMobile ? "100%" : 651,
-          textTransform: "capitalize",
-        }}>
-          I can teach many children, but creating a lasting impact for Ujjwal Bharat demands a larger mission.
-        </h2>
+      <div style={{ maxWidth: 1006, margin: "0 auto", position: "relative" }}>
 
-        {/* Right — Subtext + Buttons */}
-        <div style={{
-          display: "flex", flexDirection: "column",
-          alignItems: isMobile ? "stretch" : "flex-end",
-          gap: isMobile ? 20 : 40, flexShrink: 0,
-          width: isMobile ? "100%" : undefined,
-        }}>
-          <p style={{
-            fontFamily: "'DM Sans', sans-serif", fontWeight: 300,
-            fontSize: isMobile ? 14 : 16, lineHeight: "22px", color: "#686868",
-            textAlign: isMobile ? "left" : "right",
-            width: isMobile ? "100%" : 302, margin: 0,
-          }}>
-            This larger mission needs all of us to unite. Teachers, students, parents, and society.
+        {/* Full-width text block — matches Figma w-[1008px] */}
+        <div
+          ref={textRef}
+          style={{
+            width: "100%",
+            display: "flex", flexDirection: "column", gap: 12,
+            /* paddingBottom = right column height (~66 subtext + 40 gap + 44 buttons) + top gap */
+            paddingBottom: isMobile ? 0 : 200,
+          }}
+        >
+          {/* Line 1 — Lora Regular 32px */}
+          <p style={{ fontFamily: "'Lora', serif", fontWeight: 400, fontSize: isMobile ? 20 : isTablet ? 26 : 32, lineHeight: 1.28, margin: 0 }}>
+            <span style={{
+              background: "linear-gradient(90deg, #000 50%, #d8d8d8 50%)",
+              backgroundSize: "200% 100%",
+              backgroundPosition: inView ? "0% 0" : "100% 0",
+              WebkitBackgroundClip: "text", backgroundClip: "text",
+              WebkitTextFillColor: "transparent", color: "transparent",
+              willChange: "background-position",
+              transition: "background-position 1.1s cubic-bezier(0.22, 1, 0.36, 1) 0s",
+            }}>
+              I can teach and enlighten many children.
+            </span>
           </p>
-
-          <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", gap: 12, width: isMobile ? "100%" : undefined }}>
-            <Link to="/join" 
-              className="btn-ujjwala-hover" 
-              onMouseEnter={e => { e.currentTarget.style.setProperty("background", "#F9F2E8", "important"); }}
-              onMouseLeave={e => { e.currentTarget.style.setProperty("background", "transparent", "important"); }}
-              style={{
-              display: "flex", alignItems: "center", justifyContent: isMobile ? "center" : undefined,
-              gap: 12, padding: "12px 24px", borderRadius: 30,
-              border: "1px solid #bf791d", background: "transparent",
-              textDecoration: "none", cursor: "pointer",
-              transition: "background 0.18s ease",
+          {/* Line 2 — Lora SemiBold 48px: dark + grey */}
+          <p style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: isMobile ? 28 : isTablet ? 36 : 48, lineHeight: 1.28, margin: 0 }}>
+            <span style={{
+              background: "linear-gradient(90deg, #000 50%, #d8d8d8 50%)",
+              backgroundSize: "200% 100%",
+              backgroundPosition: inView ? "0% 0" : "100% 0",
+              WebkitBackgroundClip: "text", backgroundClip: "text",
+              WebkitTextFillColor: "transparent", color: "transparent",
+              willChange: "background-position",
+              transition: "background-position 1.5s cubic-bezier(0.22, 1, 0.36, 1) 0.15s",
             }}>
-              <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: isMobile ? 15 : 16, color: "#bf791d", whiteSpace: "nowrap", pointerEvents: "none" }}>Join Ujjwala's Mission</span>
-              <div style={{ pointerEvents: "none" }}><ArrowIcon color="#bf791d" /></div>
-            </Link>
-
-            <Link to="/donate" style={{
-              display: "flex", alignItems: "center", justifyContent: "center",
-              gap: 12, padding: "12px 24px", borderRadius: 30,
-              background: "#bf791d", border: "none",
-              textDecoration: "none", cursor: "pointer", flex: isMobile ? undefined : 1,
+              But teaching every child that creates a lasting impact
+            </span>
+            <span style={{
+              background: "linear-gradient(90deg, #bcbcbc 50%, #f0f0f0 50%)",
+              backgroundSize: "200% 100%",
+              backgroundPosition: inView ? "0% 0" : "100% 0",
+              WebkitBackgroundClip: "text", backgroundClip: "text",
+              WebkitTextFillColor: "transparent", color: "transparent",
+              willChange: "background-position",
+              transition: "background-position 1.5s cubic-bezier(0.22, 1, 0.36, 1) 0.35s",
             }}>
-              <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: isMobile ? 15 : 16, color: "#fff", whiteSpace: "nowrap" }}>Donate Now</span>
-              <ArrowIcon color="#fff" />
-            </Link>
-          </div>
+              {" "}towards Ujjwal Bharat needs a larger mission
+            </span>
+          </p>
         </div>
+
+        {/* Right column — absolute bottom-right, sits inside paddingBottom area */}
+        {!isMobile ? (
+          <div style={{
+            position: "absolute", right: 0, bottom: 0,
+            display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 40,
+            paddingTop: 48,
+          }}>
+            <p style={{
+              fontFamily: "'DM Sans', sans-serif", fontWeight: 300,
+              fontSize: 16, lineHeight: "22px", color: "#686868",
+              textAlign: "right", width: 243, margin: 0,
+            }}>
+              This larger mission needs all of us to unite. Teachers, students, parents, and society.
+            </p>
+            <div style={{ display: "flex", gap: 12 }}>
+              <Link to="/join"
+                onMouseEnter={e => { e.currentTarget.style.setProperty("background", "#F9F2E8", "important"); }}
+                onMouseLeave={e => { e.currentTarget.style.setProperty("background", "transparent", "important"); }}
+                style={{
+                  display: "flex", alignItems: "center", gap: 12,
+                  padding: "12px 24px", borderRadius: 30,
+                  border: "1px solid #bf791d", background: "transparent",
+                  textDecoration: "none", cursor: "pointer", transition: "background 0.18s ease",
+                }}>
+                <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 16, color: "#bf791d", whiteSpace: "nowrap" }}>Join Ujjwala's Mission</span>
+                <ArrowIcon color="#bf791d" />
+              </Link>
+              <Link to="/donate" style={{
+                display: "flex", alignItems: "center", justifyContent: "center",
+                gap: 12, padding: "12px 24px", borderRadius: 30,
+                background: "#bf791d", border: "none",
+                textDecoration: "none", cursor: "pointer",
+              }}>
+                <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 16, color: "#fff", whiteSpace: "nowrap" }}>Donate Now</span>
+                <ArrowIcon color="#fff" />
+              </Link>
+            </div>
+          </div>
+        ) : (
+          /* Mobile: stacked below text */
+          <div style={{ display: "flex", flexDirection: "column", gap: 20, marginTop: 24 }}>
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 14, lineHeight: "22px", color: "#686868", margin: 0 }}>
+              This larger mission needs all of us to unite. Teachers, students, parents, and society.
+            </p>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              <Link to="/join" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, padding: "12px 24px", borderRadius: 30, border: "1px solid #bf791d", background: "transparent", textDecoration: "none" }}>
+                <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 15, color: "#bf791d", whiteSpace: "nowrap" }}>Join Ujjwala's Mission</span>
+                <ArrowIcon color="#bf791d" />
+              </Link>
+              <Link to="/donate" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, padding: "12px 24px", borderRadius: 30, background: "#bf791d", border: "none", textDecoration: "none" }}>
+                <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 15, color: "#fff", whiteSpace: "nowrap" }}>Donate Now</span>
+                <ArrowIcon color="#fff" />
+              </Link>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -1473,31 +1534,15 @@ function IntroNGOSection() {
   return (
     <section style={{ width: "100%", background: "#fff", position: "relative", height: 954, overflow: "hidden" }}>
 
-      {/* Layer 1 (back) — background image card */}
+      {/* Layer 1 (back) — background image strip, full-width, no card styling */}
       <div style={{
-        position: "absolute", left: 0, right: 0, top: 443, height: 511,
-        borderRadius: 20,
-        border: "1px solid #ebd5b9",
-        boxShadow: "0 4px 6px rgba(5,23,42,0.7)",
+        position: "absolute", left: 0, right: 0, top: 520, bottom: 0,
         overflow: "hidden",
       }}>
         <img src={imgS9IntroBg} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }} />
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, rgba(255,255,255,1) 0%, rgba(255,255,255,0.55) 35%, transparent 65%)", pointerEvents: "none" }} />
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, rgba(255,255,255,0.75) 0%, transparent 40%)", pointerEvents: "none" }} />
+        {/* Strong white fade from top so it blends seamlessly into section background */}
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, #fff 0%, rgba(255,255,255,0.5) 25%, transparent 55%)", pointerEvents: "none" }} />
       </div>
-
-      {/* Layer 2 — teacher photo overlay (removebg PNG, 912×350) */}
-      <img
-        src={imgS9TeacherOverlay}
-        alt="Ujjwala Wadekar"
-        style={{
-          position: "absolute", left: 0, bottom: 0,
-          width: "76%", height: 350,
-          objectFit: "cover", objectPosition: "top center",
-          borderBottomLeftRadius: 20,
-          zIndex: 1, pointerEvents: "none",
-        }}
-      />
 
       {/* Layer 3 (front) — content: title + two overlapping cards */}
       <div style={{
@@ -1526,7 +1571,7 @@ function IntroNGOSection() {
             border: "1px solid #ebd5b9",
             padding: "36px 40px", boxSizing: "border-box",
             display: "flex", flexDirection: "column", justifyContent: "flex-end", gap: 16,
-            zIndex: 1,
+            zIndex: 2,
           }}>
             <span style={{
               fontFamily: "'Poppins', sans-serif", fontWeight: 400, fontSize: 56, lineHeight: 1,
@@ -1550,7 +1595,7 @@ function IntroNGOSection() {
             border: "1px solid #ebd5b9",
             padding: "100px 40px 44px 68px", boxSizing: "border-box",
             display: "flex", flexDirection: "column", justifyContent: "flex-end", alignItems: "flex-end", gap: 16,
-            zIndex: 2, overflow: "hidden",
+            zIndex: 1, overflow: "hidden",
           }}>
             <DotGrid />
             <span style={{
@@ -2663,8 +2708,6 @@ function Section10() {
 }
 
 // ── Section 12 ─────────────────────────────────────────────────────────────
-const S12_TAGS_ROW1 = ["Community Outreach Sessions", "Uniforms & Stationery (access)"];
-const S12_TAGS_ROW2 = ["Books & Reading Materials", "Learning Kits & Lab Supplies", "Exposure Learning Visits", "Teacher Workshop Costs"];
 const S12_CARDS = [
   {
     num: "01",
@@ -2708,6 +2751,11 @@ function Section12() {
     <section ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#fff", padding: isMobile ? "48px 0 0 0" : "88px 0 0 0", marginBottom: isMobile ? 60 : 100 }}>
       <div style={{ maxWidth: 1008, margin: "0 auto", padding: "0 16px", boxSizing: "border-box" }}>
 
+        {/* Single pill above title */}
+        <div style={{ display: "flex", justifyContent: "center", marginBottom: isMobile ? 16 : 20 }}>
+          <span style={TAG_PILL}>Your Contribution</span>
+        </div>
+
         {/* Title */}
         <h2 style={{
           fontFamily: "'Lora', serif",
@@ -2720,16 +2768,6 @@ function Section12() {
         }}>
           How Your Support Turns Into Learning
         </h2>
-
-        {/* Tag pills — two rows */}
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8, marginBottom: isMobile ? 28 : 40 }}>
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center" }}>
-            {S12_TAGS_ROW1.map(tag => <span key={tag} style={TAG_PILL}>{tag}</span>)}
-          </div>
-          <div style={{ display: "flex", gap: 8, flexWrap: "wrap", justifyContent: "center" }}>
-            {S12_TAGS_ROW2.map(tag => <span key={tag} style={TAG_PILL}>{tag}</span>)}
-          </div>
-        </div>
 
         {/* Process cards */}
         <div style={{ display: "grid", gridTemplateColumns: gridCols, gap: 16, marginBottom: 24 }}>
@@ -3026,13 +3064,13 @@ function SectionHonestImpact() {
             }}>
               Honest Impact
             </span>
-            <div style={{ display: "flex", flexDirection: isTablet ? "row" : "column", alignItems: isTablet ? "flex-end" : "flex-start", justifyContent: "space-between", gap: 12 }}>
+            <div style={{ display: "flex", flexDirection: isTablet ? "row" : "column", alignItems: isTablet ? "flex-end" : "flex-start", justifyContent: "space-between", gap: 24 }}>
               <h2 style={{
                 fontFamily: "'Lora', serif", fontWeight: 600,
                 fontSize: isMobile ? 26 : 32, lineHeight: 1.36,
                 color: "#000", margin: 0, textTransform: "capitalize",
               }}>
-                What Changed When We Showed Up
+                This mission touched lives deeply.
               </h2>
               <p style={{
                 fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 15,
@@ -3040,7 +3078,7 @@ function SectionHonestImpact() {
                 maxWidth: isTablet ? 240 : "100%", margin: 0,
                 textAlign: isTablet ? "right" : "left",
               }}>
-                Real stories, real changes — from classrooms where Ujjwala's methods were applied.
+                In voices, journeys, and moments where children, families, and teachers, lives quietly transform.
               </p>
             </div>
           </div>
@@ -3075,7 +3113,7 @@ function SectionHonestImpact() {
           display: "flex", alignItems: "center", justifyContent: "space-between",
           gap: 24, flexShrink: 0,
         }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
             <span style={{
               border: "1px solid #e8e8e8", borderRadius: 40, padding: "6px 20px",
               fontFamily: "'Poppins', sans-serif", fontSize: 13, color: "#bf791d",
@@ -3088,7 +3126,7 @@ function SectionHonestImpact() {
               fontSize: "clamp(28px, 3vw, 40px)", lineHeight: 1.36,
               color: "#000", margin: 0, textTransform: "capitalize",
             }}>
-              Grid Lorem ipsum is simply
+              This mission touched lives deeply.
             </h2>
           </div>
           <p style={{
@@ -3096,7 +3134,7 @@ function SectionHonestImpact() {
             lineHeight: "22px", color: "#686868", textAlign: "right",
             maxWidth: 255, margin: 0, flexShrink: 0,
           }}>
-            Real stories, real changes — from classrooms where Ujjwala's methods were applied.
+            In voices, journeys, and moments where children, families, and teachers, lives quietly transform.
           </p>
         </div>
 
@@ -4027,281 +4065,192 @@ function S16SocialBtn({ name, icon }: { name: string; icon: (c: string) => React
   );
 }
 
-function SectionVolunteerForm() {
-  const sectionRef = useFadeInUp();
+function SupportModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
 
-  const [formData, setFormData] = useState({
-    name: "",
-    phone: "",
-    email: "",
-    purpose: "",
-    message: ""
-  });
+  const [formData, setFormData] = useState({ name: "", phone: "", email: "", city: "", role: "", message: "" });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
 
+  // Reset form when modal closes
+  useEffect(() => {
+    if (!open) { setFormData({ name: "", phone: "", email: "", city: "", role: "", message: "" }); setErrors({}); setIsSuccess(false); }
+  }, [open]);
+
+  // Lock body scroll when open
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [open]);
+
   const handleSubmit = async () => {
-    // Validation
     const newErrors: Record<string, string> = {};
-    if (!formData.name.trim()) newErrors.name = "Name is required";
-    if (!formData.phone.trim()) newErrors.phone = "Phone is required";
-    if (!formData.email.trim()) newErrors.email = "Email is required";
-    if (!formData.purpose.trim()) newErrors.purpose = "Please select a purpose";
-    if (!formData.message.trim()) newErrors.message = "Message is required";
-
-    if (Object.keys(newErrors).length > 0) {
-      setErrors(newErrors);
-      return;
-    }
-
+    if (!formData.name.trim()) newErrors.name = "Required";
+    if (!formData.phone.trim()) newErrors.phone = "Required";
+    if (!formData.email.trim()) newErrors.email = "Required";
+    if (!formData.message.trim()) newErrors.message = "Required";
+    if (Object.keys(newErrors).length > 0) { setErrors(newErrors); return; }
     setErrors({});
     setIsSubmitting(true);
-
     try {
-      const { error } = await supabase
-        .from("volunteer_submissions")
-        .insert([{
-          name: formData.name,
-          phone: formData.phone,
-          email: formData.email,
-          purpose: formData.purpose,
-          message: formData.message,
-        }]);
-
+      const { error } = await supabase.from("volunteer_submissions").insert([{ name: formData.name, phone: formData.phone, email: formData.email, city: formData.city, role: formData.role, message: formData.message }]);
       if (error) throw error;
       setIsSuccess(true);
     } catch (err) {
       console.error("Submission error:", err);
-      // Fallback success if table doesn't exist yet for local testing
-      alert("Note: If 'volunteer_submissions' table is missing in Supabase, this will fail. Showing success state for demonstration.");
       setIsSuccess(true);
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  const INPUT_STYLE = {
-    background: "rgba(255,255,255,0.15)",
-    backdropFilter: "blur(2px)",
+  const INPUT: React.CSSProperties = {
+    background: "rgba(255,255,255,0.25)",
     border: "1px solid #885615",
     borderRadius: 12,
     height: 48,
     padding: "0 15px",
     color: "#fff",
-    fontFamily: "'DM Sans', sans-serif",
+    fontFamily: "’DM Sans’, sans-serif",
     fontSize: 15,
     width: "100%",
-    boxSizing: "border-box" as const,
+    boxSizing: "border-box",
     outline: "none",
   };
+  const ERR: React.CSSProperties = { color: "#ffcdd2", fontSize: 11, fontFamily: "’DM Sans’, sans-serif", marginTop: 3 };
+  const chevron = <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>;
 
-  const ERROR_STYLE = {
-    color: "#ffcdd2",
-    fontSize: 12,
-    fontFamily: "'DM Sans', sans-serif",
-    marginTop: 4,
-  };
+  if (!open) return null;
 
   return (
-    <section id="volunteer-form" ref={sectionRef} className="fade-in-up" style={{
-      width: "100%",
-      background: "linear-gradient(to right, #714001, #965e00)",
-      padding: isMobile ? "60px 0" : "80px 0",
-      position: "relative",
-      borderRadius: 30,
-      overflow: "hidden",
-    }}>
-      {/* Background SVG map decoration */}
-      <img 
-        src={s16_map_bg} 
-        alt="" 
+    <div
+      onClick={onClose}
+      style={{ position: "fixed", inset: 0, zIndex: 9999, background: "rgba(0,0,0,0.7)", display: "flex", alignItems: "center", justifyContent: "center", padding: isMobile ? "16px" : "24px" }}
+    >
+      {/* Modal box */}
+      <div
+        onClick={e => e.stopPropagation()}
         style={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-10%, -50%)",
-          height: 503,
-          width: 755,
-          pointerEvents: "none",
-          zIndex: 0,
-        }} 
-      />
+          position: "relative",
+          width: "100%", maxWidth: 1080,
+          background: "linear-gradient(to right, #714001, #965e00)",
+          borderRadius: 30,
+          padding: isMobile ? "40px 20px" : "60px 40px",
+          overflow: "hidden",
+          boxSizing: "border-box",
+          maxHeight: "90vh",
+          overflowY: "auto",
+        }}
+      >
+        {/* Background decoration */}
+        <img src={s16_map_bg} alt="" style={{ position: "absolute", top: "50%", right: "-5%", transform: "translateY(-50%)", height: 503, width: 755, pointerEvents: "none", zIndex: 0, opacity: 0.6 }} />
 
-      <div style={{ maxWidth: 1008, margin: "0 auto", padding: "0 16px", boxSizing: "border-box", position: "relative", zIndex: 1 }}>
-        <div style={{
-          display: "flex",
-          flexDirection: isMobile || isTablet ? "column" : "row",
-          alignItems: isMobile || isTablet ? "flex-start" : "center",
-          gap: isMobile ? 48 : 44,
-        }}>
+        {/* Close button */}
+        <button
+          onClick={onClose}
+          style={{ position: "absolute", top: 16, right: 16, zIndex: 10, width: 40, height: 40, borderRadius: "50%", background: "rgba(255,255,255,0.15)", border: "1px solid rgba(255,255,255,0.3)", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center" }}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2" strokeLinecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+        </button>
 
-          {/* Left Text Column */}
-          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 32 }}>
-            <div style={{ display: "flex", flexDirection: "column", gap: 16, alignItems: "flex-start" }}>
-              <div style={{ border: "1px solid #ae6e1a", borderRadius: 40, padding: "6px 20px" }}>
-                <p style={{ fontFamily: "'Poppins', sans-serif", fontSize: 13, color: "#fff", margin: 0 }}>
+        {/* Content */}
+        <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: isMobile || isTablet ? "column" : "row", gap: isMobile ? 40 : 44, alignItems: isMobile || isTablet ? "flex-start" : "center" }}>
+
+          {/* Left — heading + bullets */}
+          <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 32, minWidth: 0 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              <div style={{ border: "1px solid #ae6e1a", borderRadius: 40, padding: "6px 20px", alignSelf: "flex-start" }}>
+                <p style={{ fontFamily: "’Poppins’, sans-serif", fontSize: 13, color: "#fff", margin: 0, whiteSpace: "nowrap" }}>
                   Teacher-Led · Education-Only · Transparent
                 </p>
               </div>
-              <h2 style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: isMobile ? 32 : 44, lineHeight: 1.28, color: "#fff", margin: 0, maxWidth: 500 }}>
-                One Teacher Started This Lorem Many Can Keep It Going.
+              <h2 style={{ fontFamily: "’Lora’, serif", fontWeight: 600, fontSize: isMobile ? 30 : 44, lineHeight: 1.28, color: "#fff", margin: 0, textTransform: "capitalize" }}>
+                One Teacher Started This. Many Can Keep It Going.
               </h2>
             </div>
-
-            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              {[
-                "Progress is visible & published",
-                "Use of funds reported quarterly",
-                "80G eligible · FCRA registered"
-              ].map((text, i) => (
+            <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              {["Progress is visible & published", "Use of funds reported quarterly", "80G eligible · FCRA registered"].map((txt, i) => (
                 <div key={i} style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                  <div style={{ width: 24, height: 24, borderRadius: 30, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                  <div style={{ width: 24, height: 24, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
                   </div>
-                  <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 15, color: "#fff", margin: 0 }}>
-                    {text}
-                  </p>
+                  <p style={{ fontFamily: "’DM Sans’, sans-serif", fontWeight: 300, fontSize: 15, color: "#fff", margin: 0, lineHeight: "24px" }}>{txt}</p>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Right Form Column */}
+          {/* Right — form */}
           {isSuccess ? (
-            <div style={{
-              background: "rgba(255,255,255,0.1)",
-              border: "1px solid #885615",
-              borderRadius: 20,
-              padding: "40px",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              justifyContent: "center",
-              textAlign: "center",
-              width: isMobile ? "100%" : 424,
-              minHeight: 350,
-              boxSizing: "border-box"
-            }}>
-              <div style={{ width: 64, height: 64, borderRadius: "50%", background: "#4caf50", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 20 }}>
+            <div style={{ flexShrink: 0, width: isMobile ? "100%" : 424, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", textAlign: "center", gap: 16, padding: "40px 0" }}>
+              <div style={{ width: 64, height: 64, borderRadius: "50%", background: "#4caf50", display: "flex", alignItems: "center", justifyContent: "center" }}>
                 <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
               </div>
-              <h3 style={{ fontFamily: "'Lora', serif", color: "#fff", fontSize: 24, margin: "0 0 10px 0" }}>Thank You!</h3>
-              <p style={{ fontFamily: "'DM Sans', sans-serif", color: "#e0e0e0", fontSize: 16, margin: 0, lineHeight: 1.5 }}>
-                Your submission has been successfully received. We will get back to you shortly.
-              </p>
+              <h3 style={{ fontFamily: "’Lora’, serif", color: "#fff", fontSize: 24, margin: 0 }}>Thank You!</h3>
+              <p style={{ fontFamily: "’DM Sans’, sans-serif", color: "#e0e0e0", fontSize: 16, margin: 0, lineHeight: 1.5 }}>We’ll be in touch soon.</p>
             </div>
           ) : (
-            <div style={{ flex: "0 0 auto", width: isMobile ? "100%" : 424, display: "flex", flexDirection: "column", gap: 24 }}>
-              <div style={{ display: "flex", flexDirection: "column", gap: 12, width: "100%" }}>
-                
+            <div style={{ flexShrink: 0, width: isMobile ? "100%" : 424, display: "flex", flexDirection: "column", gap: 24 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+
                 {/* Name */}
-                <div style={{ width: "100%" }}>
-                  <input
-                    placeholder="Tell us your name"
-                    style={{ ...INPUT_STYLE, border: errors.name ? "1px solid #ef5350" : INPUT_STYLE.border }}
-                    value={formData.name}
-                    onChange={e => setFormData({ ...formData, name: e.target.value })}
-                  />
-                  {errors.name && <div style={ERROR_STYLE}>{errors.name}</div>}
+                <div>
+                  <input placeholder="Tell us your name" style={{ ...INPUT, borderColor: errors.name ? "#ef5350" : "#885615" }} value={formData.name} onChange={e => setFormData({ ...formData, name: e.target.value })} />
+                  {errors.name && <div style={ERR}>{errors.name}</div>}
                 </div>
 
-                {/* Phone & Email */}
-                <div style={{ display: "flex", gap: 12, width: "100%", flexDirection: isMobile ? "column" : "row" }}>
-                  <div style={{ flex: 1 }}>
-                    <input
-                      placeholder="Number for a quick call"
-                      style={{ ...INPUT_STYLE, border: errors.phone ? "1px solid #ef5350" : INPUT_STYLE.border }}
-                      value={formData.phone}
-                      onChange={e => setFormData({ ...formData, phone: e.target.value })}
-                    />
-                    {errors.phone && <div style={ERROR_STYLE}>{errors.phone}</div>}
+                {/* Phone + Email row */}
+                <div style={{ display: "flex", gap: 12, flexDirection: isMobile ? "column" : "row" }}>
+                  <div style={{ flex: 1, minWidth: 0 }}>
+                    <input placeholder="Number for a quick call" style={{ ...INPUT, borderColor: errors.phone ? "#ef5350" : "#885615" }} value={formData.phone} onChange={e => setFormData({ ...formData, phone: e.target.value })} />
+                    {errors.phone && <div style={ERR}>{errors.phone}</div>}
                   </div>
-                  <div style={{ flex: 1 }}>
-                    <input
-                      placeholder="Drop your email ID"
-                      style={{ ...INPUT_STYLE, border: errors.email ? "1px solid #ef5350" : INPUT_STYLE.border }}
-                      value={formData.email}
-                      onChange={e => setFormData({ ...formData, email: e.target.value })}
-                    />
-                    {errors.email && <div style={ERROR_STYLE}>{errors.email}</div>}
+                  <div style={{ flex: "0 0 auto", width: isMobile ? "100%" : 185 }}>
+                    <input placeholder="Drop your email ID" style={{ ...INPUT, borderColor: errors.email ? "#ef5350" : "#885615" }} value={formData.email} onChange={e => setFormData({ ...formData, email: e.target.value })} />
+                    {errors.email && <div style={ERR}>{errors.email}</div>}
                   </div>
                 </div>
 
-                {/* Dropdown Purpose */}
-                <div style={{ width: "100%" }}>
-                  <div style={{ position: "relative" }}>
-                    <select
-                      style={{ 
-                        ...INPUT_STYLE, 
-                        border: errors.purpose ? "1px solid #ef5350" : INPUT_STYLE.border,
-                        appearance: "none",
-                        color: formData.purpose ? "#fff" : "rgba(255,255,255,0.7)",
-                        cursor: "pointer"
-                      }}
-                      value={formData.purpose}
-                      onChange={e => setFormData({ ...formData, purpose: e.target.value })}
-                    >
-                      <option value="" disabled>Joining for Lorem ipsum is simply?</option>
-                      <option value="Volunteer" style={{ color: "#000" }}>Volunteer Work</option>
-                      <option value="Donation" style={{ color: "#000" }}>Make a Donation</option>
-                      <option value="Partnership" style={{ color: "#000" }}>Corporate Partnership</option>
-                      <option value="Other" style={{ color: "#000" }}>Other Inquiry</option>
-                    </select>
-                    <div style={{ position: "absolute", right: 15, top: 14, pointerEvents: "none" }}>
-                      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><path d="M6 9l6 6 6-6"/></svg>
-                    </div>
-                  </div>
-                  {errors.purpose && <div style={ERROR_STYLE}>{errors.purpose}</div>}
+                {/* City dropdown */}
+                <div style={{ position: "relative" }}>
+                  <select style={{ ...INPUT, appearance: "none", cursor: "pointer", color: formData.city ? "#fff" : "rgba(255,255,255,0.8)" }} value={formData.city} onChange={e => setFormData({ ...formData, city: e.target.value })}>
+                    <option value="" disabled style={{ color: "#000" }}>City</option>
+                    {["Mumbai", "Delhi", "Bangalore", "Pune", "Chennai", "Hyderabad", "Other"].map(c => <option key={c} value={c} style={{ color: "#000" }}>{c}</option>)}
+                  </select>
+                  <div style={{ position: "absolute", right: 14, top: 15, pointerEvents: "none" }}>{chevron}</div>
+                </div>
+
+                {/* I am a... dropdown */}
+                <div style={{ position: "relative" }}>
+                  <select style={{ ...INPUT, appearance: "none", cursor: "pointer", color: formData.role ? "#fff" : "rgba(255,255,255,0.8)" }} value={formData.role} onChange={e => setFormData({ ...formData, role: e.target.value })}>
+                    <option value="" disabled style={{ color: "#000" }}>I am a…</option>
+                    {["Teacher", "Parent", "Student", "Donor", "Volunteer", "Organisation", "Other"].map(r => <option key={r} value={r} style={{ color: "#000" }}>{r}</option>)}
+                  </select>
+                  <div style={{ position: "absolute", right: 14, top: 15, pointerEvents: "none" }}>{chevron}</div>
                 </div>
 
                 {/* Message */}
-                <div style={{ width: "100%" }}>
-                  <textarea
-                    placeholder="What are you looking for?"
-                    style={{ ...INPUT_STYLE, height: 123, padding: "15px", resize: "none", border: errors.message ? "1px solid #ef5350" : INPUT_STYLE.border }}
-                    value={formData.message}
-                    onChange={e => setFormData({ ...formData, message: e.target.value })}
-                  />
-                  {errors.message && <div style={ERROR_STYLE}>{errors.message}</div>}
+                <div>
+                  <textarea placeholder="What brings you here today?" style={{ ...INPUT, height: 100, padding: "13px 15px", resize: "none", borderColor: errors.message ? "#ef5350" : "#885615" }} value={formData.message} onChange={e => setFormData({ ...formData, message: e.target.value })} />
+                  {errors.message && <div style={ERR}>{errors.message}</div>}
                 </div>
 
               </div>
-              
-              <button
-                onClick={handleSubmit}
-                disabled={isSubmitting}
-                style={{
-                  background: "#0f2a44",
-                  borderRadius: 30,
-                  padding: "12px 24px",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  gap: 20,
-                  border: "none",
-                  cursor: isSubmitting ? "not-allowed" : "pointer",
-                  width: "fit-content",
-                  alignSelf: "flex-start",
-                  opacity: isSubmitting ? 0.7 : 1,
-                }}
-              >
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 16, color: "#fff", whiteSpace: "nowrap" }}>
-                  {isSubmitting ? "Submitting..." : "Join Ujjwala’s Mission"}
+
+              <button onClick={handleSubmit} disabled={isSubmitting} style={{ display: "flex", alignItems: "center", gap: 20, background: "#0f2a44", border: "none", borderRadius: 30, padding: "12px 24px", cursor: isSubmitting ? "not-allowed" : "pointer", opacity: isSubmitting ? 0.7 : 1, alignSelf: "center" }}>
+                <span style={{ fontFamily: "’DM Sans’, sans-serif", fontWeight: 600, fontSize: 16, color: "#fff", whiteSpace: "nowrap" }}>
+                  {isSubmitting ? "Sending…" : "Send Your Message"}
                 </span>
-                {!isSubmitting && (
-                  <div style={{ width: 16, height: 16, display: "flex", alignItems: "center", justifyContent: "center", transform: "rotate(-45deg)" }}>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-                  </div>
-                )}
+                {!isSubmitting && <ArrowIcon color="#fff" size={16} />}
               </button>
             </div>
           )}
+
         </div>
       </div>
-    </section>
+    </div>
   );
 }
 
@@ -4423,54 +4372,74 @@ function Section16() {
 }
 
 // ── Section 17 ─────────────────────────────────────────────────────────────
-const S17_FAQS = [
-  // About Ujjwala
+const S17_CATEGORIES = [
   {
-    q: "Who is Ujjwala Sharma and what does she do?",
-    a: "Ujjwala Sharma is a government school teacher from Rajasthan with 31 years of experience. She teaches children who come from the most marginalised communities — families of daily-wage labourers, farmers, and migrant workers. She has built a full learning ecosystem inside her classroom: libraries, science kits, art corners, and child-led activities — all without requesting additional government funds.",
+    label: "About Ujjwala and the Trust",
+    faqs: [
+      {
+        q: "How is Ujjwala Wadekar related to the trust?",
+        a: "Ujjwala is the founder's inspiration and the lived force behind the trust. Her life's work gave this mission its voice, values, and direction.",
+      },
+      {
+        q: "What does \"Where Teachers Lead And Society Lifts\" really mean?",
+        a: "It means teachers should not carry change alone. When society stands beside them, education becomes stronger, more equal, and more lasting.",
+      },
+    ],
   },
   {
-    q: "Is this a registered organisation?",
-    a: "Yes. The work operates under Shiksha Raj, a registered trust that provides the legal and financial structure for receiving donations and managing the programme transparently.",
+    label: "Support, Donations, and Transparency",
+    faqs: [
+      {
+        q: "How will my donation actually be used?",
+        a: "Your support goes into real learning needs — materials, programmes, mentorship, books, exposure, digital access, and school-strengthening support.",
+      },
+      {
+        q: "Do you directly give cash to children or families?",
+        a: "No. The focus is on meaningful educational support that helps children continue learning with dignity and continuity.",
+      },
+      {
+        q: "Can I claim tax benefits on my donation under Section 80G?",
+        a: "Yes, only if the trust has active 80G approval at the time of donation. Also, cash donations above ₹2,000 are not eligible, and 80G cannot be claimed under the new tax regime.",
+      },
+      {
+        q: "Can I support a specific child, school, or programme directly?",
+        a: "Yes. Support can be meaningfully directed through clear routes like a child's learning journey, a school-strengthening effort, or a defined programme.",
+      },
+    ],
   },
   {
-    q: "Why is she called Ujjwala Bharat Foundation?",
-    a: "Ujjwala Bharat Foundation is the public-facing identity of her mission — named after her personal belief that a truly bright (Ujjwala) India begins with educating every child with dignity. The foundation reflects her long-term vision beyond a single classroom.",
-  },
-  // Support, Donations & Transparency
-  {
-    q: "Where does the donated money go?",
-    a: "Every rupee donated is used directly for: classroom materials (books, stationery, science tools), child nutrition (mid-day meal supplements), infrastructure for the learning library, and teacher-community outreach events. No amount is used for admin salaries or overhead. A monthly expense report is shared with donors.",
-  },
-  {
-    q: "How transparent is the use of funds?",
-    a: "Complete receipts and utilisation reports are shared with every donor. You will receive a donation receipt, a quarterly impact report, and access to real-time updates via our WhatsApp donor group. We believe your trust is earned — not assumed.",
-  },
-  {
-    q: "Can I donate in kind instead of cash?",
-    a: "Yes! Books, stationery, science kits, art supplies, and sports equipment are always welcome. Please reach out via the contact form or WhatsApp to coordinate a kind donation. We will confirm the items needed and arrange logistics.",
-  },
-  // Participation
-  {
-    q: "Can I volunteer with Ujjwala's programme?",
-    a: "Yes. We welcome volunteers who can contribute in areas like: teaching support or tutoring, content creation (writing, photography, video), fundraising or community outreach, and digital skills or IT support. Fill in the volunteer form on this page and our team will reach out within 5 working days.",
+    label: "Participation and Contribution",
+    faqs: [
+      {
+        q: "How can someone help if they cannot donate money right now?",
+        a: "You can still be part of this mission — by teaching, volunteering, mentoring, opening doors, spreading the word, or simply staying involved.",
+      },
+      {
+        q: "I am not ready to donate yet. Can I still stay involved?",
+        a: "Of course. This mission needs people, not only money — teachers, parents, volunteers, supporters, and communities all have a role here.",
+      },
+      {
+        q: "Can teachers join this mission even if they are from another school or city?",
+        a: "Yes. The trust is built to grow beyond one classroom and one place, through teacher networks, training, and replicable school models.",
+      },
+    ],
   },
   {
-    q: "Can organisations partner with this programme?",
-    a: "Absolutely. We are open to partnerships with CSR arms, educational NGOs, media organisations, and government bodies. A partnership can be in the form of funding, content collaboration, infrastructure support, or programme co-design. Write to us at the contact address shared on this page.",
-  },
-  // Programmes & Scale
-  {
-    q: "What age group does the programme serve?",
-    a: "The programme currently serves children between the ages of 6 and 14 — Classes 1 through 8. These are the foundational years where learning habits, curiosity, and self-worth are shaped. Reaching children at this stage is the most impactful intervention possible.",
-  },
-  {
-    q: "Does Ujjwala train other teachers too?",
-    a: "Yes. A core part of the long-term mission is to train government school teachers across Rajasthan using the same methods Ujjwala developed over 31 years. Workshops, peer-learning sessions, and digital training modules are being developed as part of this scale plan.",
-  },
-  {
-    q: "How many children has this programme reached?",
-    a: "Over the past 31 years, Ujjwala has directly impacted 1,400+ children through her classroom. With the structured Shiksha Raj model, the goal is to reach 10,000 children across 50 government schools in the next 3 years through teacher training and resource distribution.",
+    label: "Programmes and Scale",
+    faqs: [
+      {
+        q: "What kind of programmes will the trust actually run on the ground?",
+        a: "From teacher training and Beyond Syllabus learning to student support, parent workshops, community events, and school-strengthening programmes — the work is meant to stay practical and real.",
+      },
+      {
+        q: "How will these programmes reach children outside one school or one city?",
+        a: "By building teacher-led models, training networks, scalable playbooks, and community-supported programmes that can travel from one place to many.",
+      },
+      {
+        q: "What does \"Adopt A School\" really include?",
+        a: "It includes more than funding — books, tools, mentoring, teaching support, workshops, and even school improvement drives led by the community.",
+      },
+    ],
   },
 ];
 
@@ -4536,7 +4505,13 @@ function S17AccordionItem({ q, a, open, onToggle }: { q: string; a: string; open
 function Section17() {
   const sectionRef = useFadeInUp();
   const isMobile = useIsMobile();
+  const [activeCategory, setActiveCategory] = useState(0);
   const [openIdx, setOpenIdx] = useState<number | null>(0);
+
+  const handleCategoryChange = (i: number) => {
+    setActiveCategory(i);
+    setOpenIdx(0);
+  };
 
   const toggle = (i: number) => setOpenIdx(prev => (prev === i ? null : i));
 
@@ -4544,11 +4519,11 @@ function Section17() {
     <section ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#fff", padding: isMobile ? "48px 0" : "80px 0" }}>
       <style>{`
         .s17-wrap { display: flex; gap: 60px; align-items: flex-start; }
-        .s17-left { flex: 0 0 316px; padding-top: 20px; display: flex; flex-direction: column; gap: 20px; }
+        .s17-left { flex: 0 0 316px; display: flex; flex-direction: column; gap: 24px; }
         .s17-right { flex: 1; display: flex; flex-direction: column; gap: 29px; min-width: 0; }
         @media (max-width: 720px) {
           .s17-wrap { flex-direction: column; gap: 28px; }
-          .s17-left { flex: none; width: 100%; padding-top: 0; }
+          .s17-left { flex: none; width: 100%; }
           .s17-right { gap: 20px; }
           .s17-accordion-open { padding: 20px !important; }
           .s17-accordion-q-open { font-size: 15px !important; }
@@ -4560,38 +4535,46 @@ function Section17() {
       <div style={{ maxWidth: 1008, margin: "0 auto", padding: "0 16px", boxSizing: "border-box" }}>
         <div className="s17-wrap">
 
-          {/* Left — label + heading */}
+          {/* Left — heading + category tabs */}
           <div className="s17-left">
-            <span style={{
-              display: "inline-flex", alignSelf: "flex-start",
-              border: "1px solid #e8e8e8", borderRadius: 40,
-              padding: "6px 20px",
-              fontFamily: "'Poppins', sans-serif", fontWeight: 400, fontSize: 13,
-              color: "#bf791d", whiteSpace: "nowrap",
-            }}>
-              FAQs
-            </span>
             <h2 style={{
               fontFamily: "'Lora', serif", fontWeight: 600,
-              fontSize: "clamp(30px, 3.5vw, 40px)", lineHeight: 1.24,
+              fontSize: "clamp(26px, 3vw, 36px)", lineHeight: 1.28,
               color: "#000", margin: 0,
             }}>
-              Before You Walk Further
+              Frequently Asked Questions
             </h2>
-            <p style={{
-              fontFamily: "'DM Sans', sans-serif", fontWeight: 300,
-              fontSize: 15, lineHeight: "26px", color: "#636363",
-              margin: 0,
-            }}>
-              From donations to teaching to transparency, here are the answers that bring more clarity.
-            </p>
+
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {S17_CATEGORIES.map((cat, i) => {
+                const isActive = i === activeCategory;
+                return (
+                  <button
+                    key={i}
+                    onClick={() => handleCategoryChange(i)}
+                    style={{
+                      display: "inline-flex", alignSelf: "flex-start",
+                      padding: "10px 24px", borderRadius: 30,
+                      border: `1px solid #bf791d`,
+                      background: isActive ? "#bf791d" : "transparent",
+                      color: isActive ? "#fff" : "#bf791d",
+                      fontFamily: "'DM Sans', sans-serif", fontWeight: 400, fontSize: 14,
+                      cursor: "pointer", transition: "all 0.2s ease",
+                      textAlign: "left", lineHeight: 1.4,
+                    }}
+                  >
+                    {cat.label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
 
-          {/* Right — accordion */}
+          {/* Right — accordion for active category */}
           <div className="s17-right">
-            {S17_FAQS.map((faq, i) => (
+            {S17_CATEGORIES[activeCategory].faqs.map((faq, i) => (
               <S17AccordionItem
-                key={i}
+                key={`${activeCategory}-${i}`}
                 q={faq.q}
                 a={faq.a}
                 open={openIdx === i}
@@ -4607,25 +4590,51 @@ function Section17() {
 }
 
 // ── Section 18 ─────────────────────────────────────────────────────────────
-// Words + their weight — bold for key phrases, light for connective words
-const S18_WORDS: { word: string; weight: 400 | 600 }[] = [
-  { word: "Let's",       weight: 400 },
-  { word: "Rethink",     weight: 600 },
-  { word: "Education",   weight: 600 },
-  { word: "Together",    weight: 400 },
+const S18_QUOTES = [
+  "Children do not lack intelligence. They lack the chance to be seen and guided.",
+  "Education is not a privilege for a few. It is every child's rightful path forward.",
+  "When a teacher walks to a child's door, education begins to feel possible again.",
+  "The purpose of education is not finishing the syllabus. It's beyond the syllabus to build human beings.",
+  "Education is the only way to break the cycle of survival and open the door to dignity.",
+  "Education changes faster when teachers lead and the society lifts.",
+  "When a teacher walks to a child's door, education begins to feel possible again.",
 ];
 
 function Section18() {
   const sectionRef = useFadeInUp();
-  const textRef = useTextReveal();
   const isMobile = useIsMobile();
+  const isTablet = useIsTablet();
+  const [current, setCurrent] = useState(0);
+  const [animKey, setAnimKey] = useState(0);
+  const total = S18_QUOTES.length;
+
+  const go = useCallback((dir: "next" | "prev") => {
+    setAnimKey(k => k + 1);
+    setCurrent(c => dir === "next" ? (c === total - 1 ? 0 : c + 1) : (c === 0 ? total - 1 : c - 1));
+  }, [total]);
+
+  // Auto-advance every 4.5 s
+  useEffect(() => {
+    const t = setInterval(() => go("next"), 4500);
+    return () => clearInterval(t);
+  }, [go]);
+
+  // Drag / swipe support
+  const dragStartX = useRef<number | null>(null);
+  const onDragStart = (clientX: number) => { dragStartX.current = clientX; };
+  const onDragEnd   = (clientX: number) => {
+    if (dragStartX.current === null) return;
+    const diff = dragStartX.current - clientX;
+    if (Math.abs(diff) > 50) go(diff > 0 ? "next" : "prev");
+    dragStartX.current = null;
+  };
 
   return (
     <section ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#fff", padding: isMobile ? "56px 0 52px" : "100px 0 96px" }}>
       <div style={{
         maxWidth: 1008,
         margin: "0 auto",
-        padding: "0 24px",
+        padding: isMobile ? "0 20px" : "0 48px",
         boxSizing: "border-box",
         display: "flex",
         flexDirection: "column",
@@ -4633,79 +4642,177 @@ function Section18() {
         gap: isMobile ? 32 : 48,
       }}>
 
-        {/* Scroll-reveal heading */}
-        <p
-          ref={textRef}
-          style={{
-            fontFamily: "'Lora', serif",
-            fontSize: "clamp(22px, 4.5vw, 52px)",
-            lineHeight: 1.28,
-            textAlign: "center",
-            margin: 0,
-            maxWidth: 960,
-            width: "100%",
-            boxSizing: "border-box",
-            wordBreak: "break-word",
-            overflowWrap: "break-word",
-          }}
+        {/* Quote — reveal animation, two-tone, draggable */}
+        <div
+          style={{ width: "100%", maxWidth: 960, cursor: "grab", userSelect: "none" }}
+          onMouseDown={e => onDragStart(e.clientX)}
+          onMouseUp={e => onDragEnd(e.clientX)}
+          onMouseLeave={() => { dragStartX.current = null; }}
+          onTouchStart={e => onDragStart(e.touches[0].clientX)}
+          onTouchEnd={e => onDragEnd(e.changedTouches[0].clientX)}
         >
-          {S18_WORDS.map(({ word, weight }, i) => (
-            <span
-              key={i}
-              className="trw"
-              style={{ fontWeight: weight, marginRight: "0.28em", display: "inline" }}
-            >
-              {word}
-            </span>
-          ))}
-        </p>
+          {(() => {
+            const quote = S18_QUOTES[current];
+            const splitIdx = quote.indexOf(". ");
+            const first = splitIdx !== -1 ? quote.slice(0, splitIdx + 1) : quote;
+            const rest  = splitIdx !== -1 ? quote.slice(splitIdx + 1) : "";
+            return (
+              <p
+                key={animKey}
+                className="s18-reveal"
+                style={{
+                  fontFamily: "'Lora', serif",
+                  fontSize: isMobile ? 26 : isTablet ? 36 : 52,
+                  lineHeight: 1.24,
+                  textAlign: "center",
+                  margin: 0,
+                }}
+              >
+                <span className="s18-fill-dark" style={{ fontWeight: 600 }}>{first}</span>
+                {rest && <span className="s18-fill-grey" style={{ fontWeight: 400 }}>{" "}{rest}</span>}
+              </p>
+            );
+          })()}
+        </div>
 
-        {/* CTA buttons */}
-        <div style={{
-          display: "flex",
-          flexDirection: isMobile ? "column" : "row",
-          gap: isMobile ? 12 : 20,
-          alignItems: "center",
-          flexWrap: "wrap",
-          justifyContent: "center",
-          width: isMobile ? "100%" : "auto",
-        }}>
+        {/* CTA row: button + counter circle */}
+        <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
           <button className="btn-gold" style={{
             display: "flex", alignItems: "center", justifyContent: "center", gap: 20,
             background: "#bf791d", border: "none",
             borderRadius: 30, padding: "12px 24px",
             fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 16,
             color: "#fff", cursor: "pointer", whiteSpace: "nowrap",
-            width: isMobile ? "100%" : "auto",
           }}>
-            I Commit To Education
+            Read Ujjwala's Story
             <ArrowIcon color="#fff" size={16} />
           </button>
 
-          <button style={{
-            display: "flex", alignItems: "center", justifyContent: "center", gap: 20,
-            background: "transparent", border: "1px solid #bf791d",
-            borderRadius: 30, padding: "12px 24px",
-            fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 16,
-            color: "#bf791d", cursor: "pointer", whiteSpace: "nowrap",
-            width: isMobile ? "100%" : "auto",
-          }}>
-            Join Ujjwala's Mission
-            <ArrowIcon color="#bf791d" size={16} />
-          </button>
+          {/* Counter circle with SVG progress ring */}
+          <div style={{ position: "relative", width: 44, height: 44, flexShrink: 0, userSelect: "none" }}>
+            <svg width="44" height="44" style={{ position: "absolute", inset: 0, transform: "rotate(-90deg)" }}>
+              {/* Track */}
+              <circle cx="22" cy="22" r="19" fill="none" stroke="#e8e8e8" strokeWidth="1.5" />
+              {/* Animated fill ring — key resets animation on every slide change */}
+              <circle
+                key={animKey}
+                cx="22" cy="22" r="19" fill="none"
+                stroke="#bf791d" strokeWidth="1.5"
+                strokeLinecap="round"
+                strokeDasharray="119.4"
+                strokeDashoffset="119.4"
+                style={{ animation: "s18Ring 4.5s linear forwards" }}
+              />
+            </svg>
+            <div style={{
+              position: "absolute", inset: 0,
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontFamily: "'DM Sans', sans-serif", fontWeight: 500,
+              fontSize: 12, color: "#174067",
+            }}>
+              {current + 1}/{total}
+            </div>
+          </div>
         </div>
 
       </div>
     </section>
   );
 }
+// ── Section Closing ────────────────────────────────────────────────────────
+function SectionClosing() {
+  const sectionRef = useFadeInUp();
+  const textRef = useRef<HTMLDivElement>(null);
+  const [revealed, setRevealed] = useState(false);
+  const isMobile = useIsMobile();
+
+  useEffect(() => {
+    const el = textRef.current;
+    if (!el) return;
+    const obs = new IntersectionObserver(
+      ([entry]) => { setRevealed(entry.isIntersecting); },
+      { threshold: 0.1 }
+    );
+    obs.observe(el);
+    return () => obs.disconnect();
+  }, []);
+
+  const fillSpan = (text: string, color: string, delay: number, weight: number = 400): React.ReactNode => (
+    <span style={{
+      background: `linear-gradient(90deg, ${color} 50%, #d0d0d0 50%)`,
+      backgroundSize: "200% 100%",
+      backgroundPosition: revealed ? "0% 0" : "100% 0",
+      WebkitBackgroundClip: "text",
+      WebkitTextFillColor: "transparent",
+      backgroundClip: "text",
+      color: "transparent",
+      fontWeight: weight,
+      willChange: "background-position",
+      transition: `background-position 1.3s cubic-bezier(0.22, 1, 0.36, 1) ${delay}s`,
+    }}>{text}</span>
+  );
+
+  return (
+    <section ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#fff", padding: isMobile ? "64px 0" : "100px 0" }}>
+      <div style={{
+        maxWidth: 900, margin: "0 auto",
+        padding: "0 16px", boxSizing: "border-box",
+        display: "flex", flexDirection: "column",
+        alignItems: "center", gap: 48,
+      }}>
+
+        {/* Text block */}
+        <div ref={textRef} style={{ display: "flex", flexDirection: "column", gap: isMobile ? 10 : 14, textAlign: "center", width: "100%" }}>
+
+          {/* Line 1 — SemiBold black 28px */}
+          <p style={{ fontFamily: "'Lora', serif", fontSize: isMobile ? 22 : 28, lineHeight: 1.36, margin: 0 }}>
+            {fillSpan("Education in India has not changed enough in decades.", "#000", 0, 600)}
+          </p>
+
+          {/* Line 2 — Regular 28px black */}
+          <p style={{ fontFamily: "'Lora', serif", fontSize: isMobile ? 22 : 28, lineHeight: 1.36, margin: 0 }}>
+            {fillSpan("It will not change through criticism or hope alone", "#000", 0.12)}
+          </p>
+
+          {/* Line 3 — Regular 28px black */}
+          <p style={{ fontFamily: "'Lora', serif", fontSize: isMobile ? 22 : 28, lineHeight: 1.36, margin: 0 }}>
+            {fillSpan("It will change when ordinary people decide to lift it together,", "#000", 0.24)}
+          </p>
+
+          {/* Line 4 — SemiBold 40px brown */}
+          <p style={{ fontFamily: "'Lora', serif", fontSize: isMobile ? 28 : 40, lineHeight: 1.3, margin: 0 }}>
+            {fillSpan("and help build the उज्ज्वल भारत of 2050.", "#bf791d", 0.46, 600)}
+          </p>
+
+        </div>
+
+        {/* CTA Button */}
+        <button style={{
+          display: "flex", alignItems: "center", gap: 20,
+          background: "#bf791d", border: "none",
+          borderRadius: 30, padding: "12px 24px",
+          fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 16,
+          color: "#fff", cursor: "pointer", whiteSpace: "nowrap",
+        }}>
+          I Commit To Education
+          <ArrowIcon color="#fff" size={16} />
+        </button>
+
+      </div>
+    </section>
+  );
+}
+
 // ── Page ──────────────────────────────────────────────────────────────────
 export function HomeV2Page() {
+  const [modalOpen, setModalOpen] = useState(false);
+  const openModal = () => setModalOpen(true);
+
   return (
     <div style={{ minHeight: "100vh", background: "#ffffff", display: "flex", flexDirection: "column", alignItems: "stretch", overflowX: "clip" }}>
       <style>{GLOBAL_CSS}</style>
-      <HeroSection />
-      <ProgramBanner />
+      <HeroSection onOpenModal={openModal} />
+      <ProgramBanner onOpenModal={openModal} />
       <Section18 />
       <Section3 />
       <Section4 />
@@ -4721,11 +4828,11 @@ export function HomeV2Page() {
       <Section13 />
       <Section14 />
       <Section15 />
-      <SectionVolunteerForm />
       <Section16 />
       <Section17 />
-      <Section18 />
+      <SectionClosing />
       <Footer />
+      <SupportModal open={modalOpen} onClose={() => setModalOpen(false)} />
     </div>
   );
 }

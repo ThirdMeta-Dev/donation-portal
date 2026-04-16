@@ -21,3 +21,113 @@
 .btn-ujjwala-hover:hover {
   background: #F9F2E8 !important;
 }
+
+/* ── Cube carousel animations ────────────────────────────────────────────── */
+@keyframes cubeInNext {
+  from {
+    opacity: 0;
+    transform: perspective(600px) rotateX(-90deg) translateY(20px);
+    transform-origin: top center;
+  }
+  to {
+    opacity: 1;
+    transform: perspective(600px) rotateX(0deg) translateY(0);
+    transform-origin: top center;
+  }
+}
+
+@keyframes cubeInPrev {
+  from {
+    opacity: 0;
+    transform: perspective(600px) rotateX(90deg) translateY(-20px);
+    transform-origin: bottom center;
+  }
+  to {
+    opacity: 1;
+    transform: perspective(600px) rotateX(0deg) translateY(0);
+    transform-origin: bottom center;
+  }
+}
+
+.cube-in-next {
+  animation: cubeInNext 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.cube-in-prev {
+  animation: cubeInPrev 0.42s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Section 7 — scroll-triggered ink fill (light → dark / light → grey) */
+@keyframes s7Fill {
+  from { background-position: 100% 0; }
+  to   { background-position: 0%   0; }
+}
+.s7-fill-line1 {
+  background: linear-gradient(90deg, #000 50%, #d8d8d8 50%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: s7Fill 1.1s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.s7-fill-dark {
+  background: linear-gradient(90deg, #000 50%, #d8d8d8 50%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: s7Fill 1.5s cubic-bezier(0.22, 1, 0.36, 1) 0.15s both;
+}
+.s7-fill-grey {
+  background: linear-gradient(90deg, #bcbcbc 50%, #d8d8d8 50%);
+  background-size: 200% 100%;
+  -webkit-background-clip: text; background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: s7Fill 1.5s cubic-bezier(0.22, 1, 0.36, 1) 0.35s both;
+}
+
+/* Section 18 — clip-path reveal: text rises from below */
+@keyframes s18Reveal {
+  from {
+    clip-path: polygon(0 100%, 100% 100%, 100% 100%, 0 100%);
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%);
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.s18-reveal { animation: s18Reveal 0.65s cubic-bezier(0.22, 1, 0.36, 1) both; }
+
+/* Section 18 — ink-fill wipe left-to-right */
+@keyframes s18FillWipe {
+  0%   { background-position: 100% 0; }
+  100% { background-position: 0%   0; }
+}
+/* First sentence: fills to dark */
+.s18-fill-dark {
+  background: linear-gradient(90deg, #1a2e3b 50%, #d0d0d0 50%);
+  background-size: 200% 100%;
+  background-position: 100% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: s18FillWipe 1.3s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
+}
+/* Second sentence: fills to muted grey */
+.s18-fill-grey {
+  background: linear-gradient(90deg, #bcbcbc 50%, #e2e2e2 50%);
+  background-size: 200% 100%;
+  background-position: 100% 0;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  color: transparent;
+  animation: s18FillWipe 1.5s cubic-bezier(0.22, 1, 0.36, 1) 0.3s both;
+}
+/* Counter ring progress — 44px circle, r=19, circumference≈119.4 */
+@keyframes s18Ring {
+  from { stroke-dashoffset: 119.4; }
+  to   { stroke-dashoffset: 0; }
+}
