@@ -275,7 +275,7 @@ function VideoCards() {
       <div style={{ gridColumn: 1, gridRow: 1, marginLeft: 111, marginTop: 56, width: 32, height: 32, position: "relative" }}>
         <img src={imgPlayBtn} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }} />
       </div>
-      <img src={imgHeroVideo2} alt="" style={{ gridColumn: 1, gridRow: 1, marginLeft: 117, marginTop: 98, border: "1px solid #112d48", borderRadius: 12, boxShadow: "4px 4px 0px 0px #091c2f", width: 163, height: 290, objectFit: "cover", display: "block" }} />
+      <img src={imgHeroVideo2} alt="" style={{ gridColumn: 1, gridRow: 1, marginLeft: 117, marginTop: 98, border: "1px solid #112d48", borderRadius: 12, boxShadow: "4px 4px 0px 0px #091c2f", width: 163, height: 204, objectFit: "cover", display: "block" }} />
       <div style={{ gridColumn: 1, gridRow: 1, marginLeft: 181, marginTop: 198, width: 32, height: 32, position: "relative" }}>
         <img src={imgPlayBtn} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }} />
       </div>
