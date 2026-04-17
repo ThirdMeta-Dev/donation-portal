@@ -11,9 +11,19 @@ import { supabase } from "../lib/supabase";
 
 // ── Local asset imports (bundled by Vite for production) ─────────────────
 // @ts-ignore
-import imgHero from "@/assets/2ca4cd7fc331c012fd6c3a208d30b67ca94bb02a.png";
+import imgHero from "@/assets/urwbanner.png";
 // @ts-ignore
 import imgTeacher from "@/assets/3b08adbd33c0549761095e0db7549411c51bd4ec.png";
+// @ts-ignore
+import imgS4Award1 from "@/assets/s4_award1.png";
+// @ts-ignore
+import imgS4Award2 from "@/assets/s4_award2.png";
+// @ts-ignore
+import imgS4Award3 from "@/assets/s4_award3.png";
+// @ts-ignore
+import imgS4Award4 from "@/assets/s4_award4.png";
+// @ts-ignore
+import imgS4Award5 from "@/assets/s4_award5.png";
 // @ts-ignore
 import imgTexture from "@/assets/10c9de2356342a2446587a7242a74b82052060e2.svg";
 // @ts-ignore
@@ -27,6 +37,10 @@ import imgChevronGold from "@/assets/e25a4b39e8a9a67792da4b7be40a5cd1efeff3fd.sv
 // @ts-ignore
 import imgPlayBtn from "@/assets/94b7d143f7d79dcee5c3ef4a168888c8f0e66ec9.svg";
 // @ts-ignore
+import imgHeroVideo1 from "@/assets/hero_video1.png";
+// @ts-ignore
+import imgHeroVideo2 from "@/assets/hero_video2.png";
+// @ts-ignore
 import imgStatBg from "@/assets/b33ea922189e2f8727c7c9b20f1df35f797556ff.svg";
 // @ts-ignore
 import s12_cta_pattern from "../../assets/images/s12_cta_pattern.svg";
@@ -37,7 +51,7 @@ import imgCarousel1 from "@/assets/b025de5e50e257a2a8382e99cc8bc799d9ebaba4.png"
 
 // Section 5
 // @ts-ignore
-import imgS5Bg from "@/assets/s5_bg_new.png";
+import imgS5Bg from "@/assets/s5_bg_figma.png";
 // @ts-ignore
 import imgS5IconSee from "@/assets/6239a7c8a74115af9a45427cf8fc07127899149e.svg";
 // @ts-ignore
@@ -244,10 +258,10 @@ function StatCard() {
     <div style={{ position: "relative", width: 225.924, height: 97, overflow: "hidden" }}>
       <img src={imgStatBg} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "fill" }} />
       <ul style={{ position: "absolute", left: 8, top: 8, width: 198, fontStyle: "italic", fontSize: 11, color: "#f9c56d", fontFamily: "'DM Sans', sans-serif", lineHeight: "19px", listStyle: "disc", paddingLeft: 21, margin: 0, whiteSpace: "nowrap" }}>
+        <li><span style={{ fontWeight: 500 }}>Ujjwala Wadekar</span></li>
         <li><span style={{ fontWeight: 500 }}>31 years</span><span style={{ fontWeight: 300 }}> in government schools</span></li>
         <li><span style={{ fontWeight: 300 }}>Guiding rural generations</span></li>
         <li><span style={{ fontWeight: 300 }}>Shaped </span><span style={{ fontWeight: 500 }}>10k+</span><span style={{ fontWeight: 300 }}> characters</span></li>
-        <li><span style={{ fontWeight: 300 }}>Beyond syllabus, closer to life</span></li>
       </ul>
     </div>
   );
@@ -257,15 +271,11 @@ function StatCard() {
 function VideoCards() {
   return (
     <div style={{ display: "inline-grid", gridTemplateColumns: "max-content", gridTemplateRows: "max-content", position: "relative", placeSelf: "start" }}>
-      <div style={{ gridColumn: 1, gridRow: 1, background: "#d9d9d9", borderRadius: 12, width: 255, height: 144 }} />
+      <img src={imgHeroVideo1} alt="" style={{ gridColumn: 1, gridRow: 1, borderRadius: 12, width: 255, height: 144, objectFit: "cover", display: "block" }} />
       <div style={{ gridColumn: 1, gridRow: 1, marginLeft: 111, marginTop: 56, width: 32, height: 32, position: "relative" }}>
         <img src={imgPlayBtn} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }} />
       </div>
-      <div style={{ gridColumn: 1, gridRow: 1, marginLeft: 117, marginTop: 98, display: "flex", alignItems: "center", justifyContent: "center", width: 160, height: 232 }}>
-        <div style={{ transform: "rotate(-90deg)", flexShrink: 0 }}>
-          <div style={{ background: "#c7c7c7", border: "1px solid #112d48", borderRadius: 12, boxShadow: "4px 4px 0px 0px #091c2f", width: 232, height: 160 }} />
-        </div>
-      </div>
+      <img src={imgHeroVideo2} alt="" style={{ gridColumn: 1, gridRow: 1, marginLeft: 117, marginTop: 98, border: "1px solid #112d48", borderRadius: 12, boxShadow: "4px 4px 0px 0px #091c2f", width: 163, height: 290, objectFit: "cover", display: "block" }} />
       <div style={{ gridColumn: 1, gridRow: 1, marginLeft: 181, marginTop: 198, width: 32, height: 32, position: "relative" }}>
         <img src={imgPlayBtn} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }} />
       </div>
@@ -286,19 +296,19 @@ function HeroSection({ onOpenModal }: { onOpenModal: () => void }) {
       {/* ── Decorative layer: overflow:hidden here clips textures/ellipses ── */}
       <div style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none", zIndex: 0 }}>
         <div style={{ width: "100%", margin: "0 auto", position: "relative", height: isMobile ? "100%" : 724, overflow: "hidden" }}>
-          {/* Hero image — hidden on mobile, full width on desktop */}
-          {!isMobile && (
-            <div style={{ position: "absolute", inset: 0 }}>
-              <img src={imgHero} alt="" style={{ width: "100%", height: "100%", objectFit: "contain", objectPosition: "right bottom" }} />
-            </div>
-          )}
-          {/* Left gradients ×7 — stacked to ensure dark-left fade for readable text */}
+          {/* Left gradients — dark-left fade for readable text */}
           {Array.from({ length: 5 }).map((_, i) => (
             <div key={i} style={{ position: "absolute", top: 0, left: 0, width: isMobile ? "100%" : "70%", height: isMobile ? "100%" : 724, background: isMobile ? "linear-gradient(to bottom, #0b223a 60%, rgba(11,34,58,0.8) 100%)" : "linear-gradient(to right, rgba(11,34,58,1) 0%, rgba(11,34,58,0.9) 30%, rgba(11,34,58,0) 100%)" }} />
           ))}
-          {/* Right gradient (restored) — starts transparent, fades to dark at right edge */}
+          {/* Right gradient — ON TOP of image to blend right edge */}
           {!isMobile && (
-            <div style={{ position: "absolute", top: 0, right: 0, width: "70%", height: "100%", background: "linear-gradient(to right, rgba(11,34,58,0) 0%, rgba(11,34,58,1) 100%)" }} />
+            <div style={{ position: "absolute", top: 0, right: 0, width: "70%", height: "100%", zIndex: 2, background: "linear-gradient(to right, rgba(11,34,58,0) 0%, rgba(11,34,58,1) 100%)" }} />
+          )}
+          {/* Banner image — rendered after gradients so it appears on top */}
+          {!isMobile && (
+            <div style={{ position: "absolute", inset: 0, zIndex: 1 }}>
+              <img src={imgHero} alt="" style={{ width: "100%", height: "100%", objectFit: "contain", objectPosition: "42% bottom" }} />
+            </div>
           )}
           <div style={{ position: "absolute", left: -122, top: -25, width: 653, height: 436, opacity: 0.45 }}>
             <img src={imgTexture} alt="" style={{ width: "100%", height: "100%", objectFit: "contain" }} />
@@ -359,23 +369,11 @@ function HeroSection({ onOpenModal }: { onOpenModal: () => void }) {
           ) : (
             /* ── TABLET / DESKTOP Hero Content ── */
             <div style={{ position: "relative", display: "flex", alignItems: "flex-end", justifyContent: "space-between", width: "100%", maxWidth: 1008 }}>
-              {/* Teacher images — hidden on tablet */}
+              {/* StatCard — visible on desktop only */}
               {!isTablet && (
-                <>
-                  <div style={{ position: "absolute", left: 371, top: -31, width: 385, height: 533, pointerEvents: "none" }}>
-                    <div style={{ transform: "scaleX(-1)", width: "100%", height: "100%" }}>
-                      <div style={{ width: 385, height: 533, overflow: "hidden", opacity: 0.25, position: "relative" }}>
-                        <img src={imgTeacher} alt="" style={{ position: "absolute", height: "108.82%", left: "-0.08%", maxWidth: "none", top: "-8.82%", width: "100.15%" }} />
-                      </div>
-                    </div>
-                  </div>
-                  <div style={{ position: "absolute", left: 446, top: 63, width: 315, height: 439, overflow: "hidden", pointerEvents: "none" }}>
-                    <img src={imgTeacher} alt="Ujjwala Wadekar" style={{ position: "absolute", height: "107.97%", left: "-0.02%", maxWidth: "none", top: "-7.97%", width: "100.04%" }} />
-                  </div>
-                  <div style={{ position: "absolute", left: 235, top: -8, zIndex: 5 }}>
-                    <StatCard />
-                  </div>
-                </>
+                <div style={{ position: "absolute", left: 235, top: -8, zIndex: 5 }}>
+                  <StatCard />
+                </div>
               )}
               <div style={{ display: "flex", flexDirection: "column", gap: 40, width: isTablet ? "50%" : 364, flexShrink: 0, position: "relative", zIndex: 2 }}>
                 <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
@@ -480,7 +478,7 @@ function ProgramBanner({ onOpenModal }: { onOpenModal: () => void }) {
 }
 
 // ── Section 2: Figma CTA Banner (node 160:4105) ───────────────────────────
-function Section2() {
+function _Section2_unused({ onOpenModal }: { onOpenModal: () => void }) {
   const sectionRef = useFadeInUp();
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
@@ -554,24 +552,23 @@ function Section2() {
                   About Ujjwala <ArrowIcon color="#fff" />
                 </button>
               </Link>
-              <Link to="/join" style={{ textDecoration: "none" }}>
-                <button
-                  className="btn-ujjwala-hover"
-                  onMouseEnter={e => { e.currentTarget.style.setProperty("background", "#F9F2E8", "important"); }}
-                  onMouseLeave={e => { e.currentTarget.style.setProperty("background", "transparent", "important"); }}
-                  style={{
-                    display: "flex", alignItems: "center", justifyContent: isMobile ? "center" : undefined,
-                    gap: 20, background: "transparent",
-                    borderRadius: 30, padding: isMobile ? "11px 20px" : "12px 24px",
-                    border: "1px solid #bf791d", cursor: "pointer",
-                    color: "#bf791d", fontFamily: "'DM Sans', sans-serif",
-                    fontWeight: 600, fontSize: 16,
-                    whiteSpace: "nowrap", transition: "background 0.18s ease",
-                    width: isMobile ? "100%" : undefined,
-                  }}>
-                  Join Ujjwala's Mission <ArrowIcon color="#bf791d" />
-                </button>
-              </Link>
+              <button
+                className="btn-ujjwala-hover"
+                onClick={onOpenModal}
+                onMouseEnter={e => { e.currentTarget.style.setProperty("background", "#F9F2E8", "important"); }}
+                onMouseLeave={e => { e.currentTarget.style.setProperty("background", "transparent", "important"); }}
+                style={{
+                  display: "flex", alignItems: "center", justifyContent: isMobile ? "center" : undefined,
+                  gap: 20, background: "transparent",
+                  borderRadius: 30, padding: isMobile ? "11px 20px" : "12px 24px",
+                  border: "1px solid #bf791d", cursor: "pointer",
+                  color: "#bf791d", fontFamily: "'DM Sans', sans-serif",
+                  fontWeight: 600, fontSize: 16,
+                  whiteSpace: "nowrap", transition: "background 0.18s ease",
+                  width: isMobile ? "100%" : undefined,
+                }}>
+                Join Ujjwala's Mission <ArrowIcon color="#bf791d" />
+              </button>
             </div>
           </div>
 
@@ -657,9 +654,11 @@ function Section3() {
                 ))}
               </div>
               <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 15, lineHeight: "1.4", color: "#fff", margin: 0 }}>{S3_SLIDES[current].caption}</p>
-              <button className="btn-gold" style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "#bf791d", borderRadius: 30, padding: "10px 18px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 13, alignSelf: "flex-start" }}>
-                Read Ujjwala's Story <ArrowIcon size={13} />
-              </button>
+              <a href="#section14-story" style={{ textDecoration: "none" }}>
+                <button className="btn-gold" style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "#bf791d", borderRadius: 30, padding: "10px 18px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 13, alignSelf: "flex-start" }}>
+                  Read Ujjwala's Story <ArrowIcon size={13} />
+                </button>
+              </a>
             </div>
             {/* Nav arrows — top-right on mobile */}
             <div style={{ position: "absolute", top: 12, right: 12, display: "flex", gap: 6, zIndex: 5 }}>
@@ -753,13 +752,13 @@ function Section3() {
 
 // ── Section 4: Media & Recognitions full-bleed carousel ───────────────────
 const S4_CARDS = [
-  { label: "National Award 2018", sub: "Ministry of Education", color: "#d9d9d9" },
-  { label: "State Merit 2021", sub: "Maharashtra Govt.", color: "#e2ddd6" },
-  { label: "Global Impact 2023", sub: "Edu-Global Foundation", color: "#d9d9d9" },
-  { label: "Teacher of the Year", sub: "CBSE Council 2019", color: "#e2ddd6" },
-  { label: "Innovation Award", sub: "Teach For India", color: "#d9d9d9" },
-  { label: "Community Hero", sub: "Jalgaon District", color: "#e2ddd6" },
-  { label: "Digital Learning", sub: "UNESCO Recognition", color: "#d9d9d9" },
+  { label: "National Award 2018", sub: "Ministry of Education", color: "#d9d9d9", img: imgS4Award1 },
+  { label: "State Merit 2021", sub: "Maharashtra Govt.", color: "#e2ddd6", img: imgS4Award2 },
+  { label: "Global Impact 2023", sub: "Edu-Global Foundation", color: "#d9d9d9", img: imgS4Award3 },
+  { label: "Teacher of the Year", sub: "CBSE Council 2019", color: "#e2ddd6", img: imgS4Award4 },
+  { label: "Innovation Award", sub: "Teach For India", color: "#d9d9d9", img: imgS4Award5 },
+  { label: "Community Hero", sub: "Jalgaon District", color: "#e2ddd6", img: imgS4Award1 },
+  { label: "Digital Learning", sub: "UNESCO Recognition", color: "#d9d9d9", img: imgS4Award2 },
 ];
 
 const S4_LOOP = [...S4_CARDS, ...S4_CARDS, ...S4_CARDS];
@@ -853,9 +852,8 @@ function Section4() {
         <div style={{ overflow: "hidden", paddingLeft: isMobile ? 20 : 32 }}>
           <div style={trackStyle}>
             {S4_LOOP.map((card, i) => (
-              <div key={i} style={{ width: cardWidth, minHeight: isMobile ? 220 : 300, flexShrink: 0, borderRadius: 12, background: card.color, display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: 20, boxSizing: "border-box", cursor: "pointer", boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}>
-                <p style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: 16, color: "#112d48", margin: "0 0 4px" }}>{card.label}</p>
-                <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 12, color: "#686868", margin: 0 }}>{card.sub}</p>
+              <div key={i} style={{ width: cardWidth, minHeight: isMobile ? 220 : 300, flexShrink: 0, borderRadius: 12, overflow: "hidden", position: "relative", cursor: "pointer", boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}>
+                <img src={card.img} alt={card.label} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
               </div>
             ))}
           </div>
@@ -883,11 +881,10 @@ function Section4() {
         <div style={{ flex: 1, overflow: "hidden", minWidth: 0 }}>
           <div style={trackStyle}>
             {S4_LOOP.map((card, i) => (
-              <div key={i} style={{ width: cardWidth, minHeight: 386, flexShrink: 0, borderRadius: 12, background: card.color, display: "flex", flexDirection: "column", justifyContent: "flex-end", padding: 24, boxSizing: "border-box", cursor: "pointer", boxShadow: "0 2px 12px rgba(0,0,0,0.06)", transition: "box-shadow 0.2s" }}
+              <div key={i} style={{ width: cardWidth, minHeight: 386, flexShrink: 0, borderRadius: 12, overflow: "hidden", position: "relative", cursor: "pointer", boxShadow: "0 2px 12px rgba(0,0,0,0.06)", transition: "box-shadow 0.2s" }}
                 onMouseEnter={e => (e.currentTarget.style.boxShadow = "0 8px 32px rgba(0,0,0,0.14)")}
                 onMouseLeave={e => (e.currentTarget.style.boxShadow = "0 2px 12px rgba(0,0,0,0.06)")}>
-                <p style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: 18, color: "#112d48", margin: "0 0 4px" }}>{card.label}</p>
-                <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 13, color: "#686868", margin: 0 }}>{card.sub}</p>
+                <img src={card.img} alt={card.label} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
               </div>
             ))}
           </div>
@@ -1315,6 +1312,14 @@ import imgS10Classroom from "@/assets/s10_card_bg_classroom.jpg";
 import imgS16Youtube from "@/assets/s16_img_youtube.png";
 // @ts-ignore
 import imgS16Instagram from "@/assets/s16_img_instagram.png";
+// @ts-ignore
+import imgS16Grid1 from "@/assets/s16_grid1.png";
+// @ts-ignore
+import imgS16Grid2 from "@/assets/s16_grid2.png";
+// @ts-ignore
+import imgS16Grid3 from "@/assets/s16_grid3.png";
+// @ts-ignore
+import imgS16Grid4 from "@/assets/s16_grid4.png";
 
 // Section 15 — Team
 // @ts-ignore
@@ -1326,13 +1331,17 @@ import imgS15PhotoKalpesh2 from "@/assets/s15_photo_kalpesh2.png";
 
 // Section 13 — Hero CTA banner
 // @ts-ignore
-import imgS13Bg from "@/assets/s13_bg.png";
+import imgS13Bg from "@/assets/s13_bg_figma.png";
 // @ts-ignore
 import imgS13Teacher from "@/assets/s13_teacher.png";
 
 // Section 14 — About teacher & org
 // @ts-ignore
-import imgS14Teacher from "@/assets/s14_teacher.png";
+import imgS14Teacher from "@/assets/s14_photo_teacher.png";
+// @ts-ignore
+import imgS14PhotoBg from "@/assets/s14_photo_bg.png";
+// @ts-ignore
+import imgS14PhotoKids from "@/assets/s14_photo_kids.png";
 // @ts-ignore
 import imgS14PatternA from "@/assets/s14_pattern_a.svg";
 // @ts-ignore
@@ -1618,7 +1627,7 @@ function IntroNGOSection() {
   );
 }
 
-function Section8() {
+function Section8({ onOpenModal }: { onOpenModal: () => void }) {
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -1736,10 +1745,19 @@ function Section8() {
               ))}
             </ul>
             <p style={{ fontFamily: "'DM Sans', sans-serif", fontStyle: "italic", fontWeight: 300, fontSize: 13, lineHeight: "22px", color: "#8a6a2a", margin: "0 0 16px" }}>{prog.punchline}</p>
-            <button style={{ display: "inline-flex", alignItems: "center", gap: 10, background: "#bf791d", borderRadius: 30, padding: "10px 24px", border: "none", cursor: "pointer" }}>
-              <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 14, color: "#fff" }}>{prog.cta}</span>
-              <S8Arrow color="#fff" />
-            </button>
+            {prog.tab === "ShikshanSaath" ? (
+              <Link to="/donate" style={{ textDecoration: "none" }}>
+                <button style={{ display: "inline-flex", alignItems: "center", gap: 10, background: "#bf791d", borderRadius: 30, padding: "10px 24px", border: "none", cursor: "pointer" }}>
+                  <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 14, color: "#fff" }}>{prog.cta}</span>
+                  <S8Arrow color="#fff" />
+                </button>
+              </Link>
+            ) : (
+              <button onClick={onOpenModal} style={{ display: "inline-flex", alignItems: "center", gap: 10, background: "#bf791d", borderRadius: 30, padding: "10px 24px", border: "none", cursor: "pointer" }}>
+                <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 14, color: "#fff" }}>{prog.cta}</span>
+                <S8Arrow color="#fff" />
+              </button>
+            )}
           </div>
         </div>
         {/* Prev / Next */}
@@ -1856,10 +1874,19 @@ function Section8() {
                           ))}
                         </ul>
                         <p style={{ fontFamily: "'DM Sans', sans-serif", fontStyle: "italic", fontWeight: 300, fontSize: 13, lineHeight: "22px", color: "#8a6a2a", margin: 0 }}>{prog.punchline}</p>
-                        <button style={{ display: "inline-flex", alignItems: "center", gap: 12, background: "#bf791d", border: "none", borderRadius: 30, padding: "10px 24px", cursor: "pointer", alignSelf: "flex-start" }}>
-                          <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 14, color: "#fff" }}>{prog.cta}</span>
-                          <S8Arrow color="#fff" />
-                        </button>
+                        {prog.tab === "ShikshanSaath" ? (
+                          <Link to="/donate" style={{ textDecoration: "none" }}>
+                            <button style={{ display: "inline-flex", alignItems: "center", gap: 12, background: "#bf791d", border: "none", borderRadius: 30, padding: "10px 24px", cursor: "pointer", alignSelf: "flex-start" }}>
+                              <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 14, color: "#fff" }}>{prog.cta}</span>
+                              <S8Arrow color="#fff" />
+                            </button>
+                          </Link>
+                        ) : (
+                          <button onClick={onOpenModal} style={{ display: "inline-flex", alignItems: "center", gap: 12, background: "#bf791d", border: "none", borderRadius: 30, padding: "10px 24px", cursor: "pointer", alignSelf: "flex-start" }}>
+                            <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 14, color: "#fff" }}>{prog.cta}</span>
+                            <S8Arrow color="#fff" />
+                          </button>
+                        )}
                       </div>
                       {/* Right photo */}
                       <div style={{ width: 260, flexShrink: 0, overflow: "hidden", position: "relative", background: "#ddd4c7" }}>
@@ -2428,7 +2455,7 @@ function getS10CardPath(N: number, H = 477): string {
   return p.join(' ');
 }
 
-function Section10() {
+function Section10({ onOpenModal }: { onOpenModal: () => void }) {
   const sectionRef = useFadeInUp();
   const [activeTab, setActiveTab] = useState(0);
   const [fading, setFading] = useState(false);
@@ -2543,7 +2570,7 @@ function Section10() {
                   </div>
                 ))}
               </div>
-              <button className="btn-gold" style={{ display: "inline-flex", alignItems: "center", gap: 12, height: 40, padding: "0 20px", background: "#bf791d", border: "none", borderRadius: 30, fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 14, color: "#fff", cursor: "pointer" }}>
+              <button onClick={onOpenModal} className="btn-gold" style={{ display: "inline-flex", alignItems: "center", gap: 12, height: 40, padding: "0 20px", background: "#bf791d", border: "none", borderRadius: 30, fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 14, color: "#fff", cursor: "pointer" }}>
                 {tab.cta} <span>→</span>
               </button>
             </div>
@@ -2614,6 +2641,7 @@ function Section10() {
                 </div>
                 <button
                   className="btn-gold"
+                  onClick={onOpenModal}
                   style={{
                     display: "inline-flex", alignItems: "center", gap: 20,
                     height: 44, padding: "10px 24px",
@@ -2726,7 +2754,7 @@ const S12_CARDS = [
   },
 ];
 
-function Section12() {
+function Section12({ onOpenModal }: { onOpenModal: () => void }) {
   const sectionRef = useFadeInUp();
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
@@ -2879,23 +2907,22 @@ function Section12() {
               paddingBottom: isMobile ? 0 : 0,
             }}>
               {/* Outlined gold button */}
-              <Link to="/causes" style={{ textDecoration: "none", width: isMobile ? "100%" : "auto" }}>
-                <button
-                  onMouseEnter={e => { e.currentTarget.style.background = "rgba(191,121,29,0.06)"; }}
-                  onMouseLeave={e => { e.currentTarget.style.background = "white"; }}
-                  style={{
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    gap: 12, background: "white",
-                    borderRadius: 100, padding: "14px 28px",
-                    border: "1px solid #BF791D", cursor: "pointer",
-                    color: "#BF791D", fontFamily: "'DM Sans', sans-serif",
-                    fontWeight: 600, fontSize: 16,
-                    whiteSpace: "nowrap", transition: "all 0.2s ease",
-                    width: isMobile ? "100%" : "auto",
-                  }}>
-                  Support This Mission <ArrowIcon color="#BF791D" size={16} />
-                </button>
-              </Link>
+              <button
+                onClick={onOpenModal}
+                onMouseEnter={e => { e.currentTarget.style.background = "rgba(191,121,29,0.06)"; }}
+                onMouseLeave={e => { e.currentTarget.style.background = "white"; }}
+                style={{
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  gap: 12, background: "white",
+                  borderRadius: 100, padding: "14px 28px",
+                  border: "1px solid #BF791D", cursor: "pointer",
+                  color: "#BF791D", fontFamily: "'DM Sans', sans-serif",
+                  fontWeight: 600, fontSize: 16,
+                  whiteSpace: "nowrap", transition: "all 0.2s ease",
+                  width: isMobile ? "100%" : "auto",
+                }}>
+                Support This Mission <ArrowIcon color="#BF791D" size={16} />
+              </button>
               {/* Solid gold button */}
               <Link to="/donate" style={{ textDecoration: "none", width: isMobile ? "100%" : "auto" }}>
                 <button
@@ -3499,7 +3526,7 @@ const ArrowCircle = ({ color = "#bf791d", bg = "transparent" }: { color?: string
   </svg>
 );
 
-function Section13() {
+function Section13({ onOpenModal }: { onOpenModal: () => void }) {
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
 
@@ -3511,7 +3538,7 @@ function Section13() {
       overflow: "hidden",
     }}>
 
-      {/* Full-bleed background photo — anchored to bottom */}
+      {/* Full-bleed Figma frame background */}
       <img
         src={imgS13Bg}
         alt=""
@@ -3520,52 +3547,15 @@ function Section13() {
           position: "absolute",
           inset: 0,
           width: "100%",
-          height: "110%",
+          height: "100%",
           objectFit: "cover",
-          objectPosition: "bottom center",
+          objectPosition: "center",
         }}
       />
-
-      {/* Removebg teacher — full width, anchored bottom so figures sit at base */}
-      <img
-        src={imgS13Teacher}
-        alt=""
-        aria-hidden
-        style={{
-          position: "absolute",
-          left: 0,
-          bottom: 0,
-          width: "100%",
-          height: isMobile ? "55%" : "75%",
-          objectFit: "cover",
-          objectPosition: "bottom center",
-          pointerEvents: "none",
-        }}
-      />
-
-      {/* Primary gradient: white top → transparent bottom */}
-      <div style={{
-        position: "absolute",
-        inset: 0,
-        background: isMobile
-          ? "linear-gradient(to bottom, #ffffff 0%, #ffffff 40%, rgba(255,255,255,0.85) 65%, rgba(255,255,255,0.2) 85%, transparent 100%)"
-          : "linear-gradient(to bottom, #ffffff 0%, #ffffff 28%, rgba(255,255,255,0.7) 45%, rgba(255,255,255,0.1) 68%, transparent 85%)",
-        pointerEvents: "none",
-      }} />
-
-      {/* Secondary gradient: white left → transparent right */}
-      <div style={{
-        position: "absolute",
-        inset: 0,
-        background: isMobile
-          ? "linear-gradient(to bottom, #ffffff 0%, rgba(255,255,255,0.95) 55%, transparent 100%)"
-          : "linear-gradient(to right, #ffffff 0%, #ffffff 32%, rgba(255,255,255,0.6) 50%, transparent 68%)",
-        pointerEvents: "none",
-      }} />
 
       {/* Content container */}
       <div style={{
-        maxWidth: 1100,
+        maxWidth: 1190,
         width: "100%",
         margin: "0 auto",
         position: "relative",
@@ -3654,7 +3644,7 @@ function Section13() {
               <ArrowCircle color="rgba(255,255,255,0.7)" />
             </button>
 
-            <button className="btn-white" style={{
+            <button onClick={onOpenModal} className="btn-white" style={{
               display: "flex", alignItems: "center", justifyContent: "center", gap: 20,
               background: "#fff", border: "1px solid #bf791d",
               borderRadius: 30, padding: "12px 24px", cursor: "pointer",
@@ -3666,7 +3656,7 @@ function Section13() {
               <ArrowCircle color="#bf791d" />
             </button>
 
-            <button style={{
+            <button onClick={onOpenModal} style={{
               display: "flex", alignItems: "center", justifyContent: isMobile ? "center" : "flex-start", gap: 20,
               background: "transparent", border: "none",
               padding: "12px 0", cursor: "pointer",
@@ -3792,7 +3782,7 @@ function Section14() {
   const isTablet = useIsTablet();
 
   return (
-    <section ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#fff", marginTop: 0 }}>
+    <section id="section14-story" ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#fff", marginTop: 0 }}>
 
       {/* Decorative pattern strip */}
       <div style={{
@@ -3862,11 +3852,63 @@ function Section14() {
             </div>
           </div>
         ) : (
-          // Tablet / Desktop: 3-column layout
-          <div style={{ display: "flex", gap: 0, alignItems: "flex-start" }}>
+          // Tablet / Desktop: Figma 3-column layout with overlapping photo collage
+          <div style={{ position: "relative", height: isTablet ? 400 : 452, overflow: "hidden" }}>
 
-            {/* Left column */}
-            <div style={{ flex: isTablet ? "0 0 340px" : "0 0 507px", display: "flex", flexDirection: "column", gap: isTablet ? 24 : 36 }}>
+            {/* === Photo collage (absolutely positioned) === */}
+            {/* Background scene */}
+            <img src={imgS14PhotoBg} alt="" aria-hidden style={{
+              position: "absolute",
+              left: isTablet ? "36%" : 284,
+              top: isTablet ? "42%" : 183,
+              width: isTablet ? "46%" : 498,
+              height: isTablet ? "52%" : 332,
+              objectFit: "cover",
+              zIndex: 0,
+            }} />
+            {/* Standing teacher — main portrait */}
+            <img src={imgS14Teacher} alt="Ujjwal Mam" style={{
+              position: "absolute",
+              left: isTablet ? "46%" : 407,
+              top: 0,
+              width: isTablet ? "37%" : 420,
+              height: "115%",
+              objectFit: "cover",
+              objectPosition: "top center",
+              zIndex: 1,
+            }} />
+            {/* Kids group photo — bottom right */}
+            <img src={imgS14PhotoKids} alt="" aria-hidden style={{
+              position: "absolute",
+              left: isTablet ? "66%" : 644,
+              top: isTablet ? "52%" : 265,
+              width: isTablet ? "34%" : 374,
+              height: isTablet ? "48%" : 249,
+              objectFit: "cover",
+              zIndex: 2,
+            }} />
+
+            {/* White fade overlay — keeps text readable, lets images show through */}
+            <div style={{
+              position: "absolute",
+              left: 0, top: 0,
+              width: isTablet ? "70%" : "62%",
+              height: "100%",
+              background: "linear-gradient(to right, rgba(255,255,255,0.92) 0%, rgba(255,255,255,0.85) 55%, transparent 100%)",
+              zIndex: 3, pointerEvents: "none",
+            }} />
+
+            {/* Left column — transparent so images show through */}
+            <div style={{
+              position: "absolute", left: 0, top: 0,
+              width: isTablet ? 340 : 507,
+              height: "100%", zIndex: 4,
+              background: "none",
+              display: "flex", flexDirection: "column",
+              gap: isTablet ? 24 : 36,
+              justifyContent: "center",
+              paddingRight: 24,
+            }}>
               <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
                 <span style={{
                   display: "inline-flex", alignSelf: "flex-start",
@@ -3874,7 +3916,6 @@ function Section14() {
                   padding: "6px 20px",
                   fontFamily: "'Poppins', sans-serif", fontWeight: 400, fontSize: 13,
                   color: "#bf791d", whiteSpace: "nowrap",
-                  background: "rgba(255,255,255,0.85)",
                 }}>
                   More about me!
                 </span>
@@ -3886,44 +3927,25 @@ function Section14() {
                   After 31 Years, I Still Feel Like A Young Teacher
                 </h2>
               </div>
-              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                <div style={{
-                  fontFamily: "'DM Sans', sans-serif", fontWeight: 300,
-                  fontSize: 15, lineHeight: "26px", color: "#636363",
-                  width: isTablet ? "100%" : 392,
-                  display: "flex", flexDirection: "column", gap: 12,
-                }}>
-                  <p style={{ margin: 0 }}>Teaching found me because my family had always been teachers. My father, my mother, my grandmother. When I walked into my first government school classroom in 1995, I felt like I was continuing the family legacy.</p>
-                  <p style={{ margin: 0 }}>I have taught children who could not afford ten rupees for a school fee. I have gone to their homes at night without telling anyone. I have helped families get the documents that opened doors their children would otherwise never have found. I have done all of this because a teacher's job does not end when the bell rings.</p>
-                  <p style={{ margin: 0 }}>Its selfless service to the powerhouse of my country. No better satisfaction than shaping the bright minds of this country.</p>
-                </div>
+              <div style={{
+                fontFamily: "'DM Sans', sans-serif", fontWeight: 300,
+                fontSize: 15, lineHeight: "26px", color: "#636363",
+                width: isTablet ? "100%" : 392,
+                display: "flex", flexDirection: "column", gap: 12,
+              }}>
+                <p style={{ margin: 0 }}>Teaching found me because my family had always been teachers. My father, my mother, my grandmother. When I walked into my first government school classroom in 1995, I felt like I was continuing the family legacy.</p>
+                <p style={{ margin: 0 }}>I have taught children who could not afford ten rupees for a school fee. I have gone to their homes at night without telling anyone. I have helped families get the documents that opened doors their children would otherwise never have found. I have done all of this because a teacher's job does not end when the bell rings.</p>
+                <p style={{ margin: 0 }}>Its selfless service to the powerhouse of my country. No better satisfaction than shaping the bright minds of this country.</p>
               </div>
-            </div>
-
-            {/* Center — teacher photo */}
-            <div style={{ flex: 1, position: "relative", height: isTablet ? 400 : 560, overflow: "visible" }}>
-              <img
-                src={imgS14Teacher}
-                alt="Ujjwal Mam"
-                style={{
-                  position: "absolute",
-                  left: "50%",
-                  bottom: 0,
-                  transform: "translateX(-50%)",
-                  height: isTablet ? "100%" : "120%",
-                  width: "auto",
-                  objectFit: "contain",
-                  objectPosition: "bottom center",
-                }}
-              />
             </div>
 
             {/* Right column */}
             <div style={{
-              flex: isTablet ? "0 0 160px" : "0 0 197px",
+              position: "absolute", right: 0, top: 0,
+              width: isTablet ? 160 : 197,
+              height: "100%", zIndex: 4,
               display: "flex", flexDirection: "column",
               justifyContent: "space-between",
-              height: isTablet ? 400 : 560,
               paddingTop: 24,
             }}>
               <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
@@ -4045,7 +4067,7 @@ const S16_SOCIALS: { name: string; icon: (c: string) => React.ReactNode }[] = [
 
 function S16SocialBtn({ name, icon }: { name: string; icon: (c: string) => React.ReactNode }) {
   const [hov, setHov] = useState(false);
-  const blue = "#2e80d0";
+  const gold = "#bf791d";
   return (
     <button
       aria-label={name}
@@ -4053,14 +4075,14 @@ function S16SocialBtn({ name, icon }: { name: string; icon: (c: string) => React
       onMouseLeave={() => setHov(false)}
       style={{
         width: 36, height: 36, borderRadius: 8, flexShrink: 0,
-        border: hov ? "none" : `1.5px solid ${blue}`,
-        background: hov ? blue : "transparent",
+        border: `1.5px solid ${gold}`,
+        background: hov ? gold : "transparent",
         display: "flex", alignItems: "center", justifyContent: "center",
         cursor: "pointer",
         transition: "background 0.18s, border 0.18s",
       }}
     >
-      {icon(hov ? "#fff" : blue)}
+      {icon(hov ? "#fff" : gold)}
     </button>
   );
 }
@@ -4327,39 +4349,30 @@ function Section16() {
           {isMobile || isTablet ? (
             // Mobile/Tablet: simple 2-column grid with objectFit cover
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-              <div style={{ borderRadius: 14, overflow: "hidden", border: "1px solid #a1a1a1", height: 170 }}>
-                <img src={imgS16Youtube} alt="YouTube channel" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top left", display: "block" }} />
-              </div>
-              <div style={{ borderRadius: 14, overflow: "hidden", border: "1px solid #a1a1a1", height: 170 }}>
-                <img src={imgS16Instagram} alt="Instagram profile" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "top center", display: "block" }} />
-              </div>
-              <div style={{ borderRadius: 14, background: "#d9d9d9", height: 150 }} />
-              <div style={{ borderRadius: 14, background: "#d9d9d9", height: 150 }} />
+              {[imgS16Grid1, imgS16Grid2, imgS16Grid3, imgS16Grid4].map((img, i) => (
+                <div key={i} style={{ borderRadius: 14, overflow: "hidden", height: 160 }}>
+                  <img src={img} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                </div>
+              ))}
             </div>
           ) : (
-            // Desktop: original absolute-positioned layout
+            // Desktop: 2×2 grid with Figma images
             <div className="s16-right">
-              {/* Row 1 — real screenshots */}
               <div className="s16-row">
-                <div className="s16-img-wrap" style={{ flex: "0 0 calc(53% - 8.5px)", height: 200 }}>
-                  <img
-                    src={imgS16Youtube}
-                    alt="YouTube channel"
-                    style={{ position: "absolute", width: "118.06%", height: "120%", left: 0, top: "-12.5%", objectFit: "cover" }}
-                  />
+                <div className="s16-img-wrap" style={{ flex: "1 1 0", height: 185 }}>
+                  <img src={imgS16Grid1} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
                 </div>
-                <div className="s16-img-wrap" style={{ flex: "1 1 0", height: 200 }}>
-                  <img
-                    src={imgS16Instagram}
-                    alt="Instagram profile"
-                    style={{ position: "absolute", width: "187.12%", height: "162.28%", left: "-42.88%", top: "-18.81%", objectFit: "cover" }}
-                  />
+                <div className="s16-img-wrap" style={{ flex: "1 1 0", height: 185 }}>
+                  <img src={imgS16Grid2} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
                 </div>
               </div>
-              {/* Row 2 — placeholders */}
               <div className="s16-row">
-                <div className="s16-placeholder" style={{ flex: "0 0 calc(39% - 8.5px)", height: 215 }} />
-                <div className="s16-placeholder" style={{ flex: "1 1 0", height: 215 }} />
+                <div className="s16-img-wrap" style={{ flex: "1 1 0", height: 185 }}>
+                  <img src={imgS16Grid3} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                </div>
+                <div className="s16-img-wrap" style={{ flex: "1 1 0", height: 185 }}>
+                  <img src={imgS16Grid4} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                </div>
               </div>
             </div>
           )}
@@ -4720,7 +4733,7 @@ function Section18() {
   );
 }
 // ── Section Closing ────────────────────────────────────────────────────────
-function SectionClosing() {
+function SectionClosing({ onOpenModal }: { onOpenModal: () => void }) {
   const sectionRef = useFadeInUp();
   const textRef = useRef<HTMLDivElement>(null);
   const [revealed, setRevealed] = useState(false);
@@ -4787,7 +4800,7 @@ function SectionClosing() {
         </div>
 
         {/* CTA Button */}
-        <button style={{
+        <button onClick={onOpenModal} style={{
           display: "flex", alignItems: "center", gap: 20,
           background: "#bf791d", border: "none",
           borderRadius: 30, padding: "12px 24px",
@@ -4820,18 +4833,18 @@ export function HomeV2Page() {
       <Section6 />
       <Section7 />
       <IntroNGOSection />
-      <Section8 />
+      <Section8 onOpenModal={openModal} />
       <Section9 />
-      <Section10 />
-      <Section12 />
+      <Section10 onOpenModal={openModal} />
+      <Section12 onOpenModal={openModal} />
       <SectionHonestImpact />
-      <Section13 />
+      <Section13 onOpenModal={openModal} />
       <Section14 />
       <Section15 />
       <Section16 />
       <Section17 />
-      <SectionClosing />
-      <Footer />
+      <SectionClosing onOpenModal={openModal} />
+      <Footer onOpenModal={openModal} />
       <SupportModal open={modalOpen} onClose={() => setModalOpen(false)} />
     </div>
   );

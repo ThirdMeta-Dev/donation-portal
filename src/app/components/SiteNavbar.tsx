@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router";
 import { useAuth } from "../lib/AuthContext";
 // @ts-ignore
+import imgLogo from "@/assets/urw-logo.png";
+// @ts-ignore
 import imgChevron from "@/assets/8d5928d43f1ad11aaebbaf276ef31f030d752d0e.svg";
 // @ts-ignore
 import imgChevronGold from "@/assets/e25a4b39e8a9a67792da4b7be40a5cd1efeff3fd.svg";
@@ -187,10 +189,8 @@ export function Navbar() {
     return (
       <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
-          <Link to="/" style={{ textDecoration: "none" }}>
-            <div style={{ background: "#d9d9d9", borderRadius: 40, height: 48, width: 140, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-              <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, color: "#000" }}>Home + Logo</span>
-            </div>
+          <Link to="/" style={{ textDecoration: "none", flexShrink: 0 }}>
+            <img src={imgLogo} alt="URW Logo" style={{ height: 48, width: "auto", display: "block" }} />
           </Link>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             {user ? (
@@ -252,10 +252,8 @@ export function Navbar() {
 
   return (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: 1008 }}>
-      <Link to="/" style={{ textDecoration: "none" }}>
-        <div style={{ background: "#d9d9d9", borderRadius: 40, height: 60, width: 180, display: "flex", alignItems: "center", justifyContent: "center" }}>
-          <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 14, color: "#000" }}>Home + Logo</span>
-        </div>
+      <Link to="/" style={{ textDecoration: "none", flexShrink: 0 }}>
+        <img src={imgLogo} alt="URW Logo" style={{ height: 60, width: "auto", display: "block" }} />
       </Link>
       <div style={{ display: "flex", alignItems: "center", gap: 12, paddingLeft: 28, paddingRight: user ? 8 : 6, height: 59, borderRadius: 60, background: "rgba(255,255,255,0.1)", backdropFilter: "blur(15px)" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 20, paddingLeft: 8 }}>

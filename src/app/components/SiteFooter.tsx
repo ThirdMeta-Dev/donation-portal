@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 // @ts-ignore
-import imgFooterBg from "@/assets/footer_bg.png";
+import imgLogo from "@/assets/urw-logo.png";
+// @ts-ignore
+import imgFooterBg from "@/assets/footer_bg_new.png";
 // @ts-ignore
 import imgFooterLinkedin from "@/assets/footer_ic_linkedin.png";
 // @ts-ignore
@@ -75,7 +77,7 @@ const FOOTER_NAV = [
   },
 ];
 
-export function Footer() {
+export function Footer({ onOpenModal }: { onOpenModal?: () => void }) {
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
 
@@ -101,7 +103,7 @@ export function Footer() {
         maskImage: "linear-gradient(to bottom, transparent 0%, black 20%)",
       }}>
         <img src={imgFooterBg} alt="" aria-hidden style={{
-          width: "100%", height: "100%", objectFit: "cover", objectPosition: "center",
+          width: "100%", height: "100%", objectFit: "contain", objectPosition: "bottom center",
           display: "block",
         }} />
         <div style={{ position: "absolute", inset: 0, background: "rgba(18, 50, 80, 0.75)" }} />
@@ -129,11 +131,7 @@ export function Footer() {
 
           {/* Left: Logo + address + social */}
           <div style={{ width: isMobile ? "100%" : 291, display: "flex", flexDirection: "column", gap: 24, flexShrink: 0 }}>
-            <div style={{
-              width: 160, height: 54, borderRadius: 40,
-              background: "rgba(217,217,217,0.3)",
-              border: "1px solid rgba(255,255,255,0.2)",
-            }} />
+            <img src={imgLogo} alt="URW Logo" style={{ height: 54, width: "auto", maxWidth: 160, objectFit: "contain", display: "block", alignSelf: "flex-start" }} />
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               <p style={{
                 fontFamily: "'DM Sans', sans-serif", fontWeight: 400, fontSize: 14,
@@ -226,7 +224,7 @@ export function Footer() {
               flexShrink: 0,
               width: isMobile ? "100%" : "auto",
             }}>
-              <button className="btn-outline-white" style={{
+              <button onClick={onOpenModal} className="btn-outline-white" style={{
                 display: "flex", alignItems: "center", justifyContent: "center", gap: 20,
                 background: "transparent", border: "1px solid #fff",
                 borderRadius: 30, padding: "12px 24px",
