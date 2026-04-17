@@ -131,3 +131,13 @@
   from { stroke-dashoffset: 119.4; }
   to   { stroke-dashoffset: 0; }
 }
+
+/* Vertical video play button pulse */
+@keyframes playPulse {
+  0%   { box-shadow: 0 0 0 0 rgba(255,255,255,0.55); }
+  70%  { box-shadow: 0 0 0 14px rgba(255,255,255,0); }
+  100% { box-shadow: 0 0 0 0 rgba(255,255,255,0); }
+}
+.play-pulse {
+  animation: playPulse 1.8s ease-out infinite;
+}

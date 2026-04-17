@@ -5,6 +5,7 @@
  */
 import { Link } from "react-router";
 import { useState, useEffect, useCallback, useRef } from "react";
+import { createPortal } from "react-dom";
 import { Navbar } from "../components/SiteNavbar";
 import { Footer } from "../components/SiteFooter";
 import { supabase } from "../lib/supabase";
@@ -37,9 +38,11 @@ import imgChevronGold from "@/assets/e25a4b39e8a9a67792da4b7be40a5cd1efeff3fd.sv
 // @ts-ignore
 import imgPlayBtn from "@/assets/94b7d143f7d79dcee5c3ef4a168888c8f0e66ec9.svg";
 // @ts-ignore
-import imgHeroVideo1 from "@/assets/hero_video1.png";
-// @ts-ignore
 import imgHeroVideo2 from "@/assets/hero_video2.png";
+// @ts-ignore
+import videoHorizontalBanner from "@/assets/horizontal-banner-video.mp4";
+// @ts-ignore
+import videoVerticalBanner from "@/assets/vertical-banner-video.mp4";
 // @ts-ignore
 import imgStatBg from "@/assets/b33ea922189e2f8727c7c9b20f1df35f797556ff.svg";
 // @ts-ignore
@@ -267,18 +270,267 @@ function StatCard() {
   );
 }
 
+// ── HorizontalVideoCard — scroll-driven expand then scroll-up ─────────────
+function HorizontalVideoCard() {
+  const placeholderRef = useRef<HTMLDivElement>(null);
+  const overlayRef     = useRef<HTMLDivElement>(null);
+  const videoRef       = useRef<HTMLVideoElement>(null);
+  const startRectRef   = useRef<{ top: number; left: number } | null>(null);
+  const [mounted, setMounted] = useState(false);
+  const [muted, setMuted]     = useState(true);
+
+  // Measure placeholder absolute position once layout is stable
+  useEffect(() => {
+    const measure = () => {
+      if (!placeholderRef.current) return;
+      const r = placeholderRef.current.getBoundingClientRect();
+      startRectRef.current = { top: r.top + window.scrollY, left: r.left };
+      if (!mounted) setMounted(true);
+    };
+    const t = setTimeout(measure, 60);
+    window.addEventListener("resize", measure);
+    return () => { clearTimeout(t); window.removeEventListener("resize", measure); };
+  }, []);
+
+  // Sync muted state to video element
+  useEffect(() => {
+    if (videoRef.current) videoRef.current.muted = muted;
+  }, [muted]);
+
+  // Direct DOM scroll handler — no setState → smooth 60fps
+  useEffect(() => {
+    if (!mounted) return;
+
+    const CARD_W = 255, CARD_H = 144;
+    const EXPAND_END = 450;  // scroll px → fully fullscreen
+    const SHRINK_END = 850;  // scroll px → video fully collapsed & gone
+
+    const lerp  = (a: number, b: number, t: number) => a + (b - a) * t;
+    const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v));
+    const ease  = (t: number) => t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+
+    const onScroll = () => {
+      const scrollY = window.scrollY;
+      const rect    = startRectRef.current;
+      const overlay = overlayRef.current;
+      if (!rect || !overlay) return;
+
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+
+      const expandT = ease(clamp(scrollY / EXPAND_END, 0, 1));
+      const shrinkT = ease(clamp((scrollY - EXPAND_END) / (SHRINK_END - EXPAND_END), 0, 1));
+
+      // Phase 1 — expand: card position → fullscreen
+      // Phase 2 — shrink: height collapses upward (top pinned at 0)
+      const w = lerp(CARD_W, vw, expandT); // width stays full during shrink
+      const h = expandT < 1
+        ? lerp(CARD_H, vh, expandT)
+        : lerp(vh, 0, shrinkT);            // bottom edge rises up
+
+      const left = lerp(rect.left, 0, expandT);
+      const top  = expandT < 1
+        ? lerp(rect.top - scrollY, 0, expandT)
+        : 0;                               // pinned to top during shrink
+
+      const radius = expandT < 1
+        ? lerp(12, 0, expandT)
+        : 0;
+
+      const gone = shrinkT >= 1;
+
+      overlay.style.left         = `${left}px`;
+      overlay.style.top          = `${top}px`;
+      overlay.style.width        = `${w}px`;
+      overlay.style.height       = `${h}px`;
+      overlay.style.borderRadius = `${radius}px`;
+      overlay.style.transform    = "none";
+      overlay.style.opacity      = gone ? "0" : "1";
+    };
+
+    window.addEventListener("scroll", onScroll, { passive: true });
+    onScroll();
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [mounted]);
+
+  return (
+    <>
+      {/* Placeholder — reserves grid space; hidden once overlay is live */}
+      <div
+        ref={placeholderRef}
+        style={{
+          gridColumn: 1, gridRow: 1,
+          width: 255, height: 144,
+          borderRadius: 12,
+          visibility: mounted ? "hidden" : "visible",
+          overflow: "hidden",
+        }}
+      />
+
+      {/* Fixed overlay portal — sole video, animates on scroll */}
+      {mounted && createPortal(
+        <div
+          ref={overlayRef}
+          style={{
+            position: "fixed",
+            top: 0, left: 0,
+            width: 255, height: 144,
+            borderRadius: 12,
+            overflow: "hidden",
+            zIndex: 9990,
+            pointerEvents: "none",
+            willChange: "top, left, width, height, border-radius, transform",
+          }}
+        >
+          <video
+            ref={videoRef}
+            autoPlay muted loop playsInline
+            style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
+          >
+            <source src={videoHorizontalBanner} type="video/mp4" />
+          </video>
+
+          {/* Mute / unmute button */}
+          <button
+            onClick={() => setMuted(m => !m)}
+            style={{
+              position: "absolute", bottom: 10, right: 10,
+              width: 32, height: 32,
+              borderRadius: "50%",
+              background: "rgba(0,0,0,0.45)",
+              border: "1px solid rgba(255,255,255,0.3)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              cursor: "pointer",
+              pointerEvents: "auto",
+              zIndex: 1,
+              backdropFilter: "blur(4px)",
+              WebkitBackdropFilter: "blur(4px)",
+            }}
+            aria-label={muted ? "Unmute video" : "Mute video"}
+          >
+            {muted ? (
+              /* Speaker with X */
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M11 5L6 9H2v6h4l5 4V5z" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                <line x1="23" y1="9" x2="17" y2="15" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"/>
+                <line x1="17" y1="9" x2="23" y2="15" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"/>
+              </svg>
+            ) : (
+              /* Speaker with waves */
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                <path d="M11 5L6 9H2v6h4l5 4V5z" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
+                <path d="M15.54 8.46a5 5 0 0 1 0 7.07" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"/>
+                <path d="M19.07 4.93a10 10 0 0 1 0 14.14" stroke="#fff" strokeWidth="1.8" strokeLinecap="round"/>
+              </svg>
+            )}
+          </button>
+        </div>,
+        document.body
+      )}
+    </>
+  );
+}
+
+// ── VerticalVideoCard — thumbnail + pulse play btn + lightbox ────────────
+function VerticalVideoCard() {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      {/* Thumbnail card */}
+      <div
+        style={{
+          gridColumn: 1, gridRow: 1, marginLeft: 117, marginTop: 98,
+          border: "1px solid #112d48", borderRadius: 12,
+          boxShadow: "4px 4px 0px 0px #091c2f",
+          width: 163, height: 204,
+          overflow: "hidden", position: "relative", cursor: "pointer", flexShrink: 0,
+        }}
+        onClick={() => setOpen(true)}
+      >
+        {/* Static thumbnail image */}
+        <img
+          src={imgHeroVideo2}
+          alt=""
+          style={{ width: "100%", height: "100%", objectFit: "cover", display: "block", pointerEvents: "none" }}
+        />
+        {/* Dark scrim so play btn stands out */}
+        <div style={{ position: "absolute", inset: 0, background: "rgba(0,0,0,0.25)" }} />
+        {/* Pulsing play button */}
+        <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <div
+            className="play-pulse"
+            style={{
+              width: 40, height: 40, borderRadius: "50%",
+              background: "rgba(255,255,255,0.92)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              flexShrink: 0,
+            }}
+          >
+            <svg width="14" height="16" viewBox="0 0 14 16" fill="none">
+              <path d="M2 1.5L12.5 8L2 14.5V1.5Z" fill="#0b223a" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      {/* Lightbox portal */}
+      {open && createPortal(
+        <div
+          style={{
+            position: "fixed", inset: 0, zIndex: 99999,
+            background: "rgba(0,0,0,0.88)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}
+          onClick={() => setOpen(false)}
+        >
+          {/* Close button */}
+          <button
+            onClick={() => setOpen(false)}
+            style={{
+              position: "absolute", top: 20, right: 24,
+              width: 40, height: 40, borderRadius: "50%",
+              background: "rgba(255,255,255,0.12)",
+              border: "1px solid rgba(255,255,255,0.3)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              cursor: "pointer", zIndex: 1,
+            }}
+            aria-label="Close video"
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M2 2L14 14M14 2L2 14" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+          </button>
+
+          {/* Video — stop click from bubbling to backdrop */}
+          <video
+            src={videoVerticalBanner}
+            autoPlay
+            controls
+            playsInline
+            style={{
+              maxHeight: "88vh", maxWidth: "90vw",
+              borderRadius: 16,
+              boxShadow: "0 24px 80px rgba(0,0,0,0.6)",
+            }}
+            onClick={e => e.stopPropagation()}
+          />
+        </div>,
+        document.body
+      )}
+    </>
+  );
+}
+
 // ── VideoCards ────────────────────────────────────────────────────────────
 function VideoCards() {
   return (
     <div style={{ display: "inline-grid", gridTemplateColumns: "max-content", gridTemplateRows: "max-content", position: "relative", placeSelf: "start" }}>
-      <img src={imgHeroVideo1} alt="" style={{ gridColumn: 1, gridRow: 1, borderRadius: 12, width: 255, height: 144, objectFit: "cover", display: "block" }} />
+      <HorizontalVideoCard />
       <div style={{ gridColumn: 1, gridRow: 1, marginLeft: 111, marginTop: 56, width: 32, height: 32, position: "relative" }}>
         <img src={imgPlayBtn} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }} />
       </div>
-      <img src={imgHeroVideo2} alt="" style={{ gridColumn: 1, gridRow: 1, marginLeft: 117, marginTop: 98, border: "1px solid #112d48", borderRadius: 12, boxShadow: "4px 4px 0px 0px #091c2f", width: 163, height: 204, objectFit: "cover", display: "block" }} />
-      <div style={{ gridColumn: 1, gridRow: 1, marginLeft: 181, marginTop: 198, width: 32, height: 32, position: "relative" }}>
-        <img src={imgPlayBtn} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }} />
-      </div>
+      <VerticalVideoCard />
     </div>
   );
 }
