@@ -115,9 +115,9 @@
   color: transparent;
   animation: s18FillWipe 1.3s cubic-bezier(0.22, 1, 0.36, 1) 0.1s both;
 }
-/* Second sentence: fills to muted grey */
+/* Second sentence: also fills to dark */
 .s18-fill-grey {
-  background: linear-gradient(90deg, #bcbcbc 50%, #e2e2e2 50%);
+  background: linear-gradient(90deg, #1a2e3b 50%, #d0d0d0 50%);
   background-size: 200% 100%;
   background-position: 100% 0;
   -webkit-background-clip: text;

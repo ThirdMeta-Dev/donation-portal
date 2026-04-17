@@ -40,6 +40,8 @@ import imgPlayBtn from "@/assets/94b7d143f7d79dcee5c3ef4a168888c8f0e66ec9.svg";
 // @ts-ignore
 import imgHeroVideo2 from "@/assets/hero_video2.png";
 // @ts-ignore
+import imgMobileTeacher from "@/assets/mobile_hero_teacher.png";
+// @ts-ignore
 import videoHorizontalBanner from "@/assets/horizontal-banner-video.mp4";
 // @ts-ignore
 import videoVerticalBanner from "@/assets/vertical-banner-video.mp4";
@@ -267,6 +269,124 @@ function StatCard() {
         <li><span style={{ fontWeight: 300 }}>Shaped </span><span style={{ fontWeight: 500 }}>10k+</span><span style={{ fontWeight: 300 }}> characters</span></li>
       </ul>
     </div>
+  );
+}
+
+// ── MobileHeroPhotoBlock ──────────────────────────────────────────────────
+function MobileHeroPhotoBlock() {
+  const [lightbox, setLightbox] = useState<"youtube" | "instagram" | null>(null);
+
+  return (
+    <>
+      {/* Teacher photo + stats bubble + play buttons */}
+      <div style={{ position: "relative", width: "100%", height: 303, marginTop: 12, flexShrink: 0 }}>
+
+        {/* Teacher photo — right 78% */}
+        <img
+          src={imgMobileTeacher}
+          alt="Ujjwala Wadekar"
+          style={{
+            position: "absolute", right: 0, top: 0,
+            width: "78%", height: "100%",
+            objectFit: "contain", objectPosition: "bottom right",
+            display: "block",
+          }}
+        />
+
+        {/* Stats bubble — top left */}
+        <div style={{ position: "absolute", left: 0, top: 8, width: 126, height: 98, overflow: "visible" }}>
+          <img src={imgStatBg} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "fill" }} />
+          <ul style={{
+            position: "absolute", left: 8, top: 6, width: 106,
+            fontStyle: "italic", fontSize: 10, color: "#f9c56d",
+            fontFamily: "'DM Sans', sans-serif", lineHeight: "17px",
+            listStyle: "disc", paddingLeft: 18, margin: 0,
+          }}>
+            <li><span style={{ fontWeight: 500 }}>Ujjwala Wadekar</span></li>
+            <li><span style={{ fontWeight: 500 }}>31 yrs</span><span style={{ fontWeight: 300 }}> Teaching<br />Experience</span></li>
+            <li><span style={{ fontWeight: 500 }}>12,400+</span><span style={{ fontWeight: 300 }}> Children Reached</span></li>
+          </ul>
+        </div>
+
+        {/* Instagram play button (vertical video) */}
+        <button
+          onClick={() => setLightbox("instagram")}
+          style={{
+            position: "absolute", left: 0, top: 123,
+            width: 36, height: 36, borderRadius: "50%",
+            background: "linear-gradient(135deg, #833ab4 0%, #fd1d1d 50%, #fcb045 100%)",
+            border: "2px solid rgba(255,255,255,0.35)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            cursor: "pointer", boxShadow: "0 2px 10px rgba(0,0,0,0.4)",
+            padding: 0,
+          }}
+          aria-label="Play Instagram video"
+        >
+          <svg width="13" height="15" viewBox="0 0 13 15" fill="none">
+            <path d="M1.5 1.5L11.5 7.5L1.5 13.5V1.5Z" fill="#fff" />
+          </svg>
+        </button>
+
+        {/* YouTube play button (horizontal video) */}
+        <button
+          onClick={() => setLightbox("youtube")}
+          style={{
+            position: "absolute", left: 0, top: 165,
+            width: 36, height: 36, borderRadius: "50%",
+            background: "#FF0000",
+            border: "2px solid rgba(255,255,255,0.35)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+            cursor: "pointer", boxShadow: "0 2px 10px rgba(0,0,0,0.4)",
+            padding: 0,
+          }}
+          aria-label="Play YouTube video"
+        >
+          <svg width="14" height="10" viewBox="0 0 14 10" fill="none">
+            <path d="M13.5 1.5s-.168-1.18-.682-1.7c-.652-.683-1.382-.686-1.717-.726C9.356 0 7 0 7 0S4.645 0 2.9.074c-.335.04-1.065.043-1.717.726C.67.32.5 1.5.5 1.5S.33 2.877.33 4.254v1.287c0 1.377.168 2.754.168 2.754s.168 1.18.682 1.7c.652.683 1.535.661 1.922.733C4.33 10.06 7 10.083 7 10.083s2.359-.003 4.101-.077c.335-.04 1.065-.043 1.717-.726.514-.52.682-1.7.682-1.7S13.67 6.918 13.67 5.541V4.254c0-1.377-.17-2.754-.17-2.754zM5.545 6.818V2.864l4.636 1.984-4.636 1.97z" fill="#fff"/>
+          </svg>
+        </button>
+      </div>
+
+      {/* Lightbox portal */}
+      {lightbox && createPortal(
+        <div
+          style={{
+            position: "fixed", inset: 0, zIndex: 99999,
+            background: "rgba(0,0,0,0.9)",
+            display: "flex", alignItems: "center", justifyContent: "center",
+          }}
+          onClick={() => setLightbox(null)}
+        >
+          <button
+            onClick={() => setLightbox(null)}
+            style={{
+              position: "absolute", top: 20, right: 20,
+              width: 40, height: 40, borderRadius: "50%",
+              background: "rgba(255,255,255,0.12)",
+              border: "1px solid rgba(255,255,255,0.3)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              cursor: "pointer", zIndex: 1,
+            }}
+            aria-label="Close video"
+          >
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M2 2L14 14M14 2L2 14" stroke="#fff" strokeWidth="2" strokeLinecap="round" />
+            </svg>
+          </button>
+          <video
+            src={lightbox === "youtube" ? videoHorizontalBanner : videoVerticalBanner}
+            autoPlay controls playsInline
+            style={{
+              maxHeight: "88vh", maxWidth: "92vw",
+              borderRadius: 12,
+              boxShadow: "0 24px 80px rgba(0,0,0,0.6)",
+            }}
+            onClick={e => e.stopPropagation()}
+          />
+        </div>,
+        document.body
+      )}
+    </>
   );
 }
 
@@ -610,13 +730,16 @@ function HeroSection({ onOpenModal }: { onOpenModal: () => void }) {
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
                 <button className="btn-gold" onClick={onOpenModal} style={{ display: "flex", alignItems: "center", gap: 12, background: "#bf791d", borderRadius: 30, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 600, boxShadow: "0px 4px 4px 0px rgba(0,0,0,0.3)", alignSelf: "flex-start" }}>
-                  Support This Mission <ArrowIcon />
+                  Donate Now <ArrowIcon />
                 </button>
                 <button style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 14, padding: 0 }}>
                   <span className="arrow-bounce"><svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M9 3v12M9 15l-5-5M9 15l5-5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
-                  See My Teaching Method
+                  Problems we are working on
                 </button>
               </div>
+
+              {/* Mobile photo block — teacher image + stats + play buttons */}
+              <MobileHeroPhotoBlock />
             </div>
           ) : (
             /* ── TABLET / DESKTOP Hero Content ── */
