@@ -1672,6 +1672,10 @@ function Section7() {
 // @ts-ignore
 import imgS8Teacher from "@/assets/fb67f8b019282de8f29678da8c918384c128715b.png";
 // @ts-ignore
+import imgS8ShikshakUnnati from "@/assets/s8_shikshak_unnati.jpg";
+// @ts-ignore
+import imgS8UjjwalShala from "@/assets/s8_ujjwal_shala.jpg";
+// @ts-ignore
 import imgS9IntroBg from "@/assets/s9_intro_bg.png";
 // @ts-ignore
 import imgS9TeacherOverlay from "@/assets/s9_teacher_overlay.png";
@@ -1810,7 +1814,7 @@ const S8_PROGRAMS = [
     ],
     punchline: "When one teacher changes the way they teach, hundreds of children begin learning differently.",
     cta: "Grow With Ujjwala",
-    photo: imgTeacher,
+    photo: imgS8ShikshakUnnati,
   },
   {
     id: "s8-2",
@@ -1858,7 +1862,7 @@ const S8_PROGRAMS = [
     ],
     punchline: "A school changes deeply when it stops waiting for help and starts receiving the strength of a whole community.",
     cta: "Strengthen A School",
-    photo: imgTeacher,
+    photo: imgS8UjjwalShala,
   },
 ];
 
