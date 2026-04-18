@@ -318,7 +318,7 @@ export function Footer({ onOpenModal }: { onOpenModal?: () => void }) {
               fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 13,
               lineHeight: "1.6", color: "#fff", margin: 0,
             }}>
-              Lorem Ipsum is simply dummy text of the printing and typesetting.
+              © 2026 Ujjwala Wadekar. All rights reserved.
             </p>
             <p style={{
               fontFamily: "'Poppins', sans-serif", fontWeight: 300, fontSize: 13,
