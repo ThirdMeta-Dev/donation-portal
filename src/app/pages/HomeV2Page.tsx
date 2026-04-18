@@ -706,7 +706,7 @@ function HeroSection({ onOpenModal }: { onOpenModal: () => void }) {
       <div style={{ maxWidth: 1200, margin: "0 auto", position: "relative", minHeight: isMobile ? "auto" : 724, zIndex: 2 }}>
         <div style={{ padding: isMobile ? "20px 20px 40px" : isTablet ? "24px 32px 48px" : "28px 96px 60px", display: "flex", flexDirection: "column", gap: isMobile ? 28 : 44, alignItems: isMobile ? "stretch" : "center", position: "relative" }}>
           <div style={{ position: "relative", zIndex: 200, width: "100%" }}>
-            <Navbar />
+            <Navbar onOpenModal={onOpenModal} />
           </div>
 
           {/* Hero content — stacked on mobile, side-by-side on desktop */}
@@ -1215,7 +1215,7 @@ function Section4() {
   // Mobile/tablet: stacked layout
   if (isMobile || isTablet) {
     return (
-      <div ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#f8f5ef", paddingTop: isMobile ? 40 : 48, paddingBottom: isMobile ? 40 : 48, overflow: "hidden" }}>
+      <div id="section4-awards" ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#f8f5ef", paddingTop: isMobile ? 40 : 48, paddingBottom: isMobile ? 40 : 48, overflow: "hidden" }}>
         <div style={{ padding: isMobile ? "0 20px 24px" : "0 32px 32px", display: "flex", flexDirection: "column", gap: 16 }}>
           <div style={{ display: "inline-flex", alignItems: "center", padding: "6px 20px", borderRadius: 40, border: "1px solid #e8e8e8", alignSelf: "flex-start" }}>
             <span style={{ fontFamily: "'Poppins', sans-serif", fontSize: 13, color: "#bf791d" }}>Seen &amp; acknowledged</span>
@@ -1239,7 +1239,7 @@ function Section4() {
 
   // Desktop: side-by-side layout
   return (
-    <div ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#f8f5ef", paddingTop: 48, paddingBottom: 48, overflow: "hidden" }}>
+    <div id="section4-awards" ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#f8f5ef", paddingTop: 48, paddingBottom: 48, overflow: "hidden" }}>
       <div style={{ display: "flex", gap: 48, alignItems: "stretch", width: "100%" }}>
         <div style={{ flexShrink: 0, width: "calc(max(96px, (100vw - 1200px) / 2 + 96px) + 340px)", paddingLeft: "max(96px, calc((100vw - 1200px) / 2 + 96px))", display: "flex", flexDirection: "column", gap: 48, paddingTop: 28, boxSizing: "border-box" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
@@ -1304,7 +1304,7 @@ function Section5() {
   const hPad = isMobile ? 20 : isTablet ? 40 : 350;
 
   return (
-    <div ref={sectionRef} className="fade-in-up" style={{
+    <div id="section5-teaching" ref={sectionRef} className="fade-in-up" style={{
       width: "100%",
       minHeight: isMobile ? "auto" : 808,
       background: "#fff",
@@ -1883,7 +1883,7 @@ function IntroNGOSection() {
 
   if (isMobile || isTablet) {
     return (
-      <section style={{ width: "100%", background: "#fff", padding: isMobile ? "48px 20px 0" : "60px 32px 0", boxSizing: "border-box" }}>
+      <section id="section-intro-ngo" style={{ width: "100%", background: "#fff", padding: isMobile ? "48px 20px 0" : "60px 32px 0", boxSizing: "border-box" }}>
         <h2 style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: isMobile ? 26 : 32, lineHeight: 1.3, color: "#000", textAlign: "center", margin: "0 0 32px" }}>
           Introducing,<br />Shiksha Raj, Ujjwal Bharat Foundation
         </h2>
@@ -1916,7 +1916,7 @@ function IntroNGOSection() {
   // Section: 1200×954. Background card starts at y=443 (h=511). Content frame 1008px centered.
   // Cards group 1008×405: Vision (588×250 at left=0,top=0), Mission (751×334 at left=257,top=71).
   return (
-    <section style={{ width: "100%", background: "#fff", position: "relative", height: 954, overflow: "hidden" }}>
+    <section id="section-intro-ngo" style={{ width: "100%", background: "#fff", position: "relative", height: 954, overflow: "hidden" }}>
 
       {/* Layer 1 (back) — background image strip, full-width, no card styling */}
       <div style={{
@@ -2077,7 +2077,8 @@ function Section8({ onOpenModal }: { onOpenModal: () => void }) {
   if (isMobile || isTablet) {
     const prog = S8_PROGRAMS[activeIdx];
     return (
-      <div style={{ width: "100%", background: "#fff", padding: isMobile ? "40px 20px 48px" : "48px 32px 60px", boxSizing: "border-box" }}>
+      <div id="section8-programs" style={{ width: "100%", background: "#fff", padding: isMobile ? "40px 20px 48px" : "48px 32px 60px", boxSizing: "border-box", position: "relative" }}>
+        <span id="section8-adopt" style={{ position: "absolute", top: 0, left: 0, display: "block", height: 0, pointerEvents: "none" }} />
         {/* Header */}
         <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 24 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
@@ -2153,7 +2154,8 @@ function Section8({ onOpenModal }: { onOpenModal: () => void }) {
 
   // ── Desktop: sticky scroll-driven card stack ─────────────────────────────
   return (
-    <div ref={wrapperRef} style={{ position: "relative", height: `calc(100vh + ${RUNWAY}px)` }}>
+    <div id="section8-programs" ref={wrapperRef} style={{ position: "relative", height: `calc(100vh + ${RUNWAY}px)` }}>
+      <span id="section8-adopt" style={{ position: "absolute", top: 0, left: 0, display: "block", height: 0, pointerEvents: "none" }} />
       <div style={{ position: "sticky", top: 0, height: "100vh", background: "#fff", overflow: "hidden", display: "flex", justifyContent: "center", alignItems: "center" }}>
         <div style={{ width: 1008, display: "flex", flexDirection: "column", gap: 48 }}>
 
@@ -2620,7 +2622,7 @@ function Section9() {
   const stopDrag = () => { dragging.current = false; setIsDragging(false); };
 
   return (
-    <div ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#f8f5ef", borderRadius: 30, margin: "40px 0", overflow: "hidden" }}>
+    <div id="section9-impact" ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#f8f5ef", borderRadius: 30, margin: "40px 0", overflow: "hidden" }}>
 
       {/* Header — full width so subtitle reaches the right edge */}
       <div style={{ paddingTop: 68, paddingBottom: 52, paddingLeft: hPad, paddingRight: hPad, width: "100%", boxSizing: "border-box" }}>
@@ -2865,6 +2867,23 @@ function Section10({ onOpenModal }: { onOpenModal: () => void }) {
     }, 220);
   };
 
+  // Hash-based tab deep-link activation
+  useEffect(() => {
+    const tabMap: Record<string, number> = {
+      "section10-teachers": 0,
+      "section10-volunteers": 1,
+      "section10-partners": 2,
+      "section10-csr": 3,
+    };
+    const handleHash = () => {
+      const hash = window.location.hash.slice(1);
+      if (hash in tabMap) setActiveTab(tabMap[hash]);
+    };
+    handleHash();
+    window.addEventListener("hashchange", handleHash);
+    return () => window.removeEventListener("hashchange", handleHash);
+  }, []);
+
   const tab    = S10_TABS[activeTab];
   const TAB_W  = 244.5;
   const GAP    = 10;
@@ -2884,7 +2903,11 @@ function Section10({ onOpenModal }: { onOpenModal: () => void }) {
   const gradY2  = gradY1 + 290;
 
   return (
-    <section ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#fff", padding: isMobile ? "60px 0 80px" : "88px 0 100px" }}>
+    <section id="section10" ref={sectionRef} className="fade-in-up" style={{ position: "relative", width: "100%", background: "#fff", padding: isMobile ? "60px 0 80px" : "88px 0 100px" }}>
+      <span id="section10-teachers"   style={{ position: "absolute", top: 0, left: 0, display: "block", height: 0, pointerEvents: "none" }} />
+      <span id="section10-volunteers" style={{ position: "absolute", top: 0, left: 0, display: "block", height: 0, pointerEvents: "none" }} />
+      <span id="section10-partners"   style={{ position: "absolute", top: 0, left: 0, display: "block", height: 0, pointerEvents: "none" }} />
+      <span id="section10-csr"        style={{ position: "absolute", top: 0, left: 0, display: "block", height: 0, pointerEvents: "none" }} />
       <div style={{ maxWidth: CARD_W, margin: "0 auto", padding: `0 ${isMobile ? 16 : isTablet ? 24 : 0}px`, boxSizing: "border-box" }}>
 
         {/* Header */}
@@ -3797,7 +3820,7 @@ function Section15() {
   const cardWidth = isMobile ? "80vw" : isTablet ? "calc(50% - 10px)" : 236;
 
   return (
-    <section ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#fff", padding: isMobile ? "48px 0 56px" : "60px 0 80px" }}>
+    <section id="section15-team" ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#fff", padding: isMobile ? "48px 0 56px" : "60px 0 80px" }}>
       <div style={{ maxWidth: 1008, margin: "0 auto", padding: isMobile ? "0 20px" : "0 1px", boxSizing: "border-box" }}>
 
         {/* Header */}
@@ -4657,7 +4680,7 @@ function Section16() {
   const isTablet = useIsTablet();
 
   return (
-    <section ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#fff", padding: isMobile ? "48px 0 56px" : "72px 0 80px" }}>
+    <section id="section16-testimonials" ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#fff", padding: isMobile ? "48px 0 56px" : "72px 0 80px" }}>
       <style>{`
         .s16-grid { display: flex; gap: 48px; align-items: flex-start; }
         .s16-left { flex: 0 0 auto; width: 240px; display: flex; flex-direction: column; gap: 20px; padding-top: 24px; }
