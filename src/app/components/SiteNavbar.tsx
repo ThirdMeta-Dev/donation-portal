@@ -28,10 +28,10 @@ function useIsTablet() {
   return isTablet;
 }
 
-function ArrowIcon({ color = "#fff", size = 20 }: { color?: string; size?: number }) {
+function ArrowIcon({ color = "#fff", size = 16 }: { color?: string; size?: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill={color} style={{ flexShrink: 0 }}>
-      <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" />
+    <svg width={size} height={size} viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
+      <path d="M2 8H14M14 8L9 3M14 8L9 13" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
