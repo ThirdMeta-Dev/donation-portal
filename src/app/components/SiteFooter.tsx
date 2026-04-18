@@ -138,7 +138,7 @@ export function Footer({ onOpenModal }: { onOpenModal?: () => void }) {
                 lineHeight: "24px", color: "#fff", margin: 0,
                 maxWidth: isMobile ? "100%" : 240,
               }}>
-                Arcadion Building, North Main Road, Koregoan Park, Pune, Maharashtra Pin: 411001
+                "Rau" 89/412, Nehru Nagar, Mohadi Road, Jalgaon, 425002
               </p>
               <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
                 {FOOTER_SOCIAL.map((s) => (
