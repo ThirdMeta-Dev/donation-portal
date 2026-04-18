@@ -1,16 +1,9 @@
 import { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router";
 // @ts-ignore
 import imgLogo from "@/assets/urw-logo.png";
 // @ts-ignore
 import imgFooterBg from "@/assets/footer_bg_new.png";
-// @ts-ignore
-import imgFooterLinkedin from "@/assets/footer_ic_linkedin.png";
-// @ts-ignore
-import imgFooterTwitter from "@/assets/footer_ic_twitter.png";
-// @ts-ignore
-import imgFooterWhatsapp from "@/assets/footer_ic_whatsapp.png";
-// @ts-ignore
-import imgFooterInstagram from "@/assets/footer_ic_instagram.png";
 
 function useIsMobile(breakpoint = 768) {
   const [isMobile, setIsMobile] = useState(false);
@@ -34,52 +27,107 @@ function useIsTablet() {
   return isTablet;
 }
 
-function ArrowIcon({ color = "#fff", size = 16 }: { color?: string; size?: number }) {
+function ArrowIcon({ color = "#fff", size = 20 }: { color?: string; size?: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
-      <path d="M2 8H14M14 8L9 3M14 8L9 13" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+    <svg width={size} height={size} viewBox="0 0 24 24" fill={color} style={{ flexShrink: 0 }}>
+      <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z" />
     </svg>
   );
 }
 
-// Inline SVG social icons to resolve broken PNGs
+const WA_LINK = "https://wa.me/919370318308";
+
 const FOOTER_SOCIAL = [
   {
     label: "LinkedIn",
-    svg: <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z" stroke="#fff" strokeWidth="1.8" fill="none"/><rect x="2" y="9" width="4" height="12" stroke="#fff" strokeWidth="1.8" fill="none"/><circle cx="4" cy="4" r="2" stroke="#fff" strokeWidth="1.8" fill="none"/></svg>
+    href: "#",
+    svg: <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z" stroke="#fff" strokeWidth="1.8" fill="none"/><rect x="2" y="9" width="4" height="12" stroke="#fff" strokeWidth="1.8" fill="none"/><circle cx="4" cy="4" r="2" stroke="#fff" strokeWidth="1.8" fill="none"/></svg>,
+    outlined: true,
   },
   {
     label: "Twitter",
-    svg: <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 4l16 16M4 20L20 4" stroke="#fff" strokeWidth="1.9" strokeLinecap="round"/></svg>
+    href: "#",
+    svg: <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 4l16 16M4 20L20 4" stroke="#fff" strokeWidth="1.9" strokeLinecap="round"/></svg>,
+    outlined: false,
   },
   {
     label: "WhatsApp",
-    svg: <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 8.5-8.5h.5a8.48 8.48 0 0 1 8 8v.5z" stroke="#fff" strokeWidth="1.8" fill="none"/></svg>
+    href: WA_LINK,
+    svg: <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 8.5-8.5h.5a8.48 8.48 0 0 1 8 8v.5z" stroke="#fff" strokeWidth="1.8" fill="none"/></svg>,
+    outlined: true,
   },
   {
     label: "Instagram",
-    svg: <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="5" stroke="#fff" strokeWidth="1.8" fill="none"/><circle cx="12" cy="12" r="4" stroke="#fff" strokeWidth="1.8" fill="none"/><circle cx="17.5" cy="6.5" r="1" fill="#fff"/></svg>
+    href: "#",
+    svg: <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="5" stroke="#fff" strokeWidth="1.8" fill="none"/><circle cx="12" cy="12" r="4" stroke="#fff" strokeWidth="1.8" fill="none"/><circle cx="17.5" cy="6.5" r="1" fill="#fff"/></svg>,
+    outlined: true,
   },
 ];
 
-const FOOTER_NAV = [
+type FooterLink = { label: string; href: string; external?: boolean };
+
+const FOOTER_NAV: { heading: string; links: FooterLink[] }[] = [
   {
-    heading: "Shikha Raj Ujjwal Bharat Foundation",
-    links: ["About the trust", "Programs and Initiatives", "Adopt a School"],
-  },
-  {
-    heading: "Ujjwala Wadekar",
-    links: ["About Ujjwala", "Teaching Method", "Founder Story", "News and Talks"],
+    heading: "Community",
+    links: [
+      { label: "Words From The Community", href: "#section16-testimonials" },
+      { label: "Join The Community",        href: WA_LINK, external: true },
+    ],
   },
   {
     heading: "Get Involved",
-    links: ["Retail Donor", "CSR/Businesses", "Volunteers", "Teachers", "Partners (Non CSR)", "Join Community"],
+    links: [
+      { label: "Contribute To The Cause",  href: "/donate" },
+      { label: "CSR/Business",             href: "#section10-csr" },
+      { label: "Volunteers",               href: "#section10-volunteers" },
+      { label: "Partners",                 href: "#section10-partners" },
+      { label: "Join Community",           href: WA_LINK, external: true },
+    ],
+  },
+  {
+    heading: "Mission",
+    links: [
+      { label: "About The Mission",        href: "#section-intro-ngo" },
+      { label: "Programs & Initiatives",   href: "#section8-programs" },
+      { label: "See The Impact",           href: "#section9-impact" },
+      { label: "Adopt a School",           href: "#section8-adopt" },
+    ],
+  },
+  {
+    heading: "Ujjwala Wadekar",
+    links: [
+      { label: "My Story",                 href: "#section14-story" },
+      { label: "My Teaching Method",       href: "#section5-teaching" },
+      { label: "Awards & Recognition",     href: "#section4-awards" },
+      { label: "The Team",                 href: "#section15-team" },
+    ],
   },
 ];
+
+function scrollToHash(hash: string) {
+  const el = document.getElementById(hash);
+  if (el) {
+    el.scrollIntoView({ behavior: "smooth", block: "start" });
+    window.history.pushState(null, "", `#${hash}`);
+  }
+}
 
 export function Footer({ onOpenModal }: { onOpenModal?: () => void }) {
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleLink = (link: FooterLink) => {
+    if (link.external) { window.open(link.href, "_blank", "noopener noreferrer"); return; }
+    if (link.href.startsWith("#")) {
+      const hash = link.href.slice(1);
+      const isHome = location.pathname === "/" || location.pathname === "/home-v2";
+      if (isHome) { scrollToHash(hash); } else { navigate("/"); setTimeout(() => scrollToHash(hash), 400); }
+      return;
+    }
+    navigate(link.href);
+  };
 
   return (
     <footer style={{
@@ -142,16 +190,16 @@ export function Footer({ onOpenModal }: { onOpenModal?: () => void }) {
               </p>
               <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
                 {FOOTER_SOCIAL.map((s) => (
-                  <div key={s.label} style={{
+                  <a key={s.label} href={s.href} target={s.href.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer" style={{
                     width: 32, height: 32, borderRadius: 8,
                     display: "flex", alignItems: "center", justifyContent: "center",
                     flexShrink: 0, overflow: "hidden",
-                    background: "transparent",
-                    border: "1.5px solid rgba(255,255,255,0.4)",
-                    cursor: "pointer",
+                    background: s.outlined ? "transparent" : "#2e80d0",
+                    border: s.outlined ? "1.5px solid #2e80d0" : "none",
+                    cursor: "pointer", textDecoration: "none",
                   }}>
                     {s.svg}
-                  </div>
+                  </a>
                 ))}
               </div>
             </div>
@@ -161,34 +209,42 @@ export function Footer({ onOpenModal }: { onOpenModal?: () => void }) {
           <div style={{
             display: "flex",
             flexWrap: isMobile ? "wrap" : "nowrap",
-            gap: isMobile ? "24px 32px" : isTablet ? 28 : 44,
+            gap: isMobile ? "28px 32px" : isTablet ? 28 : 40,
             alignItems: "flex-start",
             width: isMobile ? "100%" : "auto",
           }}>
             {FOOTER_NAV.map((col) => (
               <div key={col.heading} style={{
-                display: "flex", flexDirection: "column", gap: 10,
+                display: "flex", flexDirection: "column", gap: 12,
                 alignItems: isMobile ? "flex-start" : "flex-end",
                 flex: isMobile ? "1 1 calc(50% - 16px)" : "none",
                 minWidth: isMobile ? 120 : "auto",
               }}>
                 <p style={{
-                  fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: 14,
+                  fontFamily: "'DM Sans', sans-serif", fontWeight: 500, fontSize: 15,
                   lineHeight: "1.6", color: "#fff", margin: 0,
                   textAlign: isMobile ? "left" : "right",
+                  textTransform: "uppercase", letterSpacing: "0.03em",
                 }}>
                   {col.heading}
                 </p>
                 <div style={{ width: 43, height: 1, background: "rgba(255,255,255,0.5)" }} />
                 <div style={{ display: "flex", flexDirection: "column", gap: 4, alignItems: isMobile ? "flex-start" : "flex-end" }}>
                   {col.links.map((link) => (
-                    <a key={link} href="#" style={{
-                      fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 14,
-                      lineHeight: "1.6", color: "#fff", textDecoration: "none",
-                      textAlign: isMobile ? "left" : "right",
-                    }}>
-                      {link}
-                    </a>
+                    <button
+                      key={link.label}
+                      onClick={() => handleLink(link)}
+                      style={{
+                        background: "none", border: "none", padding: 0,
+                        fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 15,
+                        lineHeight: "1.6", color: "#fff", cursor: "pointer",
+                        textAlign: isMobile ? "left" : "right",
+                      }}
+                      onMouseEnter={e => (e.currentTarget.style.opacity = "0.75")}
+                      onMouseLeave={e => (e.currentTarget.style.opacity = "1")}
+                    >
+                      {link.label}
+                    </button>
                   ))}
                 </div>
               </div>
@@ -234,7 +290,7 @@ export function Footer({ onOpenModal }: { onOpenModal?: () => void }) {
                 Join With Us
                 <ArrowIcon color="#fff" size={16} />
               </button>
-              <button className="btn-white" style={{
+              <button onClick={() => navigate("/donate")} className="btn-white" style={{
                 display: "flex", alignItems: "center", justifyContent: "center", gap: 20,
                 background: "#fff", border: "none",
                 borderRadius: 30, padding: "12px 24px",
@@ -262,7 +318,7 @@ export function Footer({ onOpenModal }: { onOpenModal?: () => void }) {
               fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 13,
               lineHeight: "1.6", color: "#fff", margin: 0,
             }}>
-              Lorem Ipsum is simply dummy text of the printing and typesetting.
+              © 2026 Ujjwala Wadekar. All rights reserved.
             </p>
             <p style={{
               fontFamily: "'Poppins', sans-serif", fontWeight: 300, fontSize: 13,
