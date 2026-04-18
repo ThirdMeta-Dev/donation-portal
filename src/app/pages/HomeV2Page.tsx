@@ -1685,6 +1685,14 @@ import imgS9TeacherOverlay from "@/assets/s9_teacher_overlay.png";
 import imgS10TeacherRmBg from "@/assets/s10_teacher_removebg.png";
 // @ts-ignore
 import imgS10Classroom from "@/assets/s10_card_bg_classroom.jpg";
+// @ts-ignore
+import imgS10BgTeachers from "@/assets/s10_bg_teachers.jpg";
+// @ts-ignore
+import imgS10BgVolunteers from "@/assets/s10_bg_volunteers.jpg";
+// @ts-ignore
+import imgS10BgPartners from "@/assets/s10_bg_partners.jpg";
+// @ts-ignore
+import imgS10BgCsr from "@/assets/s10_bg_csr.jpg";
 
 // Section 16 — Our Channels
 // @ts-ignore
@@ -2693,7 +2701,7 @@ const S10_TABS: S10TabData[] = [
     ],
     cta: "Join Teacher Network",
     photo: imgS10TeacherRmBg,
-    photoBg: imgS10Classroom,
+    photoBg: imgS10BgTeachers,
   },
   {
     label: "Volunteers",
@@ -2707,7 +2715,7 @@ const S10_TABS: S10TabData[] = [
       "A reference and recognition letter on request",
     ],
     cta: "Offer My Skills",
-    photo: imgTeacher,
+    photo: imgS10BgVolunteers,
   },
   {
     label: "Partners",
@@ -2721,7 +2729,7 @@ const S10_TABS: S10TabData[] = [
       "Child consent and safety fully managed",
     ],
     cta: "I want to show the world to every child",
-    photo: imgCarousel1,
+    photo: imgS10BgPartners,
   },
   {
     label: "CSR / Business",
@@ -2735,7 +2743,7 @@ const S10_TABS: S10TabData[] = [
       "Transparent financial reporting and audit access",
     ],
     cta: "Request CSR Proposal",
-    photo: imgS6Bg,
+    photo: imgS10BgCsr,
   },
 ];
 
