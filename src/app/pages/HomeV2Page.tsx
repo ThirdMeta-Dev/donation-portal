@@ -4382,7 +4382,7 @@ function Section13({ onOpenModal }: { onOpenModal: () => void }) {
 
 const S14_SOCIAL = [
   {
-    name: "LinkedIn",
+    name: "LinkedIn", href: "https://www.linkedin.com/in/ujjwala-wadekar-317094247/",
     icon: (color: string) => (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
         <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
@@ -4392,15 +4392,7 @@ const S14_SOCIAL = [
     ),
   },
   {
-    name: "Twitter / X",
-    icon: (color: string) => (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-        <path d="M4 4l16 16M4 20L20 4" stroke={color} strokeWidth="1.9" strokeLinecap="round" />
-      </svg>
-    ),
-  },
-  {
-    name: "WhatsApp",
+    name: "WhatsApp", href: "https://wa.me/919370318308",
     icon: (color: string) => (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
         <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" stroke={color} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
@@ -4408,7 +4400,7 @@ const S14_SOCIAL = [
     ),
   },
   {
-    name: "Instagram",
+    name: "Instagram", href: "https://www.instagram.com/zp_teacher_ujjwala_wadekar/",
     icon: (color: string) => (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
         <rect x="2" y="2" width="20" height="20" rx="5" stroke={color} strokeWidth="1.8" fill="none" />
@@ -4417,14 +4409,23 @@ const S14_SOCIAL = [
       </svg>
     ),
   },
+  {
+    name: "YouTube", href: "https://www.youtube.com/channel/UCJOILwGRJVFODGp6uQGDF1w",
+    icon: (color: string) => (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.95C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58a2.78 2.78 0 0 0 1.95 1.95C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z" stroke={color} strokeWidth="1.8" fill="none" />
+        <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill={color} />
+      </svg>
+    ),
+  },
 ];
 
-function SocialIcon({ name, icon }: { name: string; icon: (c: string) => React.ReactNode }) {
+function SocialIcon({ name, href, icon }: { name: string; href: string; icon: (c: string) => React.ReactNode }) {
   const [hovered, setHovered] = useState(false);
   const blue = "#2e80d0";
   return (
-    <button
-      aria-label={name}
+    <a
+      href={href} target="_blank" rel="noopener noreferrer" aria-label={name}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
@@ -4435,11 +4436,11 @@ function SocialIcon({ name, icon }: { name: string; icon: (c: string) => React.R
         display: "flex", alignItems: "center", justifyContent: "center",
         cursor: "pointer",
         transition: "background 0.18s, border 0.18s",
-        flexShrink: 0,
+        flexShrink: 0, textDecoration: "none",
       }}
     >
       {icon(hovered ? "#fff" : blue)}
-    </button>
+    </a>
   );
 }
 
@@ -4705,9 +4706,10 @@ function Section14() {
 }
 
 // ── Section 16 ─────────────────────────────────────────────────────────────
-const S16_SOCIALS: { name: string; icon: (c: string) => React.ReactNode }[] = [
+const S16_SOCIALS: { name: string; href: string; icon: (c: string) => React.ReactNode }[] = [
   {
     name: "LinkedIn",
+    href: "https://www.linkedin.com/in/ujjwala-wadekar-317094247/",
     icon: (c) => (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
         <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
@@ -4717,15 +4719,8 @@ const S16_SOCIALS: { name: string; icon: (c: string) => React.ReactNode }[] = [
     ),
   },
   {
-    name: "Twitter / X",
-    icon: (c) => (
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-        <path d="M4 4l16 16M4 20L20 4" stroke={c} strokeWidth="1.9" strokeLinecap="round" />
-      </svg>
-    ),
-  },
-  {
     name: "WhatsApp",
+    href: "https://wa.me/919370318308",
     icon: (c) => (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
         <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" stroke={c} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" fill="none" />
@@ -4734,6 +4729,7 @@ const S16_SOCIALS: { name: string; icon: (c: string) => React.ReactNode }[] = [
   },
   {
     name: "Instagram",
+    href: "https://www.instagram.com/zp_teacher_ujjwala_wadekar/",
     icon: (c) => (
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
         <rect x="2" y="2" width="20" height="20" rx="5" stroke={c} strokeWidth="1.8" fill="none" />
@@ -4742,14 +4738,24 @@ const S16_SOCIALS: { name: string; icon: (c: string) => React.ReactNode }[] = [
       </svg>
     ),
   },
+  {
+    name: "YouTube",
+    href: "https://www.youtube.com/channel/UCJOILwGRJVFODGp6uQGDF1w",
+    icon: (c) => (
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+        <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.95C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58a2.78 2.78 0 0 0 1.95 1.95C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z" stroke={c} strokeWidth="1.8" fill="none" />
+        <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill={c} />
+      </svg>
+    ),
+  },
 ];
 
-function S16SocialBtn({ name, icon }: { name: string; icon: (c: string) => React.ReactNode }) {
+function S16SocialBtn({ name, href, icon }: { name: string; href: string; icon: (c: string) => React.ReactNode }) {
   const [hov, setHov] = useState(false);
   const gold = "#bf791d";
   return (
-    <button
-      aria-label={name}
+    <a
+      href={href} target="_blank" rel="noopener noreferrer" aria-label={name}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       style={{
@@ -4757,12 +4763,12 @@ function S16SocialBtn({ name, icon }: { name: string; icon: (c: string) => React
         border: `1.5px solid ${gold}`,
         background: hov ? gold : "transparent",
         display: "flex", alignItems: "center", justifyContent: "center",
-        cursor: "pointer",
+        cursor: "pointer", textDecoration: "none",
         transition: "background 0.18s, border 0.18s",
       }}
     >
       {icon(hov ? "#fff" : gold)}
-    </button>
+    </a>
   );
 }
 
@@ -5019,7 +5025,7 @@ function Section16() {
             </p>
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
               {S16_SOCIALS.map((s) => (
-                <S16SocialBtn key={s.name} name={s.name} icon={s.icon} />
+                <S16SocialBtn key={s.name} name={s.name} href={s.href} icon={s.icon} />
               ))}
             </div>
           </div>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router";
 // @ts-ignore
 import imgLogo from "@/assets/urw-logo.png";
@@ -36,33 +36,50 @@ function ArrowIcon({ color = "#fff", size = 16 }: { color?: string; size?: numbe
 }
 
 const WA_LINK = "https://wa.me/919370318308";
+const GOLD = "#bf791d";
 
-const FOOTER_SOCIAL = [
+const FOOTER_SOCIAL: { label: string; href: string; icon: (c: string) => React.ReactNode }[] = [
   {
     label: "LinkedIn",
-    href: "#",
-    svg: <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z" stroke="#fff" strokeWidth="1.8" fill="none"/><rect x="2" y="9" width="4" height="12" stroke="#fff" strokeWidth="1.8" fill="none"/><circle cx="4" cy="4" r="2" stroke="#fff" strokeWidth="1.8" fill="none"/></svg>,
-    outlined: true,
-  },
-  {
-    label: "Twitter",
-    href: "#",
-    svg: <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 4l16 16M4 20L20 4" stroke="#fff" strokeWidth="1.9" strokeLinecap="round"/></svg>,
-    outlined: false,
+    href: "https://www.linkedin.com/in/ujjwala-wadekar-317094247/",
+    icon: (c) => <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z" stroke={c} strokeWidth="1.8" fill="none"/><rect x="2" y="9" width="4" height="12" stroke={c} strokeWidth="1.8" fill="none"/><circle cx="4" cy="4" r="2" stroke={c} strokeWidth="1.8" fill="none"/></svg>,
   },
   {
     label: "WhatsApp",
     href: WA_LINK,
-    svg: <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 8.5-8.5h.5a8.48 8.48 0 0 1 8 8v.5z" stroke="#fff" strokeWidth="1.8" fill="none"/></svg>,
-    outlined: true,
+    icon: (c) => <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 8.5-8.5h.5a8.48 8.48 0 0 1 8 8v.5z" stroke={c} strokeWidth="1.8" fill="none"/></svg>,
   },
   {
     label: "Instagram",
-    href: "#",
-    svg: <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="5" stroke="#fff" strokeWidth="1.8" fill="none"/><circle cx="12" cy="12" r="4" stroke="#fff" strokeWidth="1.8" fill="none"/><circle cx="17.5" cy="6.5" r="1" fill="#fff"/></svg>,
-    outlined: true,
+    href: "https://www.instagram.com/zp_teacher_ujjwala_wadekar/",
+    icon: (c) => <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="5" stroke={c} strokeWidth="1.8" fill="none"/><circle cx="12" cy="12" r="4" stroke={c} strokeWidth="1.8" fill="none"/><circle cx="17.5" cy="6.5" r="1" fill={c}/></svg>,
+  },
+  {
+    label: "YouTube",
+    href: "https://www.youtube.com/channel/UCJOILwGRJVFODGp6uQGDF1w",
+    icon: (c) => <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.95C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58a2.78 2.78 0 0 0 1.95 1.95C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z" stroke={c} strokeWidth="1.8" fill="none"/><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill={c}/></svg>,
   },
 ];
+
+function FooterSocialBtn({ label, href, icon }: typeof FOOTER_SOCIAL[0]) {
+  const [hov, setHov] = useState(false);
+  return (
+    <a
+      href={href} target="_blank" rel="noopener noreferrer" aria-label={label}
+      onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
+      style={{
+        width: 32, height: 32, borderRadius: 8, flexShrink: 0,
+        display: "flex", alignItems: "center", justifyContent: "center",
+        background: hov ? GOLD : "transparent",
+        border: `1.5px solid #fff`,
+        cursor: "pointer", textDecoration: "none",
+        transition: "background 0.18s",
+      }}
+    >
+      {icon("#fff")}
+    </a>
+  );
+}
 
 type FooterLink = { label: string; href: string; external?: boolean };
 
@@ -190,16 +207,7 @@ export function Footer({ onOpenModal }: { onOpenModal?: () => void }) {
               </p>
               <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
                 {FOOTER_SOCIAL.map((s) => (
-                  <a key={s.label} href={s.href} target={s.href.startsWith("http") ? "_blank" : undefined} rel="noopener noreferrer" style={{
-                    width: 32, height: 32, borderRadius: 8,
-                    display: "flex", alignItems: "center", justifyContent: "center",
-                    flexShrink: 0, overflow: "hidden",
-                    background: s.outlined ? "transparent" : "#2e80d0",
-                    border: s.outlined ? "1.5px solid #2e80d0" : "none",
-                    cursor: "pointer", textDecoration: "none",
-                  }}>
-                    {s.svg}
-                  </a>
+                  <FooterSocialBtn key={s.label} {...s} />
                 ))}
               </div>
             </div>

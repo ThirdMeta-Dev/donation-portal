@@ -303,20 +303,12 @@ function ContactHeroSection({ onOpenModal }: { onOpenModal: () => void }) {
 // ── SECTION 2 — Visit Us (Figma 917:18162) ─────────────────────────────────
 const VISIT_SOCIALS = [
   {
-    name: "LinkedIn", href: "#",
+    name: "LinkedIn", href: "https://www.linkedin.com/in/ujjwala-wadekar-317094247/",
     icon: (c: string) => (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
         <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z" stroke={c} strokeWidth="1.8" fill="none" />
         <rect x="2" y="9" width="4" height="12" stroke={c} strokeWidth="1.8" fill="none" />
         <circle cx="4" cy="4" r="2" stroke={c} strokeWidth="1.8" fill="none" />
-      </svg>
-    ),
-  },
-  {
-    name: "Twitter / X", href: "#",
-    icon: (c: string) => (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-        <path d="M4 4l16 16M4 20L20 4" stroke={c} strokeWidth="1.9" strokeLinecap="round" />
       </svg>
     ),
   },
@@ -329,12 +321,21 @@ const VISIT_SOCIALS = [
     ),
   },
   {
-    name: "Instagram", href: "#",
+    name: "Instagram", href: "https://www.instagram.com/zp_teacher_ujjwala_wadekar/",
     icon: (c: string) => (
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
         <rect x="2" y="2" width="20" height="20" rx="5" stroke={c} strokeWidth="1.8" fill="none" />
         <circle cx="12" cy="12" r="4" stroke={c} strokeWidth="1.8" fill="none" />
         <circle cx="17.5" cy="6.5" r="1" fill={c} />
+      </svg>
+    ),
+  },
+  {
+    name: "YouTube", href: "https://www.youtube.com/channel/UCJOILwGRJVFODGp6uQGDF1w",
+    icon: (c: string) => (
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+        <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.95C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58a2.78 2.78 0 0 0 1.95 1.95C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z" stroke={c} strokeWidth="1.8" fill="none" />
+        <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill={c} />
       </svg>
     ),
   },
