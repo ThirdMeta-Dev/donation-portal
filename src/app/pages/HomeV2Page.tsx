@@ -26,6 +26,26 @@ import imgS4Award4 from "@/assets/s4_award4.png";
 // @ts-ignore
 import imgS4Award5 from "@/assets/s4_award5.png";
 // @ts-ignore
+import imgMedia1 from "@/assets/s_media_1.jpg";
+// @ts-ignore
+import imgMedia2 from "@/assets/s_media_2.jpg";
+// @ts-ignore
+import imgMedia3 from "@/assets/s_media_3.jpg";
+// @ts-ignore
+import imgMedia4 from "@/assets/s_media_4.jpg";
+// @ts-ignore
+import imgMedia5 from "@/assets/s_media_5.jpg";
+// @ts-ignore
+import imgMedia6 from "@/assets/s_media_6.jpg";
+// @ts-ignore
+import imgMedia7 from "@/assets/s_media_7.jpg";
+// @ts-ignore
+import imgMedia8 from "@/assets/s_media_8.jpg";
+// @ts-ignore
+import imgMedia9 from "@/assets/s_media_9.jpg";
+// @ts-ignore
+import imgMedia10 from "@/assets/s_media_10.jpg";
+// @ts-ignore
 import imgTexture from "@/assets/10c9de2356342a2446587a7242a74b82052060e2.svg";
 // @ts-ignore
 import imgEllipse1 from "@/assets/bfca26775f8ffbbc192c6f8abee068e70d1ec79f.svg";
@@ -53,6 +73,24 @@ import s12_cta_pattern from "../../assets/images/s12_cta_pattern.svg";
 import s16_map_bg from "../../assets/images/s16_map_bg.svg";
 // @ts-ignore
 import imgCarousel1 from "@/assets/b025de5e50e257a2a8382e99cc8bc799d9ebaba4.png";
+// @ts-ignore
+import imgS3Slide1 from "@/assets/s3_slide1.jpg";
+// @ts-ignore
+import imgS3Slide2 from "@/assets/s3_slide2.jpg";
+// @ts-ignore
+import imgS3Slide3 from "@/assets/s3_slide3.jpg";
+// @ts-ignore
+import imgS3Slide4 from "@/assets/s3_slide4.jpg";
+// @ts-ignore
+import imgS3Slide5 from "@/assets/s3_slide5.jpg";
+// @ts-ignore
+import imgS3Slide6 from "@/assets/s3_slide6.jpg";
+// @ts-ignore
+import imgS3Slide7 from "@/assets/s3_slide7.jpg";
+// @ts-ignore
+import imgS3Slide8 from "@/assets/s3_slide8.jpg";
+// @ts-ignore
+import imgS3Slide9 from "@/assets/s3_slide9.png";
 
 // Section 5
 // @ts-ignore
@@ -961,15 +999,15 @@ function _Section2_unused({ onOpenModal }: { onOpenModal: () => void }) {
 
 // ── Section 3: Image Carousel ─────────────────────────────────────────────
 const S3_SLIDES = [
-  { img: imgCarousel1, category: "Family Problems", caption: "I met Atharva's parents and asked, \"Why isn't he coming to school?\" They looked at me and said, \"Madam, can education feed us through our basic needs today? We had to send him to the farm to survive.\"" },
-  { img: imgCarousel1, category: "Family Problems", caption: "A child spends 6 hours in school and 18 at home. If learning finds no support, no encouragement, no environment there, even the brightest child slowly stops taking education seriously." },
-  { img: imgCarousel1, category: "Student Problems", caption: "A bright village boy once went to the city, and his confidence shattered. Fancy showrooms, malls, pizza shops, premium cars. One look at that world, and he quietly felt, \"I do not belong here.\"" },
-  { img: imgCarousel1, category: "Student Problems", caption: "Students top exams and merit lists, but when life asks for difficult decisions, many end up choosing careers forced on them. Years later, they realize they lived someone else's dream, not their own." },
-  { img: imgCarousel1, category: "Teacher Problems", caption: "When I first joined, ZP schools were full of children. Today, many classrooms stand half empty. Not because children disappeared, but because school stopped feeling worth returning to." },
-  { img: imgCarousel1, category: "Teacher Problems", caption: "Do we ever ask a fish to fly? Every child is made differently. But many classrooms still reduce them to fixed hours, fixed syllabus, and fixed exams." },
-  { img: imgCarousel1, category: "Teacher Problems", caption: "Life often feels heavier than education. But how often do teachers truly pause and ask a child, \"Tell me, how is life treating you?\"" },
-  { img: imgCarousel1, category: "Society Problems", caption: "One missing birth certificate, one delayed caste document, and a child's hard-earned chance slips away quietly. Dreams do not always break with noise. Sometimes, paperwork breaks them in silence." },
-  { img: imgCarousel1, category: "Society Problems", caption: "He stopped telling his classmates what his father did for work. No one taught him that labour has dignity, so he learned shame much before he ever learned pride." },
+  { img: imgS3Slide1, category: "Family Problems", caption: "I met Atharva's parents and asked, \"Why isn't he coming to school?\" They looked at me and said, \"Madam, can education feed us through our basic needs today? We had to send him to the farm to survive.\"" },
+  { img: imgS3Slide2, category: "Family Problems", caption: "A child spends 6 hours in school and 18 at home. If learning finds no support, no encouragement, no environment there, even the brightest child slowly stops taking education seriously." },
+  { img: imgS3Slide3, category: "Student Problems", caption: "A bright village boy once went to the city, and his confidence shattered. Fancy showrooms, malls, pizza shops, premium cars. One look at that world, and he quietly felt, \"I do not belong here.\"" },
+  { img: imgS3Slide4, category: "Student Problems", caption: "Students top exams and merit lists, but when life asks for difficult decisions, many end up choosing careers forced on them. Years later, they realize they lived someone else's dream, not their own." },
+  { img: imgS3Slide5, category: "Teacher Problems", caption: "When I first joined, ZP schools were full of children. Today, many classrooms stand half empty. Not because children disappeared, but because school stopped feeling worth returning to." },
+  { img: imgS3Slide6, category: "Teacher Problems", caption: "Do we ever ask a fish to fly? Every child is made differently. But many classrooms still reduce them to fixed hours, fixed syllabus, and fixed exams." },
+  { img: imgS3Slide7, category: "Teacher Problems", caption: "Life often feels heavier than education. But how often do teachers truly pause and ask a child, \"Tell me, how is life treating you?\"" },
+  { img: imgS3Slide8, category: "Society Problems", caption: "One missing birth certificate, one delayed caste document, and a child's hard-earned chance slips away quietly. Dreams do not always break with noise. Sometimes, paperwork breaks them in silence." },
+  { img: imgS3Slide9, category: "Society Problems", caption: "He stopped telling his classmates what his father did for work. No one taught him that labour has dignity, so he learned shame much before he ever learned pride." },
 ];
 
 function Section3() {
@@ -1127,13 +1165,16 @@ function Section3() {
 
 // ── Section 4: Media & Recognitions full-bleed carousel ───────────────────
 const S4_CARDS = [
-  { label: "National Award 2018", sub: "Ministry of Education", color: "#d9d9d9", img: imgS4Award1 },
-  { label: "State Merit 2021", sub: "Maharashtra Govt.", color: "#e2ddd6", img: imgS4Award2 },
-  { label: "Global Impact 2023", sub: "Edu-Global Foundation", color: "#d9d9d9", img: imgS4Award3 },
-  { label: "Teacher of the Year", sub: "CBSE Council 2019", color: "#e2ddd6", img: imgS4Award4 },
-  { label: "Innovation Award", sub: "Teach For India", color: "#d9d9d9", img: imgS4Award5 },
-  { label: "Community Hero", sub: "Jalgaon District", color: "#e2ddd6", img: imgS4Award1 },
-  { label: "Digital Learning", sub: "UNESCO Recognition", color: "#d9d9d9", img: imgS4Award2 },
+  { label: "Recognition 1",  sub: "", color: "#d9d9d9", img: imgMedia1 },
+  { label: "Recognition 2",  sub: "", color: "#e2ddd6", img: imgMedia2 },
+  { label: "Recognition 3",  sub: "", color: "#d9d9d9", img: imgMedia3 },
+  { label: "Recognition 4",  sub: "", color: "#e2ddd6", img: imgMedia4 },
+  { label: "Recognition 5",  sub: "", color: "#d9d9d9", img: imgMedia5 },
+  { label: "Recognition 6",  sub: "", color: "#e2ddd6", img: imgMedia6 },
+  { label: "Recognition 7",  sub: "", color: "#d9d9d9", img: imgMedia7 },
+  { label: "Recognition 8",  sub: "", color: "#e2ddd6", img: imgMedia8 },
+  { label: "Recognition 9",  sub: "", color: "#d9d9d9", img: imgMedia9 },
+  { label: "Recognition 10", sub: "", color: "#e2ddd6", img: imgMedia10 },
 ];
 
 const S4_LOOP = [...S4_CARDS, ...S4_CARDS, ...S4_CARDS];
@@ -1676,7 +1717,31 @@ import imgS8ShikshakUnnati from "@/assets/s8_shikshak_unnati.jpg";
 // @ts-ignore
 import imgS8UjjwalShala from "@/assets/s8_ujjwal_shala.jpg";
 // @ts-ignore
+import imgS8T1A from "@/assets/s8_t1_a.jpg";
+// @ts-ignore
+import imgS8T1B from "@/assets/s8_t1_b.jpg";
+// @ts-ignore
+import imgS8T2C from "@/assets/s8_t2_c.jpg";
+// @ts-ignore
+import imgS8T2D from "@/assets/s8_t2_d.jpg";
+// @ts-ignore
+import imgS8T3A from "@/assets/s8_t3_a.jpg";
+// @ts-ignore
+import imgS8T3B from "@/assets/s8_t3_b.jpg";
+// @ts-ignore
+import imgS8T3C from "@/assets/s8_t3_c.jpg";
+// @ts-ignore
+import imgS8T4B from "@/assets/s8_t4_b.jpg";
+// @ts-ignore
+import imgS8T4C from "@/assets/s8_t4_c.jpg";
+// @ts-ignore
+import imgS8T5A from "@/assets/s8_t5_a.jpg";
+// @ts-ignore
+import imgS8T5B from "@/assets/s8_t5_b.jpg";
+// @ts-ignore
 import imgS9IntroBg from "@/assets/s9_intro_bg.png";
+// @ts-ignore
+import imgVisionMissionBg from "@/assets/s_vision_mission_bg.jpg";
 // @ts-ignore
 import imgS9TeacherOverlay from "@/assets/s9_teacher_overlay.png";
 
@@ -1790,6 +1855,81 @@ const SECTION_8_CARDS: S8Card[] = S8_CARDS_DATA.map((data, i) => ({
 }));
 ── END OLD Section 8 data ─────────────────────────────────────────────── */
 
+// ── Section 8 collage photo panels (one per tab) ─────────────────────────
+const s8Divider = { position: "absolute" as const, left: 0, right: 0, height: 1, background: "#d8cfc3", zIndex: 2 };
+const s8VDivider = { position: "absolute" as const, top: 0, bottom: 0, width: 1, background: "#d8cfc3", zIndex: 2 };
+
+// Tab 0 — Ujjwal Sanvaad: portrait (top 41%) | crowd (bottom)
+const s8Collage0 = (
+  <div style={{ position: "relative", width: "100%", height: "100%" }}>
+    <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "41%" }}>
+      <img src={imgS8T1A} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+    </div>
+    <div style={{ ...s8Divider, top: "41%" }} />
+    <div style={{ position: "absolute", top: "41%", left: 0, right: 0, bottom: 0 }}>
+      <img src={imgS8T1B} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+    </div>
+  </div>
+);
+
+// Tab 1 — Shikshak Unnati: teacher/robot (top 50%) | classroom session (bottom)
+const s8Collage1 = (
+  <div style={{ position: "relative", width: "100%", height: "100%" }}>
+    <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "50%" }}>
+      <img src={imgS8T2C} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }} />
+    </div>
+    <div style={{ ...s8Divider, top: "50%" }} />
+    <div style={{ position: "absolute", top: "50%", left: 0, right: 0, bottom: 0 }}>
+      <img src={imgS8T2D} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+    </div>
+  </div>
+);
+
+// Tab 2 — Unhali Shala: outdoor activity (top 69%) | two photos side-by-side (bottom)
+const s8Collage2 = (
+  <div style={{ position: "relative", width: "100%", height: "100%" }}>
+    <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "69%" }}>
+      <img src={imgS8T3A} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+    </div>
+    <div style={{ ...s8Divider, top: "69%" }} />
+    <div style={{ position: "absolute", top: "69%", left: 0, right: "48%", bottom: 0 }}>
+      <img src={imgS8T3C} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+    </div>
+    <div style={{ ...s8VDivider, left: "52%" }} />
+    <div style={{ position: "absolute", top: "69%", left: "52%", right: 0, bottom: 0 }}>
+      <img src={imgS8T3B} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+    </div>
+  </div>
+);
+
+// Tab 3 — ShikshanSaath: group gathering (top 60%) | portrait bottom-right
+const s8Collage3 = (
+  <div style={{ position: "relative", width: "100%", height: "100%" }}>
+    <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "60%" }}>
+      <img src={imgS8T4B} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center center" }} />
+    </div>
+    <div style={{ ...s8Divider, top: "60%" }} />
+    <div style={{ position: "absolute", top: "60%", left: 0, right: "48%", bottom: 0, background: "#f0ebe3" }} />
+    <div style={{ ...s8VDivider, left: "52%" }} />
+    <div style={{ position: "absolute", top: "60%", left: "52%", right: 0, bottom: 0 }}>
+      <img src={imgS8T4C} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }} />
+    </div>
+  </div>
+);
+
+// Tab 4 — Shala Abhiyan: school trip (top 50%) | distribution/crowd (bottom)
+const s8Collage4 = (
+  <div style={{ position: "relative", width: "100%", height: "100%" }}>
+    <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: "50%" }}>
+      <img src={imgS8T5B} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+    </div>
+    <div style={{ ...s8Divider, top: "50%" }} />
+    <div style={{ position: "absolute", top: "50%", left: 0, right: 0, bottom: 0 }}>
+      <img src={imgS8T5A} alt="" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+    </div>
+  </div>
+);
+
 // ── Section 8 data (NEW — 5 tabs, 1 card each, scroll stack) ─────────────
 const S8_PROGRAMS = [
   {
@@ -1806,7 +1946,8 @@ const S8_PROGRAMS = [
     ],
     punchline: "When people finally sit together and speak honestly, education stops feeling helpless and starts feeling possible.",
     cta: "Join Ujjwal Sanvaad",
-    photo: imgS8Teacher,
+    photo: imgS8T1A,
+    photoNode: s8Collage0,
   },
   {
     id: "s8-1",
@@ -1822,7 +1963,8 @@ const S8_PROGRAMS = [
     ],
     punchline: "When one teacher changes the way they teach, hundreds of children begin learning differently.",
     cta: "Grow With Ujjwala",
-    photo: imgS8ShikshakUnnati,
+    photo: imgS8T2C,
+    photoNode: s8Collage1,
   },
   {
     id: "s8-2",
@@ -1838,7 +1980,8 @@ const S8_PROGRAMS = [
     ],
     punchline: "Sometimes one meaningful summer can awaken the kind of learning school alone could not.",
     cta: "Enroll A Child",
-    photo: imgCarousel1,
+    photo: imgS8T3A,
+    photoNode: s8Collage2,
   },
   {
     id: "s8-3",
@@ -1854,7 +1997,8 @@ const S8_PROGRAMS = [
     ],
     punchline: "A child should never lose education simply because life at home became heavier than learning.",
     cta: "Support A Child",
-    photo: imgS8Teacher,
+    photo: imgS8T4B,
+    photoNode: s8Collage3,
   },
   {
     id: "s8-4",
@@ -1870,7 +2014,8 @@ const S8_PROGRAMS = [
     ],
     punchline: "A school changes deeply when it stops waiting for help and starts receiving the strength of a whole community.",
     cta: "Strengthen A School",
-    photo: imgS8UjjwalShala,
+    photo: imgS8T5B,
+    photoNode: s8Collage4,
   },
 ];
 
@@ -1917,27 +2062,44 @@ function IntroNGOSection() {
           </div>
         </div>
         {/* Background image strip at bottom */}
-        <div style={{ width: "100%", height: 200, borderRadius: "20px 20px 0 0", overflow: "hidden" }}>
-          <img src={imgS9IntroBg} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }} />
+        <div style={{ width: "100%", height: 200, borderRadius: "0 0 20px 20px", overflow: "hidden", position: "relative" }}>
+          <img src={imgVisionMissionBg} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }} />
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, #fff 0%, transparent 40%)", pointerEvents: "none" }} />
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, #fff 0%, transparent 15%, transparent 85%, #fff 100%)", pointerEvents: "none" }} />
         </div>
       </section>
     );
   }
 
-  // ── DESKTOP — pixel-perfect from Figma node 773:754 ──
-  // Section: 1200×954. Background card starts at y=443 (h=511). Content frame 1008px centered.
-  // Cards group 1008×405: Vision (588×250 at left=0,top=0), Mission (751×334 at left=257,top=71).
+  // ── DESKTOP — pixel-perfect from Figma node 746:172 ──
+  // Section: 1200×1052. Image frame (965:1130): top=541, height=511, full-width, rounded bottom.
+  // Image inset: top=-127px (−24.85% of 511), clipped by overflow:hidden.
   return (
-    <section id="section-intro-ngo" style={{ width: "100%", background: "#fff", position: "relative", height: 954, overflow: "hidden" }}>
+    <section id="section-intro-ngo" style={{ width: "100%", background: "#fff", position: "relative", height: 1120, overflow: "hidden" }}>
 
-      {/* Layer 1 (back) — background image strip, full-width, no card styling */}
+      {/* Background image — bottom portion of section */}
       <div style={{
-        position: "absolute", left: 0, right: 0, top: 520, bottom: 0,
+        position: "absolute", left: 0, right: 0,
+        top: 560, bottom: 0,
         overflow: "hidden",
+        borderRadius: "0 0 30px 30px",
       }}>
-        <img src={imgS9IntroBg} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top" }} />
-        {/* Strong white fade from top so it blends seamlessly into section background */}
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, #fff 0%, rgba(255,255,255,0.5) 25%, transparent 55%)", pointerEvents: "none" }} />
+        <img
+          src={imgVisionMissionBg}
+          alt=""
+          style={{
+            width: "100%", height: "100%",
+            objectFit: "cover",
+            objectPosition: "center 30%",
+            display: "block",
+          }}
+        />
+        {/* Top fade — blends into white section above */}
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, #fff 0%, rgba(255,255,255,0) 40%)", pointerEvents: "none" }} />
+        {/* Left fade */}
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, #fff 0%, transparent 18%)", pointerEvents: "none" }} />
+        {/* Right fade */}
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to left, #fff 0%, transparent 18%)", pointerEvents: "none" }} />
       </div>
 
       {/* Layer 3 (front) — content: title + two overlapping cards */}
@@ -2029,7 +2191,7 @@ function Section8({ onOpenModal }: { onOpenModal: () => void }) {
 
   // Card dimensions — extra 60px at TOP so stacked edges peek above active card
   const CARD_H = 460;
-  const PEEK_TOP = 60; // space above active card for peeking stack tops
+  const PEEK_TOP = 0;
   const CONTAINER_H = CARD_H + PEEK_TOP;
 
   // Stack transform per depth — cards peek from the TOP of the active card
@@ -2279,7 +2441,7 @@ function Section8({ onOpenModal }: { onOpenModal: () => void }) {
                       </div>
                       {/* Right photo */}
                       <div style={{ width: 260, flexShrink: 0, overflow: "hidden", position: "relative", background: "#ddd4c7" }}>
-                        <img src={prog.photo} alt={prog.english} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                        {prog.photoNode ?? <img src={prog.photo} alt={prog.english} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />}
                       </div>
                     </div>
                   </div>
