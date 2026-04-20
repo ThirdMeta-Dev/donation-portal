@@ -1,6 +1,6 @@
 // ─── Brand ────────────────────────────────────────────────────────────────────
-export const FOUNDATION_NAME    = "Shiksha Raj, Ujjwal Bharat Mission";
-export const FOUNDATION_SHORT   = "Shiksha Raj";
+export const FOUNDATION_NAME    = "Ujjwal Bharat";
+export const FOUNDATION_SHORT   = "Ujjwal Bharat";
 export const FOUNDATION_TRUST   = "Ujjwal Bharat Mission";
 export const FOUNDATION_TAGLINE = "Teacher-Led Education Reform, Rooted in Jalgaon";
 export const FOUNDATION_EMAIL   = "contact@shiksharaj.org";

@@ -93,7 +93,7 @@ async function sendEmail(subject: string, html: string, to: string | string[] = 
     });
     const recipients = Array.isArray(to) ? to.join(", ") : to;
     const info = await transporter.sendMail({
-      from: `"Shiksha Raj, Ujjwal Bharat Mission" <${SMTP_FROM}>`,
+      from: `"Ujjwal Bharat" <${SMTP_FROM}>`,
       to: recipients,
       subject,
       html,
@@ -203,16 +203,17 @@ function generateFormalReceiptHTML(d: any): string {
 
   <!-- Header -->
   <div style="text-align:center;border-bottom:2px solid #333;padding-bottom:12px;margin-bottom:10px">
+    <img src="https://raw.githubusercontent.com/ThirdMeta-Dev/donation-portal/main/public/favicon.png" alt="Ujjwal Bharat" style="height:56px;width:auto;margin-bottom:8px;display:block;margin-left:auto;margin-right:auto" />
     <div style="font-size:11px;font-weight:700;letter-spacing:3px;margin-bottom:4px;font-family:Arial,sans-serif">DONATION RECEIPT</div>
-    <div style="font-size:22px;font-weight:900;letter-spacing:0.5px;line-height:1.2;font-family:Arial,sans-serif">SHIKSHA RAJ, UJJWAL BHARAT MISSION</div>
+    <div style="font-size:22px;font-weight:900;letter-spacing:0.5px;line-height:1.2;font-family:Arial,sans-serif">UJJWAL BHARAT</div>
     <div style="font-size:11px;margin-top:5px;line-height:1.8;font-family:'Times New Roman',serif">
-      Near Nehru Chowk, Jalgaon, Maharashtra – 425001, India.<br>
-      Mob.: +91-9422043210 &nbsp;&nbsp; Email: contact@shiksharaj.org<br>
-      Website: www.shiksharaj.org<br>
+      "Rau" 89/412, Nehru Nagar, Mohadi Road, Jalgaon, 425002<br>
+      Mob.: +91-93703-18308 &nbsp;&nbsp; Email: contact@ujjwalbharat.org<br>
+      Website: www.ujjwalbharat.org<br>
       Reg. No. SRJ/2015/0073821 &nbsp;&nbsp; PAN: AACSR1234B
     </div>
     ${d.certificate80G ? `<div style="font-size:11px;font-weight:700;margin-top:6px;line-height:1.6;font-family:Arial,sans-serif">
-      Donations to Shiksha Raj, Ujjwal Bharat Mission are eligible for deduction U/s. 80-G of the Income Tax Act 1961:<br>
+      Donations to Ujjwal Bharat are eligible for deduction U/s. 80-G of the Income Tax Act 1961:<br>
       <span style="font-size:12px">URN. AACSR1234B/2023-24/80G &nbsp;|&nbsp; Approval No.: AACSR1234B/2023-24</span>
     </div>` : ""}
   </div>
@@ -292,7 +293,7 @@ function generateFormalReceiptHTML(d: any): string {
       1) This Receipt is not Transferable or Changeable.<br>
       2) If you have not provided PAN Xerox copy or PAN No., you cannot be eligible for 80G Benefit.<br>
       3) This is a computer-generated receipt. Valid without physical signature as per IT Act 2000.<br>
-      4) For queries, contact: contact@shiksharaj.org | +91-9422043210
+      4) For queries, contact: contact@ujjwalbharat.org | +91-93703-18308
     </div>
   </div>
 
@@ -310,9 +311,10 @@ function generateNormalReceiptHTML(d: any): string {
 <body style="margin:0;padding:20px;background:#f1f5f9;font-family:Arial,sans-serif">
 <div style="max-width:600px;margin:0 auto;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,.08)">
   <div style="background:linear-gradient(135deg,#4338CA,#3730A3);padding:28px 32px;text-align:center">
+    <img src="https://raw.githubusercontent.com/ThirdMeta-Dev/donation-portal/main/public/favicon.png" alt="Ujjwal Bharat" style="height:48px;width:auto;margin-bottom:10px;display:block;margin-left:auto;margin-right:auto;filter:brightness(0) invert(1)" />
     <div style="font-size:11px;letter-spacing:3px;color:rgba(255,255,255,.7);margin-bottom:6px">PAYMENT CONFIRMATION</div>
-    <div style="font-size:20px;font-weight:900;color:#fff">SHIKSHA RAJ, UJJWAL BHARAT MISSION</div>
-    <div style="font-size:12px;color:rgba(255,255,255,.7);margin-top:4px">www.shiksharaj.org</div>
+    <div style="font-size:20px;font-weight:900;color:#fff">UJJWAL BHARAT</div>
+    <div style="font-size:12px;color:rgba(255,255,255,.7);margin-top:4px">www.ujjwalbharat.org</div>
     <div style="margin-top:16px;background:rgba(255,255,255,.15);border-radius:8px;padding:12px">
       <div style="font-size:32px;font-weight:900;color:#fff">${amtFmt}</div>
       <div style="font-size:13px;color:rgba(255,255,255,.8);margin-top:2px">Successfully Received</div>
@@ -352,7 +354,7 @@ function generateNormalReceiptHTML(d: any): string {
     </div>` : ""}
     <div style="border-top:1px solid #e2e8f0;padding-top:16px;text-align:center">
       <div style="font-size:11px;color:#94a3b8;line-height:1.8">
-        Shiksha Raj, Ujjwal Bharat Mission &middot; Near Nehru Chowk, Jalgaon, Maharashtra – 425001<br>
+        Ujjwal Bharat &middot; "Rau" 89/412, Nehru Nagar, Mohadi Road, Jalgaon, 425002<br>
         Reg. No. SRJ/2015/0073821 &middot; PAN: AACSR1234B<br>
         This is a computer-generated receipt. Valid without physical signature.
       </div>
@@ -379,8 +381,9 @@ function emailWrap(title: string, color: string, body: string) {
 <body style="margin:0;padding:0;background:#f1f5f9;font-family:Arial,sans-serif">
 <div style="max-width:600px;margin:0 auto;padding:20px">
   <div style="background:${color};border-radius:12px 12px 0 0;padding:24px;text-align:center">
+    <img src="https://raw.githubusercontent.com/ThirdMeta-Dev/donation-portal/main/public/favicon.png" alt="Ujjwal Bharat" style="height:44px;width:auto;margin-bottom:8px;display:block;margin-left:auto;margin-right:auto;filter:brightness(0) invert(1)" />
     <h1 style="color:#fff;margin:0;font-size:20px;font-weight:800">${title}</h1>
-    <p style="color:rgba(255,255,255,.8);margin:4px 0 0;font-size:12px">Shiksha Raj, Ujjwal Bharat Mission</p>
+    <p style="color:rgba(255,255,255,.8);margin:4px 0 0;font-size:12px">Ujjwal Bharat</p>
   </div>
   <div style="background:#fff;padding:24px;border-left:1px solid #e2e8f0;border-right:1px solid #e2e8f0;border-bottom:1px solid #e2e8f0;border-radius:0 0 12px 12px">
     ${body}
@@ -420,7 +423,7 @@ function signupHtml(u: any) {
       ].map(([l,v]) => `<tr><td style="padding:8px 12px;background:#f8fafc;font-size:13px;font-weight:600;width:40%;color:#475569">${l}</td><td style="padding:8px 12px;font-size:13px;color:#0f172a">${v}</td></tr>`).join("")}
     </table>
     <div style="background:#ccfbf1;border:1px solid #5eead4;border-radius:8px;padding:12px;text-align:center">
-      <strong style="color:#4338CA">New supporter registered on Shiksha Raj, Ujjwal Bharat Mission portal.</strong>
+      <strong style="color:#4338CA">New supporter registered on Ujjwal Bharat portal.</strong>
     </div>
   `);
 }
@@ -471,8 +474,9 @@ async function seed() {
   try {
     // Create seeded auth users and their KV profiles
     const seedUsers = [
-      { email: "admin@shiksharaj.org", password: "Admin@123", name: "Admin User", donorType: "indian", country: "India" },
-      { email: "donor@test.com",      password: "Donor@123", name: "Rajesh Mehta", donorType: "indian", country: "India" },
+      { email: "admin@ashakiran.org",  password: "Admin@123", name: "Admin User",  donorType: "indian", country: "India" },
+      { email: "admin@shiksharaj.org", password: "Admin@123", name: "Admin User",  donorType: "indian", country: "India" },
+      { email: "donor@test.com",       password: "Donor@123", name: "Rajesh Mehta", donorType: "indian", country: "India" },
     ];
     for (const u of seedUsers) {
       let userId: string | null = null;
