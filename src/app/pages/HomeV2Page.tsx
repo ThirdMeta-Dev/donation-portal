@@ -3572,28 +3572,34 @@ const HONEST_CARDS_DATA = [
   },
 ];
 
-function HonestImpactCard({ cardIdx, style }: { cardIdx: number; style?: React.CSSProperties }) {
+function HonestImpactCard({ cardIdx, style, compact }: { cardIdx: number; style?: React.CSSProperties; compact?: boolean }) {
   const card = HONEST_CARDS_DATA[cardIdx];
   return (
     <div style={{
-      background: "#f8f5ef", borderRadius: 16, padding: "28px 32px",
-      display: "flex", flexDirection: "column", gap: 20,
-      boxSizing: "border-box", ...style,
+      background: "#f8f5ef", borderRadius: 16,
+      padding: compact ? "16px 18px" : "28px 32px",
+      display: "flex", flexDirection: "column",
+      gap: compact ? 10 : 20,
+      boxSizing: "border-box", overflow: "hidden", ...style,
     }}>
-      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
+      <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
         {card.tags.map(t => (
           <span key={t} style={{
-            border: "1px solid #e8e8e8", borderRadius: 40, padding: "6px 20px",
-            fontFamily: "'Poppins', sans-serif", fontSize: 13, color: "#bf791d",
+            border: "1px solid #e8e8e8", borderRadius: 40,
+            padding: compact ? "4px 12px" : "6px 20px",
+            fontFamily: "'Poppins', sans-serif",
+            fontSize: compact ? 11 : 13, color: "#bf791d",
             whiteSpace: "nowrap", lineHeight: "normal",
           }}>{t}</span>
         ))}
       </div>
-      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-        {card.rows.map(row => (
+      <div style={{ display: "flex", flexDirection: "column", gap: compact ? 8 : 16, overflow: "hidden" }}>
+        {card.rows.slice(0, compact ? 1 : undefined).map(row => (
           <div key={row.label}>
-            <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 15, lineHeight: "24px", color: "#000", margin: "0 0 2px" }}>{row.label}</p>
-            <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 15, lineHeight: "24px", color: "#636363", margin: 0 }}>{row.text}</p>
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: compact ? 12 : 15, lineHeight: "1.5", color: "#000", margin: "0 0 2px" }}>{row.label}</p>
+            <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: compact ? 12 : 15, lineHeight: "1.6", color: "#636363", margin: 0,
+              display: "-webkit-box", WebkitLineClamp: compact ? 4 : 999, WebkitBoxOrient: "vertical" as const, overflow: "hidden",
+            }}>{row.text}</p>
           </div>
         ))}
       </div>
@@ -3636,17 +3642,18 @@ function SectionHonestImpact() {
   const outerRef = useRef<HTMLDivElement>(null);
   const stripRef = useRef<HTMLDivElement>(null);
 
+  // Unified sticky-scroll: works for mobile, tablet, and desktop
   useEffect(() => {
-    if (isMobile || isTablet) return;
     const outer = outerRef.current;
     const strip = stripRef.current;
     if (!outer || !strip) return;
 
     const updateHeight = () => {
-      // Dynamically align the strip's left padding with the 1008px max-width text container above it
-      const pLeft = Math.max(24, (window.innerWidth - 1008) / 2 + 24);
-      strip.style.paddingLeft = `${pLeft}px`;
-
+      if (!isMobile && !isTablet) {
+        // Desktop: align left padding with 1008px container
+        const pLeft = Math.max(24, (window.innerWidth - 1008) / 2 + 24);
+        strip.style.paddingLeft = `${pLeft}px`;
+      }
       const scrollable = Math.max(0, strip.scrollWidth - window.innerWidth);
       outer.style.height = `calc(100vh + ${scrollable}px)`;
     };
@@ -3671,47 +3678,109 @@ function SectionHonestImpact() {
     };
   }, [isMobile, isTablet]);
 
-  // ── Mobile / Tablet: simple vertical layout ──────────────────────────────
+  // ── Mobile / Tablet: sticky horizontal scroll, 1 full col + half peek ───
   if (isMobile || isTablet) {
+    // Column width: exactly 1.5 cols fill the viewport → 1 full + half-cut peek
+    const colW = "calc((100vw - 52px) / 1.5)"; // 52 = 20 left pad + 12 gap + 20 right pad
+    const STRIP_H = isMobile ? 360 : 460;
+    const GAP = 12;
+
+    const MCol = ({ children }: { children: React.ReactNode }) => (
+      <div style={{ width: colW, flexShrink: 0, display: "flex", flexDirection: "column", gap: GAP, height: "100%" }}>
+        {children}
+      </div>
+    );
+
     return (
-      <div style={{ width: "100%", background: "#fff", padding: isMobile ? "48px 0" : "64px 0" }}>
-        <div style={{ maxWidth: 1008, margin: "0 auto", padding: "0 20px", boxSizing: "border-box" }}>
+      <div ref={outerRef} style={{ position: "relative", background: "#fff" }}>
+        <div style={{
+          position: "sticky", top: 0, height: "100vh", overflow: "hidden",
+          background: "#fff", display: "flex", flexDirection: "column",
+          justifyContent: "center", gap: 20, boxSizing: "border-box",
+          padding: "32px 0",
+        }}>
 
           {/* Header */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 32 }}>
+          <div style={{ padding: "0 20px", flexShrink: 0 }}>
             <span style={{
-              border: "1px solid #e8e8e8", borderRadius: 40, padding: "6px 20px",
-              fontFamily: "'Poppins', sans-serif", fontSize: 13, color: "#bf791d",
-              display: "inline-block", width: "fit-content",
-            }}>
-              Honest Impact
-            </span>
-            <div style={{ display: "flex", flexDirection: isTablet ? "row" : "column", alignItems: isTablet ? "flex-end" : "flex-start", justifyContent: "space-between", gap: 24 }}>
-              <h2 style={{
-                fontFamily: "'Lora', serif", fontWeight: 600,
-                fontSize: isMobile ? 26 : 32, lineHeight: 1.36,
-                color: "#000", margin: 0, textTransform: "capitalize",
-              }}>
-                This mission touched lives deeply.
-              </h2>
-              <p style={{
-                fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 15,
-                lineHeight: "22px", color: "#686868",
-                maxWidth: isTablet ? 240 : "100%", margin: 0,
-                textAlign: isTablet ? "right" : "left",
-              }}>
-                In voices, journeys, and moments where children, families, and teachers, lives quietly transform.
-              </p>
+              border: "1px solid #e8e8e8", borderRadius: 40, padding: "5px 16px",
+              fontFamily: "'Poppins', sans-serif", fontSize: 12, color: "#bf791d",
+              display: "inline-block", marginBottom: 10,
+            }}>Honest Impact</span>
+            <h2 style={{
+              fontFamily: "'Lora', serif", fontWeight: 600,
+              fontSize: isMobile ? 22 : 28, lineHeight: 1.3,
+              color: "#000", margin: 0, textTransform: "capitalize",
+            }}>This mission touched lives deeply.</h2>
+          </div>
+
+          {/* Scrolling strip — 10 columns, all same colW */}
+          <div ref={stripRef} style={{
+            display: "flex", gap: GAP, alignItems: "stretch",
+            paddingLeft: 20, paddingRight: 20,
+            height: STRIP_H, flexShrink: 0,
+            willChange: "transform",
+          }}>
+
+            {/* Col 1: photo top + text card */}
+            <MCol>
+              <HonestPhotoBlock src={imgHI1} style={{ flex: 1 }} />
+              <HonestImpactCard cardIdx={0} compact style={{ flexShrink: 0 }} />
+            </MCol>
+
+            {/* Col 2: full photo */}
+            <div style={{ width: colW, flexShrink: 0, borderRadius: 16, overflow: "hidden" }}>
+              <img src={imgHI2} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
             </div>
-          </div>
 
-          {/* Impact cards — vertical stack */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-            {HONEST_CARDS_DATA.map((_, idx) => (
-              <HonestImpactCard key={idx} cardIdx={idx} />
-            ))}
-          </div>
+            {/* Col 3: 2 stacked photos */}
+            <MCol>
+              <HonestPhotoBlock src={imgHI3} style={{ flex: 1 }} />
+              <HonestPhotoBlock src={imgHI4} style={{ flex: 1 }} />
+            </MCol>
 
+            {/* Col 4: text card + photo */}
+            <MCol>
+              <HonestImpactCard cardIdx={1} compact style={{ flexShrink: 0 }} />
+              <HonestPhotoBlock src={imgHI5} style={{ flex: 1 }} />
+            </MCol>
+
+            {/* Col 5: 2 stacked photos */}
+            <MCol>
+              <HonestPhotoBlock src={imgHI6} style={{ flex: 1 }} />
+              <HonestPhotoBlock src={imgHI7} style={{ flexShrink: 0, height: "35%" }} />
+            </MCol>
+
+            {/* Col 6: photo + text card */}
+            <MCol>
+              <HonestPhotoBlock src={imgHI8} style={{ flex: 1 }} />
+              <HonestImpactCard cardIdx={2} compact style={{ flexShrink: 0 }} />
+            </MCol>
+
+            {/* Col 7: full photo */}
+            <div style={{ width: colW, flexShrink: 0, borderRadius: 16, overflow: "hidden" }}>
+              <img src={imgHI9} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+            </div>
+
+            {/* Col 8: 2 stacked photos */}
+            <MCol>
+              <HonestPhotoBlock src={imgHI10} style={{ flex: 1 }} />
+              <HonestPhotoBlock src={imgHI11} style={{ flex: 1 }} />
+            </MCol>
+
+            {/* Col 9: text card + photo */}
+            <MCol>
+              <HonestImpactCard cardIdx={3} compact style={{ flexShrink: 0 }} />
+              <HonestPhotoBlock src={imgHI12} style={{ flex: 1 }} />
+            </MCol>
+
+            {/* Col 10: 2 stacked photos */}
+            <MCol>
+              <HonestPhotoBlock src={imgHI13} style={{ flex: 1 }} />
+              <HonestPhotoBlock src={imgHI14} style={{ flexShrink: 0, height: "35%" }} />
+            </MCol>
+
+          </div>
         </div>
       </div>
     );
