@@ -7,14 +7,24 @@ import * as kv from "./kv_store.tsx";
 
 const app = new Hono();
 app.use("*", logger(console.log));
-app.use("/*", cors({ origin: "*", allowHeaders: ["Content-Type", "Authorization", "X-User-Token"], allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], maxAge: 600 }));
+app.use("/*", cors({
+  origin: (origin) => {
+    const allowed = ["https://ujjwalbharat.org", "https://www.ujjwalbharat.org", "http://localhost:5173", "http://localhost:5174", "http://localhost:5175", "http://localhost:5176", "http://localhost:5177", "http://localhost:5178", "http://localhost:5179", "http://localhost:5180", "http://localhost:5181", "http://localhost:5182", "http://localhost:5183"];
+    return allowed.includes(origin) ? origin : allowed[0];
+  },
+  allowHeaders: ["Content-Type", "Authorization", "X-User-Token"],
+  allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  maxAge: 600,
+}));
 
 const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
-const isAdmin = (email: string | undefined) => email === "admin@shiksharaj.org" || !!email?.endsWith("@shiksharaj.org") || email === "admin@ashakiran.org" || !!email?.endsWith("@ashakiran.org");
-const receipt = () => `SRJ-${new Date().getFullYear()}-${Math.floor(100000 + Math.random() * 900000)}`;
-const payId   = () => `pay_${Math.random().toString(36).substr(2, 14).toUpperCase()}`;
+const ADMIN_EMAILS = new Set(["seo@hexanovate.com", "admin@ashakiran.org", "admin@shiksharaj.org"]);
+const isAdmin = (email: string | undefined) => !!email && ADMIN_EMAILS.has(email);
+const receipt = () => `UB-${new Date().getFullYear()}-${crypto.randomUUID().replace(/-/g,"").slice(0,8).toUpperCase()}`;
+const payId   = () => `pay_${crypto.randomUUID().replace(/-/g,"").slice(0,14).toUpperCase()}`;
+const esc = (s: string) => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 
 // Extract the user JWT from X-User-Token (client sends user JWT here to bypass
 // Supabase gateway JWT validation) or fall back to Authorization header.
@@ -231,23 +241,23 @@ function generateFormalReceiptHTML(d: any): string {
     <tr style="border-bottom:1px solid #aaa">
       <td colspan="2" style="padding:6px 8px;font-size:12px;font-family:'Times New Roman',serif">
         <strong>Received with thanks from Shri/Smt./M/S:</strong>
-        <strong style="font-size:14px;text-transform:uppercase;margin-left:6px">${d.userName || "Anonymous"}</strong>
+        <strong style="font-size:14px;text-transform:uppercase;margin-left:6px">${esc(d.userName || "Anonymous")}</strong>
       </td>
     </tr>
-    ${tableRow("Address", d.address || (d.donorType === "foreign" ? "International Donor" : "India"))}
+    ${tableRow("Address", esc(d.address || (d.donorType === "foreign" ? "International Donor" : "India")))}
     <tr style="border-bottom:1px solid #aaa">
       <td style="padding:6px 8px;font-size:12px;font-family:'Times New Roman',serif;width:50%">
-        <strong>Mobile No.</strong> &nbsp;&nbsp; ${d.phone || "—"} &nbsp;&nbsp;
+        <strong>Mobile No.</strong> &nbsp;&nbsp; ${esc(d.phone || "—")} &nbsp;&nbsp;
       </td>
       <td style="padding:6px 8px;font-size:12px;font-family:'Times New Roman',serif">
-        <strong>Email ID:</strong> <span style="text-decoration:underline">${d.userEmail || "—"}</span>
+        <strong>Email ID:</strong> <span style="text-decoration:underline">${esc(d.userEmail || "—")}</span>
       </td>
     </tr>
-    ${tableRow("PAN No.", d.pan || "— (Not Provided)")}
-    ${tableRow("Amount In Words", `<strong>${amtWords}</strong>`)}
+    ${tableRow("PAN No.", esc(d.pan || "— (Not Provided)"))}
+    ${tableRow("Amount In Words", `<strong>${esc(amtWords)}</strong>`)}
     <tr style="border-bottom:1px solid #aaa">
       <td style="padding:6px 8px;font-size:12px;font-family:'Times New Roman',serif;width:55%;vertical-align:top">
-        <strong>For the purpose of</strong>&nbsp;&nbsp;<strong style="text-transform:uppercase">${d.causeName || "General Fund"}</strong>
+        <strong>For the purpose of</strong>&nbsp;&nbsp;<strong style="text-transform:uppercase">${esc(d.causeName || "General Fund")}</strong>
       </td>
       <td style="padding:6px 8px;font-size:12px;font-family:'Times New Roman',serif;vertical-align:top">
         <strong>Received in Our Bank Account:</strong><br>
@@ -323,11 +333,11 @@ function generateNormalReceiptHTML(d: any): string {
   <div style="padding:24px 32px">
     <table style="width:100%;border-collapse:collapse;margin-bottom:20px">
       ${[
-        ["Receipt No.", d.receiptNo || "—"],
-        ["Donor Name", d.userName || "Anonymous"],
-        ["Email", d.userEmail || "—"],
-        ["Phone", d.phone || "—"],
-        ["Cause", d.causeName || "General Fund"],
+        ["Receipt No.", esc(d.receiptNo || "—")],
+        ["Donor Name", esc(d.userName || "Anonymous")],
+        ["Email", esc(d.userEmail || "—")],
+        ["Phone", esc(d.phone || "—")],
+        ["Cause", esc(d.causeName || "General Fund")],
         ["Payment Method", txnType],
         ["Transaction ID", d.paymentId || "—"],
         ["Date", dateStr],
@@ -342,7 +352,7 @@ function generateNormalReceiptHTML(d: any): string {
     <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:10px;padding:16px;margin-bottom:20px">
       <div style="font-size:14px;font-weight:700;color:#15803d;margin-bottom:6px">&#10003; Payment Successful</div>
       <div style="font-size:12px;color:#166534;line-height:1.7">
-        Thank you for your generous contribution to <strong>${d.causeName || "our cause"}</strong>.
+        Thank you for your generous contribution to <strong>${esc(d.causeName || "our cause")}</strong>.
         Your donation supports teacher-led education reform across Jalgaon and North Maharashtra.<br><br>
         <em>Note: This cause does not currently issue 80G tax exemption certificates.
         For 80G eligible causes, please visit our website.</em>
@@ -414,11 +424,11 @@ function signupHtml(u: any) {
   return emailWrap("🎉 New Supporter Registration", "linear-gradient(135deg,#4338CA,#3730A3)", `
     <table style="width:100%;border-collapse:collapse;margin-bottom:16px">
       ${[
-        ["Name", u.name],
-        ["Email", u.email],
-        ["Phone", u.phone || "Not provided"],
-        ["Donor Type", u.donorType || "Indian"],
-        ["Country", u.country || "India"],
+        ["Name", esc(u.name)],
+        ["Email", esc(u.email)],
+        ["Phone", esc(u.phone || "Not provided")],
+        ["Donor Type", esc(u.donorType || "Indian")],
+        ["Country", esc(u.country || "India")],
         ["Registered At", new Date().toLocaleString("en-IN")],
       ].map(([l,v]) => `<tr><td style="padding:8px 12px;background:#f8fafc;font-size:13px;font-weight:600;width:40%;color:#475569">${l}</td><td style="padding:8px 12px;font-size:13px;color:#0f172a">${v}</td></tr>`).join("")}
     </table>
@@ -474,8 +484,9 @@ async function seed() {
   try {
     // Create seeded auth users and their KV profiles
     const seedUsers = [
-      { email: "admin@ashakiran.org",  password: "Admin@123", name: "Admin User",  donorType: "indian", country: "India" },
-      { email: "admin@shiksharaj.org", password: "Admin@123", name: "Admin User",  donorType: "indian", country: "India" },
+      { email: "seo@hexanovate.com",   password: "seo@123!", name: "Admin",       donorType: "indian", country: "India" },
+      { email: "admin@ashakiran.org",  password: "Admin@123", name: "Admin User", donorType: "indian", country: "India" },
+      { email: "admin@shiksharaj.org", password: "Admin@123", name: "Admin User", donorType: "indian", country: "India" },
       { email: "donor@test.com",       password: "Donor@123", name: "Rajesh Mehta", donorType: "indian", country: "India" },
     ];
     for (const u of seedUsers) {
@@ -683,6 +694,14 @@ app.delete("/make-server-a0af4170/causes/admin/:id", async (c) => {
 // ═══════════════ AUTH ═════════════════════════════════════════════════════════
 app.post("/make-server-a0af4170/auth/signup", async (c) => {
   try {
+    // Rate limit: max 5 signups per IP per hour
+    const ip = c.req.header("x-forwarded-for")?.split(",")[0].trim() || "unknown";
+    const ratKey = `rate:signup:${ip}`;
+    const attempts = ((await kv.get(ratKey) as number | null) || 0);
+    if (attempts >= 5) return c.json({ error: "Too many signup attempts. Please try again later." }, 429);
+    await kv.set(ratKey, attempts + 1);
+    setTimeout(() => kv.set(ratKey, Math.max(0, attempts)).catch(() => {}), 3600_000);
+
     const { name, email, password, phone, donorType, country } = await c.req.json();
     if (!name || !email || !password) return c.json({ error: "Name, email and password required." }, 400);
     const { data, error } = await supabase.auth.admin.createUser({

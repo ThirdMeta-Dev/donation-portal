@@ -87,19 +87,13 @@ export function PaymentPage() {
       impactDescription: getImpact(),
     };
 
-    console.log("Saving donation:", donation.id, "userId:", donation.userId, "email:", donation.userEmail);
-
     try {
       const result = await donationApi.save(donation);
       const saved = (result as any).donation || donation;
-      console.log("✅ Donation saved:", saved.receiptNo, "userId:", saved.userId);
       setStep("success");
       setTimeout(() => navigate("/thank-you", { state: saved }), 1800);
     } catch (e: any) {
-      // Save failed — but still show success to donor and log the error
-      console.error("❌ Donation save error:", e.message || e);
-      setError(`Save error (payment was captured): ${e.message}. Please screenshot this page and contact support@ashakiran.org`);
-      // Still navigate so donor can see confirmation; we retry in background
+      setError(`Save error (payment was captured): ${e.message}. Please screenshot this page and contact support@ujjwalbharat.org`);
       setStep("success");
       setTimeout(() => navigate("/thank-you", { state: donation }), 2500);
     }
@@ -120,12 +114,10 @@ export function PaymentPage() {
         }
       );
       const orderData = await orderRes.json();
-      console.log("Razorpay order:", orderData);
 
       if (orderData.error) {
         setError(orderData.error);
         setStep("error");
-        // Record failed payment
         donationApi.saveFailed({ userName: name, userEmail: email, amount, causeId: cause?.id, causeName: cause?.title, frequency, donorType, errorDescription: orderData.error }).catch(() => {});
         return;
       }
@@ -133,7 +125,6 @@ export function PaymentPage() {
       const isMockOrder = orderData.orderId?.startsWith("order_MOCK");
 
       if (isMockOrder || !window.Razorpay) {
-        console.log("Using mock payment flow");
         await new Promise(r => setTimeout(r, 1200));
         const mockPayId = generatePaymentId();
         await saveAndRedirect(mockPayId, orderData.orderId);
@@ -144,12 +135,11 @@ export function PaymentPage() {
         key: orderData.key,
         amount: orderData.amount,
         currency: orderData.currency || "INR",
-        name: "Asha Kiran Foundation",
+        name: "Ujjwal Bharat",
         description: `Donation — ${cause?.title || "General Fund"}`,
-        image: "https://ui-avatars.com/api/?name=Asha+Kiran&background=F97316&color=fff&size=128&rounded=true",
+        image: "/favicon.png",
         order_id: orderData.orderId,
         handler: async (response: any) => {
-          console.log("Razorpay payment success:", response);
           setStep("processing");
           try {
             const verRes = await fetch(
@@ -170,29 +160,20 @@ export function PaymentPage() {
               setStep("error");
               return;
             }
-          } catch (e) {
-            console.error("Verify error:", e);
-          }
+          } catch (_) {}
           await saveAndRedirect(response.razorpay_payment_id, response.razorpay_order_id);
         },
         prefill: { name: name || "", email: email || "", contact: phone || "" },
         notes: { cause: cause?.title || "General Fund", pan: pan || "", donorType: donorType || "", frequency: frequency || "one-time" },
-        theme: { color: "#F97316" },
-        modal: {
-          ondismiss: () => {
-            console.log("Razorpay modal closed by user");
-            setStep("init");
-          },
-        },
+        theme: { color: "#bf791d" },
+        modal: { ondismiss: () => setStep("init") },
       };
 
       const rzp = new window.Razorpay(options);
       rzp.on("payment.failed", (response: any) => {
-        console.error("Razorpay payment failed:", response.error);
         const errDesc = response.error?.description || "Payment failed. Please try again.";
         setError(errDesc);
         setStep("error");
-        // Record failed payment in dashboard
         donationApi.saveFailed({
           userName: name, userEmail: email, amount,
           causeId: cause?.id, causeName: cause?.title,
@@ -202,8 +183,7 @@ export function PaymentPage() {
       });
       rzp.open();
 
-    } catch (e: any) {
-      console.error("Razorpay flow error:", e);
+    } catch (_e: any) {
       setError("Something went wrong. Please try again.");
       setStep("error");
     }

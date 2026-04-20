@@ -3938,12 +3938,16 @@ const S15_TEAM = [
 ];
 
 // Simplified world map SVG for card background decoration
-const S15_MAP_SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 236 280" fill="none">
-  <path d="M30 100 Q40 85 55 90 Q65 80 75 88 Q80 75 90 78 Q95 68 105 72 Q115 60 125 65 Q135 58 145 62 Q155 55 165 60 Q175 52 185 58 Q192 50 200 55 L205 70 Q195 75 190 85 Q195 95 188 105 Q180 100 175 110 Q180 120 172 130 Q165 125 158 135 Q162 145 155 152 Q148 148 142 158 Q145 168 138 175 Q130 170 125 180 Q128 190 120 197 Q112 192 108 202 Q110 215 102 220 Q93 215 90 225 Q88 238 80 240 Q72 235 70 245 Q62 243 58 235 Q52 240 45 232 Q40 225 44 215 Q38 210 35 200 Q28 198 25 188 Q20 180 25 170 Q18 162 22 152 Q16 145 20 135 Q14 128 18 118 Q12 110 18 103 Q24 96 30 100Z" stroke="white" stroke-width="0.6" fill="none" opacity="0.6"/>
-  <path d="M115 180 Q122 172 130 175 Q138 168 145 172 Q150 162 158 165 Q165 158 172 162 Q178 155 185 160 Q190 152 196 157 L200 170 Q193 176 190 186 Q195 196 188 204 Q180 200 175 210 Q178 220 170 226 Q162 222 158 232 Q160 242 152 248 Q144 244 140 252 Q138 264 130 265 Q122 260 120 250 Q112 252 108 242 Q110 232 104 226 Q96 228 94 218 Q98 208 94 200 Q100 196 105 188 Q110 182 115 180Z" stroke="white" stroke-width="0.6" fill="none" opacity="0.5"/>
-  <ellipse cx="185" cy="230" rx="22" ry="14" stroke="white" stroke-width="0.6" fill="none" opacity="0.5"/>
-  <path d="M50 50 Q58 42 68 46 Q76 38 85 42 Q92 35 100 38 L102 52 Q94 58 90 68 Q96 78 88 85 Q80 80 74 90 Q76 100 68 105 Q60 100 56 110 Q48 108 44 98 Q38 93 40 83 Q32 78 36 68 Q40 60 50 50Z" stroke="white" stroke-width="0.6" fill="none" opacity="0.55"/>
-</svg>`;
+function S15MapSVG() {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 236 280" fill="none" style={{ width: "100%", height: "100%" }}>
+      <path d="M30 100 Q40 85 55 90 Q65 80 75 88 Q80 75 90 78 Q95 68 105 72 Q115 60 125 65 Q135 58 145 62 Q155 55 165 60 Q175 52 185 58 Q192 50 200 55 L205 70 Q195 75 190 85 Q195 95 188 105 Q180 100 175 110 Q180 120 172 130 Q165 125 158 135 Q162 145 155 152 Q148 148 142 158 Q145 168 138 175 Q130 170 125 180 Q128 190 120 197 Q112 192 108 202 Q110 215 102 220 Q93 215 90 225 Q88 238 80 240 Q72 235 70 245 Q62 243 58 235 Q52 240 45 232 Q40 225 44 215 Q38 210 35 200 Q28 198 25 188 Q20 180 25 170 Q18 162 22 152 Q16 145 20 135 Q14 128 18 118 Q12 110 18 103 Q24 96 30 100Z" stroke="white" strokeWidth="0.6" fill="none" opacity={0.6}/>
+      <path d="M115 180 Q122 172 130 175 Q138 168 145 172 Q150 162 158 165 Q165 158 172 162 Q178 155 185 160 Q190 152 196 157 L200 170 Q193 176 190 186 Q195 196 188 204 Q180 200 175 210 Q178 220 170 226 Q162 222 158 232 Q160 242 152 248 Q144 244 140 252 Q138 264 130 265 Q122 260 120 250 Q112 252 108 242 Q110 232 104 226 Q96 228 94 218 Q98 208 94 200 Q100 196 105 188 Q110 182 115 180Z" stroke="white" strokeWidth="0.6" fill="none" opacity={0.5}/>
+      <ellipse cx="185" cy="230" rx="22" ry="14" stroke="white" strokeWidth="0.6" fill="none" opacity={0.5}/>
+      <path d="M50 50 Q58 42 68 46 Q76 38 85 42 Q92 35 100 38 L102 52 Q94 58 90 68 Q96 78 88 85 Q80 80 74 90 Q76 100 68 105 Q60 100 56 110 Q48 108 44 98 Q38 93 40 83 Q32 78 36 68 Q40 60 50 50Z" stroke="white" strokeWidth="0.6" fill="none" opacity={0.55}/>
+    </svg>
+  );
+}
 
 function S15Card({ member, cardWidth = 236 }: { member: typeof S15_TEAM[0]; cardWidth?: number | string }) {
   const [hovered, setHovered] = useState(false);
@@ -3967,8 +3971,9 @@ function S15Card({ member, cardWidth = 236 }: { member: typeof S15_TEAM[0]; card
         <div
           aria-hidden
           style={{ position: "absolute", inset: 0, pointerEvents: "none", overflow: "hidden", borderRadius: "16px 16px 0 0" }}
-          dangerouslySetInnerHTML={{ __html: S15_MAP_SVG }}
-        />
+        >
+          <S15MapSVG />
+        </div>
 
         {/* Person photo */}
         <img

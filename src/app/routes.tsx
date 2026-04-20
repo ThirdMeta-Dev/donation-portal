@@ -1,4 +1,7 @@
+import React, { useEffect } from "react";
 import { createBrowserRouter } from "react-router";
+import { useNavigate } from "react-router";
+import { useAuth } from "./lib/AuthContext";
 import { Root } from "./Root";
 import { HomePage } from "./pages/HomePage";
 import { AboutPage } from "./pages/AboutPage";
@@ -22,6 +25,16 @@ import { Variation3Page } from "./pages/Variation3Page";
 import { HomeNew1 } from "./pages/HomeNew1";
 import { HomeV2Page } from "./pages/HomeV2Page";
 import { ContactPage } from "./pages/ContactPage";
+
+function AdminGuard({ children }: { children: React.ReactNode }) {
+  const { user, isLoading } = useAuth();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (!isLoading && !user) navigate("/auth", { replace: true });
+  }, [user, isLoading, navigate]);
+  if (isLoading || !user) return null;
+  return <>{children}</>;
+}
 
 function NotFound() {
   return (
@@ -57,7 +70,7 @@ export const router = createBrowserRouter([
       { path: "auth/callback", Component: AuthCallbackPage },
       // Dashboards
       { path: "dashboard", Component: DonorDashboard },
-      { path: "admin", Component: AdminDashboard },
+      { path: "admin", element: <AdminGuard><AdminDashboard /></AdminGuard> },
       // LMS — hidden until re-enabled
       // { path: "lms", Component: LMSLandingPage },
       // { path: "lms/course/:id", Component: CourseDetailPage },
