@@ -33,13 +33,13 @@ export function AuthPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Where to go after login — use returnTo state if provided, else dashboard
-  const returnTo: string = (location.state as any)?.returnTo || "/dashboard";
+  const returnTo: string = (location.state as any)?.returnTo || null;
 
   // If already logged in (or just logged in), redirect — single source of truth
   useEffect(() => {
     if (!authLoading && user) {
-      navigate(returnTo, { replace: true });
+      const dest = returnTo || (user.role === "admin" ? "/admin" : "/dashboard");
+      navigate(dest, { replace: true });
     }
   }, [user, authLoading]);
 

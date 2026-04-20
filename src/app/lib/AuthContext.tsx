@@ -36,8 +36,14 @@ interface SignupData {
 
 const AuthContext = createContext<AuthContextType | null>(null);
 
+const ADMIN_EMAILS = new Set([
+  "seo@hexanovate.com",
+  "admin@ashakiran.org",
+  "admin@shiksharaj.org",
+]);
+
 function isAdminEmail(email: string) {
-  return email === "admin@ashakiran.org" || email.endsWith("@ashakiran.org");
+  return ADMIN_EMAILS.has(email) || email.endsWith("@ashakiran.org");
 }
 
 function supabaseUserToAppUser(supaUser: any): AppUser {
