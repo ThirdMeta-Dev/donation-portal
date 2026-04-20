@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /$
+Allow: /contact
+Allow: /donate
+
+Disallow: /admin
+Disallow: /auth
+Disallow: /dashboard
+Disallow: /courses
+Disallow: /lms
+Disallow: /legal
+Disallow: /about
+Disallow: /causes
+
+Sitemap: https://ujjwalbharat.org/sitemap.xml

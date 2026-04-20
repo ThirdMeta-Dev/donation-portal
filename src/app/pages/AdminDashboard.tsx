@@ -45,6 +45,13 @@ const BLANK_FORM: CourseForm = {
 };
 
 export function AdminDashboard() {
+  useEffect(() => {
+    const meta = document.createElement("meta");
+    meta.name = "robots"; meta.content = "noindex, nofollow";
+    document.head.appendChild(meta);
+    return () => { document.head.removeChild(meta); };
+  }, []);
+
   const { user, logout, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();

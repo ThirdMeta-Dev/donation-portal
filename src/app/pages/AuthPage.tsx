@@ -10,6 +10,13 @@ type Mode = "login" | "signup";
 type DonorType = "indian" | "nri" | "foreign";
 
 export function AuthPage() {
+  useEffect(() => {
+    const meta = document.createElement("meta");
+    meta.name = "robots"; meta.content = "noindex, nofollow";
+    document.head.appendChild(meta);
+    return () => { document.head.removeChild(meta); };
+  }, []);
+
   const [mode, setMode] = useState<Mode>("login");
   const [showPass, setShowPass] = useState(false);
   const [email, setEmail] = useState("");
@@ -244,13 +251,6 @@ export function AuthPage() {
               </motion.div>
             )}
 
-            {mode === "login" && (
-              <div className="bg-amber-50 border border-amber-200 rounded-xl p-3 text-xs text-amber-700">
-                <div style={{ fontWeight: 600 }} className="mb-1">Test Credentials:</div>
-                <div>🔑 Admin: <code>admin@ashakiran.org</code> / <code>Admin@123</code></div>
-                <div>💚 Donor: <code>donor@test.com</code> / <code>Donor@123</code></div>
-              </div>
-            )}
 
             <button type="submit" disabled={loading}
               className="btn-navy w-full py-3.5 rounded-xl text-sm transition-all disabled:opacity-60"
