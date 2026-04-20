@@ -424,12 +424,14 @@ export function Navbar({ onOpenModal }: { onOpenModal?: () => void }) {
               />
             ))}
 
-            {/* Contact */}
-            <div
-              onClick={() => { setMobileMenuOpen(false); onOpenModal?.(); }}
-              style={{ color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 600, padding: "12px 0 8px", cursor: "pointer" }}
-            >
-              Contact
+            {/* Contact us — amber button */}
+            <div style={{ padding: "10px 0 6px" }}>
+              <button
+                onClick={() => { setMobileMenuOpen(false); navigate("/contact"); }}
+                style={{ display: "flex", alignItems: "center", gap: 10, background: "#f59e0b", borderRadius: 30, padding: "10px 20px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 500, whiteSpace: "nowrap" }}
+              >
+                Contact us <ArrowIcon size={13} />
+              </button>
             </div>
 
             {user && (
@@ -457,42 +459,43 @@ export function Navbar({ onOpenModal }: { onOpenModal?: () => void }) {
 
       <div style={{ display: "flex", alignItems: "center", gap: 12, paddingLeft: 28, paddingRight: user ? 8 : 6, height: 59, borderRadius: 60, background: "rgba(255,255,255,0.1)", backdropFilter: "blur(15px)" }}>
 
-        {/* Nav dropdowns + Contact */}
+        {/* Nav dropdowns */}
         <div style={{ display: "flex", alignItems: "center", gap: 24, paddingLeft: 8 }}>
           {NAV_MENU.map(group => (
             <NavDropdown key={group.label} group={group} onOpenModal={onOpenModal} />
           ))}
-
-          {/* Contact — opens modal */}
-          <button
-            onClick={onOpenModal}
-            style={{ display: "flex", alignItems: "center", gap: 0, background: "none", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 400, padding: "4px 0" }}
-          >
-            Contact
-          </button>
         </div>
 
-        {/* CTA */}
-        {user ? (
-          <>
+        {/* CTAs: Contact us + Contribute Now */}
+        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+          <button
+            onClick={() => navigate("/contact")}
+            style={{ display: "flex", alignItems: "center", gap: 10, background: "transparent", borderRadius: 30, padding: "10px 20px", border: "1px solid #fff", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 600, whiteSpace: "nowrap" }}
+          >
+            Contact us <ArrowIcon size={14} />
+          </button>
+
+          {user ? (
+            <>
+              <button
+                onClick={() => navigate("/donate")}
+                className="btn-gold"
+                style={{ display: "flex", alignItems: "center", gap: 12, background: "#bf791d", borderRadius: 30, padding: "10px 20px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 500, whiteSpace: "nowrap" }}
+              >
+                Contribute Now <ArrowIcon />
+              </button>
+              <ProfileDropdown user={user} onLogout={handleLogout} />
+            </>
+          ) : (
             <button
               onClick={() => navigate("/donate")}
               className="btn-gold"
-              style={{ display: "flex", alignItems: "center", gap: 12, background: "#bf791d", borderRadius: 30, padding: "10px 20px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 500, whiteSpace: "nowrap" }}
+              style={{ display: "flex", alignItems: "center", gap: 16, background: "#bf791d", borderRadius: 30, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 500, whiteSpace: "nowrap" }}
             >
               Contribute Now <ArrowIcon />
             </button>
-            <ProfileDropdown user={user} onLogout={handleLogout} />
-          </>
-        ) : (
-          <button
-            onClick={() => navigate("/donate")}
-            className="btn-gold"
-            style={{ display: "flex", alignItems: "center", gap: 20, background: "#bf791d", borderRadius: 30, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 500, whiteSpace: "nowrap" }}
-          >
-            Contribute Now <ArrowIcon />
-          </button>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

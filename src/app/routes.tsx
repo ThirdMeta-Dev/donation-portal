@@ -21,6 +21,7 @@ import { Variation2Page } from "./pages/Variation2Page";
 import { Variation3Page } from "./pages/Variation3Page";
 import { HomeNew1 } from "./pages/HomeNew1";
 import { HomeV2Page } from "./pages/HomeV2Page";
+import { ContactPage } from "./pages/ContactPage";
 
 function NotFound() {
   return (
@@ -64,6 +65,7 @@ export const router = createBrowserRouter([
       // { path: "lms/learn/:courseId", Component: CoursePlayerPage },
       // { path: "lms/certificate/:courseId", Component: CertificatePage },
       // Legal
+      { path: "contact", Component: ContactPage },
       { path: "privacy", Component: LegalPage },
       { path: "terms", Component: LegalPage },
       { path: "cookies", Component: LegalPage },

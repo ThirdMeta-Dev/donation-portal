@@ -8,7 +8,7 @@ import { AuthProvider } from "./lib/AuthContext";
 const BARE_PAGES = ["/payment", "/thank-you", "/auth/callback"];
 
 // Pages that have their own full-page layout (internal nav/footer built in)
-const BLANK_CANVAS = ["/", "/home-v2", "/home-new-1"];
+const BLANK_CANVAS = ["/", "/home-v2", "/home-new-1", "/contact"];
 
 // Clear old localStorage dummy data (one-time migration to Supabase)
 function clearOldLocalStorage() {
