@@ -16,16 +16,6 @@ import imgHero from "@/assets/urwbanner.png";
 // @ts-ignore
 import imgTeacher from "@/assets/3b08adbd33c0549761095e0db7549411c51bd4ec.png";
 // @ts-ignore
-import imgS4Award1 from "@/assets/s4_award1.png";
-// @ts-ignore
-import imgS4Award2 from "@/assets/s4_award2.png";
-// @ts-ignore
-import imgS4Award3 from "@/assets/s4_award3.png";
-// @ts-ignore
-import imgS4Award4 from "@/assets/s4_award4.png";
-// @ts-ignore
-import imgS4Award5 from "@/assets/s4_award5.png";
-// @ts-ignore
 import imgMedia1 from "@/assets/s_media_1.jpg";
 // @ts-ignore
 import imgMedia2 from "@/assets/s_media_2.jpg";
