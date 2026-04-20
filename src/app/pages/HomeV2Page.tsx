@@ -1776,6 +1776,12 @@ import imgS15PhotoKalpesh2 from "@/assets/s15_photo_kalpesh2.png";
 import imgS13Bg from "@/assets/s13_bg_figma.png";
 // @ts-ignore
 import imgS13Teacher from "@/assets/s13_teacher.png";
+// @ts-ignore
+import imgS13Photo1 from "@/assets/s13_photo_1.jpg";
+// @ts-ignore
+import imgS13Photo2 from "@/assets/s13_photo_2.jpg";
+// @ts-ignore
+import imgS13Photo3 from "@/assets/s13_photo_3.jpg";
 // Honest Impact section photos
 // @ts-ignore
 import imgHI1 from "@/assets/hi_1.jpg";
@@ -4665,18 +4671,30 @@ function Section14() {
           {isMobile ? (
             <div style={{ display: "flex", gap: 10, width: "100%" }}>
               <div style={{ display: "flex", flexDirection: "column", gap: 10, flex: 1 }}>
-                <div style={{ height: 100, background: "#d9d9d9", borderRadius: 10 }} />
-                <div style={{ height: 94, background: "#d9d9d9", borderRadius: 10 }} />
+                <div style={{ height: 100, borderRadius: 10, overflow: "hidden" }}>
+                  <img src={imgS13Photo1} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                </div>
+                <div style={{ height: 94, borderRadius: 10, overflow: "hidden" }}>
+                  <img src={imgS13Photo2} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                </div>
               </div>
-              <div style={{ flex: 1, background: "#d9d9d9", borderRadius: 10, border: "3px solid #fff", minHeight: 210 }} />
+              <div style={{ flex: 1, borderRadius: 10, overflow: "hidden", border: "3px solid #fff", minHeight: 210 }}>
+                <img src={imgS13Photo3} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+              </div>
             </div>
           ) : (
             <div style={{ display: "flex", gap: 12, flexShrink: 0, alignItems: "flex-start" }}>
               <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-                <div style={{ width: isTablet ? 160 : 220, height: 132, background: "#d9d9d9", borderRadius: 12 }} />
-                <div style={{ width: isTablet ? 150 : 207, height: 124, background: "#d9d9d9", borderRadius: 12 }} />
+                <div style={{ width: isTablet ? 160 : 220, height: 132, borderRadius: 12, overflow: "hidden" }}>
+                  <img src={imgS13Photo1} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                </div>
+                <div style={{ width: isTablet ? 150 : 207, height: 124, borderRadius: 12, overflow: "hidden" }}>
+                  <img src={imgS13Photo2} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                </div>
               </div>
-              <div style={{ width: isTablet ? 160 : 220, height: 292, background: "#d9d9d9", borderRadius: 12, border: "3px solid #fff" }} />
+              <div style={{ width: isTablet ? 160 : 220, height: 292, borderRadius: 12, overflow: "hidden", border: "3px solid #fff" }}>
+                <img src={imgS13Photo3} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+              </div>
             </div>
           )}
         </div>
