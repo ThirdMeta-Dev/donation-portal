@@ -1776,6 +1776,35 @@ import imgS15PhotoKalpesh2 from "@/assets/s15_photo_kalpesh2.png";
 import imgS13Bg from "@/assets/s13_bg_figma.png";
 // @ts-ignore
 import imgS13Teacher from "@/assets/s13_teacher.png";
+// Honest Impact section photos
+// @ts-ignore
+import imgHI1 from "@/assets/hi_1.jpg";
+// @ts-ignore
+import imgHI2 from "@/assets/hi_2.jpg";
+// @ts-ignore
+import imgHI3 from "@/assets/hi_3.jpg";
+// @ts-ignore
+import imgHI4 from "@/assets/hi_4.jpg";
+// @ts-ignore
+import imgHI5 from "@/assets/hi_5.jpg";
+// @ts-ignore
+import imgHI6 from "@/assets/hi_6.jpg";
+// @ts-ignore
+import imgHI7 from "@/assets/hi_7.jpg";
+// @ts-ignore
+import imgHI8 from "@/assets/hi_8.jpg";
+// @ts-ignore
+import imgHI9 from "@/assets/hi_9.jpg";
+// @ts-ignore
+import imgHI10 from "@/assets/hi_10.jpg";
+// @ts-ignore
+import imgHI11 from "@/assets/hi_11.jpg";
+// @ts-ignore
+import imgHI12 from "@/assets/hi_12.jpg";
+// @ts-ignore
+import imgHI13 from "@/assets/hi_13.jpg";
+// @ts-ignore
+import imgHI14 from "@/assets/hi_14.jpg";
 
 // Section 14 — About teacher & org
 // @ts-ignore
@@ -3593,8 +3622,12 @@ function HonestPlayBtn() {
   );
 }
 
-function HonestGrayBlock({ style }: { style?: React.CSSProperties }) {
-  return <div style={{ background: "#d9d9d9", borderRadius: 16, ...style }} />;
+function HonestPhotoBlock({ src, style }: { src: string; style?: React.CSSProperties }) {
+  return (
+    <div style={{ borderRadius: 16, overflow: "hidden", flexShrink: 0, ...style }}>
+      <img src={src} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+    </div>
+  );
 }
 
 function SectionHonestImpact() {
@@ -3737,65 +3770,62 @@ function SectionHonestImpact() {
           flexShrink: 0,
         }}>
 
-          {/* Col 1: image (flex) + cream text card */}
+          {/* Col 1: photo (flex) + text card */}
           <div style={{ width: 459, display: "flex", flexDirection: "column", gap: 16, flexShrink: 0 }}>
-            <HonestGrayBlock style={{ flex: 1 }} />
+            <HonestPhotoBlock src={imgHI1} style={{ flex: 1 }} />
             <HonestImpactCard cardIdx={0} style={{ flexShrink: 0 }} />
           </div>
 
-          {/* Col 2: full-height video block + play button */}
-          <div style={{ width: 350, position: "relative", flexShrink: 0 }}>
-            <HonestGrayBlock style={{ width: "100%", height: "100%" }} />
-            <HonestPlayBtn />
+          {/* Col 2: full-height photo */}
+          <div style={{ width: 350, flexShrink: 0, borderRadius: 16, overflow: "hidden" }}>
+            <img src={imgHI2} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
           </div>
 
-          {/* Col 3: 2 stacked image blocks */}
+          {/* Col 3: 2 stacked photos */}
           <div style={{ width: 220, display: "flex", flexDirection: "column", gap: 16, flexShrink: 0 }}>
-            <HonestGrayBlock style={{ flex: 1 }} />
-            <HonestGrayBlock style={{ flex: 1 }} />
+            <HonestPhotoBlock src={imgHI3} style={{ flex: 1 }} />
+            <HonestPhotoBlock src={imgHI4} style={{ flex: 1 }} />
           </div>
 
-          {/* Col 4: cream text card (flex) + image bottom */}
+          {/* Col 4: text card (flex) + photo bottom */}
           <div style={{ width: 350, display: "flex", flexDirection: "column", gap: 16, flexShrink: 0 }}>
             <HonestImpactCard cardIdx={1} style={{ flex: 1, minHeight: 0 }} />
-            <HonestGrayBlock style={{ height: 352, flexShrink: 0 }} />
+            <HonestPhotoBlock src={imgHI5} style={{ height: 352 }} />
           </div>
 
-          {/* Col 5: 2 stacked blocks + play button overlay */}
-          <div style={{ width: 302, display: "flex", flexDirection: "column", gap: 16, flexShrink: 0, position: "relative" }}>
-            <HonestGrayBlock style={{ flex: 1 }} />
-            <HonestGrayBlock style={{ height: 184, flexShrink: 0 }} />
-            <HonestPlayBtn />
+          {/* Col 5: 2 stacked photos */}
+          <div style={{ width: 302, display: "flex", flexDirection: "column", gap: 16, flexShrink: 0 }}>
+            <HonestPhotoBlock src={imgHI6} style={{ flex: 1 }} />
+            <HonestPhotoBlock src={imgHI7} style={{ height: 184 }} />
           </div>
 
-          {/* Col 6: image (flex) + cream text card (different content) */}
+          {/* Col 6: photo (flex) + text card */}
           <div style={{ width: 459, display: "flex", flexDirection: "column", gap: 16, flexShrink: 0 }}>
-            <HonestGrayBlock style={{ flex: 1 }} />
+            <HonestPhotoBlock src={imgHI8} style={{ flex: 1 }} />
             <HonestImpactCard cardIdx={2} style={{ flexShrink: 0 }} />
           </div>
 
-          {/* Col 7: full-height video block + play button */}
-          <div style={{ width: 350, position: "relative", flexShrink: 0 }}>
-            <HonestGrayBlock style={{ width: "100%", height: "100%" }} />
-            <HonestPlayBtn />
+          {/* Col 7: full-height photo */}
+          <div style={{ width: 350, flexShrink: 0, borderRadius: 16, overflow: "hidden" }}>
+            <img src={imgHI9} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
           </div>
 
-          {/* Col 8: 2 stacked image blocks */}
+          {/* Col 8: 2 stacked photos */}
           <div style={{ width: 220, display: "flex", flexDirection: "column", gap: 16, flexShrink: 0 }}>
-            <HonestGrayBlock style={{ flex: 1 }} />
-            <HonestGrayBlock style={{ flex: 1 }} />
+            <HonestPhotoBlock src={imgHI10} style={{ flex: 1 }} />
+            <HonestPhotoBlock src={imgHI11} style={{ flex: 1 }} />
           </div>
 
-          {/* Col 9: cream text card (flex) + image bottom */}
+          {/* Col 9: text card (flex) + photo bottom */}
           <div style={{ width: 350, display: "flex", flexDirection: "column", gap: 16, flexShrink: 0 }}>
             <HonestImpactCard cardIdx={3} style={{ flex: 1, minHeight: 0 }} />
-            <HonestGrayBlock style={{ height: 352, flexShrink: 0 }} />
+            <HonestPhotoBlock src={imgHI12} style={{ height: 352 }} />
           </div>
 
-          {/* Col 10: 2 stacked image blocks */}
+          {/* Col 10: 2 stacked photos */}
           <div style={{ width: 302, display: "flex", flexDirection: "column", gap: 16, flexShrink: 0 }}>
-            <HonestGrayBlock style={{ flex: 1 }} />
-            <HonestGrayBlock style={{ height: 184, flexShrink: 0 }} />
+            <HonestPhotoBlock src={imgHI13} style={{ flex: 1 }} />
+            <HonestPhotoBlock src={imgHI14} style={{ height: 184 }} />
           </div>
 
         </div>
