@@ -106,7 +106,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error) {
-      return { success: false, error: "Invalid email or password. Use admin@ashakiran.org / Admin@123 or donor@test.com / Donor@123" };
+      return { success: false, error: "Invalid email or password." };
     }
     if (data.user) {
       setUser(supabaseUserToAppUser(data.user));
