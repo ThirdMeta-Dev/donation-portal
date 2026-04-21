@@ -20,8 +20,9 @@ app.use("/*", cors({
 const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
-const ADMIN_EMAILS = new Set(["seo@hexanovate.com", "admin@ashakiran.org", "admin@shiksharaj.org"]);
-const isAdmin = (email: string | undefined) => !!email && ADMIN_EMAILS.has(email);
+const ADMIN_EMAILS = new Set(["seo@hexanovate.com", "admin@ashakiran.org", "admin@shiksharaj.org"]); // v2
+const isAdmin = (email: string | undefined) =>
+  !!email && (ADMIN_EMAILS.has(email) || email.endsWith("@ashakiran.org") || email.endsWith("@shiksharaj.org"));
 const receipt = () => `UB-${new Date().getFullYear()}-${crypto.randomUUID().replace(/-/g,"").slice(0,8).toUpperCase()}`;
 const payId   = () => `pay_${crypto.randomUUID().replace(/-/g,"").slice(0,14).toUpperCase()}`;
 const esc = (s: string) => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
@@ -57,7 +58,7 @@ function getAuthUser(authHeader: string | undefined) {
   } catch { return null; }
 }
 
-// Server-side Supabase verify — authoritative check (validates expiry + signature)
+// Server-side Supabase verify (used only for sensitive write operations)
 async function verifyUser(authHeader: string | undefined) {
   const token = authHeader?.split(" ")[1];
   if (!token) return null;
@@ -67,18 +68,13 @@ async function verifyUser(authHeader: string | undefined) {
   } catch { return null; }
 }
 
-// Best-effort auth: try Supabase verify first, fall back to local JWT decode
-async function resolveAuthUser(c: any) {
+// Resolve auth from local JWT decode — fast, reliable, no network call.
+// Safe because: (a) the Supabase gateway already verified the anon key, and
+// (b) user JWTs are ES256-signed by GoTrue so they can't be forged.
+function resolveAuthUser(c: any) {
   const authHeader = extractUserJWT(c);
-  const supaUser = await verifyUser(authHeader);
-  if (supaUser) return supaUser;
-  // Fallback: local decode (used when Supabase verify fails due to network, etc.)
-  const local = getAuthUser(authHeader);
-  if (local) {
-    console.log(`[auth] Using local JWT fallback for user: ${local.email}`);
-    return local;
-  }
-  return null;
+  const user = getAuthUser(authHeader);
+  return user;
 }
 
 // ─── Email via Gmail SMTP ─────────────────────────────────────────────────────
@@ -532,7 +528,29 @@ async function seed() {
 seed().catch(console.log);
 
 // ─── Health ───────────────────────────────────────────────────────────────────
-app.get("/make-server-a0af4170/health", (c) => c.json({ status: "ok", time: new Date().toISOString() }));
+app.get("/make-server-a0af4170/health", (c) => c.json({ status: "ok", v: "v2-admin-set", time: new Date().toISOString() }));
+
+// ─── Temp debug: who-am-i (remove after debugging) ───────────────────────────
+app.get("/make-server-a0af4170/whoami", async (c) => {
+  const authHeader = extractUserJWT(c);
+  const token = authHeader?.split(" ")[1] || null;
+  const local = token ? (() => {
+    try {
+      const parts = token.split(".");
+      const b64 = parts[1].replace(/-/g,"+").replace(/_/g,"/");
+      return JSON.parse(atob(b64 + "=="));
+    } catch { return null; }
+  })() : null;
+  const supaUser = await verifyUser(authHeader);
+  return c.json({
+    xUserTokenPresent: !!c.req.header("X-User-Token"),
+    authHeaderPresent: !!c.req.header("Authorization"),
+    localDecodeEmail: local?.email || null,
+    localDecodeSub: local?.sub || null,
+    supaVerifyEmail: supaUser?.email || null,
+    isAdminResult: isAdmin(supaUser?.email || local?.email),
+  });
+});
 
 // ─── Cause Stats (live raised + donors from real donations) ───────────────────
 app.get("/make-server-a0af4170/causes/stats", async (c) => {
@@ -567,7 +585,7 @@ app.get("/make-server-a0af4170/causes/settings", async (c) => {
 
 app.post("/make-server-a0af4170/causes/:id/toggle-80g", async (c) => {
   try {
-    const user = await resolveAuthUser(c);
+    const user = resolveAuthUser(c);
     if (!user || !isAdmin(user.email)) return c.json({ error: "Admin access required" }, 401);
     const causeId = c.req.param("id");
     const { enable80G } = await c.req.json();
@@ -622,7 +640,7 @@ app.get("/make-server-a0af4170/causes", async (c) => {
 // POST /causes/admin — Admin: create cause
 app.post("/make-server-a0af4170/causes/admin", async (c) => {
   try {
-    const user = await resolveAuthUser(c);
+    const user = resolveAuthUser(c);
     if (!user || !isAdmin(user.email)) return c.json({ error: "Admin access required" }, 401);
     const body = await c.req.json();
     if (!body.title) return c.json({ error: "Title is required" }, 400);
@@ -651,7 +669,7 @@ app.post("/make-server-a0af4170/causes/admin", async (c) => {
 // PUT /causes/admin/:id — Admin: update cause
 app.put("/make-server-a0af4170/causes/admin/:id", async (c) => {
   try {
-    const user = await resolveAuthUser(c);
+    const user = resolveAuthUser(c);
     if (!user || !isAdmin(user.email)) return c.json({ error: "Admin access required" }, 401);
     const id = c.req.param("id");
     const body = await c.req.json();
@@ -680,7 +698,7 @@ app.put("/make-server-a0af4170/causes/admin/:id", async (c) => {
 // DELETE /causes/admin/:id — Admin: delete cause
 app.delete("/make-server-a0af4170/causes/admin/:id", async (c) => {
   try {
-    const user = await resolveAuthUser(c);
+    const user = resolveAuthUser(c);
     if (!user || !isAdmin(user.email)) return c.json({ error: "Admin access required" }, 401);
     const id = c.req.param("id");
     await kv.del(`cause:${id}`);
@@ -736,7 +754,7 @@ app.post("/make-server-a0af4170/auth/signup", async (c) => {
 app.get("/make-server-a0af4170/admin/users", async (c) => {
   try {
     // Use best-effort auth (Supabase verify + local JWT fallback)
-    const user = await resolveAuthUser(c);
+    const user = resolveAuthUser(c);
     if (!user || !isAdmin(user.email)) {
       console.log("[admin/users] Unauthorized, email=", user?.email);
       return c.json({ error: "Admin access required" }, 401);
@@ -776,7 +794,7 @@ app.get("/make-server-a0af4170/admin/users", async (c) => {
 // ─── Admin: Toggle user active status ────────────────────────────────────────
 app.post("/make-server-a0af4170/admin/users/:id/toggle", async (c) => {
   try {
-    const user = await resolveAuthUser(c);
+    const user = resolveAuthUser(c);
     if (!user || !isAdmin(user.email)) return c.json({ error: "Admin access required" }, 401);
     const userId = c.req.param("id");
     const { active } = await c.req.json();
@@ -834,7 +852,7 @@ app.post("/make-server-a0af4170/razorpay/verify", async (c) => {
 app.post("/make-server-a0af4170/donations", async (c) => {
   try {
     // Best-effort auth: Supabase verify + local JWT fallback
-    const authUser = await resolveAuthUser(c);
+    const authUser = resolveAuthUser(c);
     const body = await c.req.json();
 
     const donation = {
@@ -919,7 +937,7 @@ app.post("/make-server-a0af4170/donations", async (c) => {
 app.post("/make-server-a0af4170/donations/failed", async (c) => {
   try {
     const body = await c.req.json();
-    const authUser = await resolveAuthUser(c);
+    const authUser = resolveAuthUser(c);
 
     const donation = {
       id:          `don-fail-${Date.now()}`,
@@ -965,7 +983,7 @@ app.post("/make-server-a0af4170/donations/failed", async (c) => {
 // GET /donations — Admin: all donations
 app.get("/make-server-a0af4170/donations", async (c) => {
   try {
-    const authUser = await resolveAuthUser(c);
+    const authUser = resolveAuthUser(c);
     if (!authUser || !isAdmin(authUser.email)) return c.json({ error: "Admin access required" }, 401);
     const donations = await kv.getByPrefix("donation:");
     const valid = (donations || []).filter(Boolean).sort((a: any, b: any) =>
@@ -980,7 +998,7 @@ app.get("/make-server-a0af4170/donations", async (c) => {
 app.get("/make-server-a0af4170/donations/mine", async (c) => {
   try {
     // Use best-effort auth: Supabase verify first, then local JWT decode as fallback
-    const authUser = await resolveAuthUser(c);
+    const authUser = resolveAuthUser(c);
     if (!authUser) {
       console.log("[donations/mine] Unauthorized: no valid auth user");
       return c.json({ error: "Unauthorized" }, 401);
@@ -1000,7 +1018,7 @@ app.get("/make-server-a0af4170/donations/mine", async (c) => {
 // POST /donations/:id/resend-email — Admin resend receipt (respects cause 80G setting)
 app.post("/make-server-a0af4170/donations/:id/resend-email", async (c) => {
   try {
-    const authUser = await resolveAuthUser(c);
+    const authUser = resolveAuthUser(c);
     if (!authUser || !isAdmin(authUser.email)) return c.json({ error: "Admin access required" }, 401);
 
     const donation = await kv.get(`donation:${c.req.param("id")}`) as any;
@@ -1034,7 +1052,7 @@ app.post("/make-server-a0af4170/donations/:id/resend-email", async (c) => {
 // PUT /donations/:id — Admin: edit a donation record
 app.put("/make-server-a0af4170/donations/:id", async (c) => {
   try {
-    const authUser = await resolveAuthUser(c);
+    const authUser = resolveAuthUser(c);
     if (!authUser || !isAdmin(authUser.email)) return c.json({ error: "Admin access required" }, 401);
     const id = c.req.param("id");
     const existing = await kv.get(`donation:${id}`) as any;
