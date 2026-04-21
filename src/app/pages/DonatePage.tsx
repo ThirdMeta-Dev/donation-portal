@@ -5,9 +5,10 @@ import {
   Heart, ChevronRight, ChevronLeft, Shield, Info, CreditCard,
   Check, User, Globe, Building2, Repeat, Zap, AlertCircle
 } from "lucide-react";
-import { CAUSES, PRESET_AMOUNTS } from "../lib/constants";
+import { PRESET_AMOUNTS } from "../lib/constants";
 import { useAuth } from "../lib/AuthContext";
 import { causeApi } from "../lib/api";
+import type { CauseFull } from "../lib/api";
 
 type Step = 1 | 2 | 3;
 type Frequency = "one-time" | "monthly" | "annually";
@@ -19,6 +20,9 @@ export function DonatePage() {
   const preselectedType = (searchParams.get("type") || "indian") as DonorType;
   const navigate = useNavigate();
   const { user } = useAuth();
+
+  const [causes, setCauses] = useState<CauseFull[]>([]);
+  const [causesLoading, setCausesLoading] = useState(true);
 
   const [step, setStep] = useState<Step>(1);
   const [selectedCause, setSelectedCause] = useState(preselectedCause);
@@ -39,10 +43,16 @@ export function DonatePage() {
   const [causeSettings, setCauseSettings] = useState<Record<string, { enable80G: boolean }>>({});
 
   useEffect(() => {
-    causeApi.getSettings().then(r => setCauseSettings(r.settings || {})).catch(() => {});
+    Promise.allSettled([
+      causeApi.getCauses(),
+      causeApi.getSettings(),
+    ]).then(([causesRes, settingsRes]) => {
+      if (causesRes.status === "fulfilled") setCauses(causesRes.value.causes || []);
+      if (settingsRes.status === "fulfilled") setCauseSettings(settingsRes.value.settings || {});
+    }).finally(() => setCausesLoading(false));
   }, []);
 
-  const cause = CAUSES.find(c => c.id === selectedCause);
+  const cause = causes.find(c => c.id === selectedCause);
   // Check if the currently selected cause has 80G enabled (default true if no setting)
   const selectedCause80G = selectedCause
     ? (causeSettings[selectedCause]?.enable80G ?? true)
@@ -144,24 +154,32 @@ export function DonatePage() {
                 {/* Cause */}
                 <div>
                   <label className="block text-slate-700 text-sm mb-3" style={{ fontWeight: 600 }}>Select a Cause</label>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    {CAUSES.map(c => (
-                      <button
-                        key={c.id}
-                        onClick={() => setSelectedCause(c.id)}
-                        className="text-left p-3 rounded-xl border-2 transition-all"
-                        style={{ borderColor: selectedCause === c.id ? "#1B2B3A" : "#E5E0D8", background: selectedCause === c.id ? "#F0F4F7" : "transparent" }}
-                      >
-                        <div className="flex items-center gap-2">
-                          <div className="w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0"
-                            style={{ borderColor: selectedCause === c.id ? "#1B2B3A" : "#C4BDB3", background: selectedCause === c.id ? "#1B2B3A" : "transparent" }}>
-                            {selectedCause === c.id && <div className="w-2 h-2 bg-white rounded-full" />}
+                  {causesLoading ? (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {[...Array(5)].map((_, i) => (
+                        <div key={i} className="h-11 rounded-xl border-2 border-slate-100 bg-slate-50 animate-pulse" />
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {causes.map(c => (
+                        <button
+                          key={c.id}
+                          onClick={() => setSelectedCause(c.id)}
+                          className="text-left p-3 rounded-xl border-2 transition-all"
+                          style={{ borderColor: selectedCause === c.id ? "#1B2B3A" : "#E5E0D8", background: selectedCause === c.id ? "#F0F4F7" : "transparent" }}
+                        >
+                          <div className="flex items-center gap-2">
+                            <div className="w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0"
+                              style={{ borderColor: selectedCause === c.id ? "#1B2B3A" : "#C4BDB3", background: selectedCause === c.id ? "#1B2B3A" : "transparent" }}>
+                              {selectedCause === c.id && <div className="w-2 h-2 bg-white rounded-full" />}
+                            </div>
+                            <span className="text-sm line-clamp-1" style={{ color: "#1C1C1A", fontWeight: selectedCause === c.id ? 600 : 400 }}>{c.title}</span>
                           </div>
-                          <span className="text-sm line-clamp-1" style={{ color: "#1C1C1A", fontWeight: selectedCause === c.id ? 600 : 400 }}>{c.title}</span>
-                        </div>
-                      </button>
-                    ))}
-                  </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
                   <button
                     onClick={() => setSelectedCause("")}
                     className="mt-2 w-full text-left p-3 rounded-xl border-2 transition-all"
