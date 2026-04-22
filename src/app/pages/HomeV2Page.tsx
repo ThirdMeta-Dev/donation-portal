@@ -1703,6 +1703,16 @@ function Section7() {
 // @ts-ignore
 import imgS8Teacher from "@/assets/fb67f8b019282de8f29678da8c918384c128715b.png";
 // @ts-ignore
+import imgS8PanelT0 from "@/assets/s8_panel_t0.jpg";
+// @ts-ignore
+import imgS8PanelT1 from "@/assets/s8_panel_t1.jpg";
+// @ts-ignore
+import imgS8PanelT2 from "@/assets/s8_panel_t2.jpg";
+// @ts-ignore
+import imgS8PanelT3 from "@/assets/s8_panel_t3.jpg";
+// @ts-ignore
+import imgS8PanelT4 from "@/assets/s8_panel_t4.jpg";
+// @ts-ignore
 import imgS8ShikshakUnnati from "@/assets/s8_shikshak_unnati.jpg";
 // @ts-ignore
 import imgS8UjjwalShala from "@/assets/s8_ujjwal_shala.jpg";
@@ -1971,8 +1981,8 @@ const S8_PROGRAMS = [
     ],
     punchline: "When people finally sit together and speak honestly, education stops feeling helpless and starts feeling possible.",
     cta: "Join Ujjwal Sanvaad",
-    photo: imgS8T1A,
-    photoNode: s8Collage0,
+    photo: imgS8PanelT0,
+    photoNode: undefined,
   },
   {
     id: "s8-1",
@@ -1988,8 +1998,8 @@ const S8_PROGRAMS = [
     ],
     punchline: "When one teacher changes the way they teach, hundreds of children begin learning differently.",
     cta: "Grow With Ujjwala",
-    photo: imgS8T2C,
-    photoNode: s8Collage1,
+    photo: imgS8PanelT1,
+    photoNode: undefined,
   },
   {
     id: "s8-2",
@@ -2005,8 +2015,8 @@ const S8_PROGRAMS = [
     ],
     punchline: "Sometimes one meaningful summer can awaken the kind of learning school alone could not.",
     cta: "Enroll A Child",
-    photo: imgS8T3A,
-    photoNode: s8Collage2,
+    photo: imgS8PanelT2,
+    photoNode: undefined,
   },
   {
     id: "s8-3",
@@ -2022,8 +2032,8 @@ const S8_PROGRAMS = [
     ],
     punchline: "A child should never lose education simply because life at home became heavier than learning.",
     cta: "Support A Child",
-    photo: imgS8T4B,
-    photoNode: s8Collage3,
+    photo: imgS8PanelT3,
+    photoNode: undefined,
   },
   {
     id: "s8-4",
@@ -2039,8 +2049,8 @@ const S8_PROGRAMS = [
     ],
     punchline: "A school changes deeply when it stops waiting for help and starts receiving the strength of a whole community.",
     cta: "Strengthen A School",
-    photo: imgS8T5B,
-    photoNode: s8Collage4,
+    photo: imgS8PanelT4,
+    photoNode: undefined,
   },
 ];
 
