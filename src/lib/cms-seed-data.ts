@@ -87,21 +87,20 @@ export async function seedDatabase(env: AppEnvironment): Promise<void> {
           .single();
 
         if (sec) {
-          const { count } = await supabase
+          // Always delete and reinsert so re-seeding refreshes content
+          await supabase
             .from("cms_carousel_items")
-            .select("*", { count: "exact", head: true })
+            .delete()
             .eq("section_id", sec.id)
             .eq("environment", env);
 
-          if (!count || count === 0) {
-            const items = schema.defaultItems.map((item, idx) => ({
-              section_id: sec.id,
-              item_order: idx,
-              content: item,
-              environment: env,
-            }));
-            await supabase.from("cms_carousel_items").insert(items);
-          }
+          const items = schema.defaultItems.map((item, idx) => ({
+            section_id: sec.id,
+            item_order: idx,
+            content: item,
+            environment: env,
+          }));
+          await supabase.from("cms_carousel_items").insert(items);
         }
       }
     }

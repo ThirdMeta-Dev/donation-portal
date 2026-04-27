@@ -1002,7 +1002,11 @@ function Section3({ data }: { data?: any }) {
   const isTablet = useIsTablet();
   const cmsItems = data?.items ?? [];
   const slides = cmsItems.length > 0
-    ? cmsItems.map((it: any) => ({ img: it.image || "", category: it.category || "", caption: it.caption || "" }))
+    ? cmsItems.map((it: any, i: number) => ({
+        img: it.image || S3_SLIDES[i % S3_SLIDES.length]?.img || "",
+        category: it.category || S3_SLIDES[i % S3_SLIDES.length]?.category || "",
+        caption: it.caption || S3_SLIDES[i % S3_SLIDES.length]?.caption || "",
+      }))
     : S3_SLIDES;
   const [current, setCurrent] = useState(0);
   const total = slides.length;
@@ -1333,7 +1337,13 @@ function Section5({ data }: { data?: any }) {
   const isTablet = useIsTablet();
   const content = (data?.content ?? {}) as any;
   const cmsItems = data?.items ?? [];
-  const items = cmsItems.length > 0 ? cmsItems : S5_ITEMS;
+  const items = cmsItems.length > 0
+    ? cmsItems.map((it: any, i: number) => ({
+        ...S5_ITEMS[i % S5_ITEMS.length],
+        ...Object.fromEntries(Object.entries(it).filter(([, v]) => v !== "" && v != null)),
+        id: it.id ?? S5_ITEMS[i % S5_ITEMS.length]?.id ?? String(i),
+      }))
+    : S5_ITEMS;
   const [activeId, setActiveId] = useState<string>(items[0]?.id ?? "see");
 
   const hPad = isMobile ? 20 : isTablet ? 40 : 350;
@@ -1453,7 +1463,14 @@ function Section6({ data }: { data?: any }) {
     ? cmsItems.reduce((acc: Record<string, Testimonial[]>, it: any) => {
         const cat = it.category || "teachers";
         if (!acc[cat]) acc[cat] = [];
-        acc[cat].push({ id: it.id || String(Math.random()), title: it.title || "", body: it.body || "", photo: it.photo || imgS6OverPhoto });
+        const fallbackIdx = (S6_DATA[cat] ?? []).findIndex((t) => !acc[cat].some((a) => a.id === t.id));
+        const fallback = (S6_DATA[cat] ?? [])[Math.max(0, fallbackIdx)];
+        acc[cat].push({
+          id: it.id || String(Math.random()),
+          title: it.title || fallback?.title || "",
+          body: it.body || fallback?.body || "",
+          photo: it.photo || imgS6OverPhoto,
+        });
         return acc;
       }, {})
     : S6_DATA;
@@ -2237,11 +2254,21 @@ function Section8({ onOpenModal, data }: { onOpenModal: () => void; data?: any }
   const tabNavTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const cmsItems = data?.items ?? [];
   const programs = cmsItems.length > 0
-    ? cmsItems.map((it: any, i: number) => ({
-        id: `s8-${i}`, tab: it.tab || "", hindi: it.hindi || "", english: it.english || "",
-        desc: it.desc || "", bullets: [], punchline: it.punchline || "", cta: it.cta || "Learn More",
-        photo: it.photo || S8_PROGRAMS[i % S8_PROGRAMS.length]?.photo, photoNode: undefined,
-      }))
+    ? cmsItems.map((it: any, i: number) => {
+        const fallback = S8_PROGRAMS[i % S8_PROGRAMS.length];
+        return {
+          id: `s8-${i}`,
+          tab: it.tab || fallback?.tab || "",
+          hindi: it.hindi || fallback?.hindi || "",
+          english: it.english || fallback?.english || "",
+          desc: it.desc || fallback?.desc || "",
+          bullets: fallback?.bullets ?? [],
+          punchline: it.punchline || fallback?.punchline || "",
+          cta: it.cta || fallback?.cta || "Learn More",
+          photo: it.photo || fallback?.photo,
+          photoNode: undefined,
+        };
+      })
     : S8_PROGRAMS;
 
   const TOTAL = programs.length; // 5
@@ -3074,15 +3101,18 @@ function Section10({ onOpenModal, data }: { onOpenModal: () => void; data?: any 
   const contentRef = useRef<HTMLDivElement>(null);
   const cmsItems = data?.items ?? [];
   const tabs: S10TabData[] = cmsItems.length > 0
-    ? cmsItems.map((it: any, i: number) => ({
-        label: it.tab || it.forLabel || `Tab ${i + 1}`,
-        forLabel: it.forLabel || it.tab || "",
-        desc: it.desc || "",
-        bullets: [],
-        cta: it.cta || "Learn More",
-        photo: it.photo || S10_TABS[i % S10_TABS.length]?.photo,
-        photoBg: S10_TABS[i % S10_TABS.length]?.photoBg,
-      }))
+    ? cmsItems.map((it: any, i: number) => {
+        const fallback = S10_TABS[i % S10_TABS.length];
+        return {
+          label: it.tab || fallback?.label || `Tab ${i + 1}`,
+          forLabel: it.forLabel || fallback?.forLabel || "",
+          desc: it.desc || fallback?.desc || "",
+          bullets: fallback?.bullets ?? [],
+          cta: it.cta || fallback?.cta || "Learn More",
+          photo: it.photo || fallback?.photo,
+          photoBg: fallback?.photoBg,
+        };
+      })
     : S10_TABS;
 
   useEffect(() => {
@@ -4143,11 +4173,15 @@ function Section15({ data }: { data?: any }) {
   const content = (data?.content ?? {}) as any;
   const cmsItems = data?.items ?? [];
   const teamMembers = cmsItems.length > 0
-    ? cmsItems.map((it: any, i: number) => ({
-        name: it.name || "", role: it.role || "",
-        photo: it.photo || S15_TEAM[i % S15_TEAM.length]?.photo,
-        bio: it.bio || "",
-      }))
+    ? cmsItems.map((it: any, i: number) => {
+        const fallback = S15_TEAM[i % S15_TEAM.length];
+        return {
+          name: it.name || fallback?.name || "",
+          role: it.role || fallback?.role || "",
+          photo: it.photo || fallback?.photo,
+          bio: it.bio || fallback?.bio || "",
+        };
+      })
     : S15_TEAM;
 
   // Card width: full fluid on mobile, fixed 236 on desktop
@@ -5578,29 +5612,44 @@ export function HomeV2Page() {
   const { getSection: getBrandSection } = useCmsPage("brand");
   const openModal = () => setModalOpen(true);
 
+  // Pre-fetch all section data so we can check `enabled` before rendering
+  const dHero         = getHomeSection("HeroSection");
+  const dProgramBanner = getHomeSection("ProgramBannerSection");
+  const dQuotes       = getHomeSection("QuotesCarouselSection");
+  const dS3           = getHomeSection("S3CarouselSection");
+  const dRecognitions = getHomeSection("RecognitionsSection");
+  const dBeyond       = getHomeSection("BeyondSyllabusSection");
+  const dTestimonials = getHomeSection("TestimonialsSection");
+  const dTextReveal   = getHomeSection("TextRevealSection");
+  const dPrograms     = getHomeSection("ProgramsSection");
+  const dGetInvolved  = getHomeSection("GetInvolvedSection");
+  const dProcess      = getHomeSection("ProcessFlowSection");
+  const dTeam         = getHomeSection("TeamSection");
+  const dClosing      = getHomeSection("ClosingSection");
+
   return (
     <div style={{ minHeight: "100vh", background: "#ffffff", display: "flex", flexDirection: "column", alignItems: "stretch", overflowX: "clip" }}>
       <style>{GLOBAL_CSS}</style>
-      <HeroSection onOpenModal={openModal} data={getHomeSection("HeroSection")} />
-      <ProgramBanner onOpenModal={openModal} data={getHomeSection("ProgramBannerSection")} />
-      <Section18 data={getHomeSection("QuotesCarouselSection")} />
-      <Section3 data={getHomeSection("S3CarouselSection")} />
-      <Section4 data={getHomeSection("RecognitionsSection")} />
-      <Section5 data={getHomeSection("BeyondSyllabusSection")} />
-      <Section6 data={getHomeSection("TestimonialsSection")} />
-      <Section7 data={getHomeSection("TextRevealSection")} />
+      {dHero.enabled         && <HeroSection onOpenModal={openModal} data={dHero} />}
+      {dProgramBanner.enabled && <ProgramBanner onOpenModal={openModal} data={dProgramBanner} />}
+      {dQuotes.enabled       && <Section18 data={dQuotes} />}
+      {dS3.enabled           && <Section3 data={dS3} />}
+      {dRecognitions.enabled && <Section4 data={dRecognitions} />}
+      {dBeyond.enabled       && <Section5 data={dBeyond} />}
+      {dTestimonials.enabled && <Section6 data={dTestimonials} />}
+      {dTextReveal.enabled   && <Section7 data={dTextReveal} />}
       <IntroNGOSection />
-      <Section8 onOpenModal={openModal} data={getHomeSection("ProgramsSection")} />
+      {dPrograms.enabled     && <Section8 onOpenModal={openModal} data={dPrograms} />}
       <Section9 />
-      <Section10 onOpenModal={openModal} data={getHomeSection("GetInvolvedSection")} />
-      <Section12 onOpenModal={openModal} data={getHomeSection("ProcessFlowSection")} />
+      {dGetInvolved.enabled  && <Section10 onOpenModal={openModal} data={dGetInvolved} />}
+      {dProcess.enabled      && <Section12 onOpenModal={openModal} data={dProcess} />}
       <SectionHonestImpact />
       <Section13 onOpenModal={openModal} />
       <Section14 />
-      <Section15 data={getHomeSection("TeamSection")} />
+      {dTeam.enabled         && <Section15 data={dTeam} />}
       <Section16 />
       <Section17 />
-      <SectionClosing onOpenModal={openModal} data={getHomeSection("ClosingSection")} />
+      {dClosing.enabled      && <SectionClosing onOpenModal={openModal} data={dClosing} />}
       <Footer onOpenModal={openModal} />
       <SupportModal open={modalOpen} onClose={() => setModalOpen(false)} />
     </div>
