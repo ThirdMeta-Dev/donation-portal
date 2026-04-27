@@ -7,10 +7,9 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
     fields: [
       { key: "heading", label: "Main Heading", type: "textarea" },
       { key: "subtext", label: "Sub-text", type: "textarea" },
+      { key: "awards", label: "Award Pills (comma-separated)", type: "text" },
       { key: "ctaPrimary", label: "CTA Button (Primary)", type: "text" },
-      { key: "ctaPrimaryLink", label: "CTA Link (Primary)", type: "url" },
       { key: "ctaSecondary", label: "CTA Button (Secondary)", type: "text" },
-      { key: "ctaSecondaryLink", label: "CTA Link (Secondary)", type: "url" },
       { key: "stat1", label: "Stat Bubble 1", type: "text" },
       { key: "stat2", label: "Stat Bubble 2", type: "text" },
       { key: "stat3", label: "Stat Bubble 3", type: "text" },
@@ -23,10 +22,9 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
       heading: "Building Character, Confidence, and Capability in Every Child",
       subtext:
         "Through practical teaching experiences, I bring classrooms closer to life and children learn by seeing, doing, feeling, and understanding.",
+      awards: "National Award 2023, Forbes 30 Under 30, TISS Fellow",
       ctaPrimary: "Donate Now",
-      ctaPrimaryLink: "/donate",
       ctaSecondary: "Problems we are working on",
-      ctaSecondaryLink: "#section5-teaching",
       stat1: "31 yrs",
       stat2: "340+ Teachers in Network",
       stat3: "12,400+ Children Reached",
@@ -241,10 +239,8 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
       { key: "badge", label: "Badge", type: "text" },
       { key: "title", label: "Section Title", type: "text" },
       { key: "ctaBannerText", label: "CTA Banner Text", type: "textarea" },
-      { key: "cta1Text", label: "CTA 1 Text", type: "text" },
-      { key: "cta1Link", label: "CTA 1 Link", type: "url" },
-      { key: "cta2Text", label: "CTA 2 Text", type: "text" },
-      { key: "cta2Link", label: "CTA 2 Link", type: "url" },
+      { key: "cta1Text", label: "CTA 1 Text (opens donation form)", type: "text" },
+      { key: "cta2Text", label: "CTA 2 Text (Donate page)", type: "text" },
     ],
     isCarousel: true,
     carouselLabel: "Process Steps",
@@ -257,10 +253,8 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
       badge: "Your Contribution",
       title: "How Your Support Turns Into Learning",
       ctaBannerText: "Stand with a mission where every contribution is valued, placed with care, and reflected in real change.",
-      cta1Text: "See All Causes",
-      cta1Link: "/causes",
+      cta1Text: "Support This Mission",
       cta2Text: "Donate Now",
-      cta2Link: "/donate",
     },
     defaultItems: [
       { num: 1, title: "Support Received", desc: "Every contribution is logged, acknowledged, and allocated transparently." },
@@ -329,6 +323,83 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
       line4: "and help build the उज्ज्वल भारत of 2050.",
       ctaText: "I Commit To Education",
       ctaLink: "/donate",
+    },
+  },
+
+  IntroNGOSection: {
+    fields: [
+      { key: "titleLine1", label: "Title Line 1", type: "text" },
+      { key: "titleLine2", label: "Title Line 2", type: "text" },
+      { key: "visionText", label: "Vision Text", type: "textarea" },
+      { key: "missionText", label: "Mission Text", type: "textarea" },
+      { key: "backgroundImage", label: "Background Image", type: "image" },
+    ],
+    defaultContent: {
+      titleLine1: "Introducing,",
+      titleLine2: "Shiksha Raj, Ujjwal Bharat Foundation",
+      visionText:
+        "To build education leadership (Shiksha Raj) for a Brighter India (Ujjwal Bharat) where every child receives free, accessible education that shapes confidence, capability, and character.",
+      missionText:
+        "To transform education into a practical, experiential, life-connected, digitally ready, teacher-led, community-supported system that goes beyond textbooks to give every child free, meaningful learning and prepare them for life.",
+      backgroundImage: "",
+    },
+  },
+
+  HonestImpactSection: {
+    fields: [
+      { key: "badge", label: "Badge Text", type: "text" },
+      { key: "heading", label: "Heading", type: "textarea" },
+      { key: "subtitle", label: "Subtitle", type: "textarea" },
+    ],
+    isCarousel: true,
+    carouselLabel: "Impact Cards",
+    itemFields: [
+      { key: "tag1", label: "Tag 1", type: "text" },
+      { key: "tag2", label: "Tag 2", type: "text" },
+      { key: "row1Label", label: "Row 1 Label", type: "text" },
+      { key: "row1Text", label: "Row 1 Text", type: "textarea" },
+      { key: "row2Label", label: "Row 2 Label", type: "text" },
+      { key: "row2Text", label: "Row 2 Text", type: "textarea" },
+      { key: "row3Label", label: "Row 3 Label", type: "text" },
+      { key: "row3Text", label: "Row 3 Text", type: "textarea" },
+    ],
+    defaultContent: {
+      badge: "Honest Impact",
+      heading: "This mission touched lives deeply.",
+      subtitle:
+        "In voices, journeys, and moments where children, families, and teachers, lives quietly transform.",
+    },
+    defaultItems: [
+      { tag1: "Honest Impact", tag2: "Science", row1Label: "SITUATION", row1Text: "Class 5 children in Bhusawal had never seen a functioning lab — their science textbook remained theory.", row2Label: "WHAT WAS DONE", row2Text: "A Hands-On Learning Kit was introduced: magnets, lenses, circuits, seeds. The teacher ran six sessions.", row3Label: "WHAT CHANGED", row3Text: "Three months later, science scores improved by 22%. Children began asking questions unprompted." },
+      { tag1: "Honest Impact", tag2: "Reading", row1Label: "WHAT CHANGED", row1Text: "Reading comprehension scores improved by 35% and children began borrowing books voluntarily each week.", row2Label: "", row2Text: "", row3Label: "", row3Text: "" },
+      { tag1: "Honest Impact", tag2: "Community", row1Label: "SITUATION", row1Text: "Rural schools lacked basic reading materials, limiting children's early language development.", row2Label: "WHAT WAS DONE", row2Text: "Mobile libraries with curated books were introduced across 40 villages in the district.", row3Label: "WHAT CHANGED", row3Text: "Reading comprehension scores improved by 35% within one academic year of the program launch." },
+      { tag1: "Honest Impact", tag2: "Teachers", row1Label: "WHAT CHANGED", row1Text: "Teacher attendance improved by 28% and parent engagement in school activities tripled over the year.", row2Label: "", row2Text: "", row3Label: "", row3Text: "" },
+    ],
+  },
+
+  SupportCTASection: {
+    fields: [
+      { key: "badge", label: "Badge Text", type: "text" },
+      { key: "heading", label: "Heading", type: "textarea" },
+      { key: "description", label: "Description (desktop)", type: "textarea" },
+      { key: "bullet1", label: "Bullet 1", type: "text" },
+      { key: "bullet2", label: "Bullet 2", type: "text" },
+      { key: "bullet3", label: "Bullet 3", type: "text" },
+      { key: "cta1Text", label: "CTA 1 Text (Donate)", type: "text" },
+      { key: "cta2Text", label: "CTA 2 Text (Join Network)", type: "text" },
+      { key: "cta3Text", label: "CTA 3 Text (Partner)", type: "text" },
+    ],
+    defaultContent: {
+      badge: "One Mission · Many Hands ·",
+      heading: "One Teacher Started This. Many Can Keep It Going.",
+      description:
+        "What Ujjwala built inside her classroom over 31 years is now a structure that can travel — to other schools, other teachers, and other children who deserve the same quality of care and learning.",
+      bullet1: "Progress is visible & published",
+      bullet2: "Use of funds reported quarterly",
+      bullet3: "80G eligible · FCRA",
+      cta1Text: "Donate Now",
+      cta2Text: "Join Teacher Network",
+      cta3Text: "Partner With Us",
     },
   },
 

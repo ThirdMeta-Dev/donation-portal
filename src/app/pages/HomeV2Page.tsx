@@ -704,7 +704,7 @@ function HeroSection({ onOpenModal, data }: { onOpenModal: () => void; data?: an
           )}
           {!isMobile && (
             <div style={{ position: "absolute", inset: 0, zIndex: 1 }}>
-              <img src={content.backgroundImage || imgHero} alt="" style={{ width: "100%", height: "100%", objectFit: "contain", objectPosition: "42% bottom" }} />
+              <img src={content.heroImage || imgHero} alt="" style={{ width: "100%", height: "100%", objectFit: "contain", objectPosition: "42% bottom" }} />
             </div>
           )}
           <div style={{ position: "absolute", left: -122, top: -25, width: 653, height: 436, opacity: 0.45 }}>
@@ -745,19 +745,19 @@ function HeroSection({ onOpenModal, data }: { onOpenModal: () => void; data?: an
                   ))}
                 </div>
                 <h1 style={{ fontFamily: "'Lora', serif", fontWeight: 500, fontSize: 30, lineHeight: 1.25, color: "#fff", textTransform: "capitalize", margin: 0 }}>
-                  {content.title || "Building Character, Confidence, and Capability in Every Child"}
+                  {content.heading || "Building Character, Confidence, and Capability in Every Child"}
                 </h1>
                 <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 14, lineHeight: "22px", color: "rgba(255,255,255,0.8)", margin: 0 }}>
-                  {content.subtitle || "Through practical teaching experiences, I bring classrooms closer to life and children learn by seeing, doing, feeling, and understanding."}
+                  {content.subtext || "Through practical teaching experiences, I bring classrooms closer to life and children learn by seeing, doing, feeling, and understanding."}
                 </p>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
                 <button className="btn-gold" onClick={onOpenModal} style={{ display: "flex", alignItems: "center", gap: 12, background: "#bf791d", borderRadius: 30, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 600, boxShadow: "0px 4px 4px 0px rgba(0,0,0,0.3)", alignSelf: "flex-start" }}>
-                  {content.ctaText || "Donate Now"} <ArrowIcon />
+                  {content.ctaPrimary || "Donate Now"} <ArrowIcon />
                 </button>
                 <button style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 14, padding: 0 }}>
                   <span className="arrow-bounce"><svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M9 3v12M9 15l-5-5M9 15l5-5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
-                  {content.secondaryCtaText || "Problems we are working on"}
+                  {content.ctaSecondary || "Problems we are working on"}
                 </button>
               </div>
               <MobileHeroPhotoBlock />
@@ -779,23 +779,23 @@ function HeroSection({ onOpenModal, data }: { onOpenModal: () => void; data?: an
                     ))}
                   </div>
                   <h1 style={{ fontFamily: "'Lora', serif", fontWeight: 500, fontSize: isTablet ? 32 : 38, lineHeight: 1.2, color: "#fff", textTransform: "capitalize", width: isTablet ? "100%" : 455, margin: 0 }}>
-                    {content.title || "Building Character, Confidence, and Capability in Every Child"}
+                    {content.heading || "Building Character, Confidence, and Capability in Every Child"}
                   </h1>
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
                   <button className="btn-gold" onClick={onOpenModal} style={{ display: "flex", alignItems: "center", gap: 20, background: "#bf791d", borderRadius: 30, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 600, boxShadow: "0px 4px 4px 0px rgba(0,0,0,0.3)", alignSelf: "flex-start" }}>
-                    {content.ctaText || "Support This Mission"} <ArrowIcon />
+                    {content.ctaPrimary || "Donate Now"} <ArrowIcon />
                   </button>
                   <button style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 16, padding: 0 }}>
                     <span className="arrow-bounce"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 3v12M9 15l-5-5M9 15l5-5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
-                    {content.secondaryCtaText || "See My Teaching Method"}
+                    {content.ctaSecondary || "Problems we are working on"}
                   </button>
                 </div>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 36, alignItems: "flex-end", width: isTablet ? "40%" : 245, flexShrink: 0, position: "relative", zIndex: 2 }}>
                 {!isTablet && <VideoCards />}
                 <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 15, lineHeight: "22px", color: "#fff", textAlign: "right", maxWidth: 245, margin: 0 }}>
-                  {content.subtitle || "Through practical teaching experiences, I bring classrooms closer to life and children learn by seeing, doing, feeling, and understanding."}
+                  {content.subtext || "Through practical teaching experiences, I bring classrooms closer to life and children learn by seeing, doing, feeling, and understanding."}
                 </p>
               </div>
             </div>
@@ -2088,9 +2088,10 @@ const S8_PROGRAMS = [
 ];
 
 // ── IntroNGOSection (Figma 773:754) ──────────────────────────────────────
-function IntroNGOSection() {
+function IntroNGOSection({ data }: { data?: any }) {
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
+  const content = (data?.content ?? {}) as any;
 
   // Dot-matrix decoration for Mission card (replaces the 600+ Figma vectors)
   const DotGrid = () => (
@@ -2110,14 +2111,14 @@ function IntroNGOSection() {
     return (
       <section id="section-intro-ngo" style={{ width: "100%", background: "#fff", padding: isMobile ? "48px 20px 0" : "60px 32px 0", boxSizing: "border-box" }}>
         <h2 style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: isMobile ? 26 : 32, lineHeight: 1.3, color: "#000", textAlign: "center", margin: "0 0 32px" }}>
-          Introducing,<br />Shiksha Raj, Ujjwal Bharat Foundation
+          {content.titleLine1 || "Introducing,"}<br />{content.titleLine2 || "Shiksha Raj, Ujjwal Bharat Foundation"}
         </h2>
         <div style={{ display: "flex", flexDirection: "column", gap: 16, marginBottom: 24 }}>
           {/* Vision */}
           <div style={{ background: "#f8f5ef", borderRadius: 20, border: "1px solid #ebd5b9", padding: "28px 24px", display: "flex", flexDirection: "column", justifyContent: "flex-end", gap: 12 }}>
             <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 400, fontSize: isMobile ? 40 : 48, lineHeight: 1, background: "linear-gradient(to bottom, #d68a09 0%, #f8f5ef 75%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>Vision</span>
             <p style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 300, fontSize: 14, lineHeight: "22px", color: "#000", margin: 0 }}>
-              To build education leadership (Shiksha Raj) for a Brighter India (Ujjwal Bharat) where every child receives free, accessible education that shapes confidence, capability, and character.
+              {content.visionText || "To build education leadership (Shiksha Raj) for a Brighter India (Ujjwal Bharat) where every child receives free, accessible education that shapes confidence, capability, and character."}
             </p>
           </div>
           {/* Mission */}
@@ -2125,7 +2126,7 @@ function IntroNGOSection() {
             <DotGrid />
             <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 400, fontSize: isMobile ? 44 : 52, lineHeight: 1, textAlign: "right", position: "relative", zIndex: 1, background: "linear-gradient(to bottom, #d68a09 0%, #f8f5ef 75%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>Mission</span>
             <p style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 300, fontSize: 14, lineHeight: "22px", color: "#000", margin: 0, textAlign: "right", position: "relative", zIndex: 1 }}>
-              To transform education into a practical, experiential, life-connected, digitally ready, teacher-led, community-supported system that goes beyond textbooks to give every child free, meaningful learning and prepare them for life.
+              {content.missionText || "To transform education into a practical, experiential, life-connected, digitally ready, teacher-led, community-supported system that goes beyond textbooks to give every child free, meaningful learning and prepare them for life."}
             </p>
           </div>
         </div>
@@ -2183,7 +2184,7 @@ function IntroNGOSection() {
           fontFamily: "'Lora', serif", fontWeight: 600, fontSize: 40,
           lineHeight: 1.3, color: "#000", textAlign: "center", margin: 0,
         }}>
-          Introducing,<br />Shiksha Raj, Ujjwal Bharat Foundation
+          {content.titleLine1 || "Introducing,"}<br />{content.titleLine2 || "Shiksha Raj, Ujjwal Bharat Foundation"}
         </h2>
 
         {/* Cards group — 1008×405, absolute children */}
@@ -2208,7 +2209,7 @@ function IntroNGOSection() {
               Vision
             </span>
             <p style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 300, fontSize: 15, lineHeight: "22px", color: "#000", margin: 0 }}>
-              To build education leadership (Shiksha Raj) for a Brighter India (Ujjwal Bharat) where every child receives free, accessible education that shapes confidence, capability, and character.
+              {content.visionText || "To build education leadership (Shiksha Raj) for a Brighter India (Ujjwal Bharat) where every child receives free, accessible education that shapes confidence, capability, and character."}
             </p>
           </div>
 
@@ -2234,7 +2235,7 @@ function IntroNGOSection() {
               Mission
             </span>
             <p style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 300, fontSize: 15, lineHeight: "22px", color: "#000", margin: 0, textAlign: "right", position: "relative", zIndex: 1 }}>
-              To transform education into a practical, experiential, life-connected, digitally ready, teacher-led, community-supported system that goes beyond textbooks to give every child free, meaningful learning and prepare them for life.
+              {content.missionText || "To transform education into a practical, experiential, life-connected, digitally ready, teacher-led, community-supported system that goes beyond textbooks to give every child free, meaningful learning and prepare them for life."}
             </p>
           </div>
 
@@ -3599,7 +3600,7 @@ function Section12({ onOpenModal, data }: { onOpenModal: () => void; data?: any 
                   whiteSpace: "nowrap", transition: "all 0.2s ease",
                   width: isMobile ? "100%" : "auto",
                 }}>
-                Support This Mission <ArrowIcon color="#BF791D" size={16} />
+                {content.cta1Text || "Support This Mission"} <ArrowIcon color="#BF791D" size={16} />
               </button>
               {/* Solid gold button */}
               <Link to="/donate" style={{ textDecoration: "none", width: isMobile ? "100%" : "auto" }}>
@@ -3616,7 +3617,7 @@ function Section12({ onOpenModal, data }: { onOpenModal: () => void; data?: any 
                     whiteSpace: "nowrap", transition: "all 0.2s ease",
                     width: isMobile ? "100%" : "auto",
                   }}>
-                  Donate Now <ArrowIcon color="#fff" size={16} />
+                  {content.cta2Text || "Donate Now"} <ArrowIcon color="#fff" size={16} />
                 </button>
               </Link>
             </div>
@@ -3659,8 +3660,17 @@ const HONEST_CARDS_DATA = [
   },
 ];
 
-function HonestImpactCard({ cardIdx, style, compact }: { cardIdx: number; style?: React.CSSProperties; compact?: boolean }) {
-  const card = HONEST_CARDS_DATA[cardIdx];
+function HonestImpactCard({ cardIdx, style, compact, overrideData }: { cardIdx: number; style?: React.CSSProperties; compact?: boolean; overrideData?: any }) {
+  const fallback = HONEST_CARDS_DATA[cardIdx];
+  const cms = overrideData;
+  const card = cms ? {
+    tags: [cms.tag1, cms.tag2].filter(Boolean),
+    rows: [
+      cms.row1Label ? { label: cms.row1Label, text: cms.row1Text || "" } : null,
+      cms.row2Label ? { label: cms.row2Label, text: cms.row2Text || "" } : null,
+      cms.row3Label ? { label: cms.row3Label, text: cms.row3Text || "" } : null,
+    ].filter(Boolean) as { label: string; text: string }[],
+  } : fallback;
   return (
     <div style={{
       background: "#f8f5ef", borderRadius: 16,
@@ -3723,11 +3733,13 @@ function HonestPhotoBlock({ src, style }: { src: string; style?: React.CSSProper
   );
 }
 
-function SectionHonestImpact() {
+function SectionHonestImpact({ data }: { data?: any }) {
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
   const outerRef = useRef<HTMLDivElement>(null);
   const stripRef = useRef<HTMLDivElement>(null);
+  const content = (data?.content ?? {}) as any;
+  const cmsItems = data?.items ?? [];
 
   // Unified sticky-scroll: works for mobile, tablet, and desktop
   useEffect(() => {
@@ -3793,12 +3805,12 @@ function SectionHonestImpact() {
               border: "1px solid #e8e8e8", borderRadius: 40, padding: "5px 16px",
               fontFamily: "'Poppins', sans-serif", fontSize: 12, color: "#bf791d",
               display: "inline-block", marginBottom: 10,
-            }}>Honest Impact</span>
+            }}>{content.badge || "Honest Impact"}</span>
             <h2 style={{
               fontFamily: "'Lora', serif", fontWeight: 600,
               fontSize: isMobile ? 22 : 28, lineHeight: 1.3,
               color: "#000", margin: 0, textTransform: "capitalize",
-            }}>This mission touched lives deeply.</h2>
+            }}>{content.heading || "This mission touched lives deeply."}</h2>
           </div>
 
           {/* Scrolling strip — 10 columns, all same colW */}
@@ -3812,7 +3824,7 @@ function SectionHonestImpact() {
             {/* Col 1: photo top + text card */}
             <MCol>
               <HonestPhotoBlock src={imgHI1} style={{ flex: 1 }} />
-              <HonestImpactCard cardIdx={0} compact style={{ flexShrink: 0 }} />
+              <HonestImpactCard cardIdx={0} compact style={{ flexShrink: 0 }} overrideData={cmsItems[0]} />
             </MCol>
 
             {/* Col 2: full photo */}
@@ -3828,7 +3840,7 @@ function SectionHonestImpact() {
 
             {/* Col 4: text card + photo */}
             <MCol>
-              <HonestImpactCard cardIdx={1} compact style={{ flexShrink: 0 }} />
+              <HonestImpactCard cardIdx={1} compact style={{ flexShrink: 0 }} overrideData={cmsItems[1]} />
               <HonestPhotoBlock src={imgHI5} style={{ flex: 1 }} />
             </MCol>
 
@@ -3841,7 +3853,7 @@ function SectionHonestImpact() {
             {/* Col 6: photo + text card */}
             <MCol>
               <HonestPhotoBlock src={imgHI8} style={{ flex: 1 }} />
-              <HonestImpactCard cardIdx={2} compact style={{ flexShrink: 0 }} />
+              <HonestImpactCard cardIdx={2} compact style={{ flexShrink: 0 }} overrideData={cmsItems[2]} />
             </MCol>
 
             {/* Col 7: full photo */}
@@ -3857,7 +3869,7 @@ function SectionHonestImpact() {
 
             {/* Col 9: text card + photo */}
             <MCol>
-              <HonestImpactCard cardIdx={3} compact style={{ flexShrink: 0 }} />
+              <HonestImpactCard cardIdx={3} compact style={{ flexShrink: 0 }} overrideData={cmsItems[3]} />
               <HonestPhotoBlock src={imgHI12} style={{ flex: 1 }} />
             </MCol>
 
@@ -3897,14 +3909,14 @@ function SectionHonestImpact() {
               fontFamily: "'Poppins', sans-serif", fontSize: 13, color: "#bf791d",
               display: "inline-block", width: "fit-content",
             }}>
-              Honest Impact
+              {content.badge || "Honest Impact"}
             </span>
             <h2 style={{
               fontFamily: "'Lora', serif", fontWeight: 600,
               fontSize: "clamp(28px, 3vw, 40px)", lineHeight: 1.36,
               color: "#000", margin: 0, textTransform: "capitalize",
             }}>
-              This mission touched lives deeply.
+              {content.heading || "This mission touched lives deeply."}
             </h2>
           </div>
           <p style={{
@@ -3912,7 +3924,7 @@ function SectionHonestImpact() {
             lineHeight: "22px", color: "#686868", textAlign: "right",
             maxWidth: 255, margin: 0, flexShrink: 0,
           }}>
-            In voices, journeys, and moments where children, families, and teachers, lives quietly transform.
+            {content.subtitle || "In voices, journeys, and moments where children, families, and teachers, lives quietly transform."}
           </p>
         </div>
 
@@ -3929,7 +3941,7 @@ function SectionHonestImpact() {
           {/* Col 1: photo (flex) + text card */}
           <div style={{ width: 459, display: "flex", flexDirection: "column", gap: 16, flexShrink: 0 }}>
             <HonestPhotoBlock src={imgHI1} style={{ flex: 1 }} />
-            <HonestImpactCard cardIdx={0} style={{ flexShrink: 0 }} />
+            <HonestImpactCard cardIdx={0} style={{ flexShrink: 0 }} overrideData={cmsItems[0]} />
           </div>
 
           {/* Col 2: full-height photo */}
@@ -3945,7 +3957,7 @@ function SectionHonestImpact() {
 
           {/* Col 4: text card (flex) + photo bottom */}
           <div style={{ width: 350, display: "flex", flexDirection: "column", gap: 16, flexShrink: 0 }}>
-            <HonestImpactCard cardIdx={1} style={{ flex: 1, minHeight: 0 }} />
+            <HonestImpactCard cardIdx={1} style={{ flex: 1, minHeight: 0 }} overrideData={cmsItems[1]} />
             <HonestPhotoBlock src={imgHI5} style={{ height: 352 }} />
           </div>
 
@@ -3958,7 +3970,7 @@ function SectionHonestImpact() {
           {/* Col 6: photo (flex) + text card */}
           <div style={{ width: 459, display: "flex", flexDirection: "column", gap: 16, flexShrink: 0 }}>
             <HonestPhotoBlock src={imgHI8} style={{ flex: 1 }} />
-            <HonestImpactCard cardIdx={2} style={{ flexShrink: 0 }} />
+            <HonestImpactCard cardIdx={2} style={{ flexShrink: 0 }} overrideData={cmsItems[2]} />
           </div>
 
           {/* Col 7: full-height photo */}
@@ -3974,7 +3986,7 @@ function SectionHonestImpact() {
 
           {/* Col 9: text card (flex) + photo bottom */}
           <div style={{ width: 350, display: "flex", flexDirection: "column", gap: 16, flexShrink: 0 }}>
-            <HonestImpactCard cardIdx={3} style={{ flex: 1, minHeight: 0 }} />
+            <HonestImpactCard cardIdx={3} style={{ flex: 1, minHeight: 0 }} overrideData={cmsItems[3]} />
             <HonestPhotoBlock src={imgHI12} style={{ height: 352 }} />
           </div>
 
@@ -4292,9 +4304,15 @@ const ArrowCircle = ({ color = "#bf791d", bg = "transparent" }: { color?: string
   </svg>
 );
 
-function Section13({ onOpenModal }: { onOpenModal: () => void }) {
+function Section13({ onOpenModal, data }: { onOpenModal: () => void; data?: any }) {
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
+  const content = (data?.content ?? {}) as any;
+  const bullets = [
+    content.bullet1 || "Progress is visible & published",
+    content.bullet2 || "Use of funds reported quarterly",
+    content.bullet3 || "80G eligible · FCRA",
+  ];
 
   return (
     <section style={{
@@ -4357,7 +4375,7 @@ function Section13({ onOpenModal }: { onOpenModal: () => void }) {
             whiteSpace: "nowrap",
             background: "rgba(255,255,255,0.6)",
           }}>
-            One Mission · Many Hands ·
+            {content.badge || "One Mission · Many Hands ·"}
           </span>
 
           {/* Heading */}
@@ -4370,13 +4388,13 @@ function Section13({ onOpenModal }: { onOpenModal: () => void }) {
             margin: 0,
             textTransform: "capitalize",
           }}>
-            One Teacher Started This. Many Can Keep It Going.
+            {content.heading || "One Teacher Started This. Many Can Keep It Going."}
           </h2>
 
           {/* Bullets — inline on mobile */}
           {isMobile && (
             <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-              {S13_BULLETS.map(item => (
+              {bullets.map(item => (
                 <div key={item} style={{ display: "flex", alignItems: "center", gap: 10 }}>
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
                     <path d="M2 8h12M10 4l4 4-4 4" stroke="#bf791d" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -4406,7 +4424,7 @@ function Section13({ onOpenModal }: { onOpenModal: () => void }) {
               fontSize: isMobile ? 15 : 16,
               color: "#fff", whiteSpace: "nowrap",
             }}>
-              Donate Now
+              {content.cta1Text || "Donate Now"}
               <ArrowCircle color="rgba(255,255,255,0.7)" />
             </button>
 
@@ -4418,7 +4436,7 @@ function Section13({ onOpenModal }: { onOpenModal: () => void }) {
               fontSize: isMobile ? 15 : 16,
               color: "#bf791d", whiteSpace: "nowrap",
             }}>
-              Join Teacher Network
+              {content.cta2Text || "Join Teacher Network"}
               <ArrowCircle color="#bf791d" />
             </button>
 
@@ -4430,7 +4448,7 @@ function Section13({ onOpenModal }: { onOpenModal: () => void }) {
               fontSize: isMobile ? 15 : 16,
               color: "#bf791d", whiteSpace: "nowrap",
             }}>
-              Partner With Us
+              {content.cta3Text || "Partner With Us"}
               <ArrowCircle color="#bf791d" />
             </button>
           </div>
@@ -4449,9 +4467,9 @@ function Section13({ onOpenModal }: { onOpenModal: () => void }) {
               fontSize: 15, lineHeight: "26px", color: "#636363",
               margin: 0, maxWidth: 380,
             }}>
-              What Ujjwala built inside her classroom over 31 years is now a structure that can travel — to other schools, other teachers, and other children who deserve the same quality of care and learning.
+              {content.description || "What Ujjwala built inside her classroom over 31 years is now a structure that can travel — to other schools, other teachers, and other children who deserve the same quality of care and learning."}
             </p>
-            {S13_BULLETS.map(item => (
+            {bullets.map(item => (
               <div key={item} style={{ display: "flex", alignItems: "center", gap: 10 }}>
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
                   <path d="M2 8h12M10 4l4 4-4 4" stroke="#bf791d" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -5613,19 +5631,22 @@ export function HomeV2Page() {
   const openModal = () => setModalOpen(true);
 
   // Pre-fetch all section data so we can check `enabled` before rendering
-  const dHero         = getHomeSection("HeroSection");
+  const dHero          = getHomeSection("HeroSection");
   const dProgramBanner = getHomeSection("ProgramBannerSection");
-  const dQuotes       = getHomeSection("QuotesCarouselSection");
-  const dS3           = getHomeSection("S3CarouselSection");
-  const dRecognitions = getHomeSection("RecognitionsSection");
-  const dBeyond       = getHomeSection("BeyondSyllabusSection");
-  const dTestimonials = getHomeSection("TestimonialsSection");
-  const dTextReveal   = getHomeSection("TextRevealSection");
-  const dPrograms     = getHomeSection("ProgramsSection");
-  const dGetInvolved  = getHomeSection("GetInvolvedSection");
-  const dProcess      = getHomeSection("ProcessFlowSection");
-  const dTeam         = getHomeSection("TeamSection");
-  const dClosing      = getHomeSection("ClosingSection");
+  const dQuotes        = getHomeSection("QuotesCarouselSection");
+  const dS3            = getHomeSection("S3CarouselSection");
+  const dRecognitions  = getHomeSection("RecognitionsSection");
+  const dBeyond        = getHomeSection("BeyondSyllabusSection");
+  const dTestimonials  = getHomeSection("TestimonialsSection");
+  const dTextReveal    = getHomeSection("TextRevealSection");
+  const dIntroNGO      = getHomeSection("IntroNGOSection");
+  const dPrograms      = getHomeSection("ProgramsSection");
+  const dGetInvolved   = getHomeSection("GetInvolvedSection");
+  const dProcess       = getHomeSection("ProcessFlowSection");
+  const dHonestImpact  = getHomeSection("HonestImpactSection");
+  const dSupportCTA    = getHomeSection("SupportCTASection");
+  const dTeam          = getHomeSection("TeamSection");
+  const dClosing       = getHomeSection("ClosingSection");
 
   return (
     <div style={{ minHeight: "100vh", background: "#ffffff", display: "flex", flexDirection: "column", alignItems: "stretch", overflowX: "clip" }}>
@@ -5638,13 +5659,13 @@ export function HomeV2Page() {
       {dBeyond.enabled       && <Section5 data={dBeyond} />}
       {dTestimonials.enabled && <Section6 data={dTestimonials} />}
       {dTextReveal.enabled   && <Section7 data={dTextReveal} />}
-      <IntroNGOSection />
+      {dIntroNGO.enabled     && <IntroNGOSection data={dIntroNGO} />}
       {dPrograms.enabled     && <Section8 onOpenModal={openModal} data={dPrograms} />}
       <Section9 />
       {dGetInvolved.enabled  && <Section10 onOpenModal={openModal} data={dGetInvolved} />}
       {dProcess.enabled      && <Section12 onOpenModal={openModal} data={dProcess} />}
-      <SectionHonestImpact />
-      <Section13 onOpenModal={openModal} />
+      {dHonestImpact.enabled && <SectionHonestImpact data={dHonestImpact} />}
+      {dSupportCTA.enabled   && <Section13 onOpenModal={openModal} data={dSupportCTA} />}
       <Section14 />
       {dTeam.enabled         && <Section15 data={dTeam} />}
       <Section16 />
