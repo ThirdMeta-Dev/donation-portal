@@ -42,7 +42,9 @@ jobs:
         env:
           SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
 
-      - name: Deploy via FTP
+      - name: Deploy via FTP (attempt 1)
+        id: ftp1
+        continue-on-error: true
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.STAGING_FTP_HOST }}
@@ -51,3 +53,20 @@ jobs:
           server-dir: ${{ secrets.STAGING_FTP_SERVER_DIR }}
           local-dir: ./dist/
           dangerous-clean-slate: false
+          timeout: 60000
+
+      - name: Wait before retry
+        if: steps.ftp1.outcome == 'failure'
+        run: sleep 30
+
+      - name: Deploy via FTP (attempt 2)
+        if: steps.ftp1.outcome == 'failure'
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+        with:
+          server: ${{ secrets.STAGING_FTP_HOST }}
+          username: ${{ secrets.STAGING_FTP_USERNAME }}
+          password: ${{ secrets.STAGING_FTP_PASSWORD }}
+          server-dir: ${{ secrets.STAGING_FTP_SERVER_DIR }}
+          local-dir: ./dist/
+          dangerous-clean-slate: false
+          timeout: 60000
