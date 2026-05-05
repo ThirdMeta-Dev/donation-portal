@@ -85,10 +85,10 @@ function resolveAuthUser(c: any) {
 }
 
 // ─── Email via Resend ─────────────────────────────────────────────────────────
-const NOTIFY_EMAIL = "hasan.kanchwala@hexanovate.com";
-const SMTP_FROM    = "noreply@ujjwalawadekar.com";
+const NOTIFY_EMAILS = ["unmesh.wadekar@hexanovate.com", "kalpesh.wadekar@hexanovate.com"];
+const SMTP_FROM     = "noreply@ujjwalawadekar.com";
 
-async function sendEmail(subject: string, html: string, to: string | string[] = NOTIFY_EMAIL) {
+async function sendEmail(subject: string, html: string, to: string | string[] = NOTIFY_EMAILS) {
   const apiKey = Deno.env.get("RESEND_API_KEY");
   if (!apiKey) {
     console.log("[EMAIL] RESEND_API_KEY not set — skipping:", subject);
@@ -745,7 +745,7 @@ app.post("/make-server-a0af4170/auth/signup", async (c) => {
     sendEmail(
       `🎉 New Donor Registration: ${name} (${email})`,
       signupHtml({ name, email, phone, donorType, country }),
-      NOTIFY_EMAIL,
+      NOTIFY_EMAILS,
     ).catch(e => console.log("[signup] Email error:", e));
 
     return c.json({ success: true, userId: data.user?.id });
@@ -891,8 +891,8 @@ app.post("/make-server-a0af4170/donations", async (c) => {
     }
 
     // 3. Send emails based on cause's 80G setting (non-blocking)
-    const recipients = [NOTIFY_EMAIL];
-    if (donation.userEmail && donation.userEmail !== NOTIFY_EMAIL) {
+    const recipients = [...NOTIFY_EMAILS];
+    if (donation.userEmail && !NOTIFY_EMAILS.includes(donation.userEmail)) {
       recipients.push(donation.userEmail);
     }
 
@@ -924,7 +924,7 @@ app.post("/make-server-a0af4170/donations", async (c) => {
       sendEmail(
         `❌ Payment Failed — ${donation.userName} | ₹${donation.amount.toLocaleString("en-IN")}`,
         donationFailedHtml(donation),
-        NOTIFY_EMAIL,
+        NOTIFY_EMAILS,
       ).catch(e => console.log("[donations] Failed payment email error:", e));
     }
 
@@ -1037,8 +1037,8 @@ app.post("/make-server-a0af4170/donations/:id/resend-email", async (c) => {
       ? `[Resent 80G] ✅ Receipt: ${donation.receiptNo} | ${donation.userName} | ₹${(donation.amount || 0).toLocaleString("en-IN")}`
       : `[Resent] ✅ Payment Confirmation: ${donation.receiptNo} | ${donation.userName} | ₹${(donation.amount || 0).toLocaleString("en-IN")}`;
 
-    const recipients = [NOTIFY_EMAIL];
-    if (donation.userEmail && donation.userEmail !== NOTIFY_EMAIL) {
+    const recipients = [...NOTIFY_EMAILS];
+    if (donation.userEmail && !NOTIFY_EMAILS.includes(donation.userEmail)) {
       recipients.push(donation.userEmail);
     }
 
@@ -1264,6 +1264,27 @@ app.get("/make-server-a0af4170/lms/certificates", async (c) => {
     const certs = await kv.getByPrefix(`certificate:${user.id}:`);
     return c.json({ certificates: (certs || []).filter(Boolean) });
   } catch (e) { return c.json({ error: "Failed: " + e }, 500); }
+});
+
+// ─── Contact Form Notification ───────────────────────────────────────────────
+app.post("/make-server-a0af4170/contact", async (c) => {
+  try {
+    const { name, email, phone, city, role, message } = await c.req.json();
+    const html = `
+      <h2 style="color:#1a1a1a">📬 New Contact Form Submission</h2>
+      <table style="border-collapse:collapse;width:100%;font-family:sans-serif;font-size:14px">
+        <tr><td style="padding:8px;font-weight:600;color:#555">Name</td><td style="padding:8px">${name || "—"}</td></tr>
+        <tr style="background:#f9f9f9"><td style="padding:8px;font-weight:600;color:#555">Email</td><td style="padding:8px">${email || "—"}</td></tr>
+        <tr><td style="padding:8px;font-weight:600;color:#555">Phone</td><td style="padding:8px">${phone || "—"}</td></tr>
+        <tr style="background:#f9f9f9"><td style="padding:8px;font-weight:600;color:#555">City</td><td style="padding:8px">${city || "—"}</td></tr>
+        <tr><td style="padding:8px;font-weight:600;color:#555">Role</td><td style="padding:8px">${role || "—"}</td></tr>
+        <tr style="background:#f9f9f9"><td style="padding:8px;font-weight:600;color:#555">Message</td><td style="padding:8px">${message || "—"}</td></tr>
+      </table>`;
+    await sendEmail(`📬 Contact Form: ${name} (${email})`, html, NOTIFY_EMAILS);
+    return c.json({ success: true });
+  } catch (e) {
+    return c.json({ error: "Failed: " + e }, 500);
+  }
 });
 
 Deno.serve(app.fetch);
