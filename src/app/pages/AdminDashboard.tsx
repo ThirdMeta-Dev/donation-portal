@@ -5,7 +5,7 @@ import {
   BarChart3, Users, IndianRupee, Heart, Search, TrendingUp, CheckCircle2,
   Shield, RefreshCw, Loader2, BookOpen, Plus, Trash2, Edit, X,
   GraduationCap, ChevronDown, ChevronUp, Video, FileText, Calendar, Eye,
-  UserCheck, UserX, Mail, ToggleLeft, ToggleRight, AlertCircle
+  UserCheck, UserX, Mail, ToggleLeft, ToggleRight, AlertCircle, Layout
 } from "lucide-react";
 import { useAuth } from "../lib/AuthContext";
 import { donationApi, lmsApi, adminApi, causeApi, Donation, Course, AppUserRecord, CauseFull } from "../lib/api";
@@ -13,6 +13,7 @@ import { DonationReceiptModal } from "../components/DonationReceiptModal";
 import { CauseFormDrawer } from "../components/CauseFormDrawer";
 import { DonationEditModal } from "../components/DonationEditModal";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, CartesianGrid } from "recharts";
+import { CmsPanel } from "../components/cms/CmsPanel";
 
 const COLORS = ["#4338CA", "#D97706", "#059669", "#7C3AED", "#E11D48", "#0891B2"];
 
@@ -57,7 +58,7 @@ export function AdminDashboard() {
   const location = useLocation();
   const [donations, setDonations] = useState<Donation[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
-  const [activeTab, setActiveTab] = useState<"overview" | "donations" | "users" | "causes" | "courses">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "donations" | "users" | "causes" | "courses" | "content">("overview");
   const [appUsers, setAppUsers] = useState<AppUserRecord[]>([]);
   const [usersLoading, setUsersLoading] = useState(false);
   const [usersError, setUsersError] = useState("");
@@ -313,6 +314,7 @@ export function AdminDashboard() {
     { id: "users",     label: `Users${appUsers.length > 0 ? ` (${appUsers.length})` : ""}`, icon: <Users size={15} />, onTabClick: () => { setActiveTab("users"); loadUsers(); } },
     { id: "causes",    label: `Causes (${causes.length || "—"})`, icon: <Heart size={15} />, onTabClick: () => { setActiveTab("causes"); if (causes.length === 0) loadCauses(); } },
     { id: "courses",   label: "LMS Courses",               icon: <GraduationCap size={15} /> },
+    { id: "content",   label: "Content",                   icon: <Layout size={15} /> },
   ] as { id: typeof activeTab; label: string; icon: React.ReactNode; onTabClick?: () => void }[];
 
   const statusBadge = (status: string) => {
@@ -956,6 +958,13 @@ export function AdminDashboard() {
                     ))}
                   </div>
                 )}
+              </motion.div>
+            )}
+
+            {/* ── CONTENT CMS ── */}
+            {activeTab === "content" && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                <CmsPanel />
               </motion.div>
             )}
           </>

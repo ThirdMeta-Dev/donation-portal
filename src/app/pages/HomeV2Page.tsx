@@ -684,30 +684,27 @@ function VideoCards() {
 }
 
 // ── HeroSection ───────────────────────────────────────────────────────────
-function HeroSection({ onOpenModal }: { onOpenModal: () => void }) {
+function HeroSection({ onOpenModal, data }: { onOpenModal: () => void; data?: any }) {
   const ref = useFadeInUp(0.05);
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
-  const isSmall = isMobile || isTablet;
+  const content = (data?.content ?? {}) as any;
 
   return (
     <div ref={ref} className="fade-in-up" style={{ width: "100%", minHeight: isMobile ? "auto" : 724, position: "relative", background: "linear-gradient(114.7deg, #0a2036 0%, #132f4c 100%)", marginBottom: isMobile ? 0 : -131, flexShrink: 0 }}>
 
-      {/* ── Decorative layer: overflow:hidden here clips textures/ellipses ── */}
+      {/* ── Decorative layer ── */}
       <div style={{ position: "absolute", inset: 0, overflow: "hidden", pointerEvents: "none", zIndex: 0 }}>
         <div style={{ width: "100%", margin: "0 auto", position: "relative", height: isMobile ? "100%" : 724, overflow: "hidden" }}>
-          {/* Left gradients — dark-left fade for readable text */}
           {Array.from({ length: 5 }).map((_, i) => (
             <div key={i} style={{ position: "absolute", top: 0, left: 0, width: isMobile ? "100%" : "70%", height: isMobile ? "100%" : 724, background: isMobile ? "linear-gradient(to bottom, #0b223a 60%, rgba(11,34,58,0.8) 100%)" : "linear-gradient(to right, rgba(11,34,58,1) 0%, rgba(11,34,58,0.9) 30%, rgba(11,34,58,0) 100%)" }} />
           ))}
-          {/* Right gradient — ON TOP of image to blend right edge */}
           {!isMobile && (
             <div style={{ position: "absolute", top: 0, right: 0, width: "70%", height: "100%", zIndex: 2, background: "linear-gradient(to right, rgba(11,34,58,0) 0%, rgba(11,34,58,1) 100%)" }} />
           )}
-          {/* Banner image — rendered after gradients so it appears on top */}
           {!isMobile && (
             <div style={{ position: "absolute", inset: 0, zIndex: 1 }}>
-              <img src={imgHero} alt="" style={{ width: "100%", height: "100%", objectFit: "contain", objectPosition: "42% bottom" }} />
+              <img src={content.heroImage || imgHero} alt="" style={{ width: "100%", height: "100%", objectFit: "contain", objectPosition: "42% bottom" }} />
             </div>
           )}
           <div style={{ position: "absolute", left: -122, top: -25, width: 653, height: 436, opacity: 0.45 }}>
@@ -737,42 +734,36 @@ function HeroSection({ onOpenModal }: { onOpenModal: () => void }) {
             <Navbar onOpenModal={onOpenModal} />
           </div>
 
-          {/* Hero content — stacked on mobile, side-by-side on desktop */}
           {isMobile ? (
-            /* ── MOBILE Hero Content ── */
             <div style={{ display: "flex", flexDirection: "column", gap: 28, position: "relative" }}>
               <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
                 <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
-                  {["Award 1", "Award 2", "Award 3"].map(a => (
+                  {(content.awards || "Award 1, Award 2, Award 3").split(",").map((a: string) => (
                     <div key={a} style={{ background: "#13304c", borderRadius: 6, height: 32, padding: "0 12px", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                      <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 200, fontSize: 11, color: "#fff" }}>{a}</span>
+                      <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 200, fontSize: 11, color: "#fff" }}>{a.trim()}</span>
                     </div>
                   ))}
                 </div>
                 <h1 style={{ fontFamily: "'Lora', serif", fontWeight: 500, fontSize: 30, lineHeight: 1.25, color: "#fff", textTransform: "capitalize", margin: 0 }}>
-                  Building Character,<br />Confidence, and Capability in Every Child
+                  {content.heading || "Building Character, Confidence, and Capability in Every Child"}
                 </h1>
                 <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 14, lineHeight: "22px", color: "rgba(255,255,255,0.8)", margin: 0 }}>
-                  Through practical teaching experiences, I bring classrooms closer to life and children learn by seeing, doing, feeling, and understanding.
+                  {content.subtext || "Through practical teaching experiences, I bring classrooms closer to life and children learn by seeing, doing, feeling, and understanding."}
                 </p>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
                 <button className="btn-gold" onClick={onOpenModal} style={{ display: "flex", alignItems: "center", gap: 12, background: "#bf791d", borderRadius: 30, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 600, boxShadow: "0px 4px 4px 0px rgba(0,0,0,0.3)", alignSelf: "flex-start" }}>
-                  Donate Now <ArrowIcon />
+                  {content.ctaPrimary || "Donate Now"} <ArrowIcon />
                 </button>
                 <button style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 14, padding: 0 }}>
                   <span className="arrow-bounce"><svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M9 3v12M9 15l-5-5M9 15l5-5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
-                  Problems we are working on
+                  {content.ctaSecondary || "Problems we are working on"}
                 </button>
               </div>
-
-              {/* Mobile photo block — teacher image + stats + play buttons */}
               <MobileHeroPhotoBlock />
             </div>
           ) : (
-            /* ── TABLET / DESKTOP Hero Content ── */
             <div style={{ position: "relative", display: "flex", alignItems: "flex-end", justifyContent: "space-between", width: "100%", maxWidth: 1008 }}>
-              {/* StatCard — visible on desktop only */}
               {!isTablet && (
                 <div style={{ position: "absolute", left: 235, top: -8, zIndex: 5 }}>
                   <StatCard />
@@ -781,30 +772,30 @@ function HeroSection({ onOpenModal }: { onOpenModal: () => void }) {
               <div style={{ display: "flex", flexDirection: "column", gap: 40, width: isTablet ? "50%" : 364, flexShrink: 0, position: "relative", zIndex: 2 }}>
                 <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
                   <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-                    {["Award 1", "Award 2", "Award 3"].map(a => (
+                    {(content.awards || "Award 1, Award 2, Award 3").split(",").map((a: string) => (
                       <div key={a} style={{ background: "#13304c", borderRadius: 6, height: 40, width: 100, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                        <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 200, fontSize: 13, color: "#fff" }}>{a}</span>
+                        <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 200, fontSize: 13, color: "#fff" }}>{a.trim()}</span>
                       </div>
                     ))}
                   </div>
                   <h1 style={{ fontFamily: "'Lora', serif", fontWeight: 500, fontSize: isTablet ? 32 : 38, lineHeight: 1.2, color: "#fff", textTransform: "capitalize", width: isTablet ? "100%" : 455, margin: 0 }}>
-                    {"Building Character, Confidence, and Capability in Every Child"}
+                    {content.heading || "Building Character, Confidence, and Capability in Every Child"}
                   </h1>
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
                   <button className="btn-gold" onClick={onOpenModal} style={{ display: "flex", alignItems: "center", gap: 20, background: "#bf791d", borderRadius: 30, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 600, boxShadow: "0px 4px 4px 0px rgba(0,0,0,0.3)", alignSelf: "flex-start" }}>
-                    Support This Mission <ArrowIcon />
+                    {content.ctaPrimary || "Donate Now"} <ArrowIcon />
                   </button>
                   <button style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 16, padding: 0 }}>
                     <span className="arrow-bounce"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 3v12M9 15l-5-5M9 15l5-5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
-                    See My Teaching Method
+                    {content.ctaSecondary || "Problems we are working on"}
                   </button>
                 </div>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 36, alignItems: "flex-end", width: isTablet ? "40%" : 245, flexShrink: 0, position: "relative", zIndex: 2 }}>
                 {!isTablet && <VideoCards />}
                 <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 15, lineHeight: "22px", color: "#fff", textAlign: "right", maxWidth: 245, margin: 0 }}>
-                  Through practical teaching experiences, I bring classrooms closer to life and children learn by seeing, doing, feeling, and understanding.
+                  {content.subtext || "Through practical teaching experiences, I bring classrooms closer to life and children learn by seeing, doing, feeling, and understanding."}
                 </p>
               </div>
             </div>
@@ -815,12 +806,17 @@ function HeroSection({ onOpenModal }: { onOpenModal: () => void }) {
   );
 }
 
+
 // ── ProgramBanner ─────────────────────────────────────────────────────────
-function ProgramBanner({ onOpenModal }: { onOpenModal: () => void }) {
+function ProgramBanner({ onOpenModal, data }: { onOpenModal: () => void; data?: any }) {
   const ref = useFadeInUp();
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
-  const items = ["Open conversations on real classroom struggles", "Learn from Ujjwala's practical guidance", "Build collective action for change"];
+  const content = (data?.content ?? {}) as any;
+  const DEFAULT_ITEMS = ["Open conversations on real classroom struggles", "Learn from Ujjwala's practical guidance", "Build collective action for change"];
+  const items = content.bullet1
+    ? [content.bullet1, content.bullet2, content.bullet3].filter(Boolean)
+    : DEFAULT_ITEMS;
   return (
     <div ref={ref} className="fade-in-up" style={{
       width: isMobile ? "97%" : "100%",
@@ -841,9 +837,9 @@ function ProgramBanner({ onOpenModal }: { onOpenModal: () => void }) {
         <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", gap: isMobile ? 20 : isTablet ? 40 : 104, alignItems: "flex-start" }}>
           {/* Left: program name + description */}
           <div style={{ display: "flex", flexDirection: "column", gap: 8, width: isMobile ? "100%" : isTablet ? "55%" : 488, color: "#fff", flexShrink: isMobile ? undefined : 0 }}>
-            <p style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: isMobile ? 16 : 18, margin: 0 }}>उज्ज्वल संवाद (Ujjwal Sanvaad)</p>
+            <p style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 600, fontSize: isMobile ? 16 : 18, margin: 0 }}>{content.title || "उज्ज्वल संवाद (Ujjwal Sanvaad)"}</p>
             <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: isMobile ? 14 : 15, lineHeight: "24px", margin: 0 }}>
-              Come sit with Ujjwala and a growing community of teachers, parents, and supporters who want better education for every child.
+              {content.subtitle || "Come sit with Ujjwala and a growing community of teachers, parents, and supporters who want better education for every child."}
             </p>
           </div>
           {/* Right: bullet list */}
@@ -872,7 +868,7 @@ function ProgramBanner({ onOpenModal }: { onOpenModal: () => void }) {
               width: isMobile ? "100%" : undefined, justifyContent: isMobile ? "center" : undefined,
               transition: "background 0.18s ease",
             }}>
-            Let's Rethink Education Together <ArrowIcon />
+            {content.ctaText || "Let's Rethink Education Together"} <ArrowIcon />
           </button>
         </div>
       </div>
@@ -1000,12 +996,20 @@ const S3_SLIDES = [
   { img: imgS3Slide9, category: "Society Problems", caption: "He stopped telling his classmates what his father did for work. No one taught him that labour has dignity, so he learned shame much before he ever learned pride." },
 ];
 
-function Section3() {
+function Section3({ data }: { data?: any }) {
   const sectionRef = useFadeInUp();
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
+  const cmsItems = data?.items ?? [];
+  const slides = cmsItems.length > 0
+    ? cmsItems.map((it: any, i: number) => ({
+        img: it.image || S3_SLIDES[i % S3_SLIDES.length]?.img || "",
+        category: it.category || S3_SLIDES[i % S3_SLIDES.length]?.category || "",
+        caption: it.caption || S3_SLIDES[i % S3_SLIDES.length]?.caption || "",
+      }))
+    : S3_SLIDES;
   const [current, setCurrent] = useState(0);
-  const total = S3_SLIDES.length;
+  const total = slides.length;
   const prev = useCallback(() => setCurrent(c => (c === 0 ? total - 1 : c - 1)), [total]);
   const next = useCallback(() => setCurrent(c => (c === total - 1 ? 0 : c + 1)), [total]);
   useEffect(() => {
@@ -1040,7 +1044,7 @@ function Section3() {
         <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 20px" }}>
           <div style={{ position: "relative", borderRadius: 20, overflow: "hidden", aspectRatio: "4 / 5" }}>
             {/* All slides stacked — opacity crossfade, no remount */}
-            {S3_SLIDES.map((slide, i) => (
+            {slides.map((slide: any, i: number) => (
               <img key={i} src={slide.img} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", opacity: i === current ? 1 : 0, transition: "opacity 0.5s ease" }} />
             ))}
             {/* Glassmorphism card */}
@@ -1056,7 +1060,7 @@ function Section3() {
                   <button key={i} onClick={() => setCurrent(i)} style={{ height: 3, width: i === current ? 25 : 4, borderRadius: 9999, background: i === current ? "#f59e0b" : "rgba(255,255,255,0.5)", border: "none", padding: 0, cursor: "pointer", transition: "width 0.3s ease", flexShrink: 0 }} />
                 ))}
               </div>
-              <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 15, lineHeight: "1.4", color: "#fff", margin: 0 }}>{S3_SLIDES[current].caption}</p>
+              <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 15, lineHeight: "1.4", color: "#fff", margin: 0 }}>{slides[current]?.caption}</p>
               <a href="#section14-story" style={{ textDecoration: "none" }}>
                 <button className="btn-gold" style={{ display: "inline-flex", alignItems: "center", gap: 8, background: "#bf791d", borderRadius: 30, padding: "10px 18px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 13, alignSelf: "flex-start" }}>
                   Read Ujjwala's Story <ArrowIcon size={13} />
@@ -1100,7 +1104,7 @@ function Section3() {
 
           {/* ── Image card: all slides stacked, crossfade via opacity ── */}
           <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: IMG_H, borderRadius: 20, overflow: "hidden", zIndex: 1 }}>
-            {S3_SLIDES.map((slide, i) => (
+            {slides.map((slide: any, i: number) => (
               <img key={i} src={slide.img} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", display: "block", opacity: i === current ? 1 : 0, transition: "opacity 0.5s ease" }} />
             ))}
           </div>
@@ -1130,7 +1134,7 @@ function Section3() {
                 ))}
               </div>
               <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 18, lineHeight: "25px", color: "#fff", margin: 0 }}>
-                {S3_SLIDES[current].caption}
+                {slides[current]?.caption}
               </p>
             </div>
             {/* CTA */}
@@ -1170,10 +1174,11 @@ const S4_CARDS = [
 const S4_LOOP = [...S4_CARDS, ...S4_CARDS, ...S4_CARDS];
 const S4_N = S4_CARDS.length;
 
-function Section4() {
+function Section4({ data }: { data?: any }) {
   const sectionRef = useFadeInUp();
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
+  const content = (data?.content ?? {}) as any;
   const GAP = 16;
   const [cardWidth, setCardWidth] = useState(268);
   // idx into S4_LOOP — starts at N (middle copy) so we can go prev and next freely
@@ -1275,11 +1280,11 @@ function Section4() {
         <div style={{ flexShrink: 0, width: "calc(max(96px, (100vw - 1200px) / 2 + 96px) + 340px)", paddingLeft: "max(96px, calc((100vw - 1200px) / 2 + 96px))", display: "flex", flexDirection: "column", gap: 48, paddingTop: 28, boxSizing: "border-box" }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
             <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", padding: "6px 20px", borderRadius: 40, border: "1px solid #e8e8e8", alignSelf: "flex-start" }}>
-              <span style={{ fontFamily: "'Poppins', sans-serif", fontSize: 13, color: "#bf791d", whiteSpace: "nowrap" }}>Seen &amp; acknowledged</span>
+              <span style={{ fontFamily: "'Poppins', sans-serif", fontSize: 13, color: "#bf791d", whiteSpace: "nowrap" }}>{content.badge || "Seen & acknowledged"}</span>
             </div>
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              <p style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: 44, lineHeight: 1.24, color: "#000", margin: 0 }}>Finally, My Voice Reached!!</p>
-              <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 16, lineHeight: "24px", color: "#686868", margin: 0 }}>Awards don't define my work. They confirm that someone is watching and believe it mattered.</p>
+              <p style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: 44, lineHeight: 1.24, color: "#000", margin: 0 }}>{content.title || "Finally, My Voice Reached!!"}</p>
+              <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 16, lineHeight: "24px", color: "#686868", margin: 0 }}>{content.description || "Awards don't define my work. They confirm that someone is watching and believe it mattered."}</p>
             </div>
           </div>
           {navButtons}
@@ -1326,11 +1331,20 @@ function S5PlayIcon({ active }: { active: boolean }) {
   );
 }
 
-function Section5() {
+function Section5({ data }: { data?: any }) {
   const sectionRef = useFadeInUp();
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
-  const [activeId, setActiveId] = useState<string>("see");
+  const content = (data?.content ?? {}) as any;
+  const cmsItems = data?.items ?? [];
+  const items = cmsItems.length > 0
+    ? cmsItems.map((it: any, i: number) => ({
+        ...S5_ITEMS[i % S5_ITEMS.length],
+        ...Object.fromEntries(Object.entries(it).filter(([, v]) => v !== "" && v != null)),
+        id: it.id ?? S5_ITEMS[i % S5_ITEMS.length]?.id ?? String(i),
+      }))
+    : S5_ITEMS;
+  const [activeId, setActiveId] = useState<string>(items[0]?.id ?? "see");
 
   const hPad = isMobile ? 20 : isTablet ? 40 : 350;
 
@@ -1369,12 +1383,12 @@ function Section5() {
             {/* Pill badge — indented another 164px in Figma */}
             <div style={{ paddingLeft: isMobile ? 0 : isTablet ? 0 : 164 }}>
               <div style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", padding: "6px 20px", borderRadius: 40, border: "1px solid #e8e8e8", background: "rgba(255,255,255,0.9)" }}>
-                <span style={{ fontFamily: "'Poppins', sans-serif", fontSize: 13, color: "#bf791d" }}>Glimpse of my teaching!</span>
+                <span style={{ fontFamily: "'Poppins', sans-serif", fontSize: 13, color: "#bf791d" }}>{content.badge || "Glimpse of my teaching!"}</span>
               </div>
             </div>
             <div style={{ width: isMobile || isTablet ? "100%" : "auto", maxWidth: 657 }}>
               <p style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: isMobile ? 26 : isTablet ? 30 : 36, lineHeight: 1.32, color: "#000", textTransform: "capitalize", margin: 0 }}>
-                Creating Experiences That Live For Life. Beyond Syllabus, Closer To Life.
+                {content.heading || "Creating Experiences That Live For Life. Beyond Syllabus, Closer To Life."}
               </p>
             </div>
           </div>
@@ -1382,13 +1396,14 @@ function Section5() {
           {/* Accordion */}
           <div style={{ paddingLeft: isMobile ? 0 : hPad, paddingTop: isMobile ? 24 : 44 }}>
             <div style={{ width: isMobile || isTablet ? "100%" : "auto", maxWidth: 562, display: "flex", flexDirection: "column" }}>
-              {S5_ITEMS.map((item) => {
-                const isActive = activeId === item.id;
+              {items.map((item: any, idx: number) => {
+                const itemId = item.id ?? String(idx);
+                const isActive = activeId === itemId;
                 return (
-                  <div key={item.id}>
+                  <div key={itemId}>
                     {/* Row: icon + label */}
                     <button
-                      onClick={() => setActiveId(item.id)}
+                      onClick={() => setActiveId(itemId)}
                       style={{ display: "flex", alignItems: "center", gap: 16, width: "100%", background: "none", border: "none", padding: "12px 0", cursor: "pointer", textAlign: "left" }}
                     >
                       <S5PlayIcon active={isActive} />
@@ -1419,8 +1434,8 @@ function Section5() {
                     </div>
 
                     {/* Separator line */}
-                    {item.sepWidth > 0 && !isMobile && (
-                      <div style={{ height: 1, width: item.sepWidth, background: "rgba(0,0,0,0.15)", margin: "4px 0 4px 0" }} />
+                    {(item.sepWidth === undefined || item.sepWidth > 0) && !isMobile && (
+                      <div style={{ height: 1, width: item.sepWidth ?? 177, background: "rgba(0,0,0,0.15)", margin: "4px 0 4px 0" }} />
                     )}
                     {isMobile && <div style={{ height: 1, background: "rgba(0,0,0,0.08)", margin: "4px 0" }} />}
                   </div>
@@ -1435,7 +1450,7 @@ function Section5() {
   );
 }
 
-function Section6() {
+function Section6({ data }: { data?: any }) {
   const sectionRef = useFadeInUp();
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
@@ -1443,7 +1458,24 @@ function Section6() {
   const [slideIndex, setSlideIndex] = useState(0);
   const [progress, setProgress] = useState(0);
   const duration = 5000;
-  const activeData = S6_DATA[activeTab];
+  const cmsItems = data?.items ?? [];
+  const s6DataMerged: Record<string, Testimonial[]> = cmsItems.length > 0
+    ? cmsItems.reduce((acc: Record<string, Testimonial[]>, it: any) => {
+        const cat = it.category || "teachers";
+        if (!acc[cat]) acc[cat] = [];
+        const fallbackIdx = (S6_DATA[cat] ?? []).findIndex((t) => !acc[cat].some((a) => a.id === t.id));
+        const fallback = (S6_DATA[cat] ?? [])[Math.max(0, fallbackIdx)];
+        acc[cat].push({
+          id: it.id || String(Math.random()),
+          title: it.title || fallback?.title || "",
+          body: it.body || fallback?.body || "",
+          photo: it.photo || imgS6OverPhoto,
+        });
+        return acc;
+      }, {})
+    : S6_DATA;
+  const tabs = Object.keys(s6DataMerged).map(id => ({ id, label: id.charAt(0).toUpperCase() + id.slice(1) }));
+  const activeData = s6DataMerged[activeTab] ?? s6DataMerged[tabs[0]?.id] ?? [];
 
   useEffect(() => {
     const startTime = Date.now();
@@ -1482,7 +1514,7 @@ function Section6() {
         <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", justifyContent: isMobile ? "flex-start" : "space-between", alignItems: isMobile ? "flex-start" : "center", marginBottom: isMobile ? 16 : 24, gap: isMobile ? 16 : 0 }}>
           {/* Tabs */}
           <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-            {S6_TABS.map((tab) => {
+            {tabs.map((tab) => {
               const isActive = activeTab === tab.id;
               return (
                 <button key={tab.id} onClick={() => { setActiveTab(tab.id); setSlideIndex(0); setProgress(0); }} style={{
@@ -1554,9 +1586,10 @@ function Section6() {
 
 // ── Section 7 — CTA Banner (Figma 276:1757) ─────────────────────────────
 
-function Section7() {
+function Section7({ data }: { data?: any }) {
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
+  const content = (data?.content ?? {}) as any;
 
   // Scroll-triggered fill
   const textRef = useRef<HTMLDivElement>(null);
@@ -1608,7 +1641,7 @@ function Section7() {
               willChange: "background-position",
               transition: "background-position 1.1s cubic-bezier(0.22, 1, 0.36, 1) 0s",
             }}>
-              I can teach and enlighten many children.
+              {content.line1 || "I can teach and enlighten many children."}
             </span>
           </p>
           {/* Line 2 — Lora SemiBold 48px: dark + grey */}
@@ -1622,7 +1655,7 @@ function Section7() {
               willChange: "background-position",
               transition: "background-position 1.5s cubic-bezier(0.22, 1, 0.36, 1) 0.15s",
             }}>
-              But teaching every child that creates a lasting impact
+              {content.line2Part1 || "But teaching every child that creates a lasting impact"}
             </span>
             <span style={{
               background: "linear-gradient(90deg, #bcbcbc 50%, #f0f0f0 50%)",
@@ -1633,7 +1666,7 @@ function Section7() {
               willChange: "background-position",
               transition: "background-position 1.5s cubic-bezier(0.22, 1, 0.36, 1) 0.35s",
             }}>
-              {" "}towards Ujjwal Bharat needs a larger mission
+              {" "}{content.line2Part2 || "towards Ujjwal Bharat needs a larger mission"}
             </span>
           </p>
         </div>
@@ -1650,7 +1683,7 @@ function Section7() {
               fontSize: 16, lineHeight: "22px", color: "#686868",
               textAlign: "right", width: 243, margin: 0,
             }}>
-              This larger mission needs all of us to unite. Teachers, students, parents, and society.
+              {content.supportText || "This larger mission needs all of us to unite. Teachers, students, parents, and society."}
             </p>
             <div style={{ display: "flex", gap: 12 }}>
               <Link to="/join"
@@ -1662,7 +1695,7 @@ function Section7() {
                   border: "1px solid #bf791d", background: "transparent",
                   textDecoration: "none", cursor: "pointer", transition: "background 0.18s ease",
                 }}>
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 16, color: "#bf791d", whiteSpace: "nowrap" }}>Join Ujjwala's Mission</span>
+                <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 16, color: "#bf791d", whiteSpace: "nowrap" }}>{content.cta1Text || "Join Ujjwala's Mission"}</span>
                 <ArrowIcon color="#bf791d" />
               </Link>
               <Link to="/donate" style={{
@@ -1671,7 +1704,7 @@ function Section7() {
                 background: "#bf791d", border: "none",
                 textDecoration: "none", cursor: "pointer",
               }}>
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 16, color: "#fff", whiteSpace: "nowrap" }}>Donate Now</span>
+                <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 16, color: "#fff", whiteSpace: "nowrap" }}>{content.cta2Text || "Donate Now"}</span>
                 <ArrowIcon color="#fff" />
               </Link>
             </div>
@@ -1680,15 +1713,15 @@ function Section7() {
           /* Mobile: stacked below text */
           <div style={{ display: "flex", flexDirection: "column", gap: 20, marginTop: 24 }}>
             <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 14, lineHeight: "22px", color: "#686868", margin: 0 }}>
-              This larger mission needs all of us to unite. Teachers, students, parents, and society.
+              {content.supportText || "This larger mission needs all of us to unite. Teachers, students, parents, and society."}
             </p>
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               <Link to="/join" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, padding: "12px 24px", borderRadius: 30, border: "1px solid #bf791d", background: "transparent", textDecoration: "none" }}>
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 15, color: "#bf791d", whiteSpace: "nowrap" }}>Join Ujjwala's Mission</span>
+                <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 15, color: "#bf791d", whiteSpace: "nowrap" }}>{content.cta1Text || "Join Ujjwala's Mission"}</span>
                 <ArrowIcon color="#bf791d" />
               </Link>
               <Link to="/donate" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, padding: "12px 24px", borderRadius: 30, background: "#bf791d", border: "none", textDecoration: "none" }}>
-                <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 15, color: "#fff", whiteSpace: "nowrap" }}>Donate Now</span>
+                <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 15, color: "#fff", whiteSpace: "nowrap" }}>{content.cta2Text || "Donate Now"}</span>
                 <ArrowIcon color="#fff" />
               </Link>
             </div>
@@ -2055,9 +2088,10 @@ const S8_PROGRAMS = [
 ];
 
 // ── IntroNGOSection (Figma 773:754) ──────────────────────────────────────
-function IntroNGOSection() {
+function IntroNGOSection({ data }: { data?: any }) {
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
+  const content = (data?.content ?? {}) as any;
 
   // Dot-matrix decoration for Mission card (replaces the 600+ Figma vectors)
   const DotGrid = () => (
@@ -2077,14 +2111,14 @@ function IntroNGOSection() {
     return (
       <section id="section-intro-ngo" style={{ width: "100%", background: "#fff", padding: isMobile ? "48px 20px 0" : "60px 32px 0", boxSizing: "border-box" }}>
         <h2 style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: isMobile ? 26 : 32, lineHeight: 1.3, color: "#000", textAlign: "center", margin: "0 0 32px" }}>
-          Introducing,<br />Shiksha Raj, Ujjwal Bharat Foundation
+          {content.titleLine1 || "Introducing,"}<br />{content.titleLine2 || "Shiksha Raj, Ujjwal Bharat Foundation"}
         </h2>
         <div style={{ display: "flex", flexDirection: "column", gap: 16, marginBottom: 24 }}>
           {/* Vision */}
           <div style={{ background: "#f8f5ef", borderRadius: 20, border: "1px solid #ebd5b9", padding: "28px 24px", display: "flex", flexDirection: "column", justifyContent: "flex-end", gap: 12 }}>
             <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 400, fontSize: isMobile ? 40 : 48, lineHeight: 1, background: "linear-gradient(to bottom, #d68a09 0%, #f8f5ef 75%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>Vision</span>
             <p style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 300, fontSize: 14, lineHeight: "22px", color: "#000", margin: 0 }}>
-              To build education leadership (Shiksha Raj) for a Brighter India (Ujjwal Bharat) where every child receives free, accessible education that shapes confidence, capability, and character.
+              {content.visionText || "To build education leadership (Shiksha Raj) for a Brighter India (Ujjwal Bharat) where every child receives free, accessible education that shapes confidence, capability, and character."}
             </p>
           </div>
           {/* Mission */}
@@ -2092,7 +2126,7 @@ function IntroNGOSection() {
             <DotGrid />
             <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 400, fontSize: isMobile ? 44 : 52, lineHeight: 1, textAlign: "right", position: "relative", zIndex: 1, background: "linear-gradient(to bottom, #d68a09 0%, #f8f5ef 75%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>Mission</span>
             <p style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 300, fontSize: 14, lineHeight: "22px", color: "#000", margin: 0, textAlign: "right", position: "relative", zIndex: 1 }}>
-              To transform education into a practical, experiential, life-connected, digitally ready, teacher-led, community-supported system that goes beyond textbooks to give every child free, meaningful learning and prepare them for life.
+              {content.missionText || "To transform education into a practical, experiential, life-connected, digitally ready, teacher-led, community-supported system that goes beyond textbooks to give every child free, meaningful learning and prepare them for life."}
             </p>
           </div>
         </div>
@@ -2150,7 +2184,7 @@ function IntroNGOSection() {
           fontFamily: "'Lora', serif", fontWeight: 600, fontSize: 40,
           lineHeight: 1.3, color: "#000", textAlign: "center", margin: 0,
         }}>
-          Introducing,<br />Shiksha Raj, Ujjwal Bharat Foundation
+          {content.titleLine1 || "Introducing,"}<br />{content.titleLine2 || "Shiksha Raj, Ujjwal Bharat Foundation"}
         </h2>
 
         {/* Cards group — 1008×405, absolute children */}
@@ -2175,7 +2209,7 @@ function IntroNGOSection() {
               Vision
             </span>
             <p style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 300, fontSize: 15, lineHeight: "22px", color: "#000", margin: 0 }}>
-              To build education leadership (Shiksha Raj) for a Brighter India (Ujjwal Bharat) where every child receives free, accessible education that shapes confidence, capability, and character.
+              {content.visionText || "To build education leadership (Shiksha Raj) for a Brighter India (Ujjwal Bharat) where every child receives free, accessible education that shapes confidence, capability, and character."}
             </p>
           </div>
 
@@ -2201,7 +2235,7 @@ function IntroNGOSection() {
               Mission
             </span>
             <p style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 300, fontSize: 15, lineHeight: "22px", color: "#000", margin: 0, textAlign: "right", position: "relative", zIndex: 1 }}>
-              To transform education into a practical, experiential, life-connected, digitally ready, teacher-led, community-supported system that goes beyond textbooks to give every child free, meaningful learning and prepare them for life.
+              {content.missionText || "To transform education into a practical, experiential, life-connected, digitally ready, teacher-led, community-supported system that goes beyond textbooks to give every child free, meaningful learning and prepare them for life."}
             </p>
           </div>
 
@@ -2211,7 +2245,7 @@ function IntroNGOSection() {
   );
 }
 
-function Section8({ onOpenModal }: { onOpenModal: () => void }) {
+function Section8({ onOpenModal, data }: { onOpenModal: () => void; data?: any }) {
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
   const wrapperRef = useRef<HTMLDivElement>(null);
@@ -2219,8 +2253,26 @@ function Section8({ onOpenModal }: { onOpenModal: () => void }) {
   // Lock scroll-listener while a tab-click navigation is animating
   const isTabNavRef = useRef(false);
   const tabNavTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const cmsItems = data?.items ?? [];
+  const programs = cmsItems.length > 0
+    ? cmsItems.map((it: any, i: number) => {
+        const fallback = S8_PROGRAMS[i % S8_PROGRAMS.length];
+        return {
+          id: `s8-${i}`,
+          tab: it.tab || fallback?.tab || "",
+          hindi: it.hindi || fallback?.hindi || "",
+          english: it.english || fallback?.english || "",
+          desc: it.desc || fallback?.desc || "",
+          bullets: fallback?.bullets ?? [],
+          punchline: it.punchline || fallback?.punchline || "",
+          cta: it.cta || fallback?.cta || "Learn More",
+          photo: it.photo || fallback?.photo,
+          photoNode: undefined,
+        };
+      })
+    : S8_PROGRAMS;
 
-  const TOTAL = S8_PROGRAMS.length; // 5
+  const TOTAL = programs.length; // 5
   const STEP = 350; // px of scroll per card advance
   const RUNWAY = TOTAL * STEP;
 
@@ -2284,25 +2336,25 @@ function Section8({ onOpenModal }: { onOpenModal: () => void }) {
 
   // ── Mobile / Tablet ──────────────────────────────────────────────────────
   if (isMobile || isTablet) {
-    const prog = S8_PROGRAMS[activeIdx];
+    const prog = programs[activeIdx];
     return (
       <div id="section8-programs" style={{ width: "100%", background: "#fff", padding: isMobile ? "40px 20px 48px" : "48px 32px 60px", boxSizing: "border-box", position: "relative" }}>
         <span id="section8-adopt" style={{ position: "absolute", top: 0, left: 0, display: "block", height: 0, pointerEvents: "none" }} />
         {/* Header */}
         <div style={{ display: "flex", flexDirection: "column", gap: 12, marginBottom: 24 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 12 }}>
-            <h2 style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: isMobile ? 26 : 34, lineHeight: 1.28, color: "#000", margin: 0 }}>What the Trust Builds Ground</h2>
+            <h2 style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: isMobile ? 26 : 34, lineHeight: 1.28, color: "#000", margin: 0 }}>{(data?.content as any)?.title || "What the Trust Builds Ground"}</h2>
             <div style={{ border: "1px solid #e8e8e8", borderRadius: 40, padding: "5px 16px", flexShrink: 0 }}>
-              <span style={{ fontFamily: "'Poppins', sans-serif", fontSize: 12, color: "#bf791d" }}>On the Ground</span>
+              <span style={{ fontFamily: "'Poppins', sans-serif", fontSize: 12, color: "#bf791d" }}>{(data?.content as any)?.badge || "On the Ground"}</span>
             </div>
           </div>
           <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 14, lineHeight: "22px", color: "#686868", margin: 0 }}>
-            Five programmes built from 31 years of classroom truth — each one addresses a real need.
+            {(data?.content as any)?.subtitle || "Five programmes built from 31 years of classroom truth — each one addresses a real need."}
           </p>
         </div>
         {/* Tabs */}
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", marginBottom: 20 }}>
-          {S8_PROGRAMS.map((p, idx) => {
+          {programs.map((p: any, idx: number) => {
             const isActive = activeIdx === idx;
             return (
               <button key={idx} onClick={() => handleTabClick(idx)} style={{
@@ -2372,14 +2424,14 @@ function Section8({ onOpenModal }: { onOpenModal: () => void }) {
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
             <div style={{ display: "flex", flexDirection: "column", gap: 10, maxWidth: 634 }}>
               <h2 style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: 40, lineHeight: "54.4px", color: "#000", margin: 0, textTransform: "capitalize" }}>
-                What the Trust Builds Ground
+                {(data?.content as any)?.title || "What the Trust Builds Ground"}
               </h2>
               <p style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 16, lineHeight: "22px", color: "#686868", margin: 0 }}>
-                Five programmes built from 31 years of classroom truth — each one addresses a real need.
+                {(data?.content as any)?.subtitle || "Five programmes built from 31 years of classroom truth — each one addresses a real need."}
               </p>
             </div>
             <div style={{ border: "1px solid #e8e8e8", borderRadius: 40, padding: "6px 20px", flexShrink: 0 }}>
-              <span style={{ fontFamily: "'Poppins', sans-serif", fontSize: 13, color: "#bf791d" }}>On the Ground</span>
+              <span style={{ fontFamily: "'Poppins', sans-serif", fontSize: 13, color: "#bf791d" }}>{(data?.content as any)?.badge || "On the Ground"}</span>
             </div>
           </div>
 
@@ -2388,7 +2440,7 @@ function Section8({ onOpenModal }: { onOpenModal: () => void }) {
 
             {/* Left: programme tabs */}
             <div style={{ width: 212, display: "flex", flexDirection: "column", gap: 10, flexShrink: 0 }}>
-              {S8_PROGRAMS.map((p, idx) => {
+              {programs.map((p: any, idx: number) => {
                 const isActive = activeIdx === idx;
                 return (
                   <button key={idx} onClick={() => handleTabClick(idx)} style={{
@@ -2405,7 +2457,7 @@ function Section8({ onOpenModal }: { onOpenModal: () => void }) {
 
             {/* Right: card stack — all 5 cards in DOM, past ones peek from the TOP */}
             <div style={{ flex: 1, position: "relative", height: CONTAINER_H }}>
-              {S8_PROGRAMS.map((prog, idx) => {
+              {programs.map((prog: any, idx: number) => {
                 const isActive = idx === activeIdx;
                 const isPast   = idx < activeIdx;
                 const isFuture = idx > activeIdx;
@@ -3041,13 +3093,28 @@ function getS10CardPath(N: number, H = 477): string {
   return p.join(' ');
 }
 
-function Section10({ onOpenModal }: { onOpenModal: () => void }) {
+function Section10({ onOpenModal, data }: { onOpenModal: () => void; data?: any }) {
   const sectionRef = useFadeInUp();
   const [activeTab, setActiveTab] = useState(0);
   const [fading, setFading] = useState(false);
   const [winW, setWinW] = useState(typeof window !== "undefined" ? window.innerWidth : 1200);
   const [cardH, setCardH] = useState(477);
   const contentRef = useRef<HTMLDivElement>(null);
+  const cmsItems = data?.items ?? [];
+  const tabs: S10TabData[] = cmsItems.length > 0
+    ? cmsItems.map((it: any, i: number) => {
+        const fallback = S10_TABS[i % S10_TABS.length];
+        return {
+          label: it.tab || fallback?.label || `Tab ${i + 1}`,
+          forLabel: it.forLabel || fallback?.forLabel || "",
+          desc: it.desc || fallback?.desc || "",
+          bullets: fallback?.bullets ?? [],
+          cta: it.cta || fallback?.cta || "Learn More",
+          photo: it.photo || fallback?.photo,
+          photoBg: fallback?.photoBg,
+        };
+      })
+    : S10_TABS;
 
   useEffect(() => {
     const onResize = () => setWinW(window.innerWidth);
@@ -3093,7 +3160,7 @@ function Section10({ onOpenModal }: { onOpenModal: () => void }) {
     return () => window.removeEventListener("hashchange", handleHash);
   }, []);
 
-  const tab    = S10_TABS[activeTab];
+  const tab    = tabs[activeTab];
   const TAB_W  = 244.5;
   const GAP    = 10;
   const CARD_H = cardH;
@@ -3126,14 +3193,14 @@ function Section10({ onOpenModal }: { onOpenModal: () => void }) {
             fontSize: isMobile ? 28 : 40, lineHeight: "1.36",
             color: "#000", margin: "0 0 12px", textTransform: "capitalize",
           }}>
-            Find Your Role In This Mission
+            {(data?.content as any)?.title || "Find Your Role In This Mission"}
           </h2>
           <p style={{
             fontFamily: "'DM Sans', sans-serif", fontWeight: 300,
             fontSize: 16, lineHeight: "22px", color: "#686868",
             margin: "0 auto", maxWidth: 556,
           }}>
-            Choose what fits your life and your capacity. Every role here connects directly to the way India educates.
+            {(data?.content as any)?.subtitle || "Choose what fits your life and your capacity. Every role here connects directly to the way India educates."}
           </p>
         </div>
 
@@ -3142,7 +3209,7 @@ function Section10({ onOpenModal }: { onOpenModal: () => void }) {
           /* Mobile: simple flex tabs above a rounded card */
           <div>
             <div style={{ display: "flex", gap: GAP, marginBottom: 0 }}>
-              {S10_TABS.map((t, i) => {
+              {tabs.map((t, i) => {
                 const isActive = i === activeTab;
                 return (
                   <button key={t.label} onClick={() => handleTabClick(i)} style={{
@@ -3282,7 +3349,7 @@ function Section10({ onOpenModal }: { onOpenModal: () => void }) {
               gap: GAP,
               zIndex: 10,
             }}>
-              {S10_TABS.map((t, i) => {
+              {tabs.map((t, i) => {
                 const isActive = i === activeTab;
                 return (
                   <button
@@ -3361,10 +3428,15 @@ const S12_CARDS = [
   },
 ];
 
-function Section12({ onOpenModal }: { onOpenModal: () => void }) {
+function Section12({ onOpenModal, data }: { onOpenModal: () => void; data?: any }) {
   const sectionRef = useFadeInUp();
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
+  const content = (data?.content ?? {}) as any;
+  const cmsItems = data?.items ?? [];
+  const cards = cmsItems.length > 0
+    ? cmsItems.map((it: any, i: number) => ({ num: String(it.num ?? i + 1).padStart(2, "0"), title: it.title || "", desc: it.desc || "" }))
+    : S12_CARDS;
   const TAG_PILL: React.CSSProperties = {
     border: "1px solid #bf791d",
     borderRadius: 100,
@@ -3388,7 +3460,7 @@ function Section12({ onOpenModal }: { onOpenModal: () => void }) {
 
         {/* Single pill above title */}
         <div style={{ display: "flex", justifyContent: "center", marginBottom: isMobile ? 16 : 20 }}>
-          <span style={TAG_PILL}>Your Contribution</span>
+          <span style={TAG_PILL}>{content.badge || "Your Contribution"}</span>
         </div>
 
         {/* Title */}
@@ -3401,12 +3473,12 @@ function Section12({ onOpenModal }: { onOpenModal: () => void }) {
           color: "#111",
           margin: isMobile ? "0 0 32px 0" : "0 0 48px 0",
         }}>
-          How Your Support Turns Into Learning
+          {content.title || "How Your Support Turns Into Learning"}
         </h2>
 
         {/* Process cards */}
         <div style={{ display: "grid", gridTemplateColumns: gridCols, gap: 16, marginBottom: 24 }}>
-          {S12_CARDS.map(card => (
+          {cards.map((card: any) => (
             <div key={card.num} style={{
               position: "relative",
               background: "#f8f5ef",
@@ -3499,7 +3571,7 @@ function Section12({ onOpenModal }: { onOpenModal: () => void }) {
                 color: "#111",
                 maxWidth: "100%",
               }}>
-                Stand with a mission where every contribution is valued, placed with care, and reflected in real change.
+                {content.ctaBannerText || "Stand with a mission where every contribution is valued, placed with care, and reflected in real change."}
               </h3>
             </div>
 
@@ -3528,7 +3600,7 @@ function Section12({ onOpenModal }: { onOpenModal: () => void }) {
                   whiteSpace: "nowrap", transition: "all 0.2s ease",
                   width: isMobile ? "100%" : "auto",
                 }}>
-                Support This Mission <ArrowIcon color="#BF791D" size={16} />
+                {content.cta1Text || "Support This Mission"} <ArrowIcon color="#BF791D" size={16} />
               </button>
               {/* Solid gold button */}
               <Link to="/donate" style={{ textDecoration: "none", width: isMobile ? "100%" : "auto" }}>
@@ -3545,7 +3617,7 @@ function Section12({ onOpenModal }: { onOpenModal: () => void }) {
                     whiteSpace: "nowrap", transition: "all 0.2s ease",
                     width: isMobile ? "100%" : "auto",
                   }}>
-                  Donate Now <ArrowIcon color="#fff" size={16} />
+                  {content.cta2Text || "Donate Now"} <ArrowIcon color="#fff" size={16} />
                 </button>
               </Link>
             </div>
@@ -3588,8 +3660,17 @@ const HONEST_CARDS_DATA = [
   },
 ];
 
-function HonestImpactCard({ cardIdx, style, compact }: { cardIdx: number; style?: React.CSSProperties; compact?: boolean }) {
-  const card = HONEST_CARDS_DATA[cardIdx];
+function HonestImpactCard({ cardIdx, style, compact, overrideData }: { cardIdx: number; style?: React.CSSProperties; compact?: boolean; overrideData?: any }) {
+  const fallback = HONEST_CARDS_DATA[cardIdx];
+  const cms = overrideData;
+  const card = cms ? {
+    tags: [cms.tag1, cms.tag2].filter(Boolean),
+    rows: [
+      cms.row1Label ? { label: cms.row1Label, text: cms.row1Text || "" } : null,
+      cms.row2Label ? { label: cms.row2Label, text: cms.row2Text || "" } : null,
+      cms.row3Label ? { label: cms.row3Label, text: cms.row3Text || "" } : null,
+    ].filter(Boolean) as { label: string; text: string }[],
+  } : fallback;
   return (
     <div style={{
       background: "#f8f5ef", borderRadius: 16,
@@ -3652,11 +3733,13 @@ function HonestPhotoBlock({ src, style }: { src: string; style?: React.CSSProper
   );
 }
 
-function SectionHonestImpact() {
+function SectionHonestImpact({ data }: { data?: any }) {
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
   const outerRef = useRef<HTMLDivElement>(null);
   const stripRef = useRef<HTMLDivElement>(null);
+  const content = (data?.content ?? {}) as any;
+  const cmsItems = data?.items ?? [];
 
   // Unified sticky-scroll: works for mobile, tablet, and desktop
   useEffect(() => {
@@ -3722,12 +3805,12 @@ function SectionHonestImpact() {
               border: "1px solid #e8e8e8", borderRadius: 40, padding: "5px 16px",
               fontFamily: "'Poppins', sans-serif", fontSize: 12, color: "#bf791d",
               display: "inline-block", marginBottom: 10,
-            }}>Honest Impact</span>
+            }}>{content.badge || "Honest Impact"}</span>
             <h2 style={{
               fontFamily: "'Lora', serif", fontWeight: 600,
               fontSize: isMobile ? 22 : 28, lineHeight: 1.3,
               color: "#000", margin: 0, textTransform: "capitalize",
-            }}>This mission touched lives deeply.</h2>
+            }}>{content.heading || "This mission touched lives deeply."}</h2>
           </div>
 
           {/* Scrolling strip — 10 columns, all same colW */}
@@ -3741,7 +3824,7 @@ function SectionHonestImpact() {
             {/* Col 1: photo top + text card */}
             <MCol>
               <HonestPhotoBlock src={imgHI1} style={{ flex: 1 }} />
-              <HonestImpactCard cardIdx={0} compact style={{ flexShrink: 0 }} />
+              <HonestImpactCard cardIdx={0} compact style={{ flexShrink: 0 }} overrideData={cmsItems[0]} />
             </MCol>
 
             {/* Col 2: full photo */}
@@ -3757,7 +3840,7 @@ function SectionHonestImpact() {
 
             {/* Col 4: text card + photo */}
             <MCol>
-              <HonestImpactCard cardIdx={1} compact style={{ flexShrink: 0 }} />
+              <HonestImpactCard cardIdx={1} compact style={{ flexShrink: 0 }} overrideData={cmsItems[1]} />
               <HonestPhotoBlock src={imgHI5} style={{ flex: 1 }} />
             </MCol>
 
@@ -3770,7 +3853,7 @@ function SectionHonestImpact() {
             {/* Col 6: photo + text card */}
             <MCol>
               <HonestPhotoBlock src={imgHI8} style={{ flex: 1 }} />
-              <HonestImpactCard cardIdx={2} compact style={{ flexShrink: 0 }} />
+              <HonestImpactCard cardIdx={2} compact style={{ flexShrink: 0 }} overrideData={cmsItems[2]} />
             </MCol>
 
             {/* Col 7: full photo */}
@@ -3786,7 +3869,7 @@ function SectionHonestImpact() {
 
             {/* Col 9: text card + photo */}
             <MCol>
-              <HonestImpactCard cardIdx={3} compact style={{ flexShrink: 0 }} />
+              <HonestImpactCard cardIdx={3} compact style={{ flexShrink: 0 }} overrideData={cmsItems[3]} />
               <HonestPhotoBlock src={imgHI12} style={{ flex: 1 }} />
             </MCol>
 
@@ -3826,14 +3909,14 @@ function SectionHonestImpact() {
               fontFamily: "'Poppins', sans-serif", fontSize: 13, color: "#bf791d",
               display: "inline-block", width: "fit-content",
             }}>
-              Honest Impact
+              {content.badge || "Honest Impact"}
             </span>
             <h2 style={{
               fontFamily: "'Lora', serif", fontWeight: 600,
               fontSize: "clamp(28px, 3vw, 40px)", lineHeight: 1.36,
               color: "#000", margin: 0, textTransform: "capitalize",
             }}>
-              This mission touched lives deeply.
+              {content.heading || "This mission touched lives deeply."}
             </h2>
           </div>
           <p style={{
@@ -3841,7 +3924,7 @@ function SectionHonestImpact() {
             lineHeight: "22px", color: "#686868", textAlign: "right",
             maxWidth: 255, margin: 0, flexShrink: 0,
           }}>
-            In voices, journeys, and moments where children, families, and teachers, lives quietly transform.
+            {content.subtitle || "In voices, journeys, and moments where children, families, and teachers, lives quietly transform."}
           </p>
         </div>
 
@@ -3858,7 +3941,7 @@ function SectionHonestImpact() {
           {/* Col 1: photo (flex) + text card */}
           <div style={{ width: 459, display: "flex", flexDirection: "column", gap: 16, flexShrink: 0 }}>
             <HonestPhotoBlock src={imgHI1} style={{ flex: 1 }} />
-            <HonestImpactCard cardIdx={0} style={{ flexShrink: 0 }} />
+            <HonestImpactCard cardIdx={0} style={{ flexShrink: 0 }} overrideData={cmsItems[0]} />
           </div>
 
           {/* Col 2: full-height photo */}
@@ -3874,7 +3957,7 @@ function SectionHonestImpact() {
 
           {/* Col 4: text card (flex) + photo bottom */}
           <div style={{ width: 350, display: "flex", flexDirection: "column", gap: 16, flexShrink: 0 }}>
-            <HonestImpactCard cardIdx={1} style={{ flex: 1, minHeight: 0 }} />
+            <HonestImpactCard cardIdx={1} style={{ flex: 1, minHeight: 0 }} overrideData={cmsItems[1]} />
             <HonestPhotoBlock src={imgHI5} style={{ height: 352 }} />
           </div>
 
@@ -3887,7 +3970,7 @@ function SectionHonestImpact() {
           {/* Col 6: photo (flex) + text card */}
           <div style={{ width: 459, display: "flex", flexDirection: "column", gap: 16, flexShrink: 0 }}>
             <HonestPhotoBlock src={imgHI8} style={{ flex: 1 }} />
-            <HonestImpactCard cardIdx={2} style={{ flexShrink: 0 }} />
+            <HonestImpactCard cardIdx={2} style={{ flexShrink: 0 }} overrideData={cmsItems[2]} />
           </div>
 
           {/* Col 7: full-height photo */}
@@ -3903,7 +3986,7 @@ function SectionHonestImpact() {
 
           {/* Col 9: text card (flex) + photo bottom */}
           <div style={{ width: 350, display: "flex", flexDirection: "column", gap: 16, flexShrink: 0 }}>
-            <HonestImpactCard cardIdx={3} style={{ flex: 1, minHeight: 0 }} />
+            <HonestImpactCard cardIdx={3} style={{ flex: 1, minHeight: 0 }} overrideData={cmsItems[3]} />
             <HonestPhotoBlock src={imgHI12} style={{ height: 352 }} />
           </div>
 
@@ -4095,10 +4178,23 @@ function S15Card({ member, cardWidth = 236 }: { member: typeof S15_TEAM[0]; card
   );
 }
 
-function Section15() {
+function Section15({ data }: { data?: any }) {
   const sectionRef = useFadeInUp();
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
+  const content = (data?.content ?? {}) as any;
+  const cmsItems = data?.items ?? [];
+  const teamMembers = cmsItems.length > 0
+    ? cmsItems.map((it: any, i: number) => {
+        const fallback = S15_TEAM[i % S15_TEAM.length];
+        return {
+          name: it.name || fallback?.name || "",
+          role: it.role || fallback?.role || "",
+          photo: it.photo || fallback?.photo,
+          bio: it.bio || fallback?.bio || "",
+        };
+      })
+    : S15_TEAM;
 
   // Card width: full fluid on mobile, fixed 236 on desktop
   const cardWidth = isMobile ? "80vw" : isTablet ? "calc(50% - 10px)" : 236;
@@ -4115,19 +4211,19 @@ function Section15() {
               padding: "6px 20px", fontFamily: "'Poppins', sans-serif",
               fontWeight: 400, fontSize: 13, color: "#bf791d", width: "fit-content",
             }}>
-              My support system
+              {content.badge || "My support system"}
             </span>
             <h2 style={{
               fontFamily: "'Lora', serif", fontWeight: 600, fontSize: 28,
               lineHeight: 1.36, color: "#000", margin: 0, textTransform: "capitalize",
             }}>
-              Meet the faces that keep the mission alive
+              {content.title || "Meet the faces that keep the mission alive"}
             </h2>
             <p style={{
               fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 15,
               lineHeight: "22px", color: "#686868", margin: 0,
             }}>
-              The first ones to inspire &amp; believe in me. The first ones to carry the mission on their shoulders.
+              {content.subtitle || "The first ones to inspire & believe in me. The first ones to carry the mission on their shoulders."}
             </p>
           </div>
         ) : (
@@ -4140,7 +4236,7 @@ function Section15() {
               padding: "6px 20px", fontFamily: "'Poppins', sans-serif",
               fontWeight: 400, fontSize: 13, color: "#bf791d", whiteSpace: "nowrap",
             }}>
-              My support system
+              {content.badge || "My support system"}
             </span>
             <h2 style={{
               fontFamily: "'Lora', serif", fontWeight: 600,
@@ -4148,14 +4244,14 @@ function Section15() {
               color: "#000", margin: 0, textTransform: "capitalize",
               textAlign: "center",
             }}>
-              Meet the faces that keep the mission alive
+              {content.title || "Meet the faces that keep the mission alive"}
             </h2>
             <p style={{
               fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 15,
               lineHeight: "22px", color: "#686868",
               width: isTablet ? 160 : 206, textAlign: "right", margin: 0,
             }}>
-              The first ones to inspire &amp; believe in me. The first ones to carry the mission on their shoulders.
+              {content.subtitle || "The first ones to inspire & believe in me. The first ones to carry the mission on their shoulders."}
             </p>
           </div>
         )}
@@ -4169,7 +4265,7 @@ function Section15() {
             scrollSnapType: "x mandatory",
             WebkitOverflowScrolling: "touch",
           }}>
-            {S15_TEAM.map((member, i) => (
+            {teamMembers.map((member: any, i: number) => (
               <div key={i} style={{ scrollSnapAlign: "start", flexShrink: 0 }}>
                 <S15Card member={member} cardWidth={cardWidth} />
               </div>
@@ -4177,13 +4273,13 @@ function Section15() {
           </div>
         ) : isTablet ? (
           <div style={{ display: "flex", flexWrap: "wrap", gap: 20 }}>
-            {S15_TEAM.map((member, i) => (
+            {teamMembers.map((member: any, i: number) => (
               <S15Card key={i} member={member} cardWidth={cardWidth} />
             ))}
           </div>
         ) : (
           <div style={{ display: "flex", gap: 20 }}>
-            {S15_TEAM.map((member, i) => (
+            {teamMembers.map((member: any, i: number) => (
               <S15Card key={i} member={member} />
             ))}
           </div>
@@ -4208,9 +4304,15 @@ const ArrowCircle = ({ color = "#bf791d", bg = "transparent" }: { color?: string
   </svg>
 );
 
-function Section13({ onOpenModal }: { onOpenModal: () => void }) {
+function Section13({ onOpenModal, data }: { onOpenModal: () => void; data?: any }) {
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
+  const content = (data?.content ?? {}) as any;
+  const bullets = [
+    content.bullet1 || "Progress is visible & published",
+    content.bullet2 || "Use of funds reported quarterly",
+    content.bullet3 || "80G eligible · FCRA",
+  ];
 
   return (
     <section style={{
@@ -4273,7 +4375,7 @@ function Section13({ onOpenModal }: { onOpenModal: () => void }) {
             whiteSpace: "nowrap",
             background: "rgba(255,255,255,0.6)",
           }}>
-            One Mission · Many Hands ·
+            {content.badge || "One Mission · Many Hands ·"}
           </span>
 
           {/* Heading */}
@@ -4286,13 +4388,13 @@ function Section13({ onOpenModal }: { onOpenModal: () => void }) {
             margin: 0,
             textTransform: "capitalize",
           }}>
-            One Teacher Started This. Many Can Keep It Going.
+            {content.heading || "One Teacher Started This. Many Can Keep It Going."}
           </h2>
 
           {/* Bullets — inline on mobile */}
           {isMobile && (
             <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-              {S13_BULLETS.map(item => (
+              {bullets.map(item => (
                 <div key={item} style={{ display: "flex", alignItems: "center", gap: 10 }}>
                   <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
                     <path d="M2 8h12M10 4l4 4-4 4" stroke="#bf791d" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -4322,7 +4424,7 @@ function Section13({ onOpenModal }: { onOpenModal: () => void }) {
               fontSize: isMobile ? 15 : 16,
               color: "#fff", whiteSpace: "nowrap",
             }}>
-              Donate Now
+              {content.cta1Text || "Donate Now"}
               <ArrowCircle color="rgba(255,255,255,0.7)" />
             </button>
 
@@ -4334,7 +4436,7 @@ function Section13({ onOpenModal }: { onOpenModal: () => void }) {
               fontSize: isMobile ? 15 : 16,
               color: "#bf791d", whiteSpace: "nowrap",
             }}>
-              Join Teacher Network
+              {content.cta2Text || "Join Teacher Network"}
               <ArrowCircle color="#bf791d" />
             </button>
 
@@ -4346,7 +4448,7 @@ function Section13({ onOpenModal }: { onOpenModal: () => void }) {
               fontSize: isMobile ? 15 : 16,
               color: "#bf791d", whiteSpace: "nowrap",
             }}>
-              Partner With Us
+              {content.cta3Text || "Partner With Us"}
               <ArrowCircle color="#bf791d" />
             </button>
           </div>
@@ -4365,9 +4467,9 @@ function Section13({ onOpenModal }: { onOpenModal: () => void }) {
               fontSize: 15, lineHeight: "26px", color: "#636363",
               margin: 0, maxWidth: 380,
             }}>
-              What Ujjwala built inside her classroom over 31 years is now a structure that can travel — to other schools, other teachers, and other children who deserve the same quality of care and learning.
+              {content.description || "What Ujjwala built inside her classroom over 31 years is now a structure that can travel — to other schools, other teachers, and other children who deserve the same quality of care and learning."}
             </p>
-            {S13_BULLETS.map(item => (
+            {bullets.map(item => (
               <div key={item} style={{ display: "flex", alignItems: "center", gap: 10 }}>
                 <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}>
                   <path d="M2 8h12M10 4l4 4-4 4" stroke="#bf791d" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -5313,13 +5415,15 @@ const S18_QUOTES = [
   "When a teacher walks to a child's door, education begins to feel possible again.",
 ];
 
-function Section18() {
+function Section18({ data }: { data?: any }) {
   const sectionRef = useFadeInUp();
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
+  const cmsItems = data?.items ?? [];
+  const quotes: string[] = cmsItems.length > 0 ? cmsItems.map((it: any) => it.quote || "") : S18_QUOTES;
   const [current, setCurrent] = useState(0);
   const [animKey, setAnimKey] = useState(0);
-  const total = S18_QUOTES.length;
+  const total = quotes.length;
 
   const go = useCallback((dir: "next" | "prev") => {
     setAnimKey(k => k + 1);
@@ -5365,7 +5469,7 @@ function Section18() {
           onTouchEnd={e => onDragEnd(e.changedTouches[0].clientX)}
         >
           {(() => {
-            const quote = S18_QUOTES[current];
+            const quote = quotes[current];
             const splitIdx = quote.indexOf(". ");
             const first = splitIdx !== -1 ? quote.slice(0, splitIdx + 1) : quote;
             const rest  = splitIdx !== -1 ? quote.slice(splitIdx + 1) : "";
@@ -5433,11 +5537,12 @@ function Section18() {
   );
 }
 // ── Section Closing ────────────────────────────────────────────────────────
-function SectionClosing({ onOpenModal }: { onOpenModal: () => void }) {
+function SectionClosing({ onOpenModal, data }: { onOpenModal: () => void; data?: any }) {
   const sectionRef = useFadeInUp();
   const textRef = useRef<HTMLDivElement>(null);
   const [revealed, setRevealed] = useState(false);
   const isMobile = useIsMobile();
+  const content = (data?.content ?? {}) as any;
 
   useEffect(() => {
     const el = textRef.current;
@@ -5479,22 +5584,22 @@ function SectionClosing({ onOpenModal }: { onOpenModal: () => void }) {
 
           {/* Line 1 — SemiBold black 28px */}
           <p style={{ fontFamily: "'Lora', serif", fontSize: isMobile ? 22 : 28, lineHeight: 1.36, margin: 0 }}>
-            {fillSpan("Education in India has not changed enough in decades.", "#000", 0, 600)}
+            {fillSpan(content.line1 || "Education in India has not changed enough in decades.", "#000", 0, 600)}
           </p>
 
           {/* Line 2 — Regular 28px black */}
           <p style={{ fontFamily: "'Lora', serif", fontSize: isMobile ? 22 : 28, lineHeight: 1.36, margin: 0 }}>
-            {fillSpan("It will not change through criticism or hope alone", "#000", 0.12)}
+            {fillSpan(content.line2 || "It will not change through criticism or hope alone", "#000", 0.12)}
           </p>
 
           {/* Line 3 — Regular 28px black */}
           <p style={{ fontFamily: "'Lora', serif", fontSize: isMobile ? 22 : 28, lineHeight: 1.36, margin: 0 }}>
-            {fillSpan("It will change when ordinary people decide to lift it together,", "#000", 0.24)}
+            {fillSpan(content.line3 || "It will change when ordinary people decide to lift it together,", "#000", 0.24)}
           </p>
 
           {/* Line 4 — SemiBold 40px brown */}
           <p style={{ fontFamily: "'Lora', serif", fontSize: isMobile ? 28 : 40, lineHeight: 1.3, margin: 0 }}>
-            {fillSpan("and help build the उज्ज्वल भारत of 2050.", "#bf791d", 0.46, 600)}
+            {fillSpan(content.line4 || "and help build the उज्ज्वल भारत of 2050.", "#bf791d", 0.46, 600)}
           </p>
 
         </div>
@@ -5507,7 +5612,7 @@ function SectionClosing({ onOpenModal }: { onOpenModal: () => void }) {
           fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 16,
           color: "#fff", cursor: "pointer", whiteSpace: "nowrap",
         }}>
-          I Commit To Education
+          {content.ctaText || "I Commit To Education"}
           <ArrowIcon color="#fff" size={16} />
         </button>
 
@@ -5517,33 +5622,55 @@ function SectionClosing({ onOpenModal }: { onOpenModal: () => void }) {
 }
 
 // ── Page ──────────────────────────────────────────────────────────────────
+import { useCmsPage } from "../hooks/useCmsPage";
+
 export function HomeV2Page() {
   const [modalOpen, setModalOpen] = useState(false);
+  const { getSection: getHomeSection } = useCmsPage("home");
+  const { getSection: getBrandSection } = useCmsPage("brand");
   const openModal = () => setModalOpen(true);
+
+  // Pre-fetch all section data so we can check `enabled` before rendering
+  const dHero          = getHomeSection("HeroSection");
+  const dProgramBanner = getHomeSection("ProgramBannerSection");
+  const dQuotes        = getHomeSection("QuotesCarouselSection");
+  const dS3            = getHomeSection("S3CarouselSection");
+  const dRecognitions  = getHomeSection("RecognitionsSection");
+  const dBeyond        = getHomeSection("BeyondSyllabusSection");
+  const dTestimonials  = getHomeSection("TestimonialsSection");
+  const dTextReveal    = getHomeSection("TextRevealSection");
+  const dIntroNGO      = getHomeSection("IntroNGOSection");
+  const dPrograms      = getHomeSection("ProgramsSection");
+  const dGetInvolved   = getHomeSection("GetInvolvedSection");
+  const dProcess       = getHomeSection("ProcessFlowSection");
+  const dHonestImpact  = getHomeSection("HonestImpactSection");
+  const dSupportCTA    = getHomeSection("SupportCTASection");
+  const dTeam          = getHomeSection("TeamSection");
+  const dClosing       = getHomeSection("ClosingSection");
 
   return (
     <div style={{ minHeight: "100vh", background: "#ffffff", display: "flex", flexDirection: "column", alignItems: "stretch", overflowX: "clip" }}>
       <style>{GLOBAL_CSS}</style>
-      <HeroSection onOpenModal={openModal} />
-      <ProgramBanner onOpenModal={openModal} />
-      <Section18 />
-      <Section3 />
-      <Section4 />
-      <Section5 />
-      <Section6 />
-      <Section7 />
-      <IntroNGOSection />
-      <Section8 onOpenModal={openModal} />
+      {dHero.enabled         && <HeroSection onOpenModal={openModal} data={dHero} />}
+      {dProgramBanner.enabled && <ProgramBanner onOpenModal={openModal} data={dProgramBanner} />}
+      {dQuotes.enabled       && <Section18 data={dQuotes} />}
+      {dS3.enabled           && <Section3 data={dS3} />}
+      {dRecognitions.enabled && <Section4 data={dRecognitions} />}
+      {dBeyond.enabled       && <Section5 data={dBeyond} />}
+      {dTestimonials.enabled && <Section6 data={dTestimonials} />}
+      {dTextReveal.enabled   && <Section7 data={dTextReveal} />}
+      {dIntroNGO.enabled     && <IntroNGOSection data={dIntroNGO} />}
+      {dPrograms.enabled     && <Section8 onOpenModal={openModal} data={dPrograms} />}
       <Section9 />
-      <Section10 onOpenModal={openModal} />
-      <Section12 onOpenModal={openModal} />
-      <SectionHonestImpact />
-      <Section13 onOpenModal={openModal} />
+      {dGetInvolved.enabled  && <Section10 onOpenModal={openModal} data={dGetInvolved} />}
+      {dProcess.enabled      && <Section12 onOpenModal={openModal} data={dProcess} />}
+      {dHonestImpact.enabled && <SectionHonestImpact data={dHonestImpact} />}
+      {dSupportCTA.enabled   && <Section13 onOpenModal={openModal} data={dSupportCTA} />}
       <Section14 />
-      <Section15 />
+      {dTeam.enabled         && <Section15 data={dTeam} />}
       <Section16 />
       <Section17 />
-      <SectionClosing onOpenModal={openModal} />
+      {dClosing.enabled      && <SectionClosing onOpenModal={openModal} data={dClosing} />}
       <Footer onOpenModal={openModal} />
       <SupportModal open={modalOpen} onClose={() => setModalOpen(false)} />
     </div>
