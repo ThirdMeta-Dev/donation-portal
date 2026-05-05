@@ -2,6 +2,9 @@ import { useState, useEffect, useRef } from "react";
 import { Navbar } from "../components/SiteNavbar";
 import { Footer } from "../components/SiteFooter";
 import { supabase } from "../lib/supabase";
+import { projectId, publicAnonKey } from "/utils/supabase/info";
+import { useCmsPage } from "../hooks/useCmsPage";
+import { FOUNDATION_NAME, FOUNDER_NAME } from "../lib/constants";
 
 // @ts-ignore
 import s16_map_bg from "../../assets/images/s16_map_bg.svg";
@@ -115,6 +118,11 @@ function ContactHeroSection({ onOpenModal }: { onOpenModal: () => void }) {
         city: formData.city, role: formData.role, message: formData.message,
       }]);
       if (error) throw error;
+      fetch(`https://${projectId}.supabase.co/functions/v1/make-server-a0af4170/contact`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "apikey": publicAnonKey },
+        body: JSON.stringify(formData),
+      }).catch(() => {});
       setIsSuccess(true);
     } catch { setIsSuccess(true); }
     finally  { setIsSubmitting(false); }
@@ -301,46 +309,6 @@ function ContactHeroSection({ onOpenModal }: { onOpenModal: () => void }) {
 }
 
 // ── SECTION 2 — Visit Us (Figma 917:18162) ─────────────────────────────────
-const VISIT_SOCIALS = [
-  {
-    name: "LinkedIn", href: "https://www.linkedin.com/in/ujjwala-wadekar-317094247/",
-    icon: (c: string) => (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-        <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z" stroke={c} strokeWidth="1.8" fill="none" />
-        <rect x="2" y="9" width="4" height="12" stroke={c} strokeWidth="1.8" fill="none" />
-        <circle cx="4" cy="4" r="2" stroke={c} strokeWidth="1.8" fill="none" />
-      </svg>
-    ),
-  },
-  {
-    name: "WhatsApp", href: "https://wa.me/919370318308",
-    icon: (c: string) => (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-        <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 8.5-8.5h.5a8.48 8.48 0 0 1 8 8v.5z" stroke={c} strokeWidth="1.8" fill="none" />
-      </svg>
-    ),
-  },
-  {
-    name: "Instagram", href: "https://www.instagram.com/zp_teacher_ujjwala_wadekar/",
-    icon: (c: string) => (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-        <rect x="2" y="2" width="20" height="20" rx="5" stroke={c} strokeWidth="1.8" fill="none" />
-        <circle cx="12" cy="12" r="4" stroke={c} strokeWidth="1.8" fill="none" />
-        <circle cx="17.5" cy="6.5" r="1" fill={c} />
-      </svg>
-    ),
-  },
-  {
-    name: "YouTube", href: "https://www.youtube.com/channel/UCJOILwGRJVFODGp6uQGDF1w",
-    icon: (c: string) => (
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
-        <path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.95C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58a2.78 2.78 0 0 0 1.95 1.95C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z" stroke={c} strokeWidth="1.8" fill="none" />
-        <polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill={c} />
-      </svg>
-    ),
-  },
-];
-
 function VisitSocialBtn({ name, href, icon }: { name: string; href: string; icon: (c: string) => React.ReactNode }) {
   const [hov, setHov] = useState(false);
   const gold = "#bf791d";
@@ -362,10 +330,17 @@ function VisitSocialBtn({ name, href, icon }: { name: string; href: string; icon
   );
 }
 
-function VisitUsSection() {
+function VisitUsSection({ contactInfo }: { contactInfo: any }) {
   const sectionRef = useFadeInUp();
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
+
+  const socials = [
+    { name: "LinkedIn", href: contactInfo.linkedin || "https://www.linkedin.com/in/ujjwala-wadekar-317094247/", icon: (c: string) => <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z" stroke={c} strokeWidth="1.8" fill="none" /><rect x="2" y="9" width="4" height="12" stroke={c} strokeWidth="1.8" fill="none" /><circle cx="4" cy="4" r="2" stroke={c} strokeWidth="1.8" fill="none" /></svg> },
+    { name: "WhatsApp", href: contactInfo.whatsapp || "https://wa.me/919370318308", icon: (c: string) => <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 8.5-8.5h.5a8.48 8.48 0 0 1 8 8v.5z" stroke={c} strokeWidth="1.8" fill="none" /></svg> },
+    { name: "Instagram", href: contactInfo.instagram || "https://www.instagram.com/zp_teacher_ujjwala_wadekar/", icon: (c: string) => <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="5" stroke={c} strokeWidth="1.8" fill="none" /><circle cx="12" cy="12" r="4" stroke={c} strokeWidth="1.8" fill="none" /><circle cx="17.5" cy="6.5" r="1" fill={c} /></svg> },
+    { name: "YouTube", href: contactInfo.youtube || "https://www.youtube.com/channel/UCJOILwGRJVFODGp6uQGDF1w", icon: (c: string) => <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M22.54 6.42a2.78 2.78 0 0 0-1.95-1.95C18.88 4 12 4 12 4s-6.88 0-8.59.46a2.78 2.78 0 0 0-1.95 1.96A29 29 0 0 0 1 12a29 29 0 0 0 .46 5.58a2.78 2.78 0 0 0 1.95 1.95C5.12 20 12 20 12 20s6.88 0 8.59-.46a2.78 2.78 0 0 0 1.95-1.95A29 29 0 0 0 23 12a29 29 0 0 0-.46-5.58z" stroke={c} strokeWidth="1.8" fill="none" /><polygon points="9.75 15.02 15.5 12 9.75 8.98 9.75 15.02" fill={c} /></svg> },
+  ];
 
   return (
     <section ref={sectionRef} className="cp-fade" style={{
@@ -375,7 +350,6 @@ function VisitUsSection() {
       position: "relative",
       overflow: "hidden",
     }}>
-      {/* Background image at bottom portion of section — matches Figma node 917:18161 */}
       <div style={{
         position: "absolute",
         left: 0, right: 0, bottom: 0,
@@ -384,128 +358,70 @@ function VisitUsSection() {
         zIndex: 0,
         overflow: "hidden",
       }}>
-        <img
-          src={imgVisitBg}
-          alt=""
-          style={{
-            width: "100%", height: "100%",
-            objectFit: "cover", objectPosition: "center top",
-            display: "block",
-          }}
-        />
-        {/* Top fade — white to transparent going down */}
+        <img src={imgVisitBg} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", objectPosition: "center top", display: "block" }} />
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to bottom, #fff 0%, rgba(255,255,255,0) 55%)" }} />
-        {/* Bottom fade — transparent to white going down */}
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, #fff 0%, rgba(255,255,255,0) 35%)" }} />
-        {/* Left fade */}
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, #fff 0%, transparent 22%)" }} />
-        {/* Right fade */}
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to left, #fff 0%, transparent 18%)" }} />
       </div>
 
-      {/* Content */}
       <div style={{
         maxWidth: 1008, margin: "0 auto",
         padding: isMobile ? "60px 20px 180px" : isTablet ? "72px 32px 200px" : "80px 0 280px",
         boxSizing: "border-box",
         position: "relative", zIndex: 2,
       }}>
-
-        {/* Header row */}
         <div style={{
-          display: "flex",
-          flexDirection: isMobile ? "column" : "row",
+          display: "flex", flexDirection: isMobile ? "column" : "row",
           alignItems: isMobile ? "flex-start" : "center",
-          justifyContent: "space-between",
-          gap: isMobile ? 16 : 24,
-          marginBottom: isMobile ? 36 : 52,
+          justifyContent: "space-between", gap: isMobile ? 16 : 24, marginBottom: isMobile ? 36 : 52,
         }}>
-          <h2 style={{
-            fontFamily: "'Lora',serif", fontWeight: 600,
-            fontSize: isMobile ? 30 : 40, lineHeight: 1.28,
-            color: "#000", margin: 0,
-          }}>
-            Visit Us
-          </h2>
+          <h2 style={{ fontFamily: "'Lora',serif", fontWeight: 600, fontSize: isMobile ? 30 : 40, lineHeight: 1.28, color: "#000", margin: 0 }}>Visit Us</h2>
           <div style={{ display: "flex", gap: 8 }}>
-            {VISIT_SOCIALS.map(s => <VisitSocialBtn key={s.name} name={s.name} href={s.href} icon={s.icon} />)}
+            {socials.map(s => <VisitSocialBtn key={s.name} name={s.name} href={s.href} icon={s.icon} />)}
           </div>
         </div>
 
-        {/* Contact info + Map */}
-        <div style={{
-          display: "flex",
-          flexDirection: isMobile || isTablet ? "column" : "row",
-          gap: isMobile ? 32 : 48,
-          alignItems: "stretch",
-        }}>
-
-          {/* Contact info column */}
+        <div style={{ display: "flex", flexDirection: isMobile || isTablet ? "column" : "row", gap: isMobile ? 32 : 48, alignItems: "stretch" }}>
           <div style={{ flex: "0 0 auto", width: isMobile ? "100%" : 311, display: "flex", flexDirection: "column", gap: 32 }}>
-            {/* Address */}
             <div style={{ display: "flex", alignItems: "flex-start", gap: 14 }}>
               <div style={{ width: 32, height: 32, borderRadius: 8, background: "#f9f2e8", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#bf791d" strokeWidth="1.8" strokeLinecap="round">
-                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" />
-                  <circle cx="12" cy="9" r="2.5" />
-                </svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#bf791d" strokeWidth="1.8" strokeLinecap="round"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" /><circle cx="12" cy="9" r="2.5" /></svg>
               </div>
               <div>
                 <p style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: 16, color: "#000", margin: "0 0 4px" }}>Address</p>
                 <p style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 400, fontSize: 16, color: "#636363", margin: 0, lineHeight: "24px" }}>
-                  Arcadion Building, North Main Road,<br />
-                  Koregaon Park, Pune,<br />
-                  Maharashtra Pin: 411001
+                  {contactInfo.address || "Arcadion Building, North Main Road, Koregaon Park, Pune, Maharashtra Pin: 411001"}
                 </p>
               </div>
             </div>
 
-            {/* Email */}
             <div style={{ display: "flex", alignItems: "flex-start", gap: 14 }}>
               <div style={{ width: 32, height: 32, borderRadius: 8, background: "#f9f2e8", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#bf791d" strokeWidth="1.8" strokeLinecap="round">
-                  <rect x="2" y="4" width="20" height="16" rx="2" />
-                  <path d="M22 7l-10 7L2 7" />
-                </svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#bf791d" strokeWidth="1.8" strokeLinecap="round"><rect x="2" y="4" width="20" height="16" rx="2" /><path d="M22 7l-10 7L2 7" /></svg>
               </div>
               <div>
                 <p style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: 16, color: "#000", margin: "0 0 4px" }}>Email Id:</p>
-                <p style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 400, fontSize: 16, color: "#636363", margin: 0 }}>
-                  info@ujjwalabharat.org
-                </p>
+                <p style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 400, fontSize: 16, color: "#636363", margin: 0 }}>{contactInfo.email || "info@ujjwalabharat.org"}</p>
               </div>
             </div>
 
-            {/* Phone */}
             <div style={{ display: "flex", alignItems: "flex-start", gap: 14 }}>
               <div style={{ width: 32, height: 32, borderRadius: 8, background: "#f9f2e8", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#bf791d" strokeWidth="1.8" strokeLinecap="round">
-                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.5 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.41 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.5a16 16 0 0 0 5.6 5.6l.86-.86a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16.92z" />
-                </svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#bf791d" strokeWidth="1.8" strokeLinecap="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.5 12a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.41 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.5a16 16 0 0 0 5.6 5.6l.86-.86a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21 16.92z" /></svg>
               </div>
               <div>
                 <p style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: 16, color: "#000", margin: "0 0 4px" }}>Phone Number:</p>
-                <p style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 400, fontSize: 16, color: "#636363", margin: 0 }}>
-                  +91 93703 18308
-                </p>
+                <p style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 400, fontSize: 16, color: "#636363", margin: 0 }}>{contactInfo.phone || "+91 93703 18308"}</p>
               </div>
             </div>
           </div>
 
-          {/* Map */}
-          <div style={{
-            flex: 1, minWidth: 0,
-            borderRadius: 20, overflow: "hidden",
-            minHeight: isMobile ? 240 : 340,
-            background: "#e8e8e8",
-          }}>
+          <div style={{ flex: 1, minWidth: 0, borderRadius: 20, overflow: "hidden", minHeight: isMobile ? 240 : 340, background: "#e8e8e8" }}>
             <iframe
               title="Office Location"
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3782.2613173522965!2d73.89396!3d18.53601!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc2c16bf9d7d0ef%3A0x5fe9bf7a6c71e9b0!2sKoregaon%20Park%2C%20Pune%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1680000000000"
-              width="100%" height="100%"
-              style={{ border: 0, display: "block", minHeight: isMobile ? 240 : 340 }}
-              allowFullScreen loading="lazy"
-              referrerPolicy="no-referrer-when-downgrade"
+              src={contactInfo.mapsEmbed || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3782.2613173522965!2d73.89396!3d18.53601!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc2c16bf9d7d0ef%3A0x5fe9bf7a6c71e9b0!2sKoregaon%20Park%2C%20Pune%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1680000000000"}
+              width="100%" height="100%" style={{ border: 0, display: "block", minHeight: isMobile ? 240 : 340 }} allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade"
             />
           </div>
         </div>
@@ -521,156 +437,46 @@ function CTABoxSection() {
   const isTablet = useIsTablet();
 
   return (
-    <section ref={sectionRef} className="cp-fade" style={{
-      width: "100%",
-      background: "#fff",
-      padding: isMobile ? "64px 20px 56px" : "154px 0 72px",
-      boxSizing: "border-box",
-    }}>
-      {/* Rounded box */}
-      <div style={{
-        maxWidth: 1200, margin: "0 auto",
-        padding: isMobile ? "0 20px" : "0",
-        boxSizing: "border-box",
-      }}>
+    <section ref={sectionRef} className="cp-fade" style={{ width: "100%", background: "#fff", padding: isMobile ? "64px 20px 56px" : "154px 0 72px", boxSizing: "border-box" }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: isMobile ? "0 20px" : "0", boxSizing: "border-box" }}>
         <div style={{
-          borderRadius: 30,
-          background: "linear-gradient(135deg, #704000 0%, #955e00 100%)",
+          borderRadius: 30, background: "linear-gradient(135deg, #704000 0%, #955e00 100%)",
           padding: isMobile ? "36px 24px 32px" : isTablet ? "44px 40px 40px" : "52px 56px 48px",
-          position: "relative",
-          overflow: "hidden",
-          minHeight: isMobile ? "auto" : 334,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "space-between",
-          gap: 32,
+          position: "relative", overflow: "hidden", minHeight: isMobile ? "auto" : 334,
+          display: "flex", flexDirection: "column", justifyContent: "space-between", gap: 32,
         }}>
-          {/* India map silhouette (right side) */}
-          <img
-            src={s16_map_bg}
-            alt=""
-            style={{
-              position: "absolute", right: "-6%", bottom: "-15%",
-              height: "130%", width: "auto",
-              pointerEvents: "none", opacity: 0.22,
-              zIndex: 0,
-            }}
-          />
-          {/* Bottom white fade overlay */}
-          <div style={{
-            position: "absolute", bottom: 0, left: 0, right: 0, height: "50%",
-            background: "linear-gradient(to top, rgba(255,255,255,0.08), transparent)",
-            pointerEvents: "none", zIndex: 1,
-          }} />
-
-          {/* Content */}
+          <img src={s16_map_bg} alt="" style={{ position: "absolute", right: "-6%", bottom: "-15%", height: "130%", width: "auto", pointerEvents: "none", opacity: 0.22, zIndex: 0 }} />
+          <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: "50%", background: "linear-gradient(to top, rgba(255,255,255,0.08), transparent)", pointerEvents: "none", zIndex: 1 }} />
           <div style={{ position: "relative", zIndex: 2 }}>
-            {/* Top row: badge+heading (left) + bullets (right) */}
-            <div style={{
-              display: "flex",
-              flexDirection: isMobile || isTablet ? "column" : "row",
-              alignItems: isMobile || isTablet ? "flex-start" : "flex-start",
-              justifyContent: "space-between",
-              gap: isMobile ? 24 : 40,
-            }}>
-              {/* Left: badge + heading */}
+            <div style={{ display: "flex", flexDirection: isMobile || isTablet ? "column" : "row", alignItems: "flex-start", justifyContent: "space-between", gap: isMobile ? 24 : 40 }}>
               <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 20 }}>
-                <div style={{
-                  border: "1px solid #885615", borderRadius: 40,
-                  padding: "6px 20px", alignSelf: "flex-start",
-                }}>
-                  <span style={{ fontFamily: "'Poppins',sans-serif", fontSize: 13, color: "#fff" }}>
-                    Teacher-Led · Education-Only · Transparent
-                  </span>
-                </div>
-                <h2 style={{
-                  fontFamily: "'Lora',serif", fontWeight: 600,
-                  fontSize: isMobile ? 28 : 44, lineHeight: 1.28,
-                  color: "#fff", margin: 0, textTransform: "capitalize",
-                }}>
+                <div style={{ border: "1px solid #885615", borderRadius: 40, padding: "6px 20px", alignSelf: "flex-start" }}><span style={{ fontFamily: "'Poppins',sans-serif", fontSize: 13, color: "#fff" }}>Teacher-Led · Education-Only · Transparent</span></div>
+                <h2 style={{ fontFamily: "'Lora',serif", fontWeight: 600, fontSize: isMobile ? 28 : 44, lineHeight: 1.28, color: "#fff", margin: 0, textTransform: "capitalize" }}>
                   <span style={{ display: "block" }}>One Teacher Started This.</span>
                   <span style={{ display: "block" }}>Many Can Keep It Going.</span>
                 </h2>
               </div>
-
-              {/* Right: bullets — plain arrow + text, no circle */}
               {!isMobile && (
                 <div style={{ flexShrink: 0, display: "flex", flexDirection: "column", gap: 2, paddingTop: 20 }}>
                   {["Progress is visible & published", "Use of funds reported quarterly", "80G eligible · FCRA registered"].map((txt, i) => (
-                    <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, height: 24 }}>
-                      <ArrowIcon color="#fff" size={14} />
-                      <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 15, color: "#fff", fontWeight: 300, whiteSpace: "nowrap" }}>
-                        {txt}
-                      </span>
-                    </div>
+                    <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, height: 24 }}><ArrowIcon color="#fff" size={14} /><span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 15, color: "#fff", fontWeight: 300, whiteSpace: "nowrap" }}>{txt}</span></div>
                   ))}
                 </div>
               )}
             </div>
-
-            {/* Mobile bullets */}
             {isMobile && (
               <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 8 }}>
                 {["Progress is visible & published", "Use of funds reported quarterly", "80G eligible · FCRA registered"].map((txt, i) => (
-                  <div key={i} style={{ display: "flex", alignItems: "center", gap: 10 }}>
-                    <ArrowIcon color="#fff" size={13} />
-                    <span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 14, color: "#fff", fontWeight: 300 }}>{txt}</span>
-                  </div>
+                  <div key={i} style={{ display: "flex", alignItems: "center", gap: 10 }}><ArrowIcon color="#fff" size={13} /><span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 14, color: "#fff", fontWeight: 300 }}>{txt}</span></div>
                 ))}
               </div>
             )}
           </div>
-
-          {/* Bottom CTAs — right-aligned, matching Figma (CTAs start at x=376 of 1008px = right-aligned) */}
-          <div style={{
-            position: "relative", zIndex: 2,
-            display: "flex",
-            flexDirection: isMobile ? "column" : "row",
-            justifyContent: isMobile ? "flex-start" : "flex-end",
-            alignItems: isMobile ? "flex-start" : "center",
-            gap: isMobile ? 12 : 16,
-            flexWrap: "wrap",
-          }}>
-            {/* Partner With Us — no border, plain text + arrow */}
-            <a href="#"
-              style={{
-                display: "flex", alignItems: "center", gap: 14,
-                background: "transparent",
-                border: "none",
-                padding: "12px 4px",
-                fontFamily: "'DM Sans',sans-serif", fontWeight: 500, fontSize: 15,
-                color: "#fff", cursor: "pointer", textDecoration: "none", whiteSpace: "nowrap",
-              }}>
-              Partner With Us <ArrowIcon color="#fff" size={18} />
-            </a>
-
-            {/* Join Teacher Network — outlined white pill */}
-            <a href="#"
-              style={{
-                display: "flex", alignItems: "center", gap: 16,
-                background: "transparent",
-                border: "1.5px solid rgba(255,255,255,0.8)",
-                borderRadius: 100, padding: "12px 28px",
-                fontFamily: "'DM Sans',sans-serif", fontWeight: 500, fontSize: 15,
-                color: "#fff", cursor: "pointer", textDecoration: "none", whiteSpace: "nowrap",
-              }}>
-              Join Teacher Network <ArrowIcon color="#fff" size={18} />
-            </a>
-
-            {/* Donate Now — white filled pill, gold text */}
-            <a href="/donate"
-              style={{
-                display: "flex", alignItems: "center", gap: 16,
-                background: "#fff",
-                border: "none",
-                borderRadius: 100, padding: "12px 28px",
-                fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 15,
-                color: "#bf791d", cursor: "pointer", textDecoration: "none", whiteSpace: "nowrap",
-              }}>
-              Donate Now <ArrowIcon color="#bf791d" size={18} />
-            </a>
+          <div style={{ position: "relative", zIndex: 2, display: "flex", flexDirection: isMobile ? "column" : "row", justifyContent: isMobile ? "flex-start" : "flex-end", alignItems: isMobile ? "flex-start" : "center", gap: isMobile ? 12 : 16, flexWrap: "wrap" }}>
+            <a href="#" style={{ display: "flex", alignItems: "center", gap: 14, background: "transparent", border: "none", padding: "12px 4px", fontFamily: "'DM Sans',sans-serif", fontWeight: 500, fontSize: 15, color: "#fff", cursor: "pointer", textDecoration: "none", whiteSpace: "nowrap" }}>Partner With Us <ArrowIcon color="#fff" size={18} /></a>
+            <a href="#" style={{ display: "flex", alignItems: "center", gap: 16, background: "transparent", border: "1.5px solid rgba(255,255,255,0.8)", borderRadius: 100, padding: "12px 28px", fontFamily: "'DM Sans',sans-serif", fontWeight: 500, fontSize: 15, color: "#fff", cursor: "pointer", textDecoration: "none", whiteSpace: "nowrap" }}>Join Teacher Network <ArrowIcon color="#fff" size={18} /></a>
+            <a href="/donate" style={{ display: "flex", alignItems: "center", gap: 16, background: "#fff", border: "none", borderRadius: 100, padding: "12px 28px", fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 15, color: "#bf791d", cursor: "pointer", textDecoration: "none", whiteSpace: "nowrap" }}>Donate Now <ArrowIcon color="#bf791d" size={18} /></a>
           </div>
-
         </div>
       </div>
     </section>
@@ -678,78 +484,60 @@ function CTABoxSection() {
 }
 
 // ── SECTION 4 — In My Words (copied from HomeV2 Section16) ─────────────────
-const CP_S16_SOCIALS: { name: string; icon: (c: string) => React.ReactNode }[] = [
-  { name: "LinkedIn",   icon: (c) => <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z" stroke={c} strokeWidth="1.8" fill="none" /><rect x="2" y="9" width="4" height="12" stroke={c} strokeWidth="1.8" fill="none" /><circle cx="4" cy="4" r="2" stroke={c} strokeWidth="1.8" fill="none" /></svg> },
-  { name: "Twitter / X",icon: (c) => <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M4 4l16 16M4 20L20 4" stroke={c} strokeWidth="1.9" strokeLinecap="round" /></svg> },
-  { name: "WhatsApp",   icon: (c) => <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 8.5-8.5h.5a8.48 8.48 0 0 1 8 8v.5z" stroke={c} strokeWidth="1.8" fill="none" /></svg> },
-  { name: "Instagram",  icon: (c) => <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="5" stroke={c} strokeWidth="1.8" fill="none" /><circle cx="12" cy="12" r="4" stroke={c} strokeWidth="1.8" fill="none" /><circle cx="17.5" cy="6.5" r="1" fill={c} /></svg> },
-];
-
 function S16SocialBtn({ name, icon }: { name: string; icon: (c: string) => React.ReactNode }) {
   const [hov, setHov] = useState(false);
   const gold = "#bf791d";
   return (
-    <button aria-label={name}
-      onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)}
-      style={{
-        width: 36, height: 36, borderRadius: 8, flexShrink: 0,
-        border: `1.5px solid ${gold}`, background: hov ? gold : "transparent",
-        display: "flex", alignItems: "center", justifyContent: "center",
-        cursor: "pointer", transition: "background 0.18s",
-      }}>
-      {icon(hov ? "#fff" : gold)}
-    </button>
+    <button aria-label={name} onMouseEnter={() => setHov(true)} onMouseLeave={() => setHov(false)} style={{ width: 36, height: 36, borderRadius: 8, flexShrink: 0, border: `1.5px solid ${gold}`, background: hov ? gold : "transparent", display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", transition: "background 0.18s" }}>{icon(hov ? "#fff" : gold)}</button>
   );
 }
 
-function InMyWordsSection() {
+function InMyWordsSection({ gridData }: { gridData: any }) {
   const sectionRef = useFadeInUp();
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
 
+  const socials: { name: string; icon: (c: string) => React.ReactNode }[] = [
+    { name: "LinkedIn", icon: (c) => <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z" stroke={c} strokeWidth="1.8" fill="none" /><rect x="2" y="9" width="4" height="12" stroke={c} strokeWidth="1.8" fill="none" /><circle cx="4" cy="4" r="2" stroke={c} strokeWidth="1.8" fill="none" /></svg> },
+    { name: "WhatsApp", icon: (c) => <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 8.5-8.5h.5a8.48 8.48 0 0 1 8 8v.5z" stroke={c} strokeWidth="1.8" fill="none" /></svg> },
+    { name: "Instagram", icon: (c) => <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="5" stroke={c} strokeWidth="1.8" fill="none" /><circle cx="12" cy="12" r="4" stroke={c} strokeWidth="1.8" fill="none" /><circle cx="17.5" cy="6.5" r="1" fill={c} /></svg> },
+  ];
+
+  const gridImages = gridData.items.length > 0 ? gridData.items.map((it: any) => it.image) : [imgS16Grid1, imgS16Grid2, imgS16Grid3, imgS16Grid4];
+
   return (
     <section ref={sectionRef} className="cp-fade" style={{ width: "100%", background: "#fff", padding: isMobile ? "48px 0 56px" : "72px 0 80px" }}>
       <div style={{ maxWidth: 1008, margin: "0 auto", padding: isMobile ? "0 20px" : "0", boxSizing: "border-box" }}>
-        <div style={{
-          display: "flex", flexDirection: isMobile ? "column" : "row",
-          alignItems: "flex-start", justifyContent: "space-between",
-          gap: isMobile ? 10 : 32, marginBottom: isMobile ? 28 : 44,
-        }}>
+        <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", alignItems: "flex-start", justifyContent: "space-between", gap: isMobile ? 10 : 32, marginBottom: isMobile ? 28 : 44 }}>
           <span style={{ display: "inline-flex", flexShrink: 0, border: "1px solid #e8e8e8", borderRadius: 40, padding: "6px 20px", fontFamily: "'Poppins',sans-serif", fontWeight: 400, fontSize: 13, color: "#bf791d", whiteSpace: "nowrap" }}>
-            In my words
+            {gridData.content.badge || "In my words"}
           </span>
           <h2 style={{ fontFamily: "'Lora',serif", fontWeight: 600, fontSize: isMobile ? 26 : "clamp(28px,4vw,40px)", lineHeight: 1.36, color: "#000", margin: 0, textTransform: "capitalize", textAlign: isMobile ? "left" : "right" }}>
-            See The Work, Feel The Journey
+            {gridData.content.title || "See The Work, Feel The Journey"}
           </h2>
         </div>
-
         <div className="cp-s16-grid">
           <div className="cp-s16-left">
             <p style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 300, fontSize: 15, lineHeight: "26px", color: "#636363", margin: 0 }}>
-              The full stories, lessons, and lived moments continue across every channel I share.
+              {gridData.content.description || "The full stories, lessons, and lived moments continue across every channel I share."}
             </p>
-            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-              {CP_S16_SOCIALS.map(s => <S16SocialBtn key={s.name} name={s.name} icon={s.icon} />)}
-            </div>
+            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>{socials.map(s => <S16SocialBtn key={s.name} name={s.name} icon={s.icon} />)}</div>
           </div>
-
           {isMobile || isTablet ? (
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-              {[imgS16Grid1, imgS16Grid2, imgS16Grid3, imgS16Grid4].map((img, i) => (
-                <div key={i} style={{ borderRadius: 14, overflow: "hidden", height: 160 }}>
-                  <img src={img} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-                </div>
+              {gridImages.map((img: string, i: number) => (
+                <div key={i} style={{ borderRadius: 14, overflow: "hidden", height: 160 }}><img src={img} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} /></div>
               ))}
             </div>
           ) : (
             <div className="cp-s16-right">
               <div className="cp-s16-row">
-                <div className="cp-s16-img-wrap" style={{ flex: "1 1 0", height: 185 }}><img src={imgS16Grid1} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} /></div>
-                <div className="cp-s16-img-wrap" style={{ flex: "1 1 0", height: 185 }}><img src={imgS16Grid2} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} /></div>
+                <div className="cp-s16-img-wrap" style={{ flex: "1 1 0", height: 185 }}><img src={gridImages[0]} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} /></div>
+                <div className="cp-s16-img-wrap" style={{ flex: "1 1 0", height: 185 }}><img src={gridImages[1]} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} /></div>
               </div>
               <div className="cp-s16-row">
-                <div className="cp-s16-img-wrap" style={{ flex: "1 1 0", height: 185 }}><img src={imgS16Grid3} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} /></div>
-                <div className="cp-s16-img-wrap" style={{ flex: "1 1 0", height: 185 }}><img src={imgS16Grid4} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} /></div>
+                <div className="cp-s16-img-wrap" style={{ flex: "1 1 0", height: 185 }}><img src={gridImages[2]} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} /></div>
+                <div className="cp-s16-img-wrap" style={{ flex: "1 1 0", height: 185 }}><img src={gridImages[3]} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} /></div>
               </div>
             </div>
           )}
@@ -761,6 +549,8 @@ function InMyWordsSection() {
 
 // ── SECTION 5 — Education Closing (copied from HomeV2 SectionClosing) ───────
 function EducationClosingSection() {
+  const { getSection: getHomeSection } = useCmsPage("home");
+  const closingData = getHomeSection("ClosingSection").content as any;
   const sectionRef = useFadeInUp();
   const textRef    = useRef<HTMLDivElement>(null);
   const [revealed, setRevealed] = useState(false);
@@ -776,13 +566,7 @@ function EducationClosingSection() {
 
   const fill = (text: string, color: string, delay: number, weight = 400): React.ReactNode => (
     <span style={{
-      background: `linear-gradient(90deg, ${color} 50%, #d0d0d0 50%)`,
-      backgroundSize: "200% 100%",
-      backgroundPosition: revealed ? "0% 0" : "100% 0",
-      WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent",
-      backgroundClip: "text", color: "transparent",
-      fontWeight: weight, willChange: "background-position",
-      transition: `background-position 1.3s cubic-bezier(0.22,1,0.36,1) ${delay}s`,
+      background: `linear-gradient(90deg, ${color} 50%, #d0d0d0 50%)`, backgroundSize: "200% 100%", backgroundPosition: revealed ? "0% 0" : "100% 0", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text", color: "transparent", fontWeight: weight, willChange: "background-position", transition: `background-position 1.3s cubic-bezier(0.22,1,0.36,1) ${delay}s`,
     }}>{text}</span>
   );
 
@@ -790,29 +574,12 @@ function EducationClosingSection() {
     <section ref={sectionRef} className="cp-fade" style={{ width: "100%", background: "#fff", padding: isMobile ? "64px 0" : "100px 0" }}>
       <div style={{ maxWidth: 900, margin: "0 auto", padding: "0 16px", boxSizing: "border-box", display: "flex", flexDirection: "column", alignItems: "center", gap: 48 }}>
         <div ref={textRef} style={{ display: "flex", flexDirection: "column", gap: isMobile ? 10 : 14, textAlign: "center", width: "100%" }}>
-          <p style={{ fontFamily: "'Lora',serif", fontSize: isMobile ? 22 : 28, lineHeight: 1.36, margin: 0 }}>
-            {fill("Education in India has not changed enough in decades.", "#000", 0, 600)}
-          </p>
-          <p style={{ fontFamily: "'Lora',serif", fontSize: isMobile ? 22 : 28, lineHeight: 1.36, margin: 0 }}>
-            {fill("It will not change through criticism or hope alone", "#000", 0.12)}
-          </p>
-          <p style={{ fontFamily: "'Lora',serif", fontSize: isMobile ? 22 : 28, lineHeight: 1.36, margin: 0 }}>
-            {fill("It will change when ordinary people decide to lift it together,", "#000", 0.24)}
-          </p>
-          <p style={{ fontFamily: "'Lora',serif", fontSize: isMobile ? 28 : 40, lineHeight: 1.3, margin: 0 }}>
-            {fill("and help build the उज्ज्वल भारत of 2050.", "#bf791d", 0.46, 600)}
-          </p>
+          <p style={{ fontFamily: "'Lora',serif", fontSize: isMobile ? 22 : 28, lineHeight: 1.36, margin: 0 }}>{fill(closingData.line1 || "Education in India has not changed enough in decades.", "#000", 0, 600)}</p>
+          <p style={{ fontFamily: "'Lora',serif", fontSize: isMobile ? 22 : 28, lineHeight: 1.36, margin: 0 }}>{fill(closingData.line2 || "It will not change through criticism or hope alone", "#000", 0.12)}</p>
+          <p style={{ fontFamily: "'Lora',serif", fontSize: isMobile ? 22 : 28, lineHeight: 1.36, margin: 0 }}>{fill(closingData.line3 || "It will change when ordinary people decide to lift it together,", "#000", 0.24)}</p>
+          <p style={{ fontFamily: "'Lora',serif", fontSize: isMobile ? 28 : 40, lineHeight: 1.3, margin: 0 }}>{fill(closingData.line4 || "and help build the उज्ज्वल भारत of 2050.", "#bf791d", 0.46, 600)}</p>
         </div>
-        <a href="/donate" style={{
-          display: "flex", alignItems: "center", gap: 20,
-          background: "#bf791d", border: "none",
-          borderRadius: 30, padding: "12px 24px",
-          fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 16,
-          color: "#fff", cursor: "pointer", whiteSpace: "nowrap", textDecoration: "none",
-        }}>
-          I Commit To Education
-          <ArrowIcon color="#fff" size={16} />
-        </a>
+        <a href={closingData.ctaLink || "/donate"} style={{ display: "flex", alignItems: "center", gap: 20, background: "#bf791d", border: "none", borderRadius: 30, padding: "12px 24px", fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 16, color: "#fff", cursor: "pointer", whiteSpace: "nowrap", textDecoration: "none" }}>{closingData.ctaText || "I Commit To Education"}<ArrowIcon color="#fff" size={16} /></a>
       </div>
     </section>
   );
@@ -821,17 +588,19 @@ function EducationClosingSection() {
 // ── Page ──────────────────────────────────────────────────────────────────────
 export function ContactPage() {
   const [modalOpen, setModalOpen] = useState(false);
+  const { getSection: getContactSection } = useCmsPage("contact");
+  const contactInfo = getContactSection("ContactInfoSection").content as any;
+  const gridData = getContactSection("ContactGridSection");
 
   return (
     <div style={{ minHeight: "100vh", background: "#fff", display: "flex", flexDirection: "column", alignItems: "stretch", overflowX: "clip" }}>
       <style>{PAGE_CSS}</style>
       <ContactHeroSection onOpenModal={() => setModalOpen(true)} />
-      <VisitUsSection />
+      <VisitUsSection contactInfo={contactInfo} />
       <CTABoxSection />
-      <InMyWordsSection />
+      <InMyWordsSection gridData={gridData} />
       <EducationClosingSection />
       <Footer onOpenModal={() => setModalOpen(true)} />
-      {/* Reuse the home modal if needed */}
       {modalOpen && (
         <div onClick={() => setModalOpen(false)} style={{ position: "fixed", inset: 0, zIndex: 9999, background: "rgba(0,0,0,0.5)", display: "flex", alignItems: "center", justifyContent: "center", padding: 24 }}>
           <div onClick={e => e.stopPropagation()} style={{ background: "#fff", borderRadius: 20, padding: 40, maxWidth: 480, width: "100%", textAlign: "center" }}>
