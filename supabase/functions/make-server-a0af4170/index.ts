@@ -2,7 +2,6 @@ import { Hono } from "npm:hono";
 import { cors } from "npm:hono/cors";
 import { logger } from "npm:hono/logger";
 import { createClient } from "npm:@supabase/supabase-js";
-import nodemailer from "npm:nodemailer";
 import * as kv from "./kv_store.ts";
 
 const app = new Hono();
@@ -85,35 +84,30 @@ function resolveAuthUser(c: any) {
   return user;
 }
 
-// ─── Email via Gmail SMTP ─────────────────────────────────────────────────────
+// ─── Email via Resend ─────────────────────────────────────────────────────────
 const NOTIFY_EMAIL = "hasan.kanchwala@hexanovate.com";
-const SMTP_FROM    = "seo@hexanovate.com";
+const SMTP_FROM    = "noreply@ujjwalawadekar.com";
 
 async function sendEmail(subject: string, html: string, to: string | string[] = NOTIFY_EMAIL) {
-  const smtpPass = (Deno.env.get("SMTP_PASSWORD") || "").replace(/\s/g, "");
-  if (!smtpPass) {
-    console.log("[EMAIL] SMTP_PASSWORD not set — skipping:", subject);
-    return { ok: false, reason: "no smtp password" };
+  const apiKey = Deno.env.get("RESEND_API_KEY");
+  if (!apiKey) {
+    console.log("[EMAIL] RESEND_API_KEY not set — skipping:", subject);
+    return { ok: false, reason: "no api key" };
   }
+  const recipients = Array.isArray(to) ? to : [to];
   try {
-    const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
-      port: 465,
-      secure: true,
-      auth: { user: SMTP_FROM, pass: smtpPass },
-      tls: { rejectUnauthorized: false },
-      connectionTimeout: 15000,
-      socketTimeout: 15000,
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ from: `Ujjwal Bharat <${SMTP_FROM}>`, to: recipients, subject, html }),
     });
-    const recipients = Array.isArray(to) ? to.join(", ") : to;
-    const info = await transporter.sendMail({
-      from: `"Ujjwal Bharat" <${SMTP_FROM}>`,
-      to: recipients,
-      subject,
-      html,
-    });
-    console.log(`[EMAIL] ✅ Sent "${subject}" → ${recipients} | msgId=${info.messageId}`);
-    return { ok: true, messageId: info.messageId };
+    const data = await res.json();
+    if (!res.ok) {
+      console.log(`[EMAIL] ❌ FAILED "${subject}" | status=${res.status} body=${JSON.stringify(data)}`);
+      return { ok: false, reason: JSON.stringify(data) };
+    }
+    console.log(`[EMAIL] ✅ Sent "${subject}" → ${recipients.join(", ")} | id=${data.id}`);
+    return { ok: true, messageId: data.id };
   } catch (e) {
     console.log(`[EMAIL] ❌ FAILED "${subject}" | error=${String(e).slice(0, 400)}`);
     return { ok: false, reason: String(e) };
