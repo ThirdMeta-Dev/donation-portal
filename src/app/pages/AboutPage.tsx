@@ -2,6 +2,7 @@ import { motion } from "motion/react";
 import { Link } from "react-router";
 import { Heart, Award, Shield, Users, Star, ArrowRight, CheckCircle2 } from "lucide-react";
 import { FOUNDER_NAME, FOUNDATION_NAME, TEAM_MEMBERS, MILESTONES, IMAGES } from "../lib/constants";
+import { useCmsPage } from "../hooks/useCmsPage";
 
 function FadeIn({ children, delay = 0, className = "" }: { children: React.ReactNode; delay?: number; className?: string }) {
   return (
@@ -12,6 +13,21 @@ function FadeIn({ children, delay = 0, className = "" }: { children: React.React
 }
 
 export function AboutPage() {
+  const { getSection: getAboutSection } = useCmsPage("about");
+  const { getSection: getBrandSection } = useCmsPage("brand");
+
+  const brand = getBrandSection("BrandSettings").content as any;
+  const founderBio = getAboutSection("FounderBioSection").content as any;
+  const missionVision = getAboutSection("MissionVisionSection").content as any;
+  const milestones = getAboutSection("AboutMilestonesSection");
+  const team = getAboutSection("TeamSection");
+  const certs = getAboutSection("CertificationsSection");
+
+  // Fallbacks
+  const fName = brand.founderName || FOUNDER_NAME;
+  const foundationName = brand.foundationName || FOUNDATION_NAME;
+  const founderBioBadge = founderBio.badge || "Our Story";
+
   return (
     <div className="overflow-x-hidden">
       {/* Hero */}
@@ -21,12 +37,12 @@ export function AboutPage() {
         </div>
         <div className="relative max-w-4xl mx-auto px-4 sm:px-6 text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }}>
-            <span className="inline-block bg-orange-500/20 text-orange-300 text-sm px-4 py-1.5 rounded-full mb-4" style={{ fontWeight: 600 }}>Our Story</span>
+            <span className="inline-block bg-orange-500/20 text-orange-300 text-sm px-4 py-1.5 rounded-full mb-4" style={{ fontWeight: 600 }}>{founderBioBadge}</span>
             <h1 className="text-white text-4xl md:text-5xl mb-6" style={{ fontWeight: 800 }}>
-              About {FOUNDATION_NAME}
+              About {foundationName}
             </h1>
             <p className="text-white/70 text-lg leading-relaxed max-w-2xl mx-auto">
-              A grassroots NGO founded by {FOUNDER_NAME}, transforming lives across rural India through education, healthcare, nutrition, water, and women empowerment since 2015.
+              A grassroots NGO founded by {fName}, transforming lives across rural India through education, healthcare, nutrition, water, and women empowerment since {founderBio.foundedYear || 2015}.
             </p>
           </motion.div>
         </div>
@@ -38,7 +54,7 @@ export function AboutPage() {
           <FadeIn>
             <div className="relative">
               <video
-                src="https://sienna-pelican-786032.hostingersite.com/wp-content/uploads/2026/03/Video-344.mp4"
+                src={founderBio.videoUrl || "https://sienna-pelican-786032.hostingersite.com/wp-content/uploads/2026/03/Video-344.mp4"}
                 autoPlay
                 muted
                 loop
@@ -46,25 +62,27 @@ export function AboutPage() {
                 className="w-full max-w-md mx-auto rounded-3xl shadow-2xl object-cover aspect-[4/5]"
               />
               <div className="absolute -bottom-5 -right-5 rounded-2xl p-4 shadow-xl" style={{ background: "#B07D3A" }}>
-                <div className="text-2xl text-white" style={{ fontWeight: 800 }}>2015</div>
+                <div className="text-2xl text-white" style={{ fontWeight: 800 }}>{founderBio.foundedYear || 2015}</div>
                 <div className="text-sm" style={{ color: "rgba(248,245,239,0.8)" }}>Founded</div>
               </div>
             </div>
           </FadeIn>
           <FadeIn delay={0.2}>
             <div>
-              <span className="inline-block bg-orange-100 text-orange-600 text-sm px-4 py-1.5 rounded-full mb-4" style={{ fontWeight: 600 }}>Founder & Executive Director</span>
-              <h2 className="text-slate-900 text-3xl mb-4" style={{ fontWeight: 800 }}>{FOUNDER_NAME}</h2>
+              <span className="inline-block bg-orange-100 text-orange-600 text-sm px-4 py-1.5 rounded-full mb-4" style={{ fontWeight: 600 }}>{founderBio.founderTitle || "Founder & Executive Director"}</span>
+              <h2 className="text-slate-900 text-3xl mb-4" style={{ fontWeight: 800 }}>{founderBio.founderName || fName}</h2>
               <div className="space-y-4 text-slate-600 leading-relaxed">
-                <p>A social entrepreneur with 15+ years of grassroots experience across Maharashtra. IIM Ahmedabad alumna who gave up a corporate career to serve rural India.</p>
-                <p>Ujjwala grew up witnessing the stark inequality between urban and rural India. After her MBA, she worked for 3 years in the corporate sector before founding {FOUNDATION_NAME} in her ancestral village in Nashik district.</p>
-                <p>What started as a single classroom with 42 children has grown into a comprehensive platform touching 1.45 lakh lives across 6 states.</p>
+                <p>{founderBio.bio1 || "A social entrepreneur with 15+ years of grassroots experience across Maharashtra. IIM Ahmedabad alumna who gave up a corporate career to serve rural India."}</p>
+                <p>{founderBio.bio2 || `Ujjwala grew up witnessing the stark inequality between urban and rural India. After her MBA, she worked for 3 years in the corporate sector before founding ${foundationName} in her ancestral village in Nashik district.`}</p>
+                <p>{founderBio.bio3 || "What started as a single classroom with 42 children has grown into a comprehensive platform touching 1.45 lakh lives across 6 states."}</p>
                 <blockquote className="border-l-4 border-orange-500 pl-4 italic text-slate-500">
-                  "Every child I meet in a remote village has the same potential as a child in Mumbai. The difference is only opportunity — and that is what we provide."
+                  "{founderBio.founderQuote || "Every child I meet in a remote village has the same potential as a child in Mumbai. The difference is only opportunity — and that is what we provide."}"
                 </blockquote>
               </div>
               <div className="mt-6 flex flex-wrap gap-3">
-                {["IIM Ahmedabad Alumni", "Forbes 30 Under 30 India", "National Award 2023", "TISS Fellow"].map(badge => (
+                {[founderBio.badge1, founderBio.badge2, founderBio.badge3, founderBio.badge4].filter(Boolean).map((badge: any) => (
+                  <span key={badge} className="bg-slate-100 text-slate-700 text-xs px-3 py-1.5 rounded-full" style={{ fontWeight: 500 }}>{badge}</span>
+                )) || ["IIM Ahmedabad Alumni", "Forbes 30 Under 30 India", "National Award 2023", "TISS Fellow"].map(badge => (
                   <span key={badge} className="bg-slate-100 text-slate-700 text-xs px-3 py-1.5 rounded-full" style={{ fontWeight: 500 }}>{badge}</span>
                 ))}
               </div>
@@ -78,9 +96,9 @@ export function AboutPage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
-              { title: "Our Mission", icon: "🎯", color: "border-orange-300 bg-orange-50", content: "To provide equal access to quality education, healthcare, nutrition, clean water, and economic opportunity to every rural Indian, regardless of gender, caste, or economic background." },
-              { title: "Our Vision", icon: "🌟", color: "border-teal-300 bg-teal-50", content: "A self-reliant rural India where every child is educated, every family is healthy, and every woman is economically empowered — by 2035." },
-              { title: "Our Values", icon: "💎", color: "border-blue-300 bg-blue-50", content: "Transparency in every rupee spent. Dignity for every beneficiary. Accountability to our donors. Innovation in our programs. Inclusion without discrimination." },
+              { title: missionVision.missionTitle || "Our Mission", icon: "🎯", color: "border-orange-300 bg-orange-50", content: missionVision.missionText || "To provide equal access to quality education, healthcare, nutrition, clean water, and economic opportunity to every rural Indian, regardless of gender, caste, or economic background." },
+              { title: missionVision.visionTitle || "Our Vision", icon: "🌟", color: "border-teal-300 bg-teal-50", content: missionVision.visionText || "A self-reliant rural India where every child is educated, every family is healthy, and every woman is economically empowered — by 2035." },
+              { title: missionVision.valuesTitle || "Our Values", icon: "💎", color: "border-blue-300 bg-blue-50", content: missionVision.valuesText || "Transparency in every rupee spent. Dignity for every beneficiary. Accountability to our donors. Innovation in our programs. Inclusion without discrimination." },
             ].map(item => (
               <FadeIn key={item.title}>
                 <div className={`rounded-2xl border-2 ${item.color} p-6`}>
@@ -99,15 +117,15 @@ export function AboutPage() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6">
           <FadeIn>
             <div className="text-center mb-12">
-              <h2 className="text-slate-900 text-3xl mb-3" style={{ fontWeight: 800 }}>Our Journey</h2>
-              <p className="text-slate-500">From a single classroom to a national movement</p>
+              <h2 className="text-slate-900 text-3xl mb-3" style={{ fontWeight: 800 }}>{milestones.content.sectionTitle || "Our Journey"}</h2>
+              <p className="text-slate-500">{milestones.content.sectionSubtitle || "From a single classroom to a national movement"}</p>
             </div>
           </FadeIn>
           <div className="relative">
             <div className="absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-orange-400 to-teal-400 hidden sm:block" />
             <div className="space-y-8">
-              {MILESTONES.map((m, i) => (
-                <FadeIn key={m.year} delay={i * 0.1}>
+              {(milestones.items.length > 0 ? milestones.items : MILESTONES).map((m: any, i: number) => (
+                <FadeIn key={m.year + (m.title || "")} delay={i * 0.1}>
                   <div className="flex gap-6 items-start">
                     <div className="hidden sm:flex w-16 flex-col items-center flex-shrink-0">
                       <div className="w-5 h-5 rounded-full bg-orange-500 border-4 border-white shadow-md mt-1" />
@@ -118,7 +136,7 @@ export function AboutPage() {
                         <div className="h-px flex-1 bg-slate-200" />
                       </div>
                       <h3 className="text-slate-900 text-base mb-1" style={{ fontWeight: 600 }}>{m.title}</h3>
-                      <p className="text-slate-500 text-sm">{m.desc}</p>
+                      <p className="text-slate-500 text-sm">{m.description || m.desc}</p>
                     </div>
                   </div>
                 </FadeIn>
@@ -133,17 +151,21 @@ export function AboutPage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <FadeIn>
             <div className="text-center mb-12">
-              <h2 className="text-slate-900 text-3xl mb-3" style={{ fontWeight: 800 }}>Our Team</h2>
-              <p className="text-slate-500">Dedicated professionals committed to the cause</p>
+              <h2 className="text-slate-900 text-3xl mb-3" style={{ fontWeight: 800 }}>{team.content.title || "Our Team"}</h2>
+              <p className="text-slate-500">{team.content.subtitle || "Dedicated professionals committed to the cause"}</p>
             </div>
           </FadeIn>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {TEAM_MEMBERS.map((member, i) => (
+            {(team.items.length > 0 ? team.items : TEAM_MEMBERS).map((member: any, i: number) => (
               <FadeIn key={member.name} delay={i * 0.1}>
                 <div className="bg-white rounded-2xl border border-slate-200 p-6 text-center shadow-sm hover:shadow-md transition-shadow">
-                  <div className={`w-16 h-16 rounded-2xl ${member.color} text-white flex items-center justify-center text-xl mx-auto mb-4`} style={{ fontWeight: 800 }}>
-                    {member.initials}
-                  </div>
+                  {member.photo ? (
+                    <img src={member.photo} alt={member.name} className="w-20 h-20 rounded-2xl object-cover mx-auto mb-4 shadow-sm" />
+                  ) : (
+                    <div className={`w-16 h-16 rounded-2xl ${member.color || "bg-orange-500"} text-white flex items-center justify-center text-xl mx-auto mb-4`} style={{ fontWeight: 800 }}>
+                      {member.initials || member.name.split(" ").map((n: string) => n[0]).join("")}
+                    </div>
+                  )}
                   <h3 className="text-slate-900 text-base mb-1" style={{ fontWeight: 600 }}>{member.name}</h3>
                   <p className="text-orange-600 text-xs mb-3" style={{ fontWeight: 500 }}>{member.role}</p>
                   <p className="text-slate-500 text-xs leading-relaxed">{member.bio}</p>
@@ -159,24 +181,24 @@ export function AboutPage() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <FadeIn>
             <div className="text-center mb-10">
-              <h2 className="text-white text-3xl mb-3" style={{ fontWeight: 800 }}>Certifications & Compliance</h2>
-              <p className="text-white/60">Fully registered and compliant with Indian law</p>
+              <h2 className="text-white text-3xl mb-3" style={{ fontWeight: 800 }}>{certs.content.sectionTitle || "Certifications & Compliance"}</h2>
+              <p className="text-white/60">{certs.content.sectionSubtitle || "Fully registered and compliant with Indian law"}</p>
             </div>
           </FadeIn>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {[
-              { icon: "📜", title: "80G Certificate", no: "AKF/80G/2017/001", sub: "50% tax deductible" },
-              { icon: "🌐", title: "FCRA Reg.", no: "083780234", sub: "Foreign contributions" },
-              { icon: "🏛️", title: "12AA Status", no: "AKF/12AA/2016", sub: "Tax exempt NGO" },
-              { icon: "🏢", title: "MCA Reg.", no: "MH/2015/0073821", sub: "Companies Act" },
-              { icon: "💳", title: "PAN Card", no: "AACTA1234B", sub: "Permanent acc. no." },
-              { icon: "✅", title: "CSR-1 Reg.", no: "CSR00012345", sub: "CSR eligible" },
-            ].map(cert => (
-              <div key={cert.title} className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 text-center">
-                <div className="text-2xl mb-2">{cert.icon}</div>
-                <div className="text-white text-xs mb-0.5" style={{ fontWeight: 600 }}>{cert.title}</div>
-                <div className="text-white/50 text-xs">{cert.no}</div>
-                <div className="text-white/40 text-xs">{cert.sub}</div>
+            {(certs.items.length > 0 ? certs.items : [
+              { icon: "📜", name: "80G Certificate", regNumber: "AKF/80G/2017/001", description: "50% tax deductible" },
+              { icon: "🌐", name: "FCRA Reg.", regNumber: "083780234", description: "Foreign contributions" },
+              { icon: "🏛️", name: "12AA Status", regNumber: "AKF/12AA/2016", description: "Tax exempt NGO" },
+              { icon: "🏢", name: "MCA Reg.", regNumber: "MH/2015/0073821", description: "Companies Act" },
+              { icon: "💳", name: "PAN Card", regNumber: "AACTA1234B", description: "Permanent acc. no." },
+              { icon: "✅", name: "CSR-1 Reg.", regNumber: "CSR00012345", description: "CSR eligible" },
+            ]).map((cert: any) => (
+              <div key={cert.name} className="bg-white/10 backdrop-blur-sm rounded-2xl p-4 text-center">
+                <div className="text-2xl mb-2">{cert.icon || "📜"}</div>
+                <div className="text-white text-xs mb-0.5" style={{ fontWeight: 600 }}>{cert.name}</div>
+                <div className="text-white/50 text-xs">{cert.regNumber}</div>
+                <div className="text-white/40 text-xs">{cert.description}</div>
               </div>
             ))}
           </div>

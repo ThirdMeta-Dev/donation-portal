@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router";
+import { useNavigate } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
 import {
   BarChart3, Users, IndianRupee, Heart, Search, TrendingUp, CheckCircle2,
@@ -55,7 +55,6 @@ export function AdminDashboard() {
 
   const { user, logout, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
   const [donations, setDonations] = useState<Donation[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);
   const [activeTab, setActiveTab] = useState<"overview" | "donations" | "users" | "causes" | "courses" | "content">("overview");
@@ -98,7 +97,7 @@ export function AdminDashboard() {
     if (!user) { navigate("/auth", { replace: true }); return; }
     if (user.role !== "admin") { navigate("/dashboard", { replace: true }); return; }
     loadAll();
-  }, [user, authLoading, location.key]);
+  }, [user, authLoading]);
 
   async function loadAll() {
     setLoading(true); setError("");

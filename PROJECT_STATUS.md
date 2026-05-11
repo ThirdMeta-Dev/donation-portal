@@ -1,58 +1,51 @@
 # Project Status & CMS Handoff
 
-## Current Phase: Phase C — Frontend Wiring ✅ COMPLETE
+## Current Phase: Phase C — Frontend Wiring
+The goal of this phase is to connect the hardcoded React pages to the Supabase CMS backend using the `useCmsPage` hook.
 
-All pages are now fully wired to the Supabase CMS backend using the `useCmsPage` hook.
+## ✅ Completed Wiring
+The following pages have been fully wired to the CMS. They now fetch data from the database (with hardcoded fallbacks in `src/app/lib/constants.ts`).
 
-## ✅ All Pages Wired
+1.  **About Page (`AboutPage.tsx`)**:
+    *   Wired `FounderBioSection`, `MissionVisionSection`, `AboutMilestonesSection`, `TeamSection`, and `CertificationsSection`.
+    *   Integrated global `BrandSettings`.
+2.  **Contact Page (`ContactPage.tsx`)**:
+    *   Wired `ContactInfoSection` (Address, Email, Phone, Socials, Maps).
+    *   Wired `ContactGridSection` (Images for the "In My Words" section).
+    *   Wired `ClosingSection` (Shared from Home schemas).
+3.  **Donate Page (`DonatePage.tsx`)**:
+    *   Wired `PresetAmountsSection` (Dynamic donation pills).
+    *   Wired `ImpactMessagesSection` (Dynamic logic for "Your donation feeds X children").
 
-### Home Page (`HomeV2Page.tsx`)
-All sections wired with `data` props from `getSection("SectionName")`:
+## 🚧 Work In Progress: Home Page (`HomeV2Page.tsx`)
+The Home Page is a high-complexity file (~5,500 lines). The wiring has started but is only partially complete.
 
-- **HeroSection** → `HeroSection` (crash bug fixed: `data?.content ?? {}`)
-- **ProgramBanner** → `ProgramBannerSection` (title, subtitle, bullets, ctaText)
-- **Section18** (Quotes Carousel) → `QuotesCarouselSection` (quotes array)
-- **Section3** (Image Carousel) → `S3CarouselSection` (slides with img+caption)
-- **Section4** (Recognitions) → `RecognitionsSection` (badge, title, description)
-- **Section5** (Beyond Syllabus) → `BeyondSyllabusSection` (badge, heading, accordion items)
-- **Section6** (Testimonials) → `TestimonialsSection` (category-grouped testimonials)
-- **Section7** (Text Reveal) → `TextRevealSection` (line1, line2, supportText, CTAs)
-- **Section8** (Programs) → `ProgramsSection` (badge, title, subtitle, programs array)
-- **Section10** (Get Involved) → `GetInvolvedSection` (title, subtitle, tabs array)
-- **Section12** (Process Flow) → `ProcessFlowSection` (badge, title, ctaBannerText, cards)
-- **Section15** (Team) → `TeamSection` (badge, title, subtitle, team members)
-- **SectionClosing** → `ClosingSection` (4 text lines + ctaText)
+**What's done on Home:**
+*   `useCmsPage("home")` and `useCmsPage("brand")` hooks are initialized at the top level.
+*   **HeroSection** is fully wired:
+    *   `backgroundImage`, `awards`, `title`, `subtitle`, `ctaText`, and `secondaryCtaText` are now dynamic.
 
-Sections kept hardcoded (no schema defined or purely decorative):
-- `Section9` (video player)
-- `SectionHonestImpact`
-- `Section13` (full-bleed CTA background image)
-- `Section14` (social image grid)
-- `Section16` (social links)
-- `Section17` (FAQs)
-- `IntroNGOSection`
-
-### About Page (`AboutPage.tsx`) ✅
-- FounderBioSection, MissionVisionSection, AboutMilestonesSection, TeamSection, CertificationsSection + BrandSettings
-
-### Contact Page (`ContactPage.tsx`) ✅
-- ContactInfoSection, ContactGridSection, ClosingSection
-
-### Donate Page (`DonatePage.tsx`) ✅
-- PresetAmountsSection, ImpactMessagesSection
+**🔴 Pending Tasks (Pick up here):**
+The following sections in `HomeV2Page.tsx` are still using hardcoded arrays and strings. They need to be updated to accept a `data` prop from the parent:
+*   `ProgramBanner` (Map to `ProgramBannerSection`)
+*   `Section3` (Image Carousel -> `QuotesCarouselSection` or similar)
+*   `Section4` (Recognitions -> `RecognitionsSection`)
+*   `Section5` (Beyond Syllabus -> `BeyondSyllabusSection`)
+*   `Section6` (Testimonials -> `TestimonialsSection`)
+*   `Section8` (Sticky Card Stack -> `ProgramsSection` or `ProcessFlowSection`)
+*   `Section9` (Progress -> `TestimonialsSection` variants)
+*   `Section10` (Get Involved -> `GetInvolvedSection`)
+*   `SectionHonestImpact` (Needs a new schema or mapping to existing)
+*   `Section13` (CTA Banner -> `ClosingSection` variants)
+*   `Section14/15/16/17` (Team, FAQs, Social Grid)
+*   `SectionClosing` (Map to `ClosingSection`)
 
 ## 🛠 CMS Reference
-- **Hook:** `const { getSection } = useCmsPage("page-slug");`
-- **Accessing Data:** `const { content, items } = getSection("SectionName");`
-- **Environment:** Controlled via `VITE_ENVIRONMENT` (staging/production)
-- **Fallback chain:** DB content → schema `defaultContent` → hardcoded inline string
+*   **Hook:** `const { getSection } = useCmsPage("page-slug");`
+*   **Accessing Data:** `const { content, items } = getSection("SectionName");`
+*   **Environment:** Currently targeting the `STAGING` environment via `VITE_ENVIRONMENT`.
 
 ## 🔑 Admin Access (Staging)
-- **URL:** `staging.ujjwalawadekar.com/admin`
-- **Username:** `admin@shiksharaj.org`
-- **Password:** `Admin@123`
-
-## 📋 Next Steps (Optional)
-1. Run "Seed Database" from Admin → Content tab to populate staging DB
-2. Create Supabase Storage bucket `cms-media` (Public: YES) for media uploads
-3. Deploy to staging: push to `staging` branch → GitHub Actions auto-deploys
+*   **URL:** `staging.ujjwalawadekar.com/admin`
+*   **Username:** `admin@shiksharaj.org`
+*   **Password:** `Admin@123`

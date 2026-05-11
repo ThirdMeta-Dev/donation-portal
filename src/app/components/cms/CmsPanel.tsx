@@ -8,7 +8,6 @@ import { SectionTree } from "./SectionTree";
 import { FieldEditor } from "./FieldEditor";
 import { CarouselEditor } from "./CarouselEditor";
 import { MediaLibrary } from "./MediaLibrary";
-import { SeedButton } from "./SeedButton";
 
 type PanelTab = "sections" | "media";
 type SaveState = "idle" | "saving" | "saved" | "error";
@@ -117,7 +116,6 @@ export function CmsPanel() {
           </span>
         </div>
 
-        <SeedButton />
       </div>
 
       {tab === "media" ? (

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
 import {
@@ -9,6 +9,7 @@ import { PRESET_AMOUNTS } from "../lib/constants";
 import { useAuth } from "../lib/AuthContext";
 import { causeApi } from "../lib/api";
 import type { CauseFull } from "../lib/api";
+import { useCmsPage } from "../hooks/useCmsPage";
 
 type Step = 1 | 2 | 3;
 type Frequency = "one-time" | "monthly" | "annually";
@@ -20,6 +21,10 @@ export function DonatePage() {
   const preselectedType = (searchParams.get("type") || "indian") as DonorType;
   const navigate = useNavigate();
   const { user } = useAuth();
+
+  const { getSection } = useCmsPage("donate");
+  const presetData = getSection("PresetAmountsSection");
+  const impactData = getSection("ImpactMessagesSection");
 
   const [causes, setCauses] = useState<CauseFull[]>([]);
   const [causesLoading, setCausesLoading] = useState(true);
