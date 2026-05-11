@@ -45,6 +45,14 @@ const BLANK_FORM: CourseForm = {
   questions: [{ question: "", options: ["", "", "", ""], correctIndex: 0, explanation: "" }],
 };
 
+type AdminCache = {
+  donations: Donation[];
+  courses: Course[];
+  causeSettings: Record<string, { enable80G: boolean }>;
+  causes: CauseFull[];
+};
+let _cache: AdminCache | null = null;
+
 export function AdminDashboard() {
   useEffect(() => {
     const meta = document.createElement("meta");
@@ -55,8 +63,8 @@ export function AdminDashboard() {
 
   const { user, logout, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const [donations, setDonations] = useState<Donation[]>([]);
-  const [courses, setCourses] = useState<Course[]>([]);
+  const [donations, setDonations] = useState<Donation[]>(_cache?.donations ?? []);
+  const [courses, setCourses] = useState<Course[]>(_cache?.courses ?? []);
   const [activeTab, setActiveTab] = useState<"overview" | "donations" | "users" | "causes" | "courses" | "content">("overview");
   const [appUsers, setAppUsers] = useState<AppUserRecord[]>([]);
   const [usersLoading, setUsersLoading] = useState(false);
@@ -66,17 +74,17 @@ export function AdminDashboard() {
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [filterType, setFilterType] = useState("all");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!_cache);
   const [error, setError] = useState("");
   const [selectedDonation, setSelectedDonation] = useState<Donation | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
 
   // Cause settings (80G per cause)
-  const [causeSettings, setCauseSettings] = useState<Record<string, { enable80G: boolean }>>({});
+  const [causeSettings, setCauseSettings] = useState<Record<string, { enable80G: boolean }>>(_cache?.causeSettings ?? {});
   const [toggling80G, setToggling80G] = useState<string | null>(null);
 
   // Causes CRUD
-  const [causes, setCauses] = useState<CauseFull[]>([]);
+  const [causes, setCauses] = useState<CauseFull[]>(_cache?.causes ?? []);
   const [causesLoading, setCausesLoading] = useState(false);
   const [showCauseForm, setShowCauseForm] = useState(false);
   const [editingCauseFull, setEditingCauseFull] = useState<CauseFull | null>(null);
@@ -100,7 +108,8 @@ export function AdminDashboard() {
   }, [user, authLoading]);
 
   async function loadAll() {
-    setLoading(true); setError("");
+    if (!_cache) setLoading(true);
+    setError("");
     try {
       const [donRes, crsRes, settingsRes, causesRes] = await Promise.allSettled([
         donationApi.getAll(),
@@ -108,14 +117,19 @@ export function AdminDashboard() {
         causeApi.getSettings(),
         causeApi.getCauses(),
       ]);
-      if (donRes.status === "fulfilled") setDonations(
-        (donRes.value.donations || []).sort((a: Donation, b: Donation) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        )
-      );
-      if (crsRes.status === "fulfilled") setCourses(crsRes.value.courses || []);
-      if (settingsRes.status === "fulfilled") setCauseSettings(settingsRes.value.settings || {});
-      if (causesRes.status === "fulfilled") setCauses(causesRes.value.causes || []);
+      const donations = donRes.status === "fulfilled"
+        ? (donRes.value.donations || []).sort((a: Donation, b: Donation) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        : _cache?.donations ?? [];
+      const courses = crsRes.status === "fulfilled" ? (crsRes.value.courses || []) : _cache?.courses ?? [];
+      const causeSettingsData = settingsRes.status === "fulfilled" ? (settingsRes.value.settings || {}) : _cache?.causeSettings ?? {};
+      const causes = causesRes.status === "fulfilled" ? (causesRes.value.causes || []) : _cache?.causes ?? [];
+
+      _cache = { donations, courses, causeSettings: causeSettingsData, causes };
+      setDonations(donations);
+      setCourses(courses);
+      setCauseSettings(causeSettingsData);
+      setCauses(causes);
     } catch (e: any) { setError(e.message); }
     setLoading(false);
   }
