@@ -8,6 +8,7 @@ import { SectionTree } from "./SectionTree";
 import { FieldEditor } from "./FieldEditor";
 import { CarouselEditor } from "./CarouselEditor";
 import { MediaLibrary } from "./MediaLibrary";
+import { PublishButton } from "./PublishButton";
 
 type PanelTab = "sections" | "media";
 type SaveState = "idle" | "saving" | "saved" | "error";
@@ -116,6 +117,7 @@ export function CmsPanel() {
           </span>
         </div>
 
+        {APP_ENV === "staging" && <PublishButton />}
       </div>
 
       {tab === "media" ? (
