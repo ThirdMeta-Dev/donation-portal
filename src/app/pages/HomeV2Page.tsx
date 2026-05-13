@@ -765,7 +765,7 @@ function HeroSection({ onOpenModal, data }: { onOpenModal: () => void; data?: an
           ) : (
             <div style={{ position: "relative", display: "flex", alignItems: "flex-end", justifyContent: "space-between", width: "100%", maxWidth: 1008 }}>
               {!isTablet && (
-                <div style={{ position: "absolute", left: 235, top: -8, zIndex: 5 }}>
+                <div style={{ position: "absolute", left: 235, top: 60, zIndex: 5 }}>
                   <StatCard />
                 </div>
               )}
@@ -773,7 +773,7 @@ function HeroSection({ onOpenModal, data }: { onOpenModal: () => void; data?: an
                 <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
                   <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
                     {(content.awards || "Award 1, Award 2, Award 3").split(",").map((a: string) => (
-                      <div key={a} style={{ background: "#13304c", borderRadius: 6, height: 40, width: 100, display: "flex", alignItems: "center", justifyContent: "center" }}>
+                      <div key={a} style={{ background: "#13304c", borderRadius: 6, height: 40, padding: "0 12px", display: "flex", alignItems: "center", justifyContent: "center" }}>
                         <span style={{ fontFamily: "'Poppins', sans-serif", fontWeight: 200, fontSize: 13, color: "#fff" }}>{a.trim()}</span>
                       </div>
                     ))}
@@ -2838,8 +2838,16 @@ function ContentCard9({ card, width, height }: { card: S9Card; width: number; he
   );
 }
 
+// ── Shared type for CMS-wired sections ────────────────────────────────────
+interface SectionData {
+  content: Record<string, unknown>;
+  items: Record<string, unknown>[];
+  enabled: boolean;
+  loading: boolean;
+}
+
 // ── Section 9 shell ───────────────────────────────────────────────────────
-function Section9() {
+function Section9({ data }: { data: SectionData }) {
   const sectionRef = useFadeInUp();
   const [winW, setWinW] = useState(1200);
   const trackRef   = useRef<HTMLDivElement>(null);
@@ -2854,6 +2862,22 @@ function Section9() {
     window.addEventListener("resize", update, { passive: true });
     return () => window.removeEventListener("resize", update);
   }, []);
+
+  const cards: S9Card[] = data.items.length > 0
+    ? data.items.map((item, i) => ({
+        id: `cms-${i}`,
+        type: String(item.type || "content") as "video" | "content",
+        tag: String(item.tag || ""),
+        title: String(item.title || ""),
+        desc: String(item.desc || ""),
+        bullets: [item.bullet1, item.bullet2, item.bullet3, item.bullet4]
+          .filter(Boolean).map(String),
+        thumbnail: String(item.thumbnail || ""),
+      }))
+    : SECTION_9_CARDS;
+
+  const s9Badge = String(data.content.badge || "Real change!");
+  const s9Title = String(data.content.title || "What Real Progress Feels Like");
 
   // Responsive card geometry — cards bleed to right edge
   const isMobile = winW < 640;
@@ -2890,10 +2914,10 @@ function Section9() {
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", flexWrap: "wrap", gap: 24 }}>
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
             <div style={{ border: "1px solid #e8e8e8", borderRadius: 40, padding: "6px 20px", alignSelf: "flex-start" }}>
-              <span style={{ fontFamily: "'Poppins', sans-serif", fontSize: 13, color: "#bf791d" }}>Real change!</span>
+              <span style={{ fontFamily: "'Poppins', sans-serif", fontSize: 13, color: "#bf791d" }}>{s9Badge}</span>
             </div>
             <h2 style={{ fontFamily: "'Lora', serif", fontWeight: 600, fontSize: isMobile ? 28 : 40, lineHeight: "1.36", color: "#000", margin: 0, textTransform: "capitalize" }}>
-              What Real Progress Feels Like
+              {s9Title}
             </h2>
           </div>
           {!isMobile && (
@@ -2915,7 +2939,7 @@ function Section9() {
         onMouseLeave={stopDrag}
       >
         <div style={{ display: "flex", gap: GAP, width: "max-content" }}>
-          {SECTION_9_CARDS.map(card => (
+          {cards.map(card => (
             <ContentCard9 key={card.id} card={card} width={cardW} height={cardH} />
           ))}
         </div>
@@ -4561,10 +4585,21 @@ function SocialIcon({ name, href, icon }: { name: string; href: string; icon: (c
   );
 }
 
-function Section14() {
+function Section14({ data }: { data: SectionData }) {
   const sectionRef = useFadeInUp();
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
+
+  const c = data.content;
+  const s14Badge      = String(c.badge      || "About Ujjwal Mam");
+  const s14Title      = String(c.title      || "After 31 years, I still feel like a young teacher joined on 5th July, 1995.");
+  const s14Para1      = String(c.para1      || "Teaching found me because my family had always been teachers. My father, my mother, my grandmother. When I walked into my first government school classroom in 1995, I felt like I was continuing the family legacy.");
+  const s14Para2      = String(c.para2      || "I have taught children who could not afford ten rupees for a school fee. I have gone to their homes at night without telling anyone. I have helped families get the documents that opened doors their children would otherwise never have found. I have done all of this because a teacher's job does not end when the bell rings.");
+  const s14Para3      = String(c.para3      || "Its selfless service to the powerhouse of my country. No better satisfaction than shaping the bright minds of this country.");
+  const s14TeacherImg = String(c.image      || "") || imgS14Teacher;
+  const s14TrustTitle = String(c.trustTitle || "A Trust Built Because One Classroom Was Never Going To Be Enough");
+  const s14TrustP1   = String(c.trustPara1 || "For 31 years, I saw bright, curious children slowly grow distant from learning. Not because they were weak, but because the system around them stopped speaking to their life, their struggle, and their reality.");
+  const s14TrustP2   = String(c.trustPara2 || "Shiksha Raj Ujjwal Bharat Foundation was born from that journey — an education-only trust created to carry practical, teacher-led learning into schools and communities that need it most, with full transparency on every contribution and every change it helps bring.");
 
   return (
     <section id="section14-story" ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#fff", marginTop: 0 }}>
@@ -4603,23 +4638,23 @@ function Section14() {
                 color: "#bf791d", whiteSpace: "nowrap",
                 background: "rgba(255,255,255,0.85)",
               }}>
-                About Ujjwal Mam
+                {s14Badge}
               </span>
               <h2 style={{
                 fontFamily: "'Lora', serif", fontWeight: 600,
                 fontSize: 28, lineHeight: 1.28,
                 color: "#000", margin: 0, textTransform: "capitalize",
               }}>
-                After 31 years, I still feel like a young teacher joined on 5th July, 1995.
+                {s14Title}
               </h2>
               <div style={{
                 fontFamily: "'DM Sans', sans-serif", fontWeight: 300,
                 fontSize: 15, lineHeight: "26px", color: "#636363",
                 display: "flex", flexDirection: "column", gap: 12,
               }}>
-                <p style={{ margin: 0 }}>Teaching found me because my family had always been teachers. My father, my mother, my grandmother. When I walked into my first government school classroom in 1995, I felt like I was continuing the family legacy.</p>
-                <p style={{ margin: 0 }}>I have taught children who could not afford ten rupees for a school fee. I have gone to their homes at night without telling anyone. I have helped families get the documents that opened doors their children would otherwise never have found. I have done all of this because a teacher's job does not end when the bell rings.</p>
-                <p style={{ margin: 0 }}>Its selfless service to the powerhouse of my country. No better satisfaction than shaping the bright minds of this country.</p>
+                <p style={{ margin: 0 }}>{s14Para1}</p>
+                <p style={{ margin: 0 }}>{s14Para2}</p>
+                <p style={{ margin: 0 }}>{s14Para3}</p>
               </div>
               {/* Social icons row */}
               <div style={{ display: "flex", gap: 10, marginTop: 4 }}>
@@ -4630,7 +4665,7 @@ function Section14() {
             {/* Teacher photo */}
             <div style={{ width: "100%", display: "flex", justifyContent: "center", marginTop: 32 }}>
               <img
-                src={imgS14Teacher}
+                src={s14TeacherImg}
                 alt="Ujjwal Mam"
                 style={{ width: "70%", maxWidth: 280, objectFit: "contain", objectPosition: "bottom center" }}
               />
@@ -4652,7 +4687,7 @@ function Section14() {
               zIndex: 0,
             }} />
             {/* Standing teacher — main portrait */}
-            <img src={imgS14Teacher} alt="Ujjwal Mam" style={{
+            <img src={s14TeacherImg} alt="Ujjwal Mam" style={{
               position: "absolute",
               left: isTablet ? "46%" : 407,
               top: 0,
@@ -4702,14 +4737,14 @@ function Section14() {
                   fontFamily: "'Poppins', sans-serif", fontWeight: 400, fontSize: 13,
                   color: "#bf791d", whiteSpace: "nowrap",
                 }}>
-                  More about me!
+                  {s14Badge}
                 </span>
                 <h2 style={{
                   fontFamily: "'Lora', serif", fontWeight: 600,
                   fontSize: isTablet ? 32 : 48, lineHeight: 1.24,
                   color: "#000", margin: 0, textTransform: "capitalize",
                 }}>
-                  After 31 Years, I Still Feel Like A Young Teacher
+                  {s14Title}
                 </h2>
               </div>
               <div style={{
@@ -4718,9 +4753,9 @@ function Section14() {
                 width: isTablet ? "100%" : 392,
                 display: "flex", flexDirection: "column", gap: 12,
               }}>
-                <p style={{ margin: 0 }}>Teaching found me because my family had always been teachers. My father, my mother, my grandmother. When I walked into my first government school classroom in 1995, I felt like I was continuing the family legacy.</p>
-                <p style={{ margin: 0 }}>I have taught children who could not afford ten rupees for a school fee. I have gone to their homes at night without telling anyone. I have helped families get the documents that opened doors their children would otherwise never have found. I have done all of this because a teacher's job does not end when the bell rings.</p>
-                <p style={{ margin: 0 }}>Its selfless service to the powerhouse of my country. No better satisfaction than shaping the bright minds of this country.</p>
+                <p style={{ margin: 0 }}>{s14Para1}</p>
+                <p style={{ margin: 0 }}>{s14Para2}</p>
+                <p style={{ margin: 0 }}>{s14Para3}</p>
               </div>
             </div>
 
@@ -4773,15 +4808,15 @@ function Section14() {
               fontFamily: "'Poppins', sans-serif", fontWeight: 500,
               fontSize: isMobile ? 16 : 17, color: "#000", margin: 0,
             }}>
-              A Trust Built Because One Classroom Was Never Going To Be Enough
+              {s14TrustTitle}
             </p>
             <div style={{
               fontFamily: "'DM Sans', sans-serif", fontWeight: 300,
               fontSize: isMobile ? 14 : 16, lineHeight: "26px", color: "#636363",
               display: "flex", flexDirection: "column", gap: 2,
             }}>
-              <p style={{ margin: 0 }}>For 31 years, I saw bright, curious children slowly grow distant from learning. Not because they were weak, but because the system around them stopped speaking to their life, their struggle, and their reality.</p>
-              <p style={{ margin: 0, maxWidth: 394 }}>Shiksha Raj Ujjwal Bharat Foundation was born from that journey — an education-only trust created to carry practical, teacher-led learning into schools and communities that need it most, with full transparency on every contribution and every change it helps bring.</p>
+              <p style={{ margin: 0 }}>{s14TrustP1}</p>
+              <p style={{ margin: 0, maxWidth: 394 }}>{s14TrustP2}</p>
             </div>
           </div>
 
@@ -5078,10 +5113,35 @@ function SupportModal({ open, onClose }: { open: boolean; onClose: () => void })
   );
 }
 
-function Section16() {
+function Section16({ data }: { data: SectionData }) {
   const sectionRef = useFadeInUp();
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
+
+  const c = data.content;
+  const s16Badge    = String(c.badge    || "In my words");
+  const s16Title    = String(c.title    || "See The Work, Feel The Journey");
+  const s16Subtitle = String(c.subtitle || "The full stories, lessons, and lived moments continue across every channel I share.");
+
+  const socials = S16_SOCIALS.map((s) => ({
+    ...s,
+    href: (s.name === "LinkedIn"  && c.linkedinUrl  ? String(c.linkedinUrl)  :
+           s.name === "WhatsApp"  && c.whatsappUrl  ? String(c.whatsappUrl)  :
+           s.name === "Instagram" && c.instagramUrl ? String(c.instagramUrl) :
+           s.name === "YouTube"   && c.youtubeUrl   ? String(c.youtubeUrl)   :
+           s.href),
+  }));
+
+  const gridImages: string[] = data.items.length > 0
+    ? data.items.map((item) => String(item.image || "")).filter(Boolean)
+    : [imgS16Grid1, imgS16Grid2, imgS16Grid3, imgS16Grid4];
+
+  const [gi1, gi2, gi3, gi4] = [
+    gridImages[0] || imgS16Grid1,
+    gridImages[1] || imgS16Grid2,
+    gridImages[2] || imgS16Grid3,
+    gridImages[3] || imgS16Grid4,
+  ];
 
   return (
     <section id="section16-testimonials" ref={sectionRef} className="fade-in-up" style={{ width: "100%", background: "#fff", padding: isMobile ? "48px 0 56px" : "72px 0 80px" }}>
@@ -5116,7 +5176,7 @@ function Section16() {
             fontFamily: "'Poppins', sans-serif", fontWeight: 400, fontSize: 13,
             color: "#bf791d", whiteSpace: "nowrap",
           }}>
-            In my words
+            {s16Badge}
           </span>
           <h2 style={{
             fontFamily: "'Lora', serif", fontWeight: 600,
@@ -5124,7 +5184,7 @@ function Section16() {
             color: "#000", margin: 0, textTransform: "capitalize",
             textAlign: isMobile ? "left" : "right",
           }}>
-            See The Work, Feel The Journey
+            {s16Title}
           </h2>
         </div>
 
@@ -5138,10 +5198,10 @@ function Section16() {
               fontSize: 15, lineHeight: "26px", color: "#636363",
               margin: 0,
             }}>
-              The full stories, lessons, and lived moments continue across every channel I share.
+              {s16Subtitle}
             </p>
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-              {S16_SOCIALS.map((s) => (
+              {socials.map((s) => (
                 <S16SocialBtn key={s.name} name={s.name} href={s.href} icon={s.icon} />
               ))}
             </div>
@@ -5151,7 +5211,7 @@ function Section16() {
           {isMobile || isTablet ? (
             // Mobile/Tablet: simple 2-column grid with objectFit cover
             <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
-              {[imgS16Grid1, imgS16Grid2, imgS16Grid3, imgS16Grid4].map((img, i) => (
+              {[gi1, gi2, gi3, gi4].map((img, i) => (
                 <div key={i} style={{ borderRadius: 14, overflow: "hidden", height: 160 }}>
                   <img src={img} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
                 </div>
@@ -5162,18 +5222,18 @@ function Section16() {
             <div className="s16-right">
               <div className="s16-row">
                 <div className="s16-img-wrap" style={{ flex: "1 1 0", height: 185 }}>
-                  <img src={imgS16Grid1} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                  <img src={gi1} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
                 </div>
                 <div className="s16-img-wrap" style={{ flex: "1 1 0", height: 185 }}>
-                  <img src={imgS16Grid2} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                  <img src={gi2} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
                 </div>
               </div>
               <div className="s16-row">
                 <div className="s16-img-wrap" style={{ flex: "1 1 0", height: 185 }}>
-                  <img src={imgS16Grid3} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                  <img src={gi3} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
                 </div>
                 <div className="s16-img-wrap" style={{ flex: "1 1 0", height: 185 }}>
-                  <img src={imgS16Grid4} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
+                  <img src={gi4} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
                 </div>
               </div>
             </div>
@@ -5317,11 +5377,26 @@ function S17AccordionItem({ q, a, open, onToggle }: { q: string; a: string; open
   );
 }
 
-function Section17() {
+function Section17({ data }: { data: SectionData }) {
   const sectionRef = useFadeInUp();
   const isMobile = useIsMobile();
   const [activeCategory, setActiveCategory] = useState(0);
   const [openIdx, setOpenIdx] = useState<number | null>(0);
+
+  type FaqCat = { label: string; faqs: { q: string; a: string }[] };
+  const categories: FaqCat[] = data.items.length > 0
+    ? (() => {
+        const map: Record<string, FaqCat> = {};
+        data.items.forEach((item) => {
+          const cat = String(item.category || "General");
+          if (!map[cat]) map[cat] = { label: cat, faqs: [] };
+          map[cat].faqs.push({ q: String(item.question || ""), a: String(item.answer || "") });
+        });
+        return Object.values(map);
+      })()
+    : S17_CATEGORIES;
+
+  const s17Title = String(data.content.title || "Frequently Asked Questions");
 
   const handleCategoryChange = (i: number) => {
     setActiveCategory(i);
@@ -5357,11 +5432,11 @@ function Section17() {
               fontSize: "clamp(26px, 3vw, 36px)", lineHeight: 1.28,
               color: "#000", margin: 0,
             }}>
-              Frequently Asked Questions
+              {s17Title}
             </h2>
 
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-              {S17_CATEGORIES.map((cat, i) => {
+              {categories.map((cat, i) => {
                 const isActive = i === activeCategory;
                 return (
                   <button
@@ -5387,7 +5462,7 @@ function Section17() {
 
           {/* Right — accordion for active category */}
           <div className="s17-right">
-            {S17_CATEGORIES[activeCategory].faqs.map((faq, i) => (
+            {(categories[activeCategory]?.faqs ?? []).map((faq, i) => (
               <S17AccordionItem
                 key={`${activeCategory}-${i}`}
                 q={faq.q}
@@ -5647,6 +5722,10 @@ export function HomeV2Page() {
   const dSupportCTA    = getHomeSection("SupportCTASection");
   const dTeam          = getHomeSection("TeamSection");
   const dClosing       = getHomeSection("ClosingSection");
+  const dWhatProgress  = getHomeSection("WhatProgressSection");
+  const dFeelTeacher   = getHomeSection("FeelTeacherSection");
+  const dOurChannels   = getHomeSection("OurChannelsSection");
+  const dFaq           = getHomeSection("FaqSection");
 
   return (
     <div style={{ minHeight: "100vh", background: "#ffffff", display: "flex", flexDirection: "column", alignItems: "stretch", overflowX: "clip" }}>
@@ -5661,15 +5740,15 @@ export function HomeV2Page() {
       {dTextReveal.enabled   && <Section7 data={dTextReveal} />}
       {dIntroNGO.enabled     && <IntroNGOSection data={dIntroNGO} />}
       {dPrograms.enabled     && <Section8 onOpenModal={openModal} data={dPrograms} />}
-      <Section9 />
+      <Section9 data={dWhatProgress} />
       {dGetInvolved.enabled  && <Section10 onOpenModal={openModal} data={dGetInvolved} />}
       {dProcess.enabled      && <Section12 onOpenModal={openModal} data={dProcess} />}
       {dHonestImpact.enabled && <SectionHonestImpact data={dHonestImpact} />}
       {dSupportCTA.enabled   && <Section13 onOpenModal={openModal} data={dSupportCTA} />}
-      <Section14 />
+      <Section14 data={dFeelTeacher} />
       {dTeam.enabled         && <Section15 data={dTeam} />}
-      <Section16 />
-      <Section17 />
+      <Section16 data={dOurChannels} />
+      <Section17 data={dFaq} />
       {dClosing.enabled      && <SectionClosing onOpenModal={openModal} data={dClosing} />}
       <Footer onOpenModal={openModal} />
       <SupportModal open={modalOpen} onClose={() => setModalOpen(false)} />

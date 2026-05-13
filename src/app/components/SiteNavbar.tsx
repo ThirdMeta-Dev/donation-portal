@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router";
 import { useAuth } from "../lib/AuthContext";
+import { useCmsPage } from "../hooks/useCmsPage";
 // @ts-ignore
 import imgLogo from "@/assets/urw-logo.png";
 // @ts-ignore
@@ -374,6 +375,10 @@ export function Navbar({ onOpenModal }: { onOpenModal?: () => void }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const { getSection } = useCmsPage("brand");
+  const navData = getSection("NavigationSection");
+  const navCtaText  = String(navData.content.ctaText  || "Contribute Now");
+  const navLogoImg  = String(navData.content.logoImage || "") || imgLogo;
 
   const handleLogout = async () => {
     await logout();
@@ -386,7 +391,7 @@ export function Navbar({ onOpenModal }: { onOpenModal?: () => void }) {
       <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
           <Link to="/" style={{ textDecoration: "none", flexShrink: 0 }}>
-            <img src={imgLogo} alt="URW Logo" style={{ height: 48, width: "auto", display: "block" }} />
+            <img src={navLogoImg} alt="URW Logo" style={{ height: 48, width: "auto", display: "block" }} />
           </Link>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             {user ? (
@@ -397,7 +402,7 @@ export function Navbar({ onOpenModal }: { onOpenModal?: () => void }) {
                 className="btn-gold"
                 style={{ display: "flex", alignItems: "center", gap: 8, background: "#bf791d", borderRadius: 30, padding: "10px 18px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 500, whiteSpace: "nowrap" }}
               >
-                Contribute Now <ArrowIcon size={14} />
+                {navCtaText} <ArrowIcon size={14} />
               </button>
             )}
             <button
@@ -454,7 +459,7 @@ export function Navbar({ onOpenModal }: { onOpenModal?: () => void }) {
   return (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: 1008 }}>
       <Link to="/" style={{ textDecoration: "none", flexShrink: 0 }}>
-        <img src={imgLogo} alt="URW Logo" style={{ height: 60, width: "auto", display: "block" }} />
+        <img src={navLogoImg} alt="URW Logo" style={{ height: 60, width: "auto", display: "block" }} />
       </Link>
 
       <div style={{ display: "flex", alignItems: "center", gap: 12, paddingLeft: 28, paddingRight: user ? 8 : 6, height: 59, borderRadius: 60, background: "rgba(255,255,255,0.1)", backdropFilter: "blur(15px)" }}>
@@ -482,7 +487,7 @@ export function Navbar({ onOpenModal }: { onOpenModal?: () => void }) {
                 className="btn-gold"
                 style={{ display: "flex", alignItems: "center", gap: 12, background: "#bf791d", borderRadius: 30, padding: "10px 20px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 500, whiteSpace: "nowrap" }}
               >
-                Contribute Now <ArrowIcon />
+                {navCtaText} <ArrowIcon />
               </button>
               <ProfileDropdown user={user} onLogout={handleLogout} />
             </>
@@ -492,7 +497,7 @@ export function Navbar({ onOpenModal }: { onOpenModal?: () => void }) {
               className="btn-gold"
               style={{ display: "flex", alignItems: "center", gap: 16, background: "#bf791d", borderRadius: 30, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 500, whiteSpace: "nowrap" }}
             >
-              Contribute Now <ArrowIcon />
+              {navCtaText} <ArrowIcon />
             </button>
           )}
         </div>

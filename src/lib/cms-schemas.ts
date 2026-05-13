@@ -80,6 +80,8 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
   },
 
   RecognitionsSection: {
+    isCarousel: true,
+    carouselLabel: "Award Images",
     fields: [
       { key: "badge", label: "Badge Text", type: "text" },
       { key: "title", label: "Title", type: "textarea" },
@@ -91,6 +93,15 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
       description:
         "Awards don't define my work. They confirm that someone is watching and believe it mattered.",
     },
+    itemFields: [
+      { key: "image", label: "Award Image", type: "image" },
+      { key: "alt", label: "Award Name / Alt Text", type: "text" },
+    ],
+    defaultItems: [
+      { image: "", alt: "National Award 2023" },
+      { image: "", alt: "Forbes 30 Under 30" },
+      { image: "", alt: "TISS Fellow" },
+    ],
   },
 
   BeyondSyllabusSection: {
@@ -362,6 +373,7 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
       { key: "row2Text", label: "Row 2 Text", type: "textarea" },
       { key: "row3Label", label: "Row 3 Label", type: "text" },
       { key: "row3Text", label: "Row 3 Text", type: "textarea" },
+      { key: "photo", label: "Card Photo", type: "image" },
     ],
     defaultContent: {
       badge: "Honest Impact",
@@ -370,10 +382,10 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
         "In voices, journeys, and moments where children, families, and teachers, lives quietly transform.",
     },
     defaultItems: [
-      { tag1: "Honest Impact", tag2: "Science", row1Label: "SITUATION", row1Text: "Class 5 children in Bhusawal had never seen a functioning lab — their science textbook remained theory.", row2Label: "WHAT WAS DONE", row2Text: "A Hands-On Learning Kit was introduced: magnets, lenses, circuits, seeds. The teacher ran six sessions.", row3Label: "WHAT CHANGED", row3Text: "Three months later, science scores improved by 22%. Children began asking questions unprompted." },
-      { tag1: "Honest Impact", tag2: "Reading", row1Label: "WHAT CHANGED", row1Text: "Reading comprehension scores improved by 35% and children began borrowing books voluntarily each week.", row2Label: "", row2Text: "", row3Label: "", row3Text: "" },
-      { tag1: "Honest Impact", tag2: "Community", row1Label: "SITUATION", row1Text: "Rural schools lacked basic reading materials, limiting children's early language development.", row2Label: "WHAT WAS DONE", row2Text: "Mobile libraries with curated books were introduced across 40 villages in the district.", row3Label: "WHAT CHANGED", row3Text: "Reading comprehension scores improved by 35% within one academic year of the program launch." },
-      { tag1: "Honest Impact", tag2: "Teachers", row1Label: "WHAT CHANGED", row1Text: "Teacher attendance improved by 28% and parent engagement in school activities tripled over the year.", row2Label: "", row2Text: "", row3Label: "", row3Text: "" },
+      { tag1: "Honest Impact", tag2: "Science", row1Label: "SITUATION", row1Text: "Class 5 children in Bhusawal had never seen a functioning lab — their science textbook remained theory.", row2Label: "WHAT WAS DONE", row2Text: "A Hands-On Learning Kit was introduced: magnets, lenses, circuits, seeds. The teacher ran six sessions.", row3Label: "WHAT CHANGED", row3Text: "Three months later, science scores improved by 22%. Children began asking questions unprompted.", photo: "" },
+      { tag1: "Honest Impact", tag2: "Reading", row1Label: "WHAT CHANGED", row1Text: "Reading comprehension scores improved by 35% and children began borrowing books voluntarily each week.", row2Label: "", row2Text: "", row3Label: "", row3Text: "", photo: "" },
+      { tag1: "Honest Impact", tag2: "Community", row1Label: "SITUATION", row1Text: "Rural schools lacked basic reading materials, limiting children's early language development.", row2Label: "WHAT WAS DONE", row2Text: "Mobile libraries with curated books were introduced across 40 villages in the district.", row3Label: "WHAT CHANGED", row3Text: "Reading comprehension scores improved by 35% within one academic year of the program launch.", photo: "" },
+      { tag1: "Honest Impact", tag2: "Teachers", row1Label: "WHAT CHANGED", row1Text: "Teacher attendance improved by 28% and parent engagement in school activities tripled over the year.", row2Label: "", row2Text: "", row3Label: "", row3Text: "", photo: "" },
     ],
   },
 
@@ -605,7 +617,193 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
     ],
   },
 
+  // ── HOME — HARDCODED SECTIONS (now CMS-backed) ───────────────────────────
+
+  WhatProgressSection: {
+    isCarousel: true,
+    carouselLabel: "Progress Cards",
+    fields: [
+      { key: "badge", label: "Badge Text", type: "text" },
+      { key: "title", label: "Section Title", type: "textarea" },
+    ],
+    defaultContent: {
+      badge: "Real change!",
+      title: "What Real Progress Feels Like",
+    },
+    itemFields: [
+      { key: "type", label: "Card Type (video / content)", type: "text" },
+      { key: "tag", label: "Tag", type: "text" },
+      { key: "title", label: "Card Title", type: "text" },
+      { key: "desc", label: "Description", type: "textarea" },
+      { key: "bullet1", label: "Bullet 1", type: "text" },
+      { key: "bullet2", label: "Bullet 2", type: "text" },
+      { key: "bullet3", label: "Bullet 3", type: "text" },
+      { key: "thumbnail", label: "Thumbnail Image", type: "image" },
+    ],
+    defaultItems: [
+      { type: "video", tag: "Real Classroom", title: "See This Method In Action", desc: "Watch how Ujjwala transforms a standard lesson into a lived experience.", bullet1: "Students observe and then do", bullet2: "Every lesson connects to real life", bullet3: "No child is left behind", thumbnail: "" },
+      { type: "content", tag: "Student Growth", title: "A Child Who Once Refused To Come", desc: "Atharva hadn't attended school in months when Ujjwala walked to his door.", bullet1: "Home visits that changed everything", bullet2: "Family included in the journey", bullet3: "Back in school within two weeks", thumbnail: "" },
+      { type: "content", tag: "Teacher Change", title: "When A Teacher's Way Changes", desc: "A simple shift in how a teacher speaks can open a classroom completely.", bullet1: "From instruction to conversation", bullet2: "Children began raising hands", bullet3: "Confidence before marks", thumbnail: "" },
+      { type: "video", tag: "Beyond Syllabus", title: "Learning Outside The Walls", desc: "Children stepped out of their classroom into shops, farms, and streets.", bullet1: "Reading signboards as a lesson", bullet2: "Math in the marketplace", bullet3: "Science in the garden", thumbnail: "" },
+      { type: "content", tag: "Community Impact", title: "When The Village Joins In", desc: "The biggest change happened not in the classroom, but when parents started attending.", bullet1: "Monthly parent gatherings", bullet2: "Homework that involved family", bullet3: "Attendance rose steadily", thumbnail: "" },
+      { type: "content", tag: "Long-Term Change", title: "Results That Last Beyond Exams", desc: "Children who went through this programme remember what they learned five years later.", bullet1: "Skills over marks", bullet2: "Critical thinking built early", bullet3: "Career clarity from confidence", thumbnail: "" },
+    ],
+  },
+
+  FeelTeacherSection: {
+    fields: [
+      { key: "badge", label: "Badge", type: "text" },
+      { key: "title", label: "Main Title", type: "textarea" },
+      { key: "para1", label: "Paragraph 1", type: "textarea" },
+      { key: "para2", label: "Paragraph 2", type: "textarea" },
+      { key: "para3", label: "Paragraph 3", type: "textarea" },
+      { key: "image", label: "Teacher Photo (overrides default)", type: "image" },
+      { key: "trustTitle", label: "Trust Section Title", type: "textarea" },
+      { key: "trustPara1", label: "Trust Paragraph 1", type: "textarea" },
+      { key: "trustPara2", label: "Trust Paragraph 2", type: "textarea" },
+    ],
+    defaultContent: {
+      badge: "About Ujjwal Mam",
+      title: "After 31 years, I still feel like a young teacher joined on 5th July, 1995.",
+      para1: "Teaching found me because my family had always been teachers. My father, my mother, my grandmother. When I walked into my first government school classroom in 1995, I felt like I was continuing the family legacy.",
+      para2: "I have taught children who could not afford ten rupees for a school fee. I have gone to their homes at night without telling anyone. I have helped families get the documents that opened doors their children would otherwise never have found. I have done all of this because a teacher's job does not end when the bell rings.",
+      para3: "Its selfless service to the powerhouse of my country. No better satisfaction than shaping the bright minds of this country.",
+      image: "",
+      trustTitle: "A Trust Built Because One Classroom Was Never Going To Be Enough",
+      trustPara1: "For 31 years, I saw bright, curious children slowly grow distant from learning. Not because they were weak, but because the system around them stopped speaking to their life, their struggle, and their reality.",
+      trustPara2: "Shiksha Raj Ujjwal Bharat Foundation was born from that journey — an education-only trust created to carry practical, teacher-led learning into schools and communities that need it most, with full transparency on every contribution and every change it helps bring.",
+    },
+  },
+
+  OurChannelsSection: {
+    isCarousel: true,
+    carouselLabel: "Social Channels / Grid Images",
+    fields: [
+      { key: "badge", label: "Badge", type: "text" },
+      { key: "title", label: "Section Title", type: "text" },
+      { key: "subtitle", label: "Section Subtitle", type: "textarea" },
+      { key: "youtubeUrl", label: "YouTube Channel URL", type: "url" },
+      { key: "instagramUrl", label: "Instagram Profile URL", type: "url" },
+      { key: "whatsappUrl", label: "WhatsApp Community URL", type: "url" },
+      { key: "linkedinUrl", label: "LinkedIn Profile URL", type: "url" },
+    ],
+    defaultContent: {
+      badge: "Follow The Journey",
+      title: "See The Work, Feel The Journey",
+      subtitle: "The full stories, lessons, and lived moments continue across every channel I share.",
+      youtubeUrl: "https://www.youtube.com/channel/UCJOILwGRJVFODGp6uQGDF1w",
+      instagramUrl: "https://www.instagram.com/zp_teacher_ujjwala_wadekar/",
+      whatsappUrl: "https://wa.me/919370318308",
+      linkedinUrl: "https://www.linkedin.com/in/ujjwala-wadekar-317094247/",
+    },
+    itemFields: [
+      { key: "image", label: "Grid Image", type: "image" },
+      { key: "alt", label: "Alt Text", type: "text" },
+      { key: "link", label: "Image Link (optional)", type: "url" },
+    ],
+    defaultItems: [
+      { image: "", alt: "Work image 1", link: "" },
+      { image: "", alt: "Work image 2", link: "" },
+      { image: "", alt: "Work image 3", link: "" },
+      { image: "", alt: "Work image 4", link: "" },
+    ],
+  },
+
+  FaqSection: {
+    isCarousel: true,
+    carouselLabel: "FAQ Items",
+    fields: [
+      { key: "badge", label: "Badge", type: "text" },
+      { key: "title", label: "Section Title", type: "text" },
+    ],
+    defaultContent: {
+      badge: "Questions",
+      title: "Frequently Asked Questions",
+    },
+    itemFields: [
+      { key: "category", label: "Category", type: "text" },
+      { key: "question", label: "Question", type: "text" },
+      { key: "answer", label: "Answer", type: "textarea" },
+    ],
+    defaultItems: [
+      { category: "About Ujjwala and the Trust", question: "How is Ujjwala Wadekar related to the trust?", answer: "Ujjwala is the founder's inspiration and the lived force behind the trust. Her life's work gave this mission its voice, values, and direction." },
+      { category: "About Ujjwala and the Trust", question: "What does \"Where Teachers Lead And Society Lifts\" really mean?", answer: "It means teachers should not carry change alone. When society stands beside them, education becomes stronger, more equal, and more lasting." },
+      { category: "Support, Donations, and Transparency", question: "How will my donation actually be used?", answer: "Your support goes into real learning needs — materials, programmes, mentorship, books, exposure, digital access, and school-strengthening support." },
+      { category: "Support, Donations, and Transparency", question: "Do you directly give cash to children or families?", answer: "No. The focus is on meaningful educational support that helps children continue learning with dignity and continuity." },
+      { category: "Support, Donations, and Transparency", question: "Can I claim tax benefits on my donation under Section 80G?", answer: "Yes, only if the trust has active 80G approval at the time of donation. Also, cash donations above ₹2,000 are not eligible, and 80G cannot be claimed under the new tax regime." },
+      { category: "Support, Donations, and Transparency", question: "Can I support a specific child, school, or programme directly?", answer: "Yes. Support can be meaningfully directed through clear routes like a child's learning journey, a school-strengthening effort, or a defined programme." },
+      { category: "Participation and Contribution", question: "How can someone help if they cannot donate money right now?", answer: "You can still be part of this mission — by teaching, volunteering, mentoring, opening doors, spreading the word, or simply staying involved." },
+      { category: "Participation and Contribution", question: "I am not ready to donate yet. Can I still stay involved?", answer: "Of course. This mission needs people, not only money — teachers, parents, volunteers, supporters, and communities all have a role here." },
+      { category: "Participation and Contribution", question: "Can teachers join this mission even if they are from another school or city?", answer: "Yes. The trust is built to grow beyond one classroom and one place, through teacher networks, training, and replicable school models." },
+      { category: "Programmes and Scale", question: "What kind of programmes will the trust actually run on the ground?", answer: "From teacher training and Beyond Syllabus learning to student support, parent workshops, community events, and school-strengthening programmes — the work is meant to stay practical and real." },
+      { category: "Programmes and Scale", question: "How will these programmes reach children outside one school or one city?", answer: "By building teacher-led models, training networks, scalable playbooks, and community-supported programmes that can travel from one place to many." },
+      { category: "Programmes and Scale", question: "What does \"Adopt A School\" really include?", answer: "It includes more than funding — books, tools, mentoring, teaching support, workshops, and even school improvement drives led by the community." },
+    ],
+  },
+
   // ── BRAND / GLOBAL ────────────────────────────────────────────────────────
+
+  NavigationSection: {
+    isCarousel: true,
+    carouselLabel: "Navigation Items",
+    fields: [
+      { key: "logoText", label: "Logo Text", type: "text" },
+      { key: "logoImage", label: "Logo Image", type: "image" },
+      { key: "ctaText", label: "Header CTA Button Text", type: "text" },
+      { key: "ctaLink", label: "Header CTA Button Link", type: "link" },
+    ],
+    defaultContent: {
+      logoText: "Ujjwal Bharat",
+      logoImage: "",
+      ctaText: "Contribute Now",
+      ctaLink: "page:/donate",
+    },
+    itemFields: [
+      { key: "label", label: "Nav Label", type: "text" },
+      { key: "link", label: "Nav Link", type: "link" },
+    ],
+    defaultItems: [
+      { label: "About", link: "page:/about" },
+      { label: "Programs", link: "anchor:programs" },
+      { label: "Donate", link: "page:/donate" },
+      { label: "Contact", link: "page:/contact" },
+    ],
+  },
+
+  FooterSection: {
+    fields: [
+      { key: "quote", label: "Footer Tagline / Quote", type: "text" },
+      { key: "address", label: "Office Address", type: "textarea" },
+      { key: "phone", label: "Phone Number", type: "text" },
+      { key: "email", label: "Email Address", type: "text" },
+      { key: "copyright", label: "Copyright Text", type: "text" },
+      { key: "cin", label: "CIN Number", type: "text" },
+      { key: "youtubeUrl", label: "YouTube URL", type: "url" },
+      { key: "instagramUrl", label: "Instagram URL", type: "url" },
+      { key: "whatsappUrl", label: "WhatsApp URL", type: "url" },
+      { key: "linkedinUrl", label: "LinkedIn URL", type: "url" },
+      { key: "col1Title", label: "Footer Column 1 Title", type: "text" },
+      { key: "col2Title", label: "Footer Column 2 Title", type: "text" },
+      { key: "col3Title", label: "Footer Column 3 Title", type: "text" },
+      { key: "col4Title", label: "Footer Column 4 Title", type: "text" },
+    ],
+    defaultContent: {
+      quote: "Where teachers lead and society lifts.",
+      address: '"Rau" 89/412, Nehru Nagar, Mohadi Road, Jalgaon, 425002',
+      phone: "+91 93703 18308",
+      email: "info@ujjwalabharat.org",
+      copyright: "© 2026 Ujjwala Wadekar. All rights reserved.",
+      cin: "CIN:U62013PN2023PTC223154",
+      youtubeUrl: "https://www.youtube.com/channel/UCJOILwGRJVFODGp6uQGDF1w",
+      instagramUrl: "https://www.instagram.com/zp_teacher_ujjwala_wadekar/",
+      whatsappUrl: "https://wa.me/919370318308",
+      linkedinUrl: "https://www.linkedin.com/in/ujjwala-wadekar-317094247/",
+      col1Title: "Our Mission",
+      col2Title: "Programmes",
+      col3Title: "Get Involved",
+      col4Title: "Legal",
+    },
+  },
 
   BrandSettings: {
     fields: [
