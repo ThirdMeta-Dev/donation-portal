@@ -5,6 +5,7 @@
  */
 import { Link } from "react-router";
 import { useState, useEffect, useCallback, useRef } from "react";
+import { resolveCmsLink } from "../../lib/cms-types";
 import { createPortal } from "react-dom";
 import { Navbar } from "../components/SiteNavbar";
 import { Footer } from "../components/SiteFooter";
@@ -286,23 +287,28 @@ function ArrowIcon({ color = "#fff", size = 16 }: { color?: string; size?: numbe
 }
 
 // ── StatCard ──────────────────────────────────────────────────────────────
-function StatCard() {
+function StatCard({ content }: { content?: Record<string, unknown> }) {
+  const s1 = String(content?.stat1 || "31 yrs");
+  const s2 = String(content?.stat2 || "340+ Teachers in Network");
+  const s3 = String(content?.stat3 || "12,400+ Children Reached");
   return (
     <div style={{ position: "relative", width: 225.924, height: 97, overflow: "hidden" }}>
       <img src={imgStatBg} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "fill" }} />
       <ul style={{ position: "absolute", left: 8, top: 8, width: 198, fontStyle: "italic", fontSize: 11, color: "#f9c56d", fontFamily: "'DM Sans', sans-serif", lineHeight: "19px", listStyle: "disc", paddingLeft: 21, margin: 0, whiteSpace: "nowrap" }}>
         <li><span style={{ fontWeight: 500 }}>Ujjwala Wadekar</span></li>
-        <li><span style={{ fontWeight: 500 }}>31 years</span><span style={{ fontWeight: 300 }}> in government schools</span></li>
-        <li><span style={{ fontWeight: 300 }}>Guiding rural generations</span></li>
-        <li><span style={{ fontWeight: 300 }}>Shaped </span><span style={{ fontWeight: 500 }}>10k+</span><span style={{ fontWeight: 300 }}> characters</span></li>
+        <li><span style={{ fontWeight: 500 }}>{s1}</span></li>
+        <li><span style={{ fontWeight: 300 }}>{s2}</span></li>
+        <li><span style={{ fontWeight: 300 }}>{s3}</span></li>
       </ul>
     </div>
   );
 }
 
 // ── MobileHeroPhotoBlock ──────────────────────────────────────────────────
-function MobileHeroPhotoBlock() {
+function MobileHeroPhotoBlock({ content }: { content?: Record<string, unknown> }) {
   const [lightbox, setLightbox] = useState<"youtube" | "instagram" | null>(null);
+  const s1 = String(content?.stat1 || "31 yrs");
+  const s3 = String(content?.stat3 || "12,400+ Children Reached");
 
   return (
     <>
@@ -331,8 +337,8 @@ function MobileHeroPhotoBlock() {
             listStyle: "disc", paddingLeft: 18, margin: 0,
           }}>
             <li><span style={{ fontWeight: 500 }}>Ujjwala Wadekar</span></li>
-            <li><span style={{ fontWeight: 500 }}>31 yrs</span><span style={{ fontWeight: 300 }}> Teaching<br />Experience</span></li>
-            <li><span style={{ fontWeight: 500 }}>12,400+</span><span style={{ fontWeight: 300 }}> Children Reached</span></li>
+            <li><span style={{ fontWeight: 500 }}>{s1}</span></li>
+            <li><span style={{ fontWeight: 500 }}>{s3}</span></li>
           </ul>
         </div>
 
@@ -760,13 +766,13 @@ function HeroSection({ onOpenModal, data }: { onOpenModal: () => void; data?: an
                   {content.ctaSecondary || "Problems we are working on"}
                 </button>
               </div>
-              <MobileHeroPhotoBlock />
+              <MobileHeroPhotoBlock content={content} />
             </div>
           ) : (
             <div style={{ position: "relative", display: "flex", alignItems: "flex-end", justifyContent: "space-between", width: "100%", maxWidth: 1008 }}>
               {!isTablet && (
                 <div style={{ position: "absolute", left: 235, top: 60, zIndex: 5 }}>
-                  <StatCard />
+                  <StatCard content={content} />
                 </div>
               )}
               <div style={{ display: "flex", flexDirection: "column", gap: 40, width: isTablet ? "50%" : 364, flexShrink: 0, position: "relative", zIndex: 2 }}>
@@ -2257,15 +2263,17 @@ function Section8({ onOpenModal, data }: { onOpenModal: () => void; data?: any }
   const programs = cmsItems.length > 0
     ? cmsItems.map((it: any, i: number) => {
         const fallback = S8_PROGRAMS[i % S8_PROGRAMS.length];
+        const cmsBullets = [it.bullet1, it.bullet2, it.bullet3, it.bullet4].filter(Boolean);
         return {
           id: `s8-${i}`,
           tab: it.tab || fallback?.tab || "",
           hindi: it.hindi || fallback?.hindi || "",
           english: it.english || fallback?.english || "",
           desc: it.desc || fallback?.desc || "",
-          bullets: fallback?.bullets ?? [],
+          bullets: cmsBullets.length > 0 ? cmsBullets : (fallback?.bullets ?? []),
           punchline: it.punchline || fallback?.punchline || "",
           cta: it.cta || fallback?.cta || "Learn More",
+          ctaLink: it.ctaLink || "",
           photo: it.photo || fallback?.photo,
           photoNode: undefined,
         };
@@ -2382,8 +2390,8 @@ function Section8({ onOpenModal, data }: { onOpenModal: () => void; data?: any }
               ))}
             </ul>
             <p style={{ fontFamily: "'DM Sans', sans-serif", fontStyle: "italic", fontWeight: 300, fontSize: 13, lineHeight: "22px", color: "#8a6a2a", margin: "0 0 16px" }}>{prog.punchline}</p>
-            {prog.tab === "ShikshanSaath" ? (
-              <Link to="/donate" style={{ textDecoration: "none" }}>
+            {prog.ctaLink ? (
+              <Link to={resolveCmsLink(prog.ctaLink)} style={{ textDecoration: "none" }}>
                 <button style={{ display: "inline-flex", alignItems: "center", gap: 10, background: "#bf791d", borderRadius: 30, padding: "10px 24px", border: "none", cursor: "pointer" }}>
                   <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 14, color: "#fff" }}>{prog.cta}</span>
                   <S8Arrow color="#fff" />
@@ -2512,8 +2520,8 @@ function Section8({ onOpenModal, data }: { onOpenModal: () => void; data?: any }
                           ))}
                         </ul>
                         <p style={{ fontFamily: "'DM Sans', sans-serif", fontStyle: "italic", fontWeight: 300, fontSize: 13, lineHeight: "22px", color: "#8a6a2a", margin: 0 }}>{prog.punchline}</p>
-                        {prog.tab === "ShikshanSaath" ? (
-                          <Link to="/donate" style={{ textDecoration: "none" }}>
+                        {prog.ctaLink ? (
+                          <Link to={resolveCmsLink(prog.ctaLink)} style={{ textDecoration: "none" }}>
                             <button style={{ display: "inline-flex", alignItems: "center", gap: 12, background: "#bf791d", border: "none", borderRadius: 30, padding: "10px 24px", cursor: "pointer", alignSelf: "flex-start" }}>
                               <span style={{ fontFamily: "'DM Sans', sans-serif", fontWeight: 600, fontSize: 14, color: "#fff" }}>{prog.cta}</span>
                               <S8Arrow color="#fff" />
