@@ -209,14 +209,25 @@ function UserAvatar({ name }: { name: string }) {
 // ── ProfileDropdown ────────────────────────────────────────────────────────
 function ProfileDropdown({ user, onLogout }: { user: { name: string; email: string; role?: string }; onLogout: () => void }) {
   const [open, setOpen] = useState(false);
+  const [dropPos, setDropPos] = useState<{ top: number; right: number }>({ top: 0, right: 0 });
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const scheduleClose = () => { closeTimer.current = setTimeout(() => setOpen(false), 150); };
   const cancelClose   = () => { if (closeTimer.current) clearTimeout(closeTimer.current); };
   const isAdmin = user.role === "admin";
 
+  const handleOpen = () => {
+    cancelClose();
+    if (triggerRef.current) {
+      const r = triggerRef.current.getBoundingClientRect();
+      setDropPos({ top: r.bottom + 10, right: window.innerWidth - r.right });
+    }
+    setOpen(true);
+  };
+
   return (
-    <div style={{ position: "relative" }} onMouseEnter={() => { cancelClose(); setOpen(true); }} onMouseLeave={scheduleClose}>
-      <button style={{
+    <div style={{ position: "relative" }} onMouseEnter={handleOpen} onMouseLeave={scheduleClose}>
+      <button ref={triggerRef} style={{
         display: "flex", alignItems: "center", gap: 4,
         background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.2)",
         borderRadius: 30, padding: "4px 8px 4px 4px", cursor: "pointer",
@@ -230,7 +241,7 @@ function ProfileDropdown({ user, onLogout }: { user: { name: string; email: stri
           onMouseEnter={cancelClose}
           onMouseLeave={scheduleClose}
           style={{
-            position: "absolute", top: "calc(100% + 10px)", right: 0,
+            position: "fixed", top: dropPos.top, right: dropPos.right,
             minWidth: 220, background: "rgba(255,255,255,0.97)",
             backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)",
             border: "1px solid rgba(0,0,0,0.08)", borderRadius: 16,
