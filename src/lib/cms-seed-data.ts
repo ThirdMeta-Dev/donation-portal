@@ -28,6 +28,10 @@ const SECTIONS_BY_PAGE: Record<string, { component_name: string; display_name: s
     { component_name: "QuotesCarouselSection", display_name: "Quotes Carousel" },
     { component_name: "TeamSection", display_name: "Team" },
     { component_name: "ClosingSection", display_name: "Closing Section" },
+    { component_name: "WhatProgressSection", display_name: "What Real Progress Feels Like" },
+    { component_name: "FeelTeacherSection", display_name: "Feel Like A Young Teacher" },
+    { component_name: "OurChannelsSection", display_name: "See The Work / Social Channels" },
+    { component_name: "FaqSection", display_name: "FAQ" },
   ],
   about: [
     { component_name: "FounderBioSection", display_name: "Founder Bio" },
@@ -46,6 +50,8 @@ const SECTIONS_BY_PAGE: Record<string, { component_name: string; display_name: s
   ],
   brand: [
     { component_name: "BrandSettings", display_name: "Brand & Foundation Info" },
+    { component_name: "NavigationSection", display_name: "Header Navigation" },
+    { component_name: "FooterSection", display_name: "Footer" },
   ],
 };
 

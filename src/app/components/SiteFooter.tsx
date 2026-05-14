@@ -1,6 +1,6 @@
- import React, { useState, useEffect } from "react";
-
- import { useNavigate, useLocation } from "react-router";
+import React, { useState, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router";
+import { useCmsPage } from "../hooks/useCmsPage";
 // @ts-ignore
 import imgLogo from "@/assets/urw-logo.png";
 // @ts-ignore
@@ -135,6 +135,23 @@ export function Footer({ onOpenModal }: { onOpenModal?: () => void }) {
   const isTablet = useIsTablet();
   const navigate = useNavigate();
   const location = useLocation();
+  const { getSection } = useCmsPage("brand");
+  const footerData = getSection("FooterSection");
+  const fc = footerData.content;
+
+  const footerQuote     = String(fc.quote     || "Where teachers lead and society lifts.");
+  const footerAddress   = String(fc.address   || '"Rau" 89/412, Nehru Nagar, Mohadi Road, Jalgaon, 425002');
+  const footerCopyright = String(fc.copyright || "© 2026 Ujjwala Wadekar. All rights reserved.");
+  const footerCin       = String(fc.cin       || "CIN:U62013PN2023PTC223154");
+
+  const footerSocials = FOOTER_SOCIAL.map((s) => ({
+    ...s,
+    href: (s.label === "LinkedIn"  && fc.linkedinUrl  ? String(fc.linkedinUrl)  :
+           s.label === "WhatsApp"  && fc.whatsappUrl  ? String(fc.whatsappUrl)  :
+           s.label === "Instagram" && fc.instagramUrl ? String(fc.instagramUrl) :
+           s.label === "YouTube"   && fc.youtubeUrl   ? String(fc.youtubeUrl)   :
+           s.href),
+  }));
 
   const handleLink = (link: FooterLink) => {
     if (link.external) { window.open(link.href, "_blank", "noopener noreferrer"); return; }
@@ -204,10 +221,10 @@ export function Footer({ onOpenModal }: { onOpenModal?: () => void }) {
                 lineHeight: "24px", color: "#fff", margin: 0,
                 maxWidth: isMobile ? "100%" : 240,
               }}>
-                "Rau" 89/412, Nehru Nagar, Mohadi Road, Jalgaon, 425002
+                {footerAddress}
               </p>
               <div style={{ display: "flex", gap: 10, alignItems: "center" }}>
-                {FOOTER_SOCIAL.map((s) => (
+                {footerSocials.map((s) => (
                   <FooterSocialBtn key={s.label} {...s} />
                 ))}
               </div>
@@ -279,7 +296,7 @@ export function Footer({ onOpenModal }: { onOpenModal?: () => void }) {
               color: "#fff", margin: 0,
               maxWidth: isMobile ? "100%" : 574,
             }}>
-              Where teachers lead and society lifts.
+              {footerQuote}
             </p>
             <div style={{
               display: "flex",
@@ -327,14 +344,14 @@ export function Footer({ onOpenModal }: { onOpenModal?: () => void }) {
               fontFamily: "'DM Sans', sans-serif", fontWeight: 300, fontSize: 13,
               lineHeight: "1.6", color: "#fff", margin: 0,
             }}>
-              © 2026 Ujjwala Wadekar. All rights reserved.
+              {footerCopyright}
             </p>
             <p style={{
               fontFamily: "'Poppins', sans-serif", fontWeight: 300, fontSize: 13,
               lineHeight: "24px", color: "#fff", margin: 0,
               textAlign: isMobile ? "left" : "right",
             }}>
-              CIN:U62013PN2023PTC223154
+              {footerCin}
             </p>
           </div>
         </div>

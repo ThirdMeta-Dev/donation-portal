@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router";
 import { useAuth } from "../lib/AuthContext";
+import { useCmsPage } from "../hooks/useCmsPage";
+import { resolveCmsLink } from "../../lib/cms-types";
 // @ts-ignore
 import imgLogo from "@/assets/urw-logo.png";
 // @ts-ignore
@@ -374,6 +376,35 @@ export function Navbar({ onOpenModal }: { onOpenModal?: () => void }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const { getSection } = useCmsPage("brand");
+  const navData = getSection("NavigationSection");
+  const navCtaText  = String(navData.content.ctaText  || "Contribute Now");
+  const navLogoImg  = String(navData.content.logoImage || "") || imgLogo;
+
+  // Build NavGroup[] from CMS items; fall back to hardcoded NAV_MENU
+  const activeNavMenu: NavGroup[] = navData.items.length > 0
+    ? navData.items.map((it: Record<string, unknown>) => {
+        const subs: DropItem[] = [];
+        for (let i = 1; i <= 5; i++) {
+          const subLabel = String(it[`sub${i}Label`] || "").trim();
+          const subLink  = String(it[`sub${i}Link`]  || "").trim();
+          if (!subLabel) continue;
+          const resolved = resolveCmsLink(subLink);
+          subs.push({
+            label: subLabel,
+            href: resolved || undefined,
+            external: subLink.startsWith("external:"),
+          });
+        }
+        const topResolved = resolveCmsLink(String(it.link || ""));
+        return {
+          label: String(it.label || ""),
+          items: subs.length > 0
+            ? subs
+            : [{ label: String(it.label || ""), href: topResolved || undefined }],
+        };
+      })
+    : NAV_MENU;
 
   const handleLogout = async () => {
     await logout();
@@ -386,7 +417,7 @@ export function Navbar({ onOpenModal }: { onOpenModal?: () => void }) {
       <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
           <Link to="/" style={{ textDecoration: "none", flexShrink: 0 }}>
-            <img src={imgLogo} alt="URW Logo" style={{ height: 48, width: "auto", display: "block" }} />
+            <img src={navLogoImg} alt="URW Logo" style={{ height: 48, width: "auto", display: "block" }} />
           </Link>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             {user ? (
@@ -397,7 +428,7 @@ export function Navbar({ onOpenModal }: { onOpenModal?: () => void }) {
                 className="btn-gold"
                 style={{ display: "flex", alignItems: "center", gap: 8, background: "#bf791d", borderRadius: 30, padding: "10px 18px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 500, whiteSpace: "nowrap" }}
               >
-                Contribute Now <ArrowIcon size={14} />
+                {navCtaText} <ArrowIcon size={14} />
               </button>
             )}
             <button
@@ -415,7 +446,7 @@ export function Navbar({ onOpenModal }: { onOpenModal?: () => void }) {
 
         {mobileMenuOpen && (
           <div style={{ marginTop: 16, padding: "20px 16px", borderRadius: 16, background: "rgba(255,255,255,0.1)", backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)", border: "1px solid rgba(255,255,255,0.15)", display: "flex", flexDirection: "column", gap: 0 }}>
-            {NAV_MENU.map(group => (
+            {activeNavMenu.map(group => (
               <MobileNavGroup
                 key={group.label}
                 group={group}
@@ -454,14 +485,14 @@ export function Navbar({ onOpenModal }: { onOpenModal?: () => void }) {
   return (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: 1008 }}>
       <Link to="/" style={{ textDecoration: "none", flexShrink: 0 }}>
-        <img src={imgLogo} alt="URW Logo" style={{ height: 60, width: "auto", display: "block" }} />
+        <img src={navLogoImg} alt="URW Logo" style={{ height: 60, width: "auto", display: "block" }} />
       </Link>
 
       <div style={{ display: "flex", alignItems: "center", gap: 12, paddingLeft: 28, paddingRight: user ? 8 : 6, height: 59, borderRadius: 60, background: "rgba(255,255,255,0.1)", backdropFilter: "blur(15px)" }}>
 
         {/* Nav dropdowns */}
         <div style={{ display: "flex", alignItems: "center", gap: 24, paddingLeft: 8 }}>
-          {NAV_MENU.map(group => (
+          {activeNavMenu.map(group => (
             <NavDropdown key={group.label} group={group} onOpenModal={onOpenModal} />
           ))}
         </div>
@@ -482,7 +513,7 @@ export function Navbar({ onOpenModal }: { onOpenModal?: () => void }) {
                 className="btn-gold"
                 style={{ display: "flex", alignItems: "center", gap: 12, background: "#bf791d", borderRadius: 30, padding: "10px 20px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 500, whiteSpace: "nowrap" }}
               >
-                Contribute Now <ArrowIcon />
+                {navCtaText} <ArrowIcon />
               </button>
               <ProfileDropdown user={user} onLogout={handleLogout} />
             </>
@@ -492,7 +523,7 @@ export function Navbar({ onOpenModal }: { onOpenModal?: () => void }) {
               className="btn-gold"
               style={{ display: "flex", alignItems: "center", gap: 16, background: "#bf791d", borderRadius: 30, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 500, whiteSpace: "nowrap" }}
             >
-              Contribute Now <ArrowIcon />
+              {navCtaText} <ArrowIcon />
             </button>
           )}
         </div>

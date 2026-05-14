@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
-import { useNavigate, useLocation } from "react-router";
+import { useNavigate } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
 import {
   BarChart3, Users, IndianRupee, Heart, Search, TrendingUp, CheckCircle2,
   Shield, RefreshCw, Loader2, BookOpen, Plus, Trash2, Edit, X,
   GraduationCap, ChevronDown, ChevronUp, Video, FileText, Calendar, Eye,
-  UserCheck, UserX, Mail, ToggleLeft, ToggleRight, AlertCircle, Layout
+  UserCheck, UserX, Mail, ToggleLeft, ToggleRight, AlertCircle, Layout, Inbox
 } from "lucide-react";
 import { useAuth } from "../lib/AuthContext";
 import { donationApi, lmsApi, adminApi, causeApi, Donation, Course, AppUserRecord, CauseFull } from "../lib/api";
@@ -14,6 +14,7 @@ import { CauseFormDrawer } from "../components/CauseFormDrawer";
 import { DonationEditModal } from "../components/DonationEditModal";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, CartesianGrid } from "recharts";
 import { CmsPanel } from "../components/cms/CmsPanel";
+import { supabase } from "../lib/supabase";
 
 const COLORS = ["#4338CA", "#D97706", "#059669", "#7C3AED", "#E11D48", "#0891B2"];
 
@@ -45,6 +46,25 @@ const BLANK_FORM: CourseForm = {
   questions: [{ question: "", options: ["", "", "", ""], correctIndex: 0, explanation: "" }],
 };
 
+interface LeadRecord {
+  id: string;
+  name: string;
+  email: string;
+  phone: string;
+  city: string;
+  role: string;
+  message: string;
+  created_at: string;
+}
+
+type AdminCache = {
+  donations: Donation[];
+  courses: Course[];
+  causeSettings: Record<string, { enable80G: boolean }>;
+  causes: CauseFull[];
+};
+let _cache: AdminCache | null = null;
+
 export function AdminDashboard() {
   useEffect(() => {
     const meta = document.createElement("meta");
@@ -55,10 +75,9 @@ export function AdminDashboard() {
 
   const { user, logout, isLoading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
-  const [donations, setDonations] = useState<Donation[]>([]);
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [activeTab, setActiveTab] = useState<"overview" | "donations" | "users" | "causes" | "courses" | "content">("overview");
+  const [donations, setDonations] = useState<Donation[]>(_cache?.donations ?? []);
+  const [courses, setCourses] = useState<Course[]>(_cache?.courses ?? []);
+  const [activeTab, setActiveTab] = useState<"overview" | "donations" | "users" | "causes" | "courses" | "content" | "leads">("overview");
   const [appUsers, setAppUsers] = useState<AppUserRecord[]>([]);
   const [usersLoading, setUsersLoading] = useState(false);
   const [usersError, setUsersError] = useState("");
@@ -67,17 +86,32 @@ export function AdminDashboard() {
   const [search, setSearch] = useState("");
   const [filterStatus, setFilterStatus] = useState("all");
   const [filterType, setFilterType] = useState("all");
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(!_cache);
   const [error, setError] = useState("");
   const [selectedDonation, setSelectedDonation] = useState<Donation | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
 
+  // Leads (contact form submissions)
+  const [leads, setLeads] = useState<LeadRecord[]>([]);
+  const [leadsLoading, setLeadsLoading] = useState(false);
+
+  const loadLeads = async () => {
+    if (leads.length > 0) return;
+    setLeadsLoading(true);
+    const { data } = await supabase
+      .from("volunteer_submissions")
+      .select("*")
+      .order("created_at", { ascending: false });
+    setLeads((data as LeadRecord[]) ?? []);
+    setLeadsLoading(false);
+  };
+
   // Cause settings (80G per cause)
-  const [causeSettings, setCauseSettings] = useState<Record<string, { enable80G: boolean }>>({});
+  const [causeSettings, setCauseSettings] = useState<Record<string, { enable80G: boolean }>>(_cache?.causeSettings ?? {});
   const [toggling80G, setToggling80G] = useState<string | null>(null);
 
   // Causes CRUD
-  const [causes, setCauses] = useState<CauseFull[]>([]);
+  const [causes, setCauses] = useState<CauseFull[]>(_cache?.causes ?? []);
   const [causesLoading, setCausesLoading] = useState(false);
   const [showCauseForm, setShowCauseForm] = useState(false);
   const [editingCauseFull, setEditingCauseFull] = useState<CauseFull | null>(null);
@@ -98,10 +132,11 @@ export function AdminDashboard() {
     if (!user) { navigate("/auth", { replace: true }); return; }
     if (user.role !== "admin") { navigate("/dashboard", { replace: true }); return; }
     loadAll();
-  }, [user, authLoading, location.key]);
+  }, [user, authLoading]);
 
   async function loadAll() {
-    setLoading(true); setError("");
+    if (!_cache) setLoading(true);
+    setError("");
     try {
       const [donRes, crsRes, settingsRes, causesRes] = await Promise.allSettled([
         donationApi.getAll(),
@@ -109,14 +144,19 @@ export function AdminDashboard() {
         causeApi.getSettings(),
         causeApi.getCauses(),
       ]);
-      if (donRes.status === "fulfilled") setDonations(
-        (donRes.value.donations || []).sort((a: Donation, b: Donation) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
-        )
-      );
-      if (crsRes.status === "fulfilled") setCourses(crsRes.value.courses || []);
-      if (settingsRes.status === "fulfilled") setCauseSettings(settingsRes.value.settings || {});
-      if (causesRes.status === "fulfilled") setCauses(causesRes.value.causes || []);
+      const donations = donRes.status === "fulfilled"
+        ? (donRes.value.donations || []).sort((a: Donation, b: Donation) =>
+            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        : _cache?.donations ?? [];
+      const courses = crsRes.status === "fulfilled" ? (crsRes.value.courses || []) : _cache?.courses ?? [];
+      const causeSettingsData = settingsRes.status === "fulfilled" ? (settingsRes.value.settings || {}) : _cache?.causeSettings ?? {};
+      const causes = causesRes.status === "fulfilled" ? (causesRes.value.causes || []) : _cache?.causes ?? [];
+
+      _cache = { donations, courses, causeSettings: causeSettingsData, causes };
+      setDonations(donations);
+      setCourses(courses);
+      setCauseSettings(causeSettingsData);
+      setCauses(causes);
     } catch (e: any) { setError(e.message); }
     setLoading(false);
   }
@@ -315,6 +355,7 @@ export function AdminDashboard() {
     { id: "causes",    label: `Causes (${causes.length || "—"})`, icon: <Heart size={15} />, onTabClick: () => { setActiveTab("causes"); if (causes.length === 0) loadCauses(); } },
     { id: "courses",   label: "LMS Courses",               icon: <GraduationCap size={15} /> },
     { id: "content",   label: "Content",                   icon: <Layout size={15} /> },
+    { id: "leads",     label: `Leads${leads.length > 0 ? ` (${leads.length})` : ""}`, icon: <Inbox size={15} />, onTabClick: () => { setActiveTab("leads"); loadLeads(); } },
   ] as { id: typeof activeTab; label: string; icon: React.ReactNode; onTabClick?: () => void }[];
 
   const statusBadge = (status: string) => {
@@ -965,6 +1006,63 @@ export function AdminDashboard() {
             {activeTab === "content" && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                 <CmsPanel />
+              </motion.div>
+            )}
+
+            {/* ── LEADS ── */}
+            {activeTab === "leads" && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between flex-wrap gap-3">
+                    <div>
+                      <h2 className="text-lg font-semibold text-slate-800">Contact Form Leads</h2>
+                      <p className="text-sm text-slate-500 mt-0.5">All submissions from the contact / volunteer form</p>
+                    </div>
+                    <button
+                      onClick={() => { setLeads([]); loadLeads(); }}
+                      className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-indigo-600 border border-indigo-200 rounded-lg hover:bg-indigo-50 transition-colors"
+                    >
+                      <RefreshCw size={13} /> Refresh
+                    </button>
+                  </div>
+
+                  {leadsLoading ? (
+                    <div className="flex items-center justify-center py-16">
+                      <Loader2 size={24} className="animate-spin text-slate-400" />
+                    </div>
+                  ) : leads.length === 0 ? (
+                    <div className="text-center py-16 text-slate-400 text-sm">No leads yet.</div>
+                  ) : (
+                    <div className="space-y-3">
+                      {leads.map((lead) => (
+                        <div key={lead.id} className="bg-white border border-slate-200 rounded-xl p-4 space-y-3">
+                          <div className="flex items-start justify-between gap-4 flex-wrap">
+                            <div>
+                              <p className="font-semibold text-slate-800">{lead.name}</p>
+                              <p className="text-sm text-slate-500">{[lead.role, lead.city].filter(Boolean).join(" · ")}</p>
+                            </div>
+                            <p className="text-xs text-slate-400 whitespace-nowrap">
+                              {new Date(lead.created_at).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                            </p>
+                          </div>
+                          <div className="flex gap-4 flex-wrap text-sm">
+                            {lead.email && (
+                              <a href={`mailto:${lead.email}`} className="flex items-center gap-1 text-indigo-600 hover:underline">
+                                <Mail size={13} /> {lead.email}
+                              </a>
+                            )}
+                            {lead.phone && (
+                              <a href={`tel:${lead.phone}`} className="text-slate-600">{lead.phone}</a>
+                            )}
+                          </div>
+                          {lead.message && (
+                            <p className="text-sm text-slate-600 bg-slate-50 rounded-lg px-3 py-2 leading-relaxed">{lead.message}</p>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </motion.div>
             )}
           </>
