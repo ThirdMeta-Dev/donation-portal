@@ -217,14 +217,11 @@ function ProfileDropdown({ user, onLogout }: { user: { name: string; email: stri
   return (
     <div style={{ position: "relative" }} onMouseEnter={() => { cancelClose(); setOpen(true); }} onMouseLeave={scheduleClose}>
       <button style={{
-        display: "flex", alignItems: "center", gap: 8,
+        display: "flex", alignItems: "center", gap: 4,
         background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.2)",
-        borderRadius: 30, padding: "4px 12px 4px 4px", cursor: "pointer",
+        borderRadius: 30, padding: "4px 8px 4px 4px", cursor: "pointer",
       }}>
         <UserAvatar name={user.name} />
-        <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 500, color: "#fff", maxWidth: 100, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-          {user.name.split(" ")[0]}
-        </span>
         <img src={imgChevron} alt="" style={{ width: 14, height: 14, opacity: 0.7 }} />
       </button>
 
