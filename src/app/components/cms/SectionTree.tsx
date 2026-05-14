@@ -26,8 +26,11 @@ export function SectionTree({ selectedId, onSelect }: Props) {
 
       if (!pagesData?.length) { setLoading(false); return; }
 
-      setPages(pagesData);
-      setExpanded(new Set(pagesData.map((p: CmsPage) => p.id)));
+      const visible = pagesData.filter((p: CmsPage) => p.slug !== "about");
+      setPages(visible);
+      // Default: only brand page open
+      const brandPage = visible.find((p: CmsPage) => p.slug === "brand");
+      setExpanded(new Set(brandPage ? [brandPage.id] : []));
 
       const { data: sectionsData } = await supabase
         .from("cms_sections")
@@ -67,11 +70,9 @@ export function SectionTree({ selectedId, onSelect }: Props) {
   }
 
   function togglePage(pageId: string) {
-    setExpanded((prev) => {
-      const next = new Set(prev);
-      next.has(pageId) ? next.delete(pageId) : next.add(pageId);
-      return next;
-    });
+    setExpanded((prev) =>
+      prev.has(pageId) ? new Set() : new Set([pageId])
+    );
   }
 
   if (loading) {
