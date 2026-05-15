@@ -147,7 +147,7 @@ function NavDropdown({ group, onOpenModal }: { group: NavGroup; onOpenModal?: ()
         display: "flex", alignItems: "center", gap: 4,
         background: "none", border: "none", cursor: "pointer",
         color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 400,
-        padding: "4px 0",
+        padding: "4px 0", whiteSpace: "nowrap",
       }}>
         {group.label}
         <img src={imgChevron} alt="" style={{ width: 16, height: 16 }} />
@@ -499,19 +499,19 @@ export function Navbar({ onOpenModal }: { onOpenModal?: () => void }) {
       <div style={{ display: "flex", alignItems: "center", gap: 12, paddingLeft: 28, paddingRight: user ? 8 : 6, height: 59, borderRadius: 60, background: "rgba(255,255,255,0.1)", backdropFilter: "blur(15px)" }}>
 
         {/* Nav dropdowns */}
-        <div style={{ display: "flex", alignItems: "center", gap: 24, paddingLeft: 8 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: user ? 16 : 24, paddingLeft: 8 }}>
           {activeNavMenu.map(group => (
             <NavDropdown key={group.label} group={group} onOpenModal={onOpenModal} />
           ))}
         </div>
 
         {/* CTAs: Contact us + Contribute Now */}
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <button
             onClick={() => navigate("/contact")}
-            style={{ display: "flex", alignItems: "center", gap: 10, background: "transparent", borderRadius: 30, padding: "10px 20px", border: "1px solid #fff", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 600, whiteSpace: "nowrap" }}
+            style={{ display: "flex", alignItems: "center", gap: 8, background: "transparent", borderRadius: 30, padding: user ? "8px 14px" : "10px 20px", border: "1px solid #fff", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: user ? 14 : 16, fontWeight: 600, whiteSpace: "nowrap" }}
           >
-            Contact us <ArrowIcon size={14} />
+            Contact us <ArrowIcon size={13} />
           </button>
 
           {user ? (
@@ -519,9 +519,9 @@ export function Navbar({ onOpenModal }: { onOpenModal?: () => void }) {
               <button
                 onClick={() => navigate("/donate")}
                 className="btn-gold"
-                style={{ display: "flex", alignItems: "center", gap: 12, background: "#bf791d", borderRadius: 30, padding: "10px 20px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 500, whiteSpace: "nowrap" }}
+                style={{ display: "flex", alignItems: "center", gap: 8, background: "#bf791d", borderRadius: 30, padding: "8px 14px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 500, whiteSpace: "nowrap" }}
               >
-                {navCtaText} <ArrowIcon />
+                {navCtaText} <ArrowIcon size={13} />
               </button>
               <ProfileDropdown user={user} onLogout={handleLogout} />
             </>
