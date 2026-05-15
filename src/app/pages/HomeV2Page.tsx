@@ -288,18 +288,36 @@ function ArrowIcon({ color = "#fff", size = 16 }: { color?: string; size?: numbe
 
 // ── StatCard ──────────────────────────────────────────────────────────────
 function StatCard({ content }: { content?: Record<string, unknown> }) {
+  const sName = String(content?.statName || "Ujjwala Wadekar");
   const s1 = String(content?.stat1 || "31 yrs");
   const s2 = String(content?.stat2 || "340+ Teachers in Network");
   const s3 = String(content?.stat3 || "12,400+ Children Reached");
   return (
-    <div style={{ position: "relative", width: 225.924, height: 97, overflow: "hidden" }}>
-      <img src={imgStatBg} alt="" style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "fill" }} />
-      <ul style={{ position: "absolute", left: 8, top: 8, width: 198, fontStyle: "italic", fontSize: 11, color: "#f9c56d", fontFamily: "'DM Sans', sans-serif", lineHeight: "19px", listStyle: "disc", paddingLeft: 21, margin: 0, whiteSpace: "nowrap" }}>
-        <li><span style={{ fontWeight: 500 }}>Ujjwala Wadekar</span></li>
-        <li><span style={{ fontWeight: 500 }}>{s1}</span></li>
-        <li><span style={{ fontWeight: 300 }}>{s2}</span></li>
-        <li><span style={{ fontWeight: 300 }}>{s3}</span></li>
-      </ul>
+    <div style={{ position: "relative", display: "inline-block" }}>
+      <div style={{
+        background: "rgba(245,158,11,0.13)",
+        backdropFilter: "blur(20px)",
+        WebkitBackdropFilter: "blur(20px)",
+        border: "1px solid rgba(245,158,11,0.45)",
+        borderRadius: 12,
+        padding: "8px 14px 10px",
+        width: 212,
+      }}>
+        <ul style={{ fontStyle: "italic", fontSize: 11, color: "#f9c56d", fontFamily: "'DM Sans', sans-serif", lineHeight: "19px", listStyle: "disc", paddingLeft: 18, margin: 0 }}>
+          <li><span style={{ fontWeight: 500 }}>{sName}</span></li>
+          <li><span style={{ fontWeight: 500 }}>{s1}</span></li>
+          <li><span style={{ fontWeight: 300 }}>{s2}</span></li>
+          <li><span style={{ fontWeight: 300 }}>{s3}</span></li>
+        </ul>
+      </div>
+      {/* Down-pointing arrow */}
+      <div style={{
+        position: "absolute", bottom: -8, left: 20,
+        width: 0, height: 0,
+        borderLeft: "8px solid transparent",
+        borderRight: "8px solid transparent",
+        borderTop: "8px solid rgba(245,158,11,0.5)",
+      }} />
     </div>
   );
 }
@@ -307,6 +325,7 @@ function StatCard({ content }: { content?: Record<string, unknown> }) {
 // ── MobileHeroPhotoBlock ──────────────────────────────────────────────────
 function MobileHeroPhotoBlock({ content }: { content?: Record<string, unknown> }) {
   const [lightbox, setLightbox] = useState<"youtube" | "instagram" | null>(null);
+  const sName = String(content?.statName || "Ujjwala Wadekar");
   const s1 = String(content?.stat1 || "31 yrs");
   const s3 = String(content?.stat3 || "12,400+ Children Reached");
 
@@ -336,7 +355,7 @@ function MobileHeroPhotoBlock({ content }: { content?: Record<string, unknown> }
             fontFamily: "'DM Sans', sans-serif", lineHeight: "17px",
             listStyle: "disc", paddingLeft: 18, margin: 0,
           }}>
-            <li><span style={{ fontWeight: 500 }}>Ujjwala Wadekar</span></li>
+            <li><span style={{ fontWeight: 500 }}>{sName}</span></li>
             <li><span style={{ fontWeight: 500 }}>{s1}</span></li>
             <li><span style={{ fontWeight: 500 }}>{s3}</span></li>
           </ul>
@@ -771,7 +790,7 @@ function HeroSection({ onOpenModal, data }: { onOpenModal: () => void; data?: an
           ) : (
             <div style={{ position: "relative", display: "flex", alignItems: "flex-end", justifyContent: "space-between", width: "100%", maxWidth: 1008 }}>
               {!isTablet && (
-                <div style={{ position: "absolute", left: 235, top: 60, zIndex: 5 }}>
+                <div style={{ position: "absolute", left: 370, top: 6, zIndex: 5 }}>
                   <StatCard content={content} />
                 </div>
               )}
@@ -1177,19 +1196,31 @@ const S4_CARDS = [
   { label: "Recognition 10", sub: "", color: "#e2ddd6", img: imgMedia10 },
 ];
 
-const S4_LOOP = [...S4_CARDS, ...S4_CARDS, ...S4_CARDS];
-const S4_N = S4_CARDS.length;
-
 function Section4({ data }: { data?: any }) {
   const sectionRef = useFadeInUp();
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
   const content = (data?.content ?? {}) as any;
+
+  // Build cards from CMS items; fall back to bundled image for each slot
+  const rawItems = (data?.items ?? []) as { image?: string; alt?: string }[];
+  const cards = rawItems.length > 0
+    ? rawItems.map((it, i) => ({
+        img: it.image || S4_CARDS[i % S4_CARDS.length]?.img || "",
+        label: it.alt || `Award ${i + 1}`,
+        color: i % 2 === 0 ? "#d9d9d9" : "#e2ddd6",
+      }))
+    : S4_CARDS;
+  const n = cards.length;
+  const loop = [...cards, ...cards, ...cards];
+
   const GAP = 16;
   const [cardWidth, setCardWidth] = useState(268);
-  // idx into S4_LOOP — starts at N (middle copy) so we can go prev and next freely
-  const [idx, setIdx] = useState(S4_N);
+  const [idx, setIdx] = useState(n);
   const [skipAnim, setSkipAnim] = useState(false);
+
+  // Reset to middle copy when item count changes (CMS load)
+  useEffect(() => { setIdx(n); }, [n]);
 
   const updateCardWidth = useCallback(() => {
     const vw = window.innerWidth;
@@ -1216,15 +1247,15 @@ function Section4({ data }: { data?: any }) {
 
   // After each navigation, if idx drifted outside the middle copy, silently teleport back
   useEffect(() => {
-    if (idx < S4_N || idx >= 2 * S4_N) {
+    if (idx < n || idx >= 2 * n) {
       const t = setTimeout(() => {
         setSkipAnim(true);
-        setIdx(prev => (prev < S4_N ? prev + S4_N : prev - S4_N));
+        setIdx(prev => (prev < n ? prev + n : prev - n));
         requestAnimationFrame(() => requestAnimationFrame(() => setSkipAnim(false)));
       }, 520);
       return () => clearTimeout(t);
     }
-  }, [idx]);
+  }, [idx, n]);
 
   const prevSlide = useCallback(() => { setSkipAnim(false); setIdx(prev => prev - 1); }, []);
   const nextSlide = useCallback(() => { setSkipAnim(false); setIdx(prev => prev + 1); }, []);
@@ -1268,7 +1299,7 @@ function Section4({ data }: { data?: any }) {
         </div>
         <div style={{ overflow: "hidden", paddingLeft: isMobile ? 20 : 32 }}>
           <div style={trackStyle}>
-            {S4_LOOP.map((card, i) => (
+            {loop.map((card, i) => (
               <div key={i} style={{ width: cardWidth, minHeight: isMobile ? 220 : 300, flexShrink: 0, borderRadius: 12, overflow: "hidden", position: "relative", cursor: "pointer", boxShadow: "0 2px 12px rgba(0,0,0,0.06)" }}>
                 <img src={card.img} alt={card.label} style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover" }} />
               </div>
@@ -1297,7 +1328,7 @@ function Section4({ data }: { data?: any }) {
         </div>
         <div style={{ flex: 1, overflow: "hidden", minWidth: 0 }}>
           <div style={trackStyle}>
-            {S4_LOOP.map((card, i) => (
+            {loop.map((card, i) => (
               <div key={i} style={{ width: cardWidth, minHeight: 386, flexShrink: 0, borderRadius: 12, overflow: "hidden", position: "relative", cursor: "pointer", boxShadow: "0 2px 12px rgba(0,0,0,0.06)", transition: "box-shadow 0.2s" }}
                 onMouseEnter={e => (e.currentTarget.style.boxShadow = "0 8px 32px rgba(0,0,0,0.14)")}
                 onMouseLeave={e => (e.currentTarget.style.boxShadow = "0 2px 12px rgba(0,0,0,0.06)")}>
@@ -2562,6 +2593,7 @@ type S9Card = {
   desc: string;
   bullets: string[];
   thumbnail: string;
+  videoSrc?: string;
 };
 
 const SECTION_9_CARDS: S9Card[] = [
@@ -2679,7 +2711,7 @@ function VideoCard9({ card, width, height }: { card: S9Card; width: number; heig
       {/* Video */}
       <video
         ref={videoRef}
-        src={S9_VIDEO}
+        src={card.videoSrc || S9_VIDEO}
         onTimeUpdate={() => {
           const v = videoRef.current;
           if (v?.duration) setProgress(v.currentTime / v.duration);
@@ -2791,7 +2823,7 @@ function ContentCard9({ card, width, height }: { card: S9Card; width: number; he
       {/* Video fills card when playing */}
       <video
         ref={videoRef}
-        src={S9_VIDEO}
+        src={card.videoSrc || S9_VIDEO}
         onTimeUpdate={() => {
           const v = videoRef.current;
           if (v?.duration) setProgress(v.currentTime / v.duration);
@@ -2881,6 +2913,7 @@ function Section9({ data }: { data: SectionData }) {
         bullets: [item.bullet1, item.bullet2, item.bullet3, item.bullet4]
           .filter(Boolean).map(String),
         thumbnail: String(item.thumbnail || ""),
+        videoSrc: String(item.video || ""),
       }))
     : SECTION_9_CARDS;
 
@@ -3773,6 +3806,23 @@ function SectionHonestImpact({ data }: { data?: any }) {
   const content = (data?.content ?? {}) as any;
   const cmsItems = data?.items ?? [];
 
+  // CMS photos — fall back to bundled images when not set
+  const p = (k: string, fallback: string) => String(content[k] || "") || fallback;
+  const hi1  = p("photo1",  imgHI1);
+  const hi2  = p("photo2",  imgHI2);
+  const hi3  = p("photo3",  imgHI3);
+  const hi4  = p("photo4",  imgHI4);
+  const hi5  = p("photo5",  imgHI5);
+  const hi6  = p("photo6",  imgHI6);
+  const hi7  = p("photo7",  imgHI7);
+  const hi8  = p("photo8",  imgHI8);
+  const hi9  = p("photo9",  imgHI9);
+  const hi10 = p("photo10", imgHI10);
+  const hi11 = p("photo11", imgHI11);
+  const hi12 = p("photo12", imgHI12);
+  const hi13 = p("photo13", imgHI13);
+  const hi14 = p("photo14", imgHI14);
+
   // Unified sticky-scroll: works for mobile, tablet, and desktop
   useEffect(() => {
     const outer = outerRef.current;
@@ -3855,60 +3905,60 @@ function SectionHonestImpact({ data }: { data?: any }) {
 
             {/* Col 1: photo top + text card */}
             <MCol>
-              <HonestPhotoBlock src={imgHI1} style={{ flex: 1 }} />
+              <HonestPhotoBlock src={hi1} style={{ flex: 1 }} />
               <HonestImpactCard cardIdx={0} compact style={{ flexShrink: 0 }} overrideData={cmsItems[0]} />
             </MCol>
 
             {/* Col 2: full photo */}
             <div style={{ width: colW, flexShrink: 0, borderRadius: 16, overflow: "hidden" }}>
-              <img src={imgHI2} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+              <img src={hi2} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
             </div>
 
             {/* Col 3: 2 stacked photos */}
             <MCol>
-              <HonestPhotoBlock src={imgHI3} style={{ flex: 1 }} />
-              <HonestPhotoBlock src={imgHI4} style={{ flex: 1 }} />
+              <HonestPhotoBlock src={hi3} style={{ flex: 1 }} />
+              <HonestPhotoBlock src={hi4} style={{ flex: 1 }} />
             </MCol>
 
             {/* Col 4: text card + photo */}
             <MCol>
               <HonestImpactCard cardIdx={1} compact style={{ flexShrink: 0 }} overrideData={cmsItems[1]} />
-              <HonestPhotoBlock src={imgHI5} style={{ flex: 1 }} />
+              <HonestPhotoBlock src={hi5} style={{ flex: 1 }} />
             </MCol>
 
             {/* Col 5: 2 stacked photos */}
             <MCol>
-              <HonestPhotoBlock src={imgHI6} style={{ flex: 1 }} />
-              <HonestPhotoBlock src={imgHI7} style={{ flexShrink: 0, height: "35%" }} />
+              <HonestPhotoBlock src={hi6} style={{ flex: 1 }} />
+              <HonestPhotoBlock src={hi7} style={{ flexShrink: 0, height: "35%" }} />
             </MCol>
 
             {/* Col 6: photo + text card */}
             <MCol>
-              <HonestPhotoBlock src={imgHI8} style={{ flex: 1 }} />
+              <HonestPhotoBlock src={hi8} style={{ flex: 1 }} />
               <HonestImpactCard cardIdx={2} compact style={{ flexShrink: 0 }} overrideData={cmsItems[2]} />
             </MCol>
 
             {/* Col 7: full photo */}
             <div style={{ width: colW, flexShrink: 0, borderRadius: 16, overflow: "hidden" }}>
-              <img src={imgHI9} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+              <img src={hi9} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
             </div>
 
             {/* Col 8: 2 stacked photos */}
             <MCol>
-              <HonestPhotoBlock src={imgHI10} style={{ flex: 1 }} />
-              <HonestPhotoBlock src={imgHI11} style={{ flex: 1 }} />
+              <HonestPhotoBlock src={hi10} style={{ flex: 1 }} />
+              <HonestPhotoBlock src={hi11} style={{ flex: 1 }} />
             </MCol>
 
             {/* Col 9: text card + photo */}
             <MCol>
               <HonestImpactCard cardIdx={3} compact style={{ flexShrink: 0 }} overrideData={cmsItems[3]} />
-              <HonestPhotoBlock src={imgHI12} style={{ flex: 1 }} />
+              <HonestPhotoBlock src={hi12} style={{ flex: 1 }} />
             </MCol>
 
             {/* Col 10: 2 stacked photos */}
             <MCol>
-              <HonestPhotoBlock src={imgHI13} style={{ flex: 1 }} />
-              <HonestPhotoBlock src={imgHI14} style={{ flexShrink: 0, height: "35%" }} />
+              <HonestPhotoBlock src={hi13} style={{ flex: 1 }} />
+              <HonestPhotoBlock src={hi14} style={{ flexShrink: 0, height: "35%" }} />
             </MCol>
 
           </div>
@@ -3972,60 +4022,60 @@ function SectionHonestImpact({ data }: { data?: any }) {
 
           {/* Col 1: photo (flex) + text card */}
           <div style={{ width: 459, display: "flex", flexDirection: "column", gap: 16, flexShrink: 0 }}>
-            <HonestPhotoBlock src={imgHI1} style={{ flex: 1 }} />
+            <HonestPhotoBlock src={hi1} style={{ flex: 1 }} />
             <HonestImpactCard cardIdx={0} style={{ flexShrink: 0 }} overrideData={cmsItems[0]} />
           </div>
 
           {/* Col 2: full-height photo */}
           <div style={{ width: 350, flexShrink: 0, borderRadius: 16, overflow: "hidden" }}>
-            <img src={imgHI2} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+            <img src={hi2} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
           </div>
 
           {/* Col 3: 2 stacked photos */}
           <div style={{ width: 220, display: "flex", flexDirection: "column", gap: 16, flexShrink: 0 }}>
-            <HonestPhotoBlock src={imgHI3} style={{ flex: 1 }} />
-            <HonestPhotoBlock src={imgHI4} style={{ flex: 1 }} />
+            <HonestPhotoBlock src={hi3} style={{ flex: 1 }} />
+            <HonestPhotoBlock src={hi4} style={{ flex: 1 }} />
           </div>
 
           {/* Col 4: text card (flex) + photo bottom */}
           <div style={{ width: 350, display: "flex", flexDirection: "column", gap: 16, flexShrink: 0 }}>
             <HonestImpactCard cardIdx={1} style={{ flex: 1, minHeight: 0 }} overrideData={cmsItems[1]} />
-            <HonestPhotoBlock src={imgHI5} style={{ height: 352 }} />
+            <HonestPhotoBlock src={hi5} style={{ height: 352 }} />
           </div>
 
           {/* Col 5: 2 stacked photos */}
           <div style={{ width: 302, display: "flex", flexDirection: "column", gap: 16, flexShrink: 0 }}>
-            <HonestPhotoBlock src={imgHI6} style={{ flex: 1 }} />
-            <HonestPhotoBlock src={imgHI7} style={{ height: 184 }} />
+            <HonestPhotoBlock src={hi6} style={{ flex: 1 }} />
+            <HonestPhotoBlock src={hi7} style={{ height: 184 }} />
           </div>
 
           {/* Col 6: photo (flex) + text card */}
           <div style={{ width: 459, display: "flex", flexDirection: "column", gap: 16, flexShrink: 0 }}>
-            <HonestPhotoBlock src={imgHI8} style={{ flex: 1 }} />
+            <HonestPhotoBlock src={hi8} style={{ flex: 1 }} />
             <HonestImpactCard cardIdx={2} style={{ flexShrink: 0 }} overrideData={cmsItems[2]} />
           </div>
 
           {/* Col 7: full-height photo */}
           <div style={{ width: 350, flexShrink: 0, borderRadius: 16, overflow: "hidden" }}>
-            <img src={imgHI9} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+            <img src={hi9} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
           </div>
 
           {/* Col 8: 2 stacked photos */}
           <div style={{ width: 220, display: "flex", flexDirection: "column", gap: 16, flexShrink: 0 }}>
-            <HonestPhotoBlock src={imgHI10} style={{ flex: 1 }} />
-            <HonestPhotoBlock src={imgHI11} style={{ flex: 1 }} />
+            <HonestPhotoBlock src={hi10} style={{ flex: 1 }} />
+            <HonestPhotoBlock src={hi11} style={{ flex: 1 }} />
           </div>
 
           {/* Col 9: text card (flex) + photo bottom */}
           <div style={{ width: 350, display: "flex", flexDirection: "column", gap: 16, flexShrink: 0 }}>
             <HonestImpactCard cardIdx={3} style={{ flex: 1, minHeight: 0 }} overrideData={cmsItems[3]} />
-            <HonestPhotoBlock src={imgHI12} style={{ height: 352 }} />
+            <HonestPhotoBlock src={hi12} style={{ height: 352 }} />
           </div>
 
           {/* Col 10: 2 stacked photos */}
           <div style={{ width: 302, display: "flex", flexDirection: "column", gap: 16, flexShrink: 0 }}>
-            <HonestPhotoBlock src={imgHI13} style={{ flex: 1 }} />
-            <HonestPhotoBlock src={imgHI14} style={{ height: 184 }} />
+            <HonestPhotoBlock src={hi13} style={{ flex: 1 }} />
+            <HonestPhotoBlock src={hi14} style={{ height: 184 }} />
           </div>
 
         </div>
