@@ -777,13 +777,26 @@ function HeroSection({ onOpenModal, data }: { onOpenModal: () => void; data?: an
                 </p>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-                <button className="btn-gold" onClick={onOpenModal} style={{ display: "flex", alignItems: "center", gap: 12, background: "#bf791d", borderRadius: 30, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 600, boxShadow: "0px 4px 4px 0px rgba(0,0,0,0.3)", alignSelf: "flex-start" }}>
-                  {content.ctaPrimary || "Donate Now"} <ArrowIcon />
-                </button>
-                <button style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 14, padding: 0 }}>
-                  <span className="arrow-bounce"><svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M9 3v12M9 15l-5-5M9 15l5-5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
-                  {content.ctaSecondary || "Problems we are working on"}
-                </button>
+                {content.ctaPrimaryLink ? (
+                  <Link to={resolveCmsLink(String(content.ctaPrimaryLink))} className="btn-gold" style={{ display: "flex", alignItems: "center", gap: 12, background: "#bf791d", borderRadius: 30, padding: "12px 24px", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 600, boxShadow: "0px 4px 4px 0px rgba(0,0,0,0.3)", alignSelf: "flex-start", textDecoration: "none" }}>
+                    {content.ctaPrimary || "Donate Now"} <ArrowIcon />
+                  </Link>
+                ) : (
+                  <button className="btn-gold" onClick={onOpenModal} style={{ display: "flex", alignItems: "center", gap: 12, background: "#bf791d", borderRadius: 30, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 600, boxShadow: "0px 4px 4px 0px rgba(0,0,0,0.3)", alignSelf: "flex-start" }}>
+                    {content.ctaPrimary || "Donate Now"} <ArrowIcon />
+                  </button>
+                )}
+                {content.ctaSecondaryLink ? (
+                  <Link to={resolveCmsLink(String(content.ctaSecondaryLink))} style={{ display: "flex", alignItems: "center", gap: 8, color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 14, textDecoration: "none" }}>
+                    <span className="arrow-bounce"><svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M9 3v12M9 15l-5-5M9 15l5-5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
+                    {content.ctaSecondary || "Problems we are working on"}
+                  </Link>
+                ) : (
+                  <button style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 14, padding: 0 }}>
+                    <span className="arrow-bounce"><svg width="16" height="16" viewBox="0 0 18 18" fill="none"><path d="M9 3v12M9 15l-5-5M9 15l5-5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
+                    {content.ctaSecondary || "Problems we are working on"}
+                  </button>
+                )}
               </div>
               <MobileHeroPhotoBlock content={content} />
             </div>
@@ -808,13 +821,26 @@ function HeroSection({ onOpenModal, data }: { onOpenModal: () => void; data?: an
                   </h1>
                 </div>
                 <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-                  <button className="btn-gold" onClick={onOpenModal} style={{ display: "flex", alignItems: "center", gap: 20, background: "#bf791d", borderRadius: 30, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 600, boxShadow: "0px 4px 4px 0px rgba(0,0,0,0.3)", alignSelf: "flex-start" }}>
-                    {content.ctaPrimary || "Donate Now"} <ArrowIcon />
-                  </button>
-                  <button style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 16, padding: 0 }}>
-                    <span className="arrow-bounce"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 3v12M9 15l-5-5M9 15l5-5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
-                    {content.ctaSecondary || "Problems we are working on"}
-                  </button>
+                  {content.ctaPrimaryLink ? (
+                    <Link to={resolveCmsLink(String(content.ctaPrimaryLink))} className="btn-gold" style={{ display: "flex", alignItems: "center", gap: 20, background: "#bf791d", borderRadius: 30, padding: "12px 24px", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 600, boxShadow: "0px 4px 4px 0px rgba(0,0,0,0.3)", alignSelf: "flex-start", textDecoration: "none" }}>
+                      {content.ctaPrimary || "Donate Now"} <ArrowIcon />
+                    </Link>
+                  ) : (
+                    <button className="btn-gold" onClick={onOpenModal} style={{ display: "flex", alignItems: "center", gap: 20, background: "#bf791d", borderRadius: 30, padding: "12px 24px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 600, boxShadow: "0px 4px 4px 0px rgba(0,0,0,0.3)", alignSelf: "flex-start" }}>
+                      {content.ctaPrimary || "Donate Now"} <ArrowIcon />
+                    </button>
+                  )}
+                  {content.ctaSecondaryLink ? (
+                    <Link to={resolveCmsLink(String(content.ctaSecondaryLink))} style={{ display: "flex", alignItems: "center", gap: 8, color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 16, textDecoration: "none" }}>
+                      <span className="arrow-bounce"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 3v12M9 15l-5-5M9 15l5-5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
+                      {content.ctaSecondary || "Problems we are working on"}
+                    </Link>
+                  ) : (
+                    <button style={{ display: "flex", alignItems: "center", gap: 8, background: "none", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 16, padding: 0 }}>
+                      <span className="arrow-bounce"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M9 3v12M9 15l-5-5M9 15l5-5" stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" /></svg></span>
+                      {content.ctaSecondary || "Problems we are working on"}
+                    </button>
+                  )}
                 </div>
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 36, alignItems: "flex-end", width: isTablet ? "40%" : 245, flexShrink: 0, position: "relative", zIndex: 2 }}>
