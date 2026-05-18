@@ -593,6 +593,54 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
 
   // ── CONTACT ───────────────────────────────────────────────────────────────
 
+  ContactHeroSection: {
+    fields: [
+      { key: "badge", label: "Badge Text", type: "text" },
+      { key: "heading1", label: "Heading Line 1", type: "text" },
+      { key: "heading2", label: "Heading Line 2", type: "text" },
+      { key: "bullet1", label: "Bullet Point 1", type: "text" },
+      { key: "bullet2", label: "Bullet Point 2", type: "text" },
+      { key: "bullet3", label: "Bullet Point 3", type: "text" },
+      { key: "submitText", label: "Submit Button Text", type: "text" },
+    ],
+    defaultContent: {
+      badge: "Teacher-Led · Education-Only · Transparent",
+      heading1: "One Teacher Started This.",
+      heading2: "Many Can Keep It Going.",
+      bullet1: "Progress is visible & published",
+      bullet2: "Use of funds reported quarterly",
+      bullet3: "80G eligible · FCRA registered",
+      submitText: "Join Ujjwala's Mission",
+    },
+  },
+
+  ContactCTASection: {
+    fields: [
+      { key: "badge", label: "Badge Text", type: "text" },
+      { key: "heading1", label: "Heading Line 1", type: "text" },
+      { key: "heading2", label: "Heading Line 2", type: "text" },
+      { key: "bullet1", label: "Bullet Point 1", type: "text" },
+      { key: "bullet2", label: "Bullet Point 2", type: "text" },
+      { key: "bullet3", label: "Bullet Point 3", type: "text" },
+      { key: "link1Text", label: "Link 1 Text (Partner)", type: "text" },
+      { key: "link2Text", label: "Link 2 Text (Teacher Network)", type: "text" },
+      { key: "link3Text", label: "Link 3 Text (Donate)", type: "text" },
+      { key: "link3Url", label: "Link 3 URL", type: "link" },
+    ],
+    defaultContent: {
+      badge: "Teacher-Led · Education-Only · Transparent",
+      heading1: "One Teacher Started This.",
+      heading2: "Many Can Keep It Going.",
+      bullet1: "Progress is visible & published",
+      bullet2: "Use of funds reported quarterly",
+      bullet3: "80G eligible · FCRA registered",
+      link1Text: "Partner With Us",
+      link2Text: "Join Teacher Network",
+      link3Text: "Donate Now",
+      link3Url: "page:/donate",
+    },
+  },
+
   ContactInfoSection: {
     fields: [
       { key: "email", label: "Email Address", type: "text" },
@@ -607,12 +655,12 @@ export const SECTION_SCHEMAS: Record<string, SectionSchema> = {
     defaultContent: {
       email: "info@ujjwalabharat.org",
       phone: "+91 93703 18308",
-      address: "Arcadion Building, North Main Road, Koregaon Park, Pune, Maharashtra Pin: 411001",
+      address: "89/412, Neharu Nagar, Mohadi Road, Near Prasad Appt, Jalgaon, 425001",
       whatsapp: "https://wa.me/919370318308",
       linkedin: "https://www.linkedin.com/in/ujjwala-wadekar-317094247/",
       instagram: "https://www.instagram.com/zp_teacher_ujjwala_wadekar/",
       youtube: "https://www.youtube.com/channel/UCJOILwGRJVFODGp6uQGDF1w",
-      mapsEmbed: "",
+      mapsEmbed: "https://maps.google.com/maps?q=89%2F412%2C+Neharu+Nagar%2C+Mohadi+Road%2C+Near+Prasad+Appt%2C+Jalgaon%2C+Maharashtra+425001&output=embed&z=15",
     },
   },
 
