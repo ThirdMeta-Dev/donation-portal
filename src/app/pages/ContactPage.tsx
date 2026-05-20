@@ -94,7 +94,7 @@ const PAGE_CSS = `
 `;
 
 // ── SECTION 1 — Hero + Navbar + Contact Form (Figma 917:16112) ────────────
-function ContactHeroSection({ onOpenModal }: { onOpenModal: () => void }) {
+function ContactHeroSection({ onOpenModal, heroData }: { onOpenModal: () => void; heroData: any }) {
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
 
@@ -205,17 +205,17 @@ function ContactHeroSection({ onOpenModal }: { onOpenModal: () => void }) {
           <div style={{ flex: "0 0 auto", width: isMobile ? "100%" : 500, display: "flex", flexDirection: "column", gap: 24 }}>
             <div style={{ border: "1px solid rgba(255,255,255,0.3)", borderRadius: 40, padding: "6px 20px", alignSelf: "flex-start" }}>
               <span style={{ fontFamily: "'Poppins',sans-serif", fontSize: 13, color: "#fff" }}>
-                Teacher-Led · Education-Only · Transparent
+                {heroData.badge || "Teacher-Led · Education-Only · Transparent"}
               </span>
             </div>
 
             <h1 style={{ fontFamily: "'Lora',serif", fontWeight: 600, fontSize: isMobile ? 32 : 44, lineHeight: 1.28, color: "#fff", margin: 0 }}>
-              One Teacher Started This.<br />
-              Many Can Keep It Going.
+              {heroData.heading1 || "One Teacher Started This."}<br />
+              {heroData.heading2 || "Many Can Keep It Going."}
             </h1>
 
             <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-              {["Progress is visible & published", "Use of funds reported quarterly", "80G eligible · FCRA registered"].map((txt, i) => (
+              {[heroData.bullet1 || "Progress is visible & published", heroData.bullet2 || "Use of funds reported quarterly", heroData.bullet3 || "80G eligible · FCRA registered"].map((txt, i) => (
                 <div key={i} style={{ display: "flex", alignItems: "center", gap: 10 }}>
                   <div style={{ width: 24, height: 24, borderRadius: "50%", background: "#f59e0b", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
                     <ArrowIcon color="#fff" size={11} />
@@ -296,7 +296,7 @@ function ContactHeroSection({ onOpenModal }: { onOpenModal: () => void }) {
                 justifyContent: isMobile ? "center" : "flex-start",
               }}>
                 <span style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 16, color: "#fff", whiteSpace: "nowrap" }}>
-                  {isSubmitting ? "Sending…" : "Join Ujjwala's Mission"}
+                  {isSubmitting ? "Sending…" : (heroData.submitText || "Join Ujjwala's Mission")}
                 </span>
                 {!isSubmitting && <ArrowIcon color="#fff" size={16} />}
               </button>
@@ -391,7 +391,7 @@ function VisitUsSection({ contactInfo }: { contactInfo: any }) {
               <div>
                 <p style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 700, fontSize: 16, color: "#000", margin: "0 0 4px" }}>Address</p>
                 <p style={{ fontFamily: "'DM Sans',sans-serif", fontWeight: 400, fontSize: 16, color: "#636363", margin: 0, lineHeight: "24px" }}>
-                  {contactInfo.address || "Arcadion Building, North Main Road, Koregaon Park, Pune, Maharashtra Pin: 411001"}
+                  {contactInfo.address || "89/412, Neharu Nagar, Mohadi Road, Near Prasad Appt, Jalgaon, 425001"}
                 </p>
               </div>
             </div>
@@ -420,7 +420,7 @@ function VisitUsSection({ contactInfo }: { contactInfo: any }) {
           <div style={{ flex: 1, minWidth: 0, borderRadius: 20, overflow: "hidden", minHeight: isMobile ? 240 : 340, background: "#e8e8e8" }}>
             <iframe
               title="Office Location"
-              src={contactInfo.mapsEmbed || "https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3782.2613173522965!2d73.89396!3d18.53601!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bc2c16bf9d7d0ef%3A0x5fe9bf7a6c71e9b0!2sKoregaon%20Park%2C%20Pune%2C%20Maharashtra!5e0!3m2!1sen!2sin!4v1680000000000"}
+              src={contactInfo.mapsEmbed || "https://maps.google.com/maps?q=89%2F412%2C+Neharu+Nagar%2C+Mohadi+Road%2C+Near+Prasad+Appt%2C+Jalgaon%2C+Maharashtra+425001&output=embed&z=15"}
               width="100%" height="100%" style={{ border: 0, display: "block", minHeight: isMobile ? 240 : 340 }} allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade"
             />
           </div>
@@ -431,10 +431,11 @@ function VisitUsSection({ contactInfo }: { contactInfo: any }) {
 }
 
 // ── SECTION 3 — CTA Box (Figma 917:18164) ──────────────────────────────────
-function CTABoxSection() {
+function CTABoxSection({ ctaData }: { ctaData: any }) {
   const sectionRef = useFadeInUp();
   const isMobile = useIsMobile();
   const isTablet = useIsTablet();
+  const bullets = [ctaData.bullet1 || "Progress is visible & published", ctaData.bullet2 || "Use of funds reported quarterly", ctaData.bullet3 || "80G eligible · FCRA registered"];
 
   return (
     <section ref={sectionRef} className="cp-fade" style={{ width: "100%", background: "#fff", padding: isMobile ? "64px 20px 56px" : "154px 0 72px", boxSizing: "border-box" }}>
@@ -450,15 +451,15 @@ function CTABoxSection() {
           <div style={{ position: "relative", zIndex: 2 }}>
             <div style={{ display: "flex", flexDirection: isMobile || isTablet ? "column" : "row", alignItems: "flex-start", justifyContent: "space-between", gap: isMobile ? 24 : 40 }}>
               <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 20 }}>
-                <div style={{ border: "1px solid #885615", borderRadius: 40, padding: "6px 20px", alignSelf: "flex-start" }}><span style={{ fontFamily: "'Poppins',sans-serif", fontSize: 13, color: "#fff" }}>Teacher-Led · Education-Only · Transparent</span></div>
+                <div style={{ border: "1px solid #885615", borderRadius: 40, padding: "6px 20px", alignSelf: "flex-start" }}><span style={{ fontFamily: "'Poppins',sans-serif", fontSize: 13, color: "#fff" }}>{ctaData.badge || "Teacher-Led · Education-Only · Transparent"}</span></div>
                 <h2 style={{ fontFamily: "'Lora',serif", fontWeight: 600, fontSize: isMobile ? 28 : 44, lineHeight: 1.28, color: "#fff", margin: 0, textTransform: "capitalize" }}>
-                  <span style={{ display: "block" }}>One Teacher Started This.</span>
-                  <span style={{ display: "block" }}>Many Can Keep It Going.</span>
+                  <span style={{ display: "block" }}>{ctaData.heading1 || "One Teacher Started This."}</span>
+                  <span style={{ display: "block" }}>{ctaData.heading2 || "Many Can Keep It Going."}</span>
                 </h2>
               </div>
               {!isMobile && (
                 <div style={{ flexShrink: 0, display: "flex", flexDirection: "column", gap: 2, paddingTop: 20 }}>
-                  {["Progress is visible & published", "Use of funds reported quarterly", "80G eligible · FCRA registered"].map((txt, i) => (
+                  {bullets.map((txt, i) => (
                     <div key={i} style={{ display: "flex", alignItems: "center", gap: 10, height: 24 }}><ArrowIcon color="#fff" size={14} /><span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 15, color: "#fff", fontWeight: 300, whiteSpace: "nowrap" }}>{txt}</span></div>
                   ))}
                 </div>
@@ -466,16 +467,16 @@ function CTABoxSection() {
             </div>
             {isMobile && (
               <div style={{ display: "flex", flexDirection: "column", gap: 8, marginTop: 8 }}>
-                {["Progress is visible & published", "Use of funds reported quarterly", "80G eligible · FCRA registered"].map((txt, i) => (
+                {bullets.map((txt, i) => (
                   <div key={i} style={{ display: "flex", alignItems: "center", gap: 10 }}><ArrowIcon color="#fff" size={13} /><span style={{ fontFamily: "'DM Sans',sans-serif", fontSize: 14, color: "#fff", fontWeight: 300 }}>{txt}</span></div>
                 ))}
               </div>
             )}
           </div>
           <div style={{ position: "relative", zIndex: 2, display: "flex", flexDirection: isMobile ? "column" : "row", justifyContent: isMobile ? "flex-start" : "flex-end", alignItems: isMobile ? "flex-start" : "center", gap: isMobile ? 12 : 16, flexWrap: "wrap" }}>
-            <a href="#" style={{ display: "flex", alignItems: "center", gap: 14, background: "transparent", border: "none", padding: "12px 4px", fontFamily: "'DM Sans',sans-serif", fontWeight: 500, fontSize: 15, color: "#fff", cursor: "pointer", textDecoration: "none", whiteSpace: "nowrap" }}>Partner With Us <ArrowIcon color="#fff" size={18} /></a>
-            <a href="#" style={{ display: "flex", alignItems: "center", gap: 16, background: "transparent", border: "1.5px solid rgba(255,255,255,0.8)", borderRadius: 100, padding: "12px 28px", fontFamily: "'DM Sans',sans-serif", fontWeight: 500, fontSize: 15, color: "#fff", cursor: "pointer", textDecoration: "none", whiteSpace: "nowrap" }}>Join Teacher Network <ArrowIcon color="#fff" size={18} /></a>
-            <a href="/donate" style={{ display: "flex", alignItems: "center", gap: 16, background: "#fff", border: "none", borderRadius: 100, padding: "12px 28px", fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 15, color: "#bf791d", cursor: "pointer", textDecoration: "none", whiteSpace: "nowrap" }}>Donate Now <ArrowIcon color="#bf791d" size={18} /></a>
+            <a href="#" style={{ display: "flex", alignItems: "center", gap: 14, background: "transparent", border: "none", padding: "12px 4px", fontFamily: "'DM Sans',sans-serif", fontWeight: 500, fontSize: 15, color: "#fff", cursor: "pointer", textDecoration: "none", whiteSpace: "nowrap" }}>{ctaData.link1Text || "Partner With Us"} <ArrowIcon color="#fff" size={18} /></a>
+            <a href="#" style={{ display: "flex", alignItems: "center", gap: 16, background: "transparent", border: "1.5px solid rgba(255,255,255,0.8)", borderRadius: 100, padding: "12px 28px", fontFamily: "'DM Sans',sans-serif", fontWeight: 500, fontSize: 15, color: "#fff", cursor: "pointer", textDecoration: "none", whiteSpace: "nowrap" }}>{ctaData.link2Text || "Join Teacher Network"} <ArrowIcon color="#fff" size={18} /></a>
+            <a href="/donate" style={{ display: "flex", alignItems: "center", gap: 16, background: "#fff", border: "none", borderRadius: 100, padding: "12px 28px", fontFamily: "'DM Sans',sans-serif", fontWeight: 600, fontSize: 15, color: "#bf791d", cursor: "pointer", textDecoration: "none", whiteSpace: "nowrap" }}>{ctaData.link3Text || "Donate Now"} <ArrowIcon color="#bf791d" size={18} /></a>
           </div>
         </div>
       </div>
@@ -503,7 +504,8 @@ function InMyWordsSection({ gridData }: { gridData: any }) {
     { name: "Instagram", icon: (c) => <svg width="20" height="20" viewBox="0 0 24 24" fill="none"><rect x="2" y="2" width="20" height="20" rx="5" stroke={c} strokeWidth="1.8" fill="none" /><circle cx="12" cy="12" r="4" stroke={c} strokeWidth="1.8" fill="none" /><circle cx="17.5" cy="6.5" r="1" fill={c} /></svg> },
   ];
 
-  const gridImages = gridData.items.length > 0 ? gridData.items.map((it: any) => it.image) : [imgS16Grid1, imgS16Grid2, imgS16Grid3, imgS16Grid4];
+  const defaultGridImages = [imgS16Grid1, imgS16Grid2, imgS16Grid3, imgS16Grid4];
+  const gridImages = gridData.items.length > 0 ? gridData.items.map((it: any, i: number) => it.image || defaultGridImages[i]) : defaultGridImages;
 
   return (
     <section ref={sectionRef} className="cp-fade" style={{ width: "100%", background: "#fff", padding: isMobile ? "48px 0 56px" : "72px 0 80px" }}>
@@ -591,13 +593,15 @@ export function ContactPage() {
   const { getSection: getContactSection } = useCmsPage("contact");
   const contactInfo = getContactSection("ContactInfoSection").content as any;
   const gridData = getContactSection("ContactGridSection");
+  const heroData = getContactSection("ContactHeroSection").content as any;
+  const ctaData = getContactSection("ContactCTASection").content as any;
 
   return (
     <div style={{ minHeight: "100vh", background: "#fff", display: "flex", flexDirection: "column", alignItems: "stretch", overflowX: "clip" }}>
       <style>{PAGE_CSS}</style>
-      <ContactHeroSection onOpenModal={() => setModalOpen(true)} />
+      <ContactHeroSection onOpenModal={() => setModalOpen(true)} heroData={heroData} />
       <VisitUsSection contactInfo={contactInfo} />
-      <CTABoxSection />
+      <CTABoxSection ctaData={ctaData} />
       <InMyWordsSection gridData={gridData} />
       <EducationClosingSection />
       <Footer onOpenModal={() => setModalOpen(true)} />

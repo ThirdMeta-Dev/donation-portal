@@ -147,7 +147,7 @@ function NavDropdown({ group, onOpenModal }: { group: NavGroup; onOpenModal?: ()
         display: "flex", alignItems: "center", gap: 4,
         background: "none", border: "none", cursor: "pointer",
         color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 400,
-        padding: "4px 0",
+        padding: "4px 0", whiteSpace: "nowrap",
       }}>
         {group.label}
         <img src={imgChevron} alt="" style={{ width: 16, height: 16 }} />
@@ -209,22 +209,30 @@ function UserAvatar({ name }: { name: string }) {
 // ── ProfileDropdown ────────────────────────────────────────────────────────
 function ProfileDropdown({ user, onLogout }: { user: { name: string; email: string; role?: string }; onLogout: () => void }) {
   const [open, setOpen] = useState(false);
+  const [dropPos, setDropPos] = useState<{ top: number; right: number }>({ top: 0, right: 0 });
+  const triggerRef = useRef<HTMLButtonElement>(null);
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const scheduleClose = () => { closeTimer.current = setTimeout(() => setOpen(false), 150); };
   const cancelClose   = () => { if (closeTimer.current) clearTimeout(closeTimer.current); };
   const isAdmin = user.role === "admin";
 
+  const handleOpen = () => {
+    cancelClose();
+    if (triggerRef.current) {
+      const r = triggerRef.current.getBoundingClientRect();
+      setDropPos({ top: r.bottom + 10, right: window.innerWidth - r.right });
+    }
+    setOpen(true);
+  };
+
   return (
-    <div style={{ position: "relative" }} onMouseEnter={() => { cancelClose(); setOpen(true); }} onMouseLeave={scheduleClose}>
-      <button style={{
-        display: "flex", alignItems: "center", gap: 8,
+    <div style={{ position: "relative" }} onMouseEnter={handleOpen} onMouseLeave={scheduleClose}>
+      <button ref={triggerRef} style={{
+        display: "flex", alignItems: "center", gap: 4,
         background: "rgba(255,255,255,0.12)", border: "1px solid rgba(255,255,255,0.2)",
-        borderRadius: 30, padding: "4px 12px 4px 4px", cursor: "pointer",
+        borderRadius: 30, padding: "4px 8px 4px 4px", cursor: "pointer",
       }}>
         <UserAvatar name={user.name} />
-        <span style={{ fontFamily: "'DM Sans', sans-serif", fontSize: 13, fontWeight: 500, color: "#fff", maxWidth: 100, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
-          {user.name.split(" ")[0]}
-        </span>
         <img src={imgChevron} alt="" style={{ width: 14, height: 14, opacity: 0.7 }} />
       </button>
 
@@ -233,7 +241,7 @@ function ProfileDropdown({ user, onLogout }: { user: { name: string; email: stri
           onMouseEnter={cancelClose}
           onMouseLeave={scheduleClose}
           style={{
-            position: "absolute", top: "calc(100% + 10px)", right: 0,
+            position: "fixed", top: dropPos.top, right: dropPos.right,
             minWidth: 220, background: "rgba(255,255,255,0.97)",
             backdropFilter: "blur(20px)", WebkitBackdropFilter: "blur(20px)",
             border: "1px solid rgba(0,0,0,0.08)", borderRadius: 16,
@@ -491,19 +499,19 @@ export function Navbar({ onOpenModal }: { onOpenModal?: () => void }) {
       <div style={{ display: "flex", alignItems: "center", gap: 12, paddingLeft: 28, paddingRight: user ? 8 : 6, height: 59, borderRadius: 60, background: "rgba(255,255,255,0.1)", backdropFilter: "blur(15px)" }}>
 
         {/* Nav dropdowns */}
-        <div style={{ display: "flex", alignItems: "center", gap: 24, paddingLeft: 8 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: user ? 16 : 24, paddingLeft: 8 }}>
           {activeNavMenu.map(group => (
             <NavDropdown key={group.label} group={group} onOpenModal={onOpenModal} />
           ))}
         </div>
 
         {/* CTAs: Contact us + Contribute Now */}
-        <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
           <button
             onClick={() => navigate("/contact")}
-            style={{ display: "flex", alignItems: "center", gap: 10, background: "transparent", borderRadius: 30, padding: "10px 20px", border: "1px solid #fff", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 16, fontWeight: 600, whiteSpace: "nowrap" }}
+            style={{ display: "flex", alignItems: "center", gap: 8, background: "transparent", borderRadius: 30, padding: user ? "8px 14px" : "10px 20px", border: "1px solid #fff", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: user ? 14 : 16, fontWeight: 600, whiteSpace: "nowrap" }}
           >
-            Contact us <ArrowIcon size={14} />
+            Contact us <ArrowIcon size={13} />
           </button>
 
           {user ? (
@@ -511,9 +519,9 @@ export function Navbar({ onOpenModal }: { onOpenModal?: () => void }) {
               <button
                 onClick={() => navigate("/donate")}
                 className="btn-gold"
-                style={{ display: "flex", alignItems: "center", gap: 12, background: "#bf791d", borderRadius: 30, padding: "10px 20px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 15, fontWeight: 500, whiteSpace: "nowrap" }}
+                style={{ display: "flex", alignItems: "center", gap: 8, background: "#bf791d", borderRadius: 30, padding: "8px 14px", border: "none", cursor: "pointer", color: "#fff", fontFamily: "'DM Sans', sans-serif", fontSize: 14, fontWeight: 500, whiteSpace: "nowrap" }}
               >
-                {navCtaText} <ArrowIcon />
+                {navCtaText} <ArrowIcon size={13} />
               </button>
               <ProfileDropdown user={user} onLogout={handleLogout} />
             </>
