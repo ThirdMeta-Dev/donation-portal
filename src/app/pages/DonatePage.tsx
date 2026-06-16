@@ -82,7 +82,7 @@ export function DonatePage() {
       errs.pan = "Invalid PAN format (e.g. ABCDE1234F)";
     }
     if (donorType !== "indian" && !country) errs.country = "Country is required";
-    if (!finalAmount || finalAmount < 100) errs.amount = "Minimum donation is ₹100";
+    if (!finalAmount || finalAmount <= 0) errs.amount = "Please enter a donation amount";
     setErrors(errs);
     return Object.keys(errs).length === 0;
   };
@@ -296,7 +296,7 @@ export function DonatePage() {
                 </div>
 
                 <button
-                  onClick={() => { if (!finalAmount || finalAmount < 100) { setErrors({ amount: "Minimum donation is ₹100" }); return; } setStep(2); }}
+                  onClick={() => { if (!finalAmount || finalAmount <= 0) { setErrors({ amount: "Please enter a donation amount" }); return; } setStep(2); }}
                    className="btn-navy w-full text-white py-4 rounded-xl text-base transition-all shadow-sm flex items-center justify-center gap-2"
                    style={{ fontWeight: 700, background: "#1B2B3A" }}
                 >

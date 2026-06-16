@@ -310,14 +310,6 @@ export function PaymentPage() {
                   <span className="flex-shrink-0 mt-0.5">✅</span>
                   <span>Choose from UPI, Debit/Credit Card, Net Banking or Wallet</span>
                 </div>
-                <div className="flex items-start gap-2">
-                  <span className="flex-shrink-0 mt-0.5">✅</span>
-                  <span>For test UPI: use <strong>success@razorpay</strong>. For test card: <strong>4111 1111 1111 1111</strong>, CVV 123, any future date</span>
-                </div>
-                <div className="flex items-start gap-2">
-                  <span className="flex-shrink-0 mt-0.5">✅</span>
-                  <span>No real money is deducted in test mode</span>
-                </div>
               </div>
             </div>
 
