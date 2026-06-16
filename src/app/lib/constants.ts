@@ -10,7 +10,7 @@ export const FOUNDER_NAME       = "Ujjwala Wadekar";
 export const FOUNDER_TITLE      = "Founder · ZP School Teacher · 31 Years of Dedicated Service";
 
 // Razorpay
-export const RAZORPAY_KEY_ID = "rzp_test_SlOMIYzDPL81Yr";
+export const RAZORPAY_KEY_ID = "rzp_live_T2QNlsCb98OwoT";
 
 // ─── Images ───────────────────────────────────────────────────────────────────
 export const IMAGES = {
