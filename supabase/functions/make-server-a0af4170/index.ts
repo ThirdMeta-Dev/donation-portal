@@ -2,7 +2,8 @@ import { Hono } from "npm:hono";
 import { cors } from "npm:hono/cors";
 import { logger } from "npm:hono/logger";
 import { createClient } from "npm:@supabase/supabase-js";
-import { PDFDocument, StandardFonts, rgb } from "npm:pdf-lib";
+import { PDFDocument, rgb } from "npm:pdf-lib";
+import fontkit from "npm:@pdf-lib/fontkit";
 import * as kv from "./kv_store.ts";
 
 const app = new Hono();
@@ -138,159 +139,230 @@ async function sendEmail(
   }
 }
 
-// ─── PDF Certificate Generator ───────────────────────────────────────────────
-async function generateCertificatePDFBytes(d: any): Promise<Uint8Array> {
-  const pdfDoc = await PDFDocument.create();
-  const page = pdfDoc.addPage([595.28, 841.89]); // A4
-  const { width, height } = page.getSize();
+// ─── PDF Certificate Asset Constants (Figma exports, base64-encoded) ─────────
+const _LOGO_B64 = "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";
+const _STAMP_B64 = "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";
 
-  const boldFont    = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
-  const regularFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
-  const timesFont   = await pdfDoc.embedFont(StandardFonts.TimesRoman);
-  const timesBold   = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
-
-  const navy    = rgb(0.106, 0.169, 0.227);
-  const gold    = rgb(0.69,  0.49,  0.23);
-  const black   = rgb(0,     0,     0);
-  const darkGray= rgb(0.25,  0.25,  0.25);
-  const gray    = rgb(0.5,   0.5,   0.5);
-  const white   = rgb(1,     1,     1);
-  const lightBg = rgb(0.95,  0.97,  1.0);
-
-  const margin = 48;
-
-  // ── TOP BANNER ──────────────────────────────────────────────────────────────
-  page.drawRectangle({ x: 0, y: height - 72, width, height: 72, color: navy });
-
-  page.drawText("UJJWAL BHARAT", {
-    x: margin, y: height - 30, size: 19, font: boldFont, color: white,
-  });
-  page.drawText("INCOME TAX DEDUCTION CERTIFICATE", {
-    x: margin, y: height - 50, size: 10, font: boldFont, color: rgb(0.8, 0.72, 0.45),
-  });
-  page.drawText("Section 133(1)(b), Income Tax Act 2025", {
-    x: margin, y: height - 64, size: 8, font: regularFont, color: rgb(0.65, 0.65, 0.65),
-  });
-
-  // Receipt no top-right
-  const rNo = `Receipt: ${d.receiptNo || "—"}`;
-  page.drawText(rNo, {
-    x: width - margin - boldFont.widthOfTextAtSize(rNo, 8), y: height - 32,
-    size: 8, font: boldFont, color: white,
-  });
-  const dateStr = _formatDate(d.createdAt || new Date().toISOString());
-  const dLabel  = `Date: ${dateStr}`;
-  page.drawText(dLabel, {
-    x: width - margin - regularFont.widthOfTextAtSize(dLabel, 8), y: height - 47,
-    size: 8, font: regularFont, color: rgb(0.65, 0.65, 0.65),
-  });
-
-  // ── ORG DETAILS ─────────────────────────────────────────────────────────────
-  let y = height - 88;
-  const orgInfo = [
-    "Plot 89, Sr. No. 412, Neharu Nagar, Prasad Apt, Jalgaon, Maharashtra, 425001",
-    "Phone: +91 9370318308  |  +91 7620688947     Email: team@srubf.com     Web: ujjwalawadekar.com",
-    "Reg. No.: U85499MR2026NPL474075     PAN: ABSCS9855K",
-  ];
-  for (const line of orgInfo) {
-    page.drawText(line, { x: margin, y, size: 7.5, font: regularFont, color: gray });
-    y -= 12;
-  }
-
-  // ── GOLD DIVIDER ────────────────────────────────────────────────────────────
-  y -= 4;
-  page.drawLine({ start: { x: margin, y }, end: { x: width - margin, y }, thickness: 1.5, color: gold });
-  y -= 16;
-
-  // ── CERTIFICATE TITLE ───────────────────────────────────────────────────────
-  const titleText = "INCOME TAX DEDUCTION CERTIFICATE";
-  page.drawText(titleText, {
-    x: (width - boldFont.widthOfTextAtSize(titleText, 13)) / 2, y,
-    size: 13, font: boldFont, color: navy,
-  });
-  y -= 14;
-  const subTitle = `Financial Year: ${(() => { const s = new Date(d.createdAt).getMonth() >= 3 ? new Date(d.createdAt).getFullYear() : new Date(d.createdAt).getFullYear() - 1; return `${s}-${String(s+1).slice(2)}`; })()}`;
-  page.drawText(subTitle, {
-    x: (width - regularFont.widthOfTextAtSize(subTitle, 9)) / 2, y,
-    size: 9, font: regularFont, color: gold,
-  });
-  y -= 22;
-
-  // ── DETAILS TABLE ────────────────────────────────────────────────────────────
-  const fyStart = new Date(d.createdAt).getMonth() >= 3 ? new Date(d.createdAt).getFullYear() : new Date(d.createdAt).getFullYear() - 1;
-  const fy = `${fyStart}-${String(fyStart + 1).slice(2)}`;
-  const amtWords = _amountInWords(d.amount || 0);
-  const payMode  = d.paymentMethod || ((d.paymentId || "").startsWith("pay_") ? "Online / UPI" : "Offline / Cash");
-
-  const rows: [string, string][] = [
-    ["Certificate No.",      `ITDC-${d.receiptNo || "—"}`],
-    ["Donor Name",           d.userName || "—"],
-    ["PAN Number",           d.pan || "Not Provided"],
-    ["Donation Amount",      `INR ${_formatAmount(d.amount || 0)} (${amtWords})`],
-    ["Financial Year",       fy],
-    ["Date of Donation",     dateStr],
-    ["Payment Mode",         payMode],
-    ["Cause / Purpose",      d.causeName || "General Fund"],
-    ["Section",              "Section 133(1)(b), Income Tax Act 2025"],
-    ["Org. PAN",             "ABSCS9855K"],
-    ["Org. Reg. No.",        "U85499MR2026NPL474075"],
-  ];
-
-  const colLabelW = 170;
-  const col2X     = margin + colLabelW + 10;
-  const rowH      = 21;
-
-  for (let i = 0; i < rows.length; i++) {
-    const rowY = y - i * rowH;
-    if (i % 2 === 0) {
-      page.drawRectangle({ x: margin, y: rowY - 6, width: width - margin * 2, height: rowH, color: lightBg });
+// ─── Text-wrap helper for pdf-lib (no built-in wrapping) ─────────────────────
+function _wrapText(text: string, maxW: number, font: any, size: number): string[] {
+  const lines: string[] = [];
+  for (const para of text.split("\n")) {
+    const words = para.split(" ");
+    let cur = "";
+    for (const w of words) {
+      const test = cur ? cur + " " + w : w;
+      if (font.widthOfTextAtSize(test, size) > maxW && cur) { lines.push(cur); cur = w; }
+      else cur = test;
     }
-    page.drawText(rows[i][0], { x: margin + 6, y: rowY + 3, size: 8.5, font: boldFont,    color: navy });
-    page.drawText(rows[i][1], { x: col2X,        y: rowY + 3, size: 8.5, font: regularFont, color: darkGray });
+    if (cur) lines.push(cur);
   }
-  y -= rows.length * rowH + 18;
+  return lines;
+}
 
-  // ── GOLD DIVIDER ────────────────────────────────────────────────────────────
-  page.drawLine({ start: { x: margin, y }, end: { x: width - margin, y }, thickness: 1, color: gold });
-  y -= 16;
-
-  // ── CERTIFICATION TEXT ───────────────────────────────────────────────────────
-  page.drawText("CERTIFICATION", { x: margin, y, size: 10, font: boldFont, color: navy });
-  y -= 14;
-
-  const certLines = [
-    `This is to certify that ${d.userName || "the donor"} has made a voluntary donation of`,
-    `INR ${_formatAmount(d.amount || 0)} (${amtWords}) to Ujjwal Bharat on ${dateStr}.`,
-    "",
-    "This donation qualifies for deduction under Section 133(1)(b) of the Income Tax Act, 2025.",
-    "Please retain this certificate for your Income Tax Return (ITR) filing.",
-    "",
-    "This is a computer-generated certificate and is valid without a physical signature",
-    "as per the provisions of the Information Technology Act, 2000.",
+// ─── PDF Certificate Generator (Figma-accurate: Lora + DM Sans, A4) ──────────
+async function generateCertificatePDFBytes(d: any): Promise<Uint8Array> {
+  // Load Lora + DM Sans from Google Fonts CDN (parallel)
+  const fontUrls = [
+    "https://fonts.gstatic.com/s/lora/v37/0QI6MX1D_JOuGQbT0gvTJPa787zAvCJG.ttf",       // Lora SemiBold 600
+    "https://fonts.gstatic.com/s/lora/v37/0QI6MX1D_JOuGQbT0gvTJPa787wsuyJG.ttf",       // Lora Medium 500
+    "https://fonts.gstatic.com/s/dmsans/v17/rP2tp2ywxg089UriI5-g4vlH9VoD8CmcqZG40F9JadbnoEwAopxhTg.ttf", // DM Sans Regular 400
+    "https://fonts.gstatic.com/s/dmsans/v17/rP2tp2ywxg089UriI5-g4vlH9VoD8CmcqZG40F9JadbnoEwA_JxhTg.ttf", // DM Sans Light 300
+    "https://fonts.gstatic.com/s/dmsans/v17/rP2tp2ywxg089UriI5-g4vlH9VoD8CmcqZG40F9JadbnoEwAfJthTg.ttf", // DM Sans SemiBold 600
+    "https://fonts.gstatic.com/s/dmsans/v17/rP2rp2ywxg089UriCZaSExd86J3t9jz86Mvy4qCRAL19DksVat-JDW3z.ttf", // DM Sans Italic 400
   ];
-
-  for (const line of certLines) {
-    if (line) page.drawText(line, { x: margin, y, size: 9, font: timesFont, color: black });
-    y -= 13;
-  }
-
-  y -= 16;
-
-  // ── SIGNATURE ────────────────────────────────────────────────────────────────
-  const sigX = width - 200;
-  page.drawLine({ start: { x: sigX, y: y - 20 }, end: { x: width - margin, y: y - 20 }, thickness: 0.8, color: black });
-  page.drawText("For Ujjwal Bharat",   { x: sigX, y: y - 34, size: 8.5, font: boldFont,    color: navy });
-  page.drawText("Authorised Signatory",{ x: sigX, y: y - 47, size: 8,   font: regularFont, color: gray });
-
-  // ── FOOTER ───────────────────────────────────────────────────────────────────
-  page.drawLine({ start: { x: margin, y: 55 }, end: { x: width - margin, y: 55 }, thickness: 0.6, color: rgb(0.8, 0.8, 0.8) });
-  page.drawText(
-    "* This certificate is issued under the Income Tax Act, 2025. Please consult your tax advisor for eligibility.",
-    { x: margin, y: 40, size: 7, font: regularFont, color: gray },
+  const [loraSBb, loraMedb, dmRegb, dmLightb, dmSBb, dmItalicb] = await Promise.all(
+    fontUrls.map(u => fetch(u).then(r => r.arrayBuffer()).then(b => new Uint8Array(b)))
   );
-  page.drawText("Ujjwal Bharat  |  ujjwalawadekar.com  |  team@srubf.com  |  +91 9370318308", {
-    x: margin, y: 26, size: 7, font: regularFont, color: gray,
-  });
+
+  const pdfDoc = await PDFDocument.create();
+  pdfDoc.registerFontkit(fontkit);
+  const [fLoraSB, fLoraMed, fDmReg, fDmLight, fDmSB, fDmItalic] = await Promise.all([
+    pdfDoc.embedFont(loraSBb), pdfDoc.embedFont(loraMedb),
+    pdfDoc.embedFont(dmRegb),  pdfDoc.embedFont(dmLightb),
+    pdfDoc.embedFont(dmSBb),   pdfDoc.embedFont(dmItalicb),
+  ]);
+
+  // Embed logo + stamp (from base64 constants)
+  const logoBytes  = Uint8Array.from(atob(_LOGO_B64),  c => c.charCodeAt(0));
+  const stampBytes = Uint8Array.from(atob(_STAMP_B64), c => c.charCodeAt(0));
+  const [logoImg, stampImg] = await Promise.all([pdfDoc.embedPng(logoBytes), pdfDoc.embedPng(stampBytes)]);
+
+  // A4 page — exact match to Figma frame (595 × 842)
+  const W = 595, H = 842;
+  const page = pdfDoc.addPage([W, H]);
+
+  // ── Coordinate helpers (Figma=top-down → pdf-lib=bottom-up) ─────────────────
+  // rY: rect/image bottom y when Figma top is at fy, element height is fh
+  const rY = (fy: number, fh: number) => H - fy - fh;
+  // dt: draw text; fy=Figma top of text box, s=font size
+  const dt = (text: string, x: number, fy: number, font: any, s: number, color: ReturnType<typeof rgb>) =>
+    page.drawText(text, { x, y: H - fy - s * 0.82, size: s, font, color });
+  // dtr: draw text right-aligned to edge rx
+  const dtr = (text: string, rx: number, fy: number, font: any, s: number, color: ReturnType<typeof rgb>) => {
+    const tw = font.widthOfTextAtSize(text, s);
+    page.drawText(text, { x: rx - tw, y: H - fy - s * 0.82, size: s, font, color });
+  };
+  // ln: horizontal line at Figma y
+  const ln = (x0: number, x1: number, fy: number, thickness: number, color: ReturnType<typeof rgb>) =>
+    page.drawLine({ start: { x: x0, y: H - fy }, end: { x: x1, y: H - fy }, thickness, color });
+
+  // ── Colors (exact Figma hex → RGB) ─────────────────────────────────────────
+  const cGold    = rgb(0.749, 0.475, 0.114);   // #BF791D  (gold bar)
+  const cOrgGold = rgb(0.718, 0.463, 0.028);   // #B77607  (org name)
+  const cBlue    = rgb(0.118, 0.333, 0.541);   // #1E558A  (section headers)
+  const cBlk     = rgb(0, 0, 0);
+  const cGray    = rgb(0.553, 0.553, 0.553);   // #8D8D8D  (terms)
+  const cFafa    = rgb(0.980, 0.980, 0.980);   // #FAFAFA  (header bg rows)
+  const cDivider = rgb(0.992, 0.925, 0.808);   // #FDECCE  (horizontal rule)
+  const cBorder  = rgb(0.863, 0.863, 0.863);   // #DCDCDC  (box borders)
+  const cRowLine = rgb(0.918, 0.918, 0.918);   // #EAEAEA  (row separators)
+  const cSecBg   = rgb(0.965, 0.965, 0.965);   // #F6F6F6  (second box bg)
+
+  // ── 1. Header bars ──────────────────────────────────────────────────────────
+  // Gold bar: x=126, y=0, w=437, h=7, #BF791D, bottom-left r≈3
+  page.drawRectangle({ x: 126, y: rY(0, 7), width: 437, height: 7, color: cGold, borderRadius: 3 });
+  // Gradient band x=205, y=0, w=358, h=21 — #123557→#174067 (40 slices)
+  const gSteps = 40;
+  for (let i = 0; i < gSteps; i++) {
+    const t = i / (gSteps - 1);
+    page.drawRectangle({
+      x: 205 + i * (358 / gSteps), y: rY(0, 21), width: 358 / gSteps + 0.6, height: 21,
+      color: rgb(0.071 + 0.019 * t, 0.209 + 0.042 * t, 0.341 + 0.063 * t),
+    });
+  }
+  // "Donation Receipt" — DM Sans Light 8px, right-aligned to x=531
+  dtr("Donation Receipt", 531, 28, fDmLight, 8, cBlk);
+
+  // ── 2. Logo (x=0, y=48, 65×51) ─────────────────────────────────────────────
+  page.drawImage(logoImg, { x: 0, y: rY(48, 51), width: 65, height: 51 });
+
+  // ── 3. Address block — right-aligned at x=531, DM Sans Regular 8px ─────────
+  dtr("Plot 89, Sr. No. 412, Neharu Nagar, Prasad Apt, Jalgaon, Maharashtra, 425001", 531, 62, fDmReg, 8, cBlk);
+  dtr("+91 9370318308  |  +91 7620688947", 531, 76, fDmReg, 8, cBlk);
+  dtr("ujjwalawadekar.com  |  team@srubf.com", 531, 90, fDmReg, 8, cBlk);
+  // Reg. No. and PAN — DM Sans SemiBold 8px
+  dtr("Reg. No.: U85499MR2026NPL474075", 531, 110, fDmSB, 8, cBlk);
+  dtr("PAN : ABSCS9855K", 531, 122, fDmSB, 8, cBlk);
+
+  // ── 4. Organization name — left, Lora SemiBold 10px #B77607 ────────────────
+  dt("SHIKSHARAJ, UJJWAL BHARAT FOUNDATION", 0, 119, fLoraSB, 10, cOrgGold);
+  dt("Reg. No. (CIN)", 0, 135, fLoraSB, 9, cOrgGold);
+
+  // ── 5. Horizontal divider y=168.83, #FDECCE ─────────────────────────────────
+  ln(0, 563, 169, 1, cDivider);
+
+  // ── 6. Receipt No. / Date ───────────────────────────────────────────────────
+  const receiptNo = d.receiptNo || "—";
+  const dateStr   = _formatDate(d.createdAt || new Date().toISOString());
+
+  dt("Receipt No.: ", 0, 189, fLoraSB, 10, cBlk);
+  dt(receiptNo, fLoraSB.widthOfTextAtSize("Receipt No.: ", 10), 189, fDmReg, 10, cBlk);
+  dt("Date : ", 229, 189, fLoraSB, 10, cBlk);
+  dt(dateStr, 229 + fLoraSB.widthOfTextAtSize("Date : ", 10), 189, fDmReg, 10, cBlk);
+
+  // ── 7. Body paragraphs — DM Sans Regular 9px, line height 14.4 ─────────────
+  const BODY_W = 531, LH = 14.4;
+  const donorName = d.userName || "Donor";
+
+  // Para 1
+  const p1 = [`Dear ${donorName}`, ..._wrapText(
+    "With heartfelt gratitude, we acknowledge your contribution to Shiksha Raj, Ujjwal Bharat Foundation. Your support helps bring meaningful education, dignity, and opportunity closer to children who need it most.",
+    BODY_W, fDmReg, 9,
+  )];
+  p1.forEach((line, i) => dt(line, 0, 219 + i * LH, fDmReg, 9, cBlk));
+
+  // Para 2
+  const p2 = _wrapText(
+    "Donations to Shiksha Raj, Ujjwal Bharat Foundation are eligible for deduction under 133(1)(b) of the Income Tax Act, 2025. URN of registration under 354(4) section - ABSCS9855KF20261",
+    BODY_W, fDmReg, 9,
+  );
+  p2.forEach((line, i) => dt(line, 0, 267 + i * LH, fDmReg, 9, cBlk));
+
+  // ── 8. Donor Details Box ─────────────────────────────────────────────────────
+  // Box 1: x=0, y=315, w=531, h=247 — border #DCDCDC
+  page.drawRectangle({ x: 0, y: rY(315, 247), width: 531, height: 247, color: rgb(1,1,1), borderColor: cBorder, borderWidth: 1 });
+
+  // "Donor Details" header row (bg #FAFAFA, h=27)
+  page.drawRectangle({ x: 0, y: rY(315, 27), width: 531, height: 27, color: cFafa });
+  dt("Donor Details", 12, 321, fLoraSB, 10, cBlue);
+
+  // Helper: draw one field row (rowBottom = Figma y of row's bottom edge, h=25)
+  const row = (label: string, value: string, rowBottom: number, vFont = fDmReg) => {
+    const labelFy = rowBottom - 25 + 5.83;
+    ln(0, 531, rowBottom, 0.5, cRowLine);
+    dt(label, 12, labelFy, fLoraSB, 10, cBlk);
+    if (value) dt(value, 12 + fLoraSB.widthOfTextAtSize(label, 10) + 6, labelFy, vFont, 9, cBlk);
+  };
+
+  row("Name :", donorName, 367);
+  row("PAN No. :", d.pan || "", 392);
+  row("Address :", (d.address || "").split("\n")[0] || "", 417);
+
+  // Mobile + Email (two columns on same row, bottom=442)
+  const mobFy = 442 - 25 + 5.83;
+  ln(0, 531, 442, 0.5, cRowLine);
+  dt("Mobile No. :", 12, mobFy, fLoraSB, 10, cBlk);
+  dt(d.phone || "", 12 + fLoraSB.widthOfTextAtSize("Mobile No. :", 10) + 6, mobFy, fDmReg, 9, cBlk);
+  dt("Email ID :", 277.5, mobFy, fLoraMed, 10, cBlk);
+  dt(d.userEmail || "", 277.5 + fLoraMed.widthOfTextAtSize("Email ID :", 10) + 6, mobFy, fDmReg, 9, cBlk);
+
+  // "Payment Details:" header row (bg #FAFAFA, y=442→469, h=27)
+  page.drawRectangle({ x: 0, y: rY(442, 27), width: 531, height: 27, color: cFafa });
+  dt("Payment Details:", 12, 448, fLoraSB, 10, cBlue);
+
+  row("Amount In Words :", _amountInWords(d.amount || 0), 494);
+  row("For the purpose of :", d.causeName || "General Fund", 519);
+
+  // Bank Account row (h=43, bottom=562)
+  const bankFy = 519 + 5.83;
+  ln(0, 531, 562, 0.5, cRowLine);
+  dt("Received in Our Bank Account :", 12, bankFy, fLoraSB, 10, cBlk);
+  dt("HDFC BANK A/C No. 50200120533381", 200, bankFy, fDmLight, 10, cBlk);
+  dt("IFSC CODE: HDFC0000180", 394, bankFy, fDmLight, 10, cBlk);
+  dt("SHIKSHARAJ, UJJWAL BHARAT FOUNDATION", 200, bankFy + 17, fDmLight, 10, cBlk);
+
+  // ── 9. Watermark — logo at 6% opacity centered over details box ─────────────
+  page.drawImage(logoImg, { x: 173, y: rY(335, 144), width: 184, height: 144, opacity: 0.06 });
+
+  // ── 10. Second box — Date / Transaction Type / Ref. No. ────────────────────
+  page.drawRectangle({ x: 0, y: rY(562, 68), width: 531, height: 68, color: cSecBg, borderColor: cBorder, borderWidth: 1 });
+
+  // Date row (label at y=574.83)
+  ln(0, 531, 581, 0.5, cRowLine);
+  dt("Date :", 12, 574, fLoraSB, 10, cBlk);
+  dt(dateStr, 12 + fLoraSB.widthOfTextAtSize("Date :", 10) + 6, 574, fDmReg, 9, cBlk);
+
+  // Transaction Type (label at y=593.83)
+  ln(0, 531, 601, 0.5, cRowLine);
+  dt("Transaction Type :", 12, 593, fLoraSB, 10, cBlk);
+  const txType = d.paymentMethod || ((d.paymentId || "").startsWith("pay_") ? "Online / UPI" : "Offline / Cash");
+  dt(txType, 12 + fLoraSB.widthOfTextAtSize("Transaction Type :", 10) + 6, 593, fDmReg, 9, cBlk);
+
+  // Ref. No. (label at y=612.83)
+  dt("Ref. No. :", 12, 612, fLoraSB, 10, cBlk);
+  dt(d.paymentId || d.razorpayOrderId || "—", 12 + fLoraSB.widthOfTextAtSize("Ref. No. :", 10) + 6, 612, fDmReg, 9, cBlk);
+
+  // ── 11. Footer text — DM Sans Regular 9px ───────────────────────────────────
+  dt(`Received with sincere thanks from Shri/Smt./M/S ${donorName}.`, 0, 667, fDmReg, 9, cBlk);
+  dt("Your contribution strengthens better learning opportunities for children through Shiksha Raj, Ujjwal Bharat Foundation.", 0, 681, fDmReg, 9, cBlk);
+
+  // ── 12. Terms and conditions — DM Sans Italic 7px ───────────────────────────
+  dt("Terms and conditions", 0, 747, fDmItalic, 7, cBlk);
+  const terms = [
+    "1.   This Receipt is not Transferable or Changeable.",
+    "2.   If you have not provided PAN No., you cannot be eligible for tax deduction benefit under",
+    "      section 133(1)(b) of Income Tax Act, 2025.",
+    "3.   This is a computer-generated receipt. Valid without physical signature as per IT Act 2000.",
+    "4.   For queries, contact: team@srubf.com | +91-7620688947, +91-9370318308",
+  ];
+  terms.forEach((t, i) => dt(t, 0, 759 + i * 10.64, fDmItalic, 7, cGray));
+
+  // ── 13. Stamp / Seal — x=481, y=729, 48×48 ──────────────────────────────────
+  page.drawImage(stampImg, { x: 481, y: rY(729, 48), width: 48, height: 48 });
+
+  // ── 14. "Received by" / "Authorised Signatory" — right-aligned ───────────────
+  dtr("Received by",          531, 787, fLoraSB,  10, cBlk);
+  dtr("Authorised Signatory", 531, 803, fDmLight,  8, cBlk);
 
   return await pdfDoc.save();
 }
