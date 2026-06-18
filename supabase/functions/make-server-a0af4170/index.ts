@@ -1156,12 +1156,16 @@ app.post("/make-server-a0af4170/donations", async (c) => {
           .then(r => console.log(`[donations] certificate email ok=${r.ok} to=${recipients.join(",")}`))
           .catch(e => console.log("[donations] certificate email error:", e));
       } else {
-        // Normal payment confirmation (no 80G certificate)
-        const normalHTML = generateNormalReceiptHTML(donation);
-        const subject = `✅ Payment Confirmation: ${donation.receiptNo} | ${donation.userName} | ₹${donation.amount.toLocaleString("en-IN")}`;
-        sendEmail(subject, normalHTML, recipients)
-          .then(r => console.log(`[donations] Normal email ok=${r.ok} cause80G=${cause80GEnabled} donorWants=${donorWants80G}`))
-          .catch(e => console.log("[donations] Normal email error:", e));
+        // Formal donation receipt with PDF attachment
+        const receiptHTML = generateFormalReceiptHTML({ ...donation, certificate80G: false });
+        const subject = `✅ Donation Receipt: ${donation.receiptNo} | ${donation.userName} | ₹${donation.amount.toLocaleString("en-IN")}`;
+        generateCertificatePDFBytes(donation)
+          .then(pdfBytes => {
+            const attachments = [{ filename: `Donation-Receipt-${donation.receiptNo.replace(/\//g, "-")}.pdf`, content: uint8ToBase64(pdfBytes) }];
+            return sendEmail(subject, receiptHTML, recipients, attachments);
+          })
+          .then(r => console.log(`[donations] receipt email ok=${r.ok}`))
+          .catch(e => console.log("[donations] receipt email error:", e));
       }
     } else {
       // Failed payment notification
@@ -1323,8 +1327,14 @@ app.post("/make-server-a0af4170/donations/offline", async (c) => {
           })
           .catch(() => sendEmail(offlineSubject, html, recipients));
       } else {
-        const html = generateNormalReceiptHTML(donation);
-        sendEmail(`✅ Payment Confirmation: ${receiptNo} | ${donation.userName} | ₹${donation.amount.toLocaleString("en-IN")}`, html, recipients).catch(() => {});
+        const html = generateFormalReceiptHTML({ ...donation, certificate80G: false });
+        const offlineSubject = `✅ Donation Receipt: ${receiptNo} | ${donation.userName} | ₹${donation.amount.toLocaleString("en-IN")}`;
+        generateCertificatePDFBytes(donation)
+          .then(pdfBytes => {
+            const attachments = [{ filename: `Donation-Receipt-${receiptNo.replace(/\//g, "-")}.pdf`, content: uint8ToBase64(pdfBytes) }];
+            return sendEmail(offlineSubject, html, recipients, attachments);
+          })
+          .catch(() => sendEmail(offlineSubject, html, recipients));
       }
     }
 
@@ -1347,27 +1357,23 @@ app.post("/make-server-a0af4170/donations/:id/resend-email", async (c) => {
     const cause80GEnabled = await getCause80GEnabled(donation.causeId);
     const use80G = cause80GEnabled && donation.certificate80G;
 
-    const emailHTML = use80G
-      ? generateFormalReceiptHTML({ ...donation, certificate80G: true })
-      : generateNormalReceiptHTML(donation);
+    const emailHTML = generateFormalReceiptHTML({ ...donation, certificate80G: use80G });
 
     const subject = use80G
       ? `[Resent] ✅ Income Tax Deduction Certificate: ${donation.receiptNo} | ${donation.userName} | ₹${(donation.amount || 0).toLocaleString("en-IN")}`
-      : `[Resent] ✅ Payment Confirmation: ${donation.receiptNo} | ${donation.userName} | ₹${(donation.amount || 0).toLocaleString("en-IN")}`;
+      : `[Resent] ✅ Donation Receipt: ${donation.receiptNo} | ${donation.userName} | ₹${(donation.amount || 0).toLocaleString("en-IN")}`;
 
     const recipients = [...NOTIFY_EMAILS];
     if (donation.userEmail && !NOTIFY_EMAILS.includes(donation.userEmail)) {
       recipients.push(donation.userEmail);
     }
 
-    let result;
-    if (use80G) {
-      const pdfBytes = await generateCertificatePDFBytes(donation);
-      const attachments = [{ filename: `Income-Tax-Certificate-${(donation.receiptNo || "").replace(/\//g, "-")}.pdf`, content: uint8ToBase64(pdfBytes) }];
-      result = await sendEmail(subject, emailHTML, recipients, attachments);
-    } else {
-      result = await sendEmail(subject, emailHTML, recipients);
-    }
+    const pdfBytes = await generateCertificatePDFBytes(donation);
+    const pdfFilename = use80G
+      ? `Income-Tax-Certificate-${(donation.receiptNo || "").replace(/\//g, "-")}.pdf`
+      : `Donation-Receipt-${(donation.receiptNo || "").replace(/\//g, "-")}.pdf`;
+    const attachments = [{ filename: pdfFilename, content: uint8ToBase64(pdfBytes) }];
+    const result = await sendEmail(subject, emailHTML, recipients, attachments);
     console.log(`[resend-email] ok=${result.ok} use80G=${use80G} to=${recipients.join(",")}`);
     return c.json({ success: true, sentTo: recipients.join(", "), use80G, emailResult: result });
   } catch (e) {
