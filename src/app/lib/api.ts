@@ -149,6 +149,8 @@ export const donationApi = {
     request<{ success: boolean; donation: Donation }>(
       "PUT", `/donations/${id}`, data, true
     ),
+  saveOffline: (data: unknown) =>
+    request<{ success: boolean; donation: Donation }>("POST", "/donations/offline", data, true),
 };
 
 // ─── Causes ───────────────────────────────────────────────────────────────────

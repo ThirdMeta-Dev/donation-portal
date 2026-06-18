@@ -30,7 +30,23 @@ const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPAB
 const ADMIN_EMAILS = new Set(["seo@hexanovate.com", "admin@ashakiran.org", "admin@shiksharaj.org"]); // v2
 const isAdmin = (email: string | undefined) =>
   !!email && (ADMIN_EMAILS.has(email) || email.endsWith("@ashakiran.org") || email.endsWith("@shiksharaj.org"));
-const receipt = () => `UB-${new Date().getFullYear()}-${crypto.randomUUID().replace(/-/g,"").slice(0,8).toUpperCase()}`;
+const receipt = () => {
+  const now = new Date();
+  const fyStart = now.getMonth() >= 3 ? now.getFullYear() : now.getFullYear() - 1;
+  const fy = `${fyStart}-${String(fyStart + 1).slice(2)}`;
+  const num = Math.floor(100000 + Math.random() * 900000);
+  return `SRUBF/${fy}/${String(num).padStart(6, "0")}`;
+};
+async function getNextReceiptNo(): Promise<string> {
+  const now = new Date();
+  const fyStart = now.getMonth() >= 3 ? now.getFullYear() : now.getFullYear() - 1;
+  const fy = `${fyStart}-${String(fyStart + 1).slice(2)}`;
+  const key = `receipt_seq:${fy}`;
+  const current = ((await kv.get(key)) as number | null) || 0;
+  const next = current + 1;
+  await kv.set(key, next);
+  return `SRUBF/${fy}/${String(next).padStart(6, "0")}`;
+}
 const payId   = () => `pay_${crypto.randomUUID().replace(/-/g,"").slice(0,14).toUpperCase()}`;
 const esc = (s: string) => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 
@@ -169,7 +185,7 @@ function generateFormalReceiptHTML(d: any): string {
   const txnType = (d.paymentId || "").startsWith("pay_") ? "ONLINE / UPI" : "RTGS / NEFT";
   const amtWords = _amountInWords(d.amount || 0);
   const amtFmt = `&#8377; ${_formatAmount(d.amount || 0)}`;
-  const receiptDisplay = (d.receiptNo || "").startsWith("SRJ-") ? d.receiptNo : `SRJ-${fy}-${(d.receiptNo || "").replace(/^[A-Z]+-\d{4}-/, "")}`;
+  const receiptDisplay = d.receiptNo || receipt();
 
   const tableRow = (label: string, value: string) =>
     `<tr style="border-bottom:1px solid #aaa">
@@ -181,25 +197,25 @@ function generateFormalReceiptHTML(d: any): string {
     <div style="border:2px solid #4338CA;border-radius:4px;margin-top:16px;overflow:hidden">
       <div style="background:#4338CA;padding:10px 16px;text-align:center">
         <span style="color:#fff;font-weight:800;font-size:13px;letter-spacing:1px;font-family:Arial,sans-serif">
-          &#128220; 80G TAX EXEMPTION CERTIFICATE
+          &#128220; INCOME TAX DEDUCTION CERTIFICATE
         </span>
       </div>
       <div style="padding:14px 16px;background:#f0fdfa">
         <table style="width:100%;border-collapse:collapse;font-size:12px;font-family:'Times New Roman',Times,serif">
           ${[
-            ["Certificate No.", `80G-AKF-${d.receiptNo}`],
+            ["Certificate No.", `ITDC-${d.receiptNo}`],
             ["Donor Name", d.userName],
             ["PAN Number", d.pan || "To be updated — Please provide PAN for 80G benefit"],
             ["Donation Amount", `&#8377; ${_formatAmount(d.amount || 0)}`],
             ["Financial Year", fy],
-            ["Section", "80G, Income Tax Act 1961"],
+            ["Section", "Section 133(1)(b), Income Tax Act 2025"],
             ["Nature of Donation", "General / Corpus Donation"],
-            ["Approval No.", "AAATA1234C/2023-24/80G"],
-            ["Organisation Reg. No.", "AKF/2018/001"],
+            ["PAN", "ABSCS9855K"],
+            ["Organisation Reg. No.", "U85499MR2026NPL474075"],
           ].map(([l, v]) => `<tr style="border-bottom:1px solid #99f6e4"><td style="padding:5px 8px;color:#115e59;font-weight:700;width:180px;font-family:'Times New Roman',serif">${l}</td><td style="padding:5px 8px;font-weight:700;color:#0f172a;font-family:'Times New Roman',serif">${v}</td></tr>`).join("")}
         </table>
         <p style="text-align:center;color:#0D9488;font-size:11px;margin-top:10px;font-weight:600;font-family:Arial,sans-serif">
-          This donation qualifies for 50% deduction under Section 80G of the Income Tax Act, 1961.<br>
+          This donation qualifies for deduction under Section 133(1)(b) of the Income Tax Act, 2025.<br>
           Please retain this certificate for Income Tax Return (ITR) filing.
         </p>
       </div>
@@ -215,14 +231,14 @@ function generateFormalReceiptHTML(d: any): string {
     <div style="font-size:11px;font-weight:700;letter-spacing:3px;margin-bottom:4px;font-family:Arial,sans-serif">DONATION RECEIPT</div>
     <div style="font-size:22px;font-weight:900;letter-spacing:0.5px;line-height:1.2;font-family:Arial,sans-serif">UJJWAL BHARAT</div>
     <div style="font-size:11px;margin-top:5px;line-height:1.8;font-family:'Times New Roman',serif">
-      "Rau" 89/412, Nehru Nagar, Mohadi Road, Jalgaon, 425002<br>
-      Mob.: +91-93703-18308 &nbsp;&nbsp; Email: contact@ujjwalbharat.org<br>
-      Website: www.ujjwalbharat.org<br>
-      Reg. No. SRJ/2015/0073821 &nbsp;&nbsp; PAN: AACSR1234B
+      Plot 89, Sr. No. 412, Neharu Nagar, Prasad Apt, Jalgaon, Maharashtra, 425001<br>
+      Mob.: +91 9370318308 &nbsp;|&nbsp; +91 7620688947 &nbsp;&nbsp; Email: team@srubf.com<br>
+      Website: https://www.ujjwalawadekar.com/<br>
+      Reg. No. U85499MR2026NPL474075 &nbsp;&nbsp; PAN: ABSCS9855K
     </div>
     ${d.certificate80G ? `<div style="font-size:11px;font-weight:700;margin-top:6px;line-height:1.6;font-family:Arial,sans-serif">
-      Donations to Ujjwal Bharat are eligible for deduction U/s. 80-G of the Income Tax Act 1961:<br>
-      <span style="font-size:12px">URN. AACSR1234B/2023-24/80G &nbsp;|&nbsp; Approval No.: AACSR1234B/2023-24</span>
+      Donations to Ujjwal Bharat are eligible for deduction under Section 133(1)(b) of the Income Tax Act, 2025:<br>
+      <span style="font-size:12px">Reg. No.: U85499MR2026NPL474075 &nbsp;|&nbsp; PAN: ABSCS9855K</span>
     </div>` : ""}
   </div>
 
@@ -299,9 +315,9 @@ function generateFormalReceiptHTML(d: any): string {
     <div style="font-weight:800;font-size:11px;margin-bottom:4px;font-family:Arial,sans-serif">* TERMS &amp; CONDITIONS</div>
     <div style="font-size:10px;line-height:1.7;color:#333;font-family:'Times New Roman',serif">
       1) This Receipt is not Transferable or Changeable.<br>
-      2) If you have not provided PAN Xerox copy or PAN No., you cannot be eligible for 80G Benefit.<br>
+      2) If you have not provided your PAN, you cannot claim deduction under Section 133(1)(b) of the Income Tax Act, 2025.<br>
       3) This is a computer-generated receipt. Valid without physical signature as per IT Act 2000.<br>
-      4) For queries, contact: contact@ujjwalbharat.org | +91-93703-18308
+      4) For queries, contact: team@srubf.com | +91 9370318308
     </div>
   </div>
 
@@ -322,7 +338,7 @@ function generateNormalReceiptHTML(d: any): string {
     <img src="https://raw.githubusercontent.com/ThirdMeta-Dev/donation-portal/main/public/favicon.png" alt="Ujjwal Bharat" style="height:48px;width:auto;margin-bottom:10px;display:block;margin-left:auto;margin-right:auto;filter:brightness(0) invert(1)" />
     <div style="font-size:11px;letter-spacing:3px;color:rgba(255,255,255,.7);margin-bottom:6px">PAYMENT CONFIRMATION</div>
     <div style="font-size:20px;font-weight:900;color:#fff">UJJWAL BHARAT</div>
-    <div style="font-size:12px;color:rgba(255,255,255,.7);margin-top:4px">www.ujjwalbharat.org</div>
+    <div style="font-size:12px;color:rgba(255,255,255,.7);margin-top:4px">https://www.ujjwalawadekar.com/</div>
     <div style="margin-top:16px;background:rgba(255,255,255,.15);border-radius:8px;padding:12px">
       <div style="font-size:32px;font-weight:900;color:#fff">${amtFmt}</div>
       <div style="font-size:13px;color:rgba(255,255,255,.8);margin-top:2px">Successfully Received</div>
@@ -350,20 +366,20 @@ function generateNormalReceiptHTML(d: any): string {
     <div style="background:#f0fdf4;border:1px solid #86efac;border-radius:10px;padding:16px;margin-bottom:20px">
       <div style="font-size:14px;font-weight:700;color:#15803d;margin-bottom:6px">&#10003; Payment Successful</div>
       <div style="font-size:12px;color:#166534;line-height:1.7">
-        Thank you for your generous contribution to <strong>${esc(d.causeName || "our cause")}</strong>.
-        Your donation supports teacher-led education reform across Jalgaon and North Maharashtra.<br><br>
-        <em>Note: This cause does not currently issue 80G tax exemption certificates.
-        For 80G eligible causes, please visit our website.</em>
+        Thank you for standing with this mission. Your contribution helps us carry practical, teacher-led learning to children who deserve better opportunities, stronger confidence, and a more meaningful education.<br><br>
+        <em>Note: This cause does not currently issue Income Tax Deduction Certificates.
+        For eligible causes, please visit our website.</em>
       </div>
     </div>
     ${d.impactDescription ? `<div style="background:#fff7ed;border:1px solid #fed7aa;border-radius:10px;padding:14px;margin-bottom:20px">
       <div style="font-size:12px;font-weight:700;color:#c2410c;margin-bottom:4px">Your Impact</div>
-      <div style="font-size:12px;color:#9a3412">${d.impactDescription}</div>
+      <div style="font-size:12px;color:#9a3412">Your donation will help bring real learning, support, and opportunity closer to a child, a classroom, or a school.</div>
     </div>` : ""}
     <div style="border-top:1px solid #e2e8f0;padding-top:16px;text-align:center">
       <div style="font-size:11px;color:#94a3b8;line-height:1.8">
-        Ujjwal Bharat &middot; "Rau" 89/412, Nehru Nagar, Mohadi Road, Jalgaon, 425002<br>
-        Reg. No. SRJ/2015/0073821 &middot; PAN: AACSR1234B<br>
+        Ujjwal Bharat &middot; Plot 89, Sr. No. 412, Neharu Nagar, Prasad Apt, Jalgaon, Maharashtra, 425001<br>
+        Reg. No. U85499MR2026NPL474075 &middot; PAN: ABSCS9855K<br>
+        <a href="https://www.ujjwalawadekar.com/" style="color:#94a3b8">ujjwalawadekar.com</a> &middot; team@srubf.com<br>
         This is a computer-generated receipt. Valid without physical signature.
       </div>
     </div>
@@ -602,14 +618,14 @@ app.post("/make-server-a0af4170/causes/:id/toggle-80g", async (c) => {
 });
 
 // ─── Default seed data ────────────────────────────────────────────────────────
-const CAUSES_SEED_VERSION = "v2-ujjwala-programs";
+const CAUSES_SEED_VERSION = "v3-home-programs";
 
 const DEFAULT_CAUSES_SEED = [
   { id: "ujjwal-sanvaad", title: "Ujjwal Sanvaad", category: "Education", description: "Open dialogue sessions between teachers, students, and parents — creating transparent, honest conversations that strengthen the school community.", longDescription: "Ujjwal Sanvaad (Bright Dialogue) brings together teachers, students, parents, and village leaders for structured conversations about learning, school challenges, and community expectations.\n\nThese sessions break down barriers between schools and families, ensuring every child's voice is heard. ₹500 sponsors one Sanvaad session for an entire village community.", image: "https://images.unsplash.com/photo-1528082414335-adbd64f18d12?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800", goal: 3000000, raised: 1200000, donors: 2100, impact: "₹500 = 1 community dialogue session for an entire village", impactItems: ["180+ villages covered", "5,200+ participants", "Teacher-parent connect", "Monthly sessions"], tag: "80G Eligible", urgent: false, enable80G: true, updates: [{ date: "2026-02-10", title: "Sanvaad in Raver Taluka", desc: "300 parents and 45 teachers gathered for an open school dialogue in Raver." }] },
-  { id: "shikshak-unnati", title: "Shikshak Unnati", category: "Education", description: "Continuous professional development for ZP government school teachers — workshops, peer learning circles, and resource kits to unlock every teacher's potential.", longDescription: "Shikshak Unnati (Teacher Progress) is Ujjwala Wadekar's flagship teacher-upliftment program. It connects 340+ government school teachers across Jalgaon and North Maharashtra for monthly workshops, peer mentoring, and access to a shared resource library.\n\nOne inspired teacher transforms hundreds of students. ₹1,000 funds one teacher's complete monthly training and resource support.", image: "https://images.unsplash.com/photo-1708593343442-7595427ddf7b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800", goal: 4000000, raised: 2100000, donors: 3240, impact: "₹1,000 = 1 teacher's workshop + resource kit for a month", impactItems: ["340+ teachers connected", "Monthly workshops", "6 districts covered", "Shared resource library"], tag: "80G Eligible", urgent: true, enable80G: true, updates: [{ date: "2026-02-20", title: "Teacher Summit in Jalgaon", desc: "200 teachers from Khandesh gathered for a 2-day Shikshak Unnati summit." }] },
-  { id: "unhali-shala", title: "Unhali Shala", category: "Education", description: "Summer school camps for government school children — keeping learning alive during vacations through activities, experiments, art, and life-skills sessions.", longDescription: "Unhali Shala (Summer School) ensures children from marginalized communities don't lose learning momentum during the long summer break. Our camps run hands-on science, language, art, and life-skills sessions across 40+ villages in Jalgaon.\n\nChildren return to school with renewed curiosity and a head start on the next academic year. ₹300 sponsors one child's full Unhali Shala summer camp experience.", image: "https://images.unsplash.com/photo-1599376672737-bd66af54c8f5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800", goal: 2000000, raised: 780000, donors: 1850, impact: "₹300 = 1 child's full Unhali Shala summer camp", impactItems: ["4,500+ children enrolled", "40+ villages", "Science, art & life skills", "6-week program"], tag: "80G Eligible", urgent: true, enable80G: true, updates: [{ date: "2026-01-15", title: "Unhali Shala 2026 Announced", desc: "Registration open for summer camps across 42 villages in Jalgaon district." }] },
-  { id: "shikshan-saath", title: "ShikshanSaath", category: "Education", description: "Peer-learning support groups where older students mentor younger ones — building confidence, reducing dropout, and creating a culture of mutual learning.", longDescription: "ShikshanSaath (Learning Together) pairs senior students with struggling juniors within government schools for guided peer-mentoring sessions. This approach not only lifts the younger learners — it deepens the knowledge and leadership skills of the mentors.\n\nEvery ₹200 funds one month of ShikshanSaath mentoring for a pair of students, including session materials and facilitator support.", image: "https://images.unsplash.com/photo-1692269725827-699e04a11cdf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800", goal: 1500000, raised: 620000, donors: 1480, impact: "₹200 = 1 month of peer-mentoring for a student pair", impactItems: ["2,800+ student pairs", "Dropout reduction", "Leadership development", "All grade levels"], tag: "80G Eligible", urgent: false, enable80G: true, updates: [] },
-  { id: "shala-abhiyan", title: "Shala Abhiyan", category: "Education", description: "A holistic school transformation campaign — upgrading infrastructure, libraries, labs, and teaching quality in the most under-resourced ZP schools of Jalgaon.", longDescription: "Shala Abhiyan (School Campaign) is a comprehensive effort to transform the most under-resourced ZP schools in Jalgaon. Each adopted school receives infrastructure improvements (blackboards, clean toilets, drinking water), a curated library, a science lab kit, and quarterly teacher mentor visits.\n\n₹25,000 fully sponsors one school for an entire academic year — with transparent impact reports shared every term.", image: "https://images.unsplash.com/photo-1763637675793-da207ba1fe18?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800", goal: 5000000, raised: 1800000, donors: 2300, impact: "₹25,000 = 1 school transformed for a full academic year", impactItems: ["35 schools covered", "Jalgaon & Dhule", "Infrastructure + library + lab", "Quarterly reports"], tag: "80G Eligible", urgent: true, enable80G: true, updates: [{ date: "2026-01-28", title: "New School in Yawal Transformed", desc: "320 students benefit from library, lab upgrades, and clean drinking water." }] },
+  { id: "shikshak-unnati", title: "Shikshak Unnati Manch", category: "Education", description: "Continuous professional development for ZP government school teachers — workshops, peer learning circles, and resource kits to unlock every teacher's potential.", longDescription: "Shikshak Unnati (Teacher Progress) is Ujjwala Wadekar's flagship teacher-upliftment program. It connects 340+ government school teachers across Jalgaon and North Maharashtra for monthly workshops, peer mentoring, and access to a shared resource library.\n\nOne inspired teacher transforms hundreds of students. ₹1,000 funds one teacher's complete monthly training and resource support.", image: "https://images.unsplash.com/photo-1708593343442-7595427ddf7b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800", goal: 4000000, raised: 2100000, donors: 3240, impact: "₹1,000 = 1 teacher's workshop + resource kit for a month", impactItems: ["340+ teachers connected", "Monthly workshops", "6 districts covered", "Shared resource library"], tag: "80G Eligible", urgent: true, enable80G: true, updates: [{ date: "2026-02-20", title: "Teacher Summit in Jalgaon", desc: "200 teachers from Khandesh gathered for a 2-day Shikshak Unnati summit." }] },
+  { id: "unhali-shala", title: "Ujjwal Unhali Shibir", category: "Education", description: "Summer school camps for government school children — keeping learning alive during vacations through activities, experiments, art, and life-skills sessions.", longDescription: "Unhali Shala (Summer School) ensures children from marginalized communities don't lose learning momentum during the long summer break. Our camps run hands-on science, language, art, and life-skills sessions across 40+ villages in Jalgaon.\n\nChildren return to school with renewed curiosity and a head start on the next academic year. ₹300 sponsors one child's full Unhali Shala summer camp experience.", image: "https://images.unsplash.com/photo-1599376672737-bd66af54c8f5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800", goal: 2000000, raised: 780000, donors: 1850, impact: "₹300 = 1 child's full Unhali Shala summer camp", impactItems: ["4,500+ children enrolled", "40+ villages", "Science, art & life skills", "6-week program"], tag: "80G Eligible", urgent: true, enable80G: true, updates: [{ date: "2026-01-15", title: "Unhali Shala 2026 Announced", desc: "Registration open for summer camps across 42 villages in Jalgaon district." }] },
+  { id: "shikshan-saath", title: "Ujjwal ShikshanSaath", category: "Education", description: "Peer-learning support groups where older students mentor younger ones — building confidence, reducing dropout, and creating a culture of mutual learning.", longDescription: "ShikshanSaath (Learning Together) pairs senior students with struggling juniors within government schools for guided peer-mentoring sessions. This approach not only lifts the younger learners — it deepens the knowledge and leadership skills of the mentors.\n\nEvery ₹200 funds one month of ShikshanSaath mentoring for a pair of students, including session materials and facilitator support.", image: "https://images.unsplash.com/photo-1692269725827-699e04a11cdf?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800", goal: 1500000, raised: 620000, donors: 1480, impact: "₹200 = 1 month of peer-mentoring for a student pair", impactItems: ["2,800+ student pairs", "Dropout reduction", "Leadership development", "All grade levels"], tag: "80G Eligible", urgent: false, enable80G: true, updates: [] },
+  { id: "shala-abhiyan", title: "Ujjwal Shala Abhiyan", category: "Education", description: "A holistic school transformation campaign — upgrading infrastructure, libraries, labs, and teaching quality in the most under-resourced ZP schools of Jalgaon.", longDescription: "Shala Abhiyan (School Campaign) is a comprehensive effort to transform the most under-resourced ZP schools in Jalgaon. Each adopted school receives infrastructure improvements (blackboards, clean toilets, drinking water), a curated library, a science lab kit, and quarterly teacher mentor visits.\n\n₹25,000 fully sponsors one school for an entire academic year — with transparent impact reports shared every term.", image: "https://images.unsplash.com/photo-1763637675793-da207ba1fe18?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&w=800", goal: 5000000, raised: 1800000, donors: 2300, impact: "₹25,000 = 1 school transformed for a full academic year", impactItems: ["35 schools covered", "Jalgaon & Dhule", "Infrastructure + library + lab", "Quarterly reports"], tag: "80G Eligible", urgent: true, enable80G: true, updates: [{ date: "2026-01-28", title: "New School in Yawal Transformed", desc: "320 students benefit from library, lab upgrades, and clean drinking water." }] },
 ];
 
 async function seedCausesIfEmpty() {
@@ -874,7 +890,7 @@ app.post("/make-server-a0af4170/donations", async (c) => {
       status:          body.status          || "success",
       certificate80G:  body.certificate80G  || false,
       createdAt:       body.createdAt       || new Date().toISOString(),
-      receiptNo:       body.receiptNo       || receipt(),
+      receiptNo:       body.receiptNo?.startsWith("SRUBF/") ? body.receiptNo : await getNextReceiptNo(),
       impactDescription: body.impactDescription || "",
       phone:           body.phone           || "",
       address:         body.address         || "",
@@ -1015,6 +1031,74 @@ app.get("/make-server-a0af4170/donations/mine", async (c) => {
     console.log(`[donations/mine] user=${authUser.id} email=${authUser.email} found=${mine.length}`);
     return c.json({ donations: mine });
   } catch (e) { return c.json({ error: "Failed: " + e }, 500); }
+});
+
+// POST /donations/offline — Admin: record an offline payment (cash/bank/UPI/cheque)
+app.post("/make-server-a0af4170/donations/offline", async (c) => {
+  try {
+    const authUser = resolveAuthUser(c);
+    if (!authUser || !isAdmin(authUser.email)) return c.json({ error: "Admin access required" }, 401);
+    const body = await c.req.json();
+    if (!body.userName || !body.amount) return c.json({ error: "Donor name and amount are required" }, 400);
+
+    const receiptNo = await getNextReceiptNo();
+    const now = body.paymentDate ? new Date(body.paymentDate).toISOString() : new Date().toISOString();
+    const paymentMethodMap: Record<string, string> = {
+      cash: "CASH",
+      neft: "NEFT / RTGS / IMPS",
+      upi: "UPI (Offline)",
+      cheque: "CHEQUE",
+    };
+    const txnType = paymentMethodMap[body.paymentMethod] || "OFFLINE";
+
+    const donation = {
+      id:              `don-offline-${Date.now()}`,
+      userId:          "offline",
+      userName:        body.userName,
+      userEmail:       body.userEmail || "",
+      causeId:         body.causeId  || "general",
+      causeName:       body.causeName || "General Fund",
+      amount:          Number(body.amount),
+      currency:        "INR",
+      frequency:       "one-time",
+      donorType:       "indian",
+      pan:             body.pan || "",
+      phone:           body.phone || "",
+      address:         body.address || "",
+      country:         "India",
+      paymentId:       body.referenceNo || `OFFLINE-${Date.now()}`,
+      razorpayOrderId: null,
+      status:          "success",
+      certificate80G:  !!body.certificate80G,
+      createdAt:       now,
+      receiptNo,
+      impactDescription: "Your donation will help bring real learning, support, and opportunity closer to a child, a classroom, or a school.",
+      paymentMethod:   txnType,
+      recordedBy:      authUser.email,
+    };
+
+    await kv.set(`donation:${donation.id}`, donation);
+    console.log(`[donations/offline] Recorded: receiptNo=${receiptNo} amount=${donation.amount} by=${authUser.email}`);
+
+    // Send receipt email to donor if email provided
+    if (donation.userEmail) {
+      const cause80GEnabled = await getCause80GEnabled(donation.causeId);
+      const send80G = cause80GEnabled && donation.certificate80G;
+      const recipients = [...NOTIFY_EMAILS, donation.userEmail];
+      if (send80G) {
+        const html = generateFormalReceiptHTML({ ...donation, certificate80G: true });
+        sendEmail(`✅ Donation Receipt: ${receiptNo} | ${donation.userName} | ₹${donation.amount.toLocaleString("en-IN")}`, html, recipients).catch(() => {});
+      } else {
+        const html = generateNormalReceiptHTML(donation);
+        sendEmail(`✅ Payment Confirmation: ${receiptNo} | ${donation.userName} | ₹${donation.amount.toLocaleString("en-IN")}`, html, recipients).catch(() => {});
+      }
+    }
+
+    return c.json({ success: true, donation });
+  } catch (e) {
+    console.log("[donations/offline] Error:", e);
+    return c.json({ error: "Failed: " + e }, 500);
+  }
 });
 
 // POST /donations/:id/resend-email — Admin resend receipt (respects cause 80G setting)

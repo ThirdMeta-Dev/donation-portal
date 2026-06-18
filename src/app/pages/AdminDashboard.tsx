@@ -5,7 +5,7 @@ import {
   BarChart3, Users, IndianRupee, Heart, Search, TrendingUp, CheckCircle2,
   Shield, RefreshCw, Loader2, BookOpen, Plus, Trash2, Edit, X,
   GraduationCap, ChevronDown, ChevronUp, Video, FileText, Calendar, Eye,
-  UserCheck, UserX, Mail, ToggleLeft, ToggleRight, AlertCircle, Layout, Inbox
+  UserCheck, UserX, Mail, ToggleLeft, ToggleRight, AlertCircle, Layout, Inbox, Banknote
 } from "lucide-react";
 import { useAuth } from "../lib/AuthContext";
 import { donationApi, lmsApi, adminApi, causeApi, Donation, Course, AppUserRecord, CauseFull } from "../lib/api";
@@ -77,7 +77,7 @@ export function AdminDashboard() {
   const navigate = useNavigate();
   const [donations, setDonations] = useState<Donation[]>(_cache?.donations ?? []);
   const [courses, setCourses] = useState<Course[]>(_cache?.courses ?? []);
-  const [activeTab, setActiveTab] = useState<"overview" | "donations" | "users" | "causes" | "courses" | "content" | "leads">("overview");
+  const [activeTab, setActiveTab] = useState<"overview" | "donations" | "users" | "causes" | "courses" | "content" | "leads" | "offline">("overview");
   const [appUsers, setAppUsers] = useState<AppUserRecord[]>([]);
   const [usersLoading, setUsersLoading] = useState(false);
   const [usersError, setUsersError] = useState("");
@@ -90,6 +90,13 @@ export function AdminDashboard() {
   const [error, setError] = useState("");
   const [selectedDonation, setSelectedDonation] = useState<Donation | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+
+  // Offline donation form state
+  const OFFLINE_FORM_INIT = { userName: "", userEmail: "", phone: "", pan: "", amount: "", causeId: "", causeName: "", paymentMethod: "cash", referenceNo: "", paymentDate: new Date().toISOString().slice(0, 10), address: "", certificate80G: false };
+  const [offlineForm, setOfflineForm] = useState(OFFLINE_FORM_INIT);
+  const [offlineSubmitting, setOfflineSubmitting] = useState(false);
+  const [offlineSuccess, setOfflineSuccess] = useState<string | null>(null);
+  const [offlineError, setOfflineError] = useState("");
 
   // Leads (contact form submissions)
   const [leads, setLeads] = useState<LeadRecord[]>([]);
@@ -356,6 +363,7 @@ export function AdminDashboard() {
     { id: "courses",   label: "LMS Courses",               icon: <GraduationCap size={15} /> },
     { id: "content",   label: "Content",                   icon: <Layout size={15} /> },
     { id: "leads",     label: `Leads${leads.length > 0 ? ` (${leads.length})` : ""}`, icon: <Inbox size={15} />, onTabClick: () => { setActiveTab("leads"); loadLeads(); } },
+    { id: "offline",   label: "Record Offline",  icon: <Banknote size={15} /> },
   ] as { id: typeof activeTab; label: string; icon: React.ReactNode; onTabClick?: () => void }[];
 
   const statusBadge = (status: string) => {
@@ -1010,6 +1018,136 @@ export function AdminDashboard() {
             )}
 
             {/* ── LEADS ── */}
+            {activeTab === "offline" && (
+              <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+                <div className="max-w-2xl mx-auto space-y-6">
+                  <div>
+                    <h2 className="text-lg font-semibold text-slate-800">Record Offline Payment</h2>
+                    <p className="text-sm text-slate-500 mt-0.5">Record cash, bank transfer, UPI, or cheque donations. A receipt will be emailed to the donor.</p>
+                  </div>
+
+                  {offlineSuccess && (
+                    <div className="bg-green-50 border border-green-200 rounded-xl p-4 flex items-start gap-3">
+                      <CheckCircle2 size={18} className="text-green-600 mt-0.5 flex-shrink-0" />
+                      <div>
+                        <p className="text-sm font-semibold text-green-800">Payment Recorded Successfully</p>
+                        <p className="text-xs text-green-700 mt-0.5">Receipt No: <strong>{offlineSuccess}</strong> — Email sent to donor.</p>
+                      </div>
+                    </div>
+                  )}
+                  {offlineError && (
+                    <div className="bg-red-50 border border-red-200 rounded-xl p-4 text-sm text-red-700">{offlineError}</div>
+                  )}
+
+                  <div className="bg-white border border-slate-200 rounded-2xl p-6 space-y-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-600 mb-1.5">Donor Full Name *</label>
+                        <input value={offlineForm.userName} onChange={e => setOfflineForm(f => ({ ...f, userName: e.target.value }))}
+                          className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-400" placeholder="As on PAN card" />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-600 mb-1.5">Email Address</label>
+                        <input value={offlineForm.userEmail} onChange={e => setOfflineForm(f => ({ ...f, userEmail: e.target.value }))} type="email"
+                          className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-400" placeholder="Receipt will be sent here" />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-600 mb-1.5">Phone Number</label>
+                        <input value={offlineForm.phone} onChange={e => setOfflineForm(f => ({ ...f, phone: e.target.value }))}
+                          className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-400" placeholder="+91 9876543210" />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-600 mb-1.5">PAN Card Number</label>
+                        <input value={offlineForm.pan} onChange={e => setOfflineForm(f => ({ ...f, pan: e.target.value.toUpperCase() }))}
+                          maxLength={10} className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-400 uppercase font-mono tracking-widest" placeholder="ABCDE1234F" />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-600 mb-1.5">Amount (₹) *</label>
+                        <input value={offlineForm.amount} onChange={e => setOfflineForm(f => ({ ...f, amount: e.target.value }))} type="number" min="1"
+                          className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-400" placeholder="e.g. 5000" />
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-600 mb-1.5">Payment Date *</label>
+                        <input value={offlineForm.paymentDate} onChange={e => setOfflineForm(f => ({ ...f, paymentDate: e.target.value }))} type="date"
+                          className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-400" />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-600 mb-1.5">Cause</label>
+                      <select value={offlineForm.causeId} onChange={e => {
+                        const c = causes.find(x => x.id === e.target.value);
+                        setOfflineForm(f => ({ ...f, causeId: e.target.value, causeName: c?.title || "General Fund" }));
+                      }} className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-400 bg-white">
+                        <option value="">Where needed most (Maximum Impact)</option>
+                        {causes.map(c => <option key={c.id} value={c.id}>{c.title}</option>)}
+                      </select>
+                    </div>
+
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-600 mb-1.5">Payment Method *</label>
+                        <select value={offlineForm.paymentMethod} onChange={e => setOfflineForm(f => ({ ...f, paymentMethod: e.target.value }))}
+                          className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-400 bg-white">
+                          <option value="cash">Cash</option>
+                          <option value="neft">NEFT / RTGS / IMPS (Bank Transfer)</option>
+                          <option value="upi">UPI (via App)</option>
+                          <option value="cheque">Cheque</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-600 mb-1.5">Reference / Cheque No.</label>
+                        <input value={offlineForm.referenceNo} onChange={e => setOfflineForm(f => ({ ...f, referenceNo: e.target.value }))}
+                          className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-400" placeholder="UTR / Cheque number" />
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-slate-600 mb-1.5">Address</label>
+                      <textarea value={offlineForm.address} onChange={e => setOfflineForm(f => ({ ...f, address: e.target.value }))} rows={2}
+                        className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-400 resize-none" placeholder="Donor's full address (for certificate)" />
+                    </div>
+
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <div onClick={() => setOfflineForm(f => ({ ...f, certificate80G: !f.certificate80G }))}
+                        className="w-5 h-5 rounded border-2 flex items-center justify-center transition-all flex-shrink-0"
+                        style={{ background: offlineForm.certificate80G ? "#4338CA" : "transparent", borderColor: offlineForm.certificate80G ? "#4338CA" : "#C4BDB3" }}>
+                        {offlineForm.certificate80G && <CheckCircle2 size={12} className="text-white" />}
+                      </div>
+                      <span className="text-sm text-slate-700">Issue Income Tax Deduction Certificate (requires PAN)</span>
+                    </label>
+
+                    <div className="flex gap-3 pt-2">
+                      <button onClick={() => { setOfflineForm(OFFLINE_FORM_INIT); setOfflineSuccess(null); setOfflineError(""); }}
+                        className="px-4 py-2.5 border border-slate-200 text-slate-600 rounded-xl text-sm hover:bg-slate-50 transition-colors">
+                        Reset
+                      </button>
+                      <button
+                        disabled={offlineSubmitting || !offlineForm.userName || !offlineForm.amount}
+                        onClick={async () => {
+                          setOfflineSubmitting(true); setOfflineError(""); setOfflineSuccess(null);
+                          try {
+                            const res = await donationApi.saveOffline({
+                              ...offlineForm,
+                              amount: parseFloat(offlineForm.amount),
+                              causeName: offlineForm.causeId ? (causes.find(c => c.id === offlineForm.causeId)?.title || "General Fund") : "General Fund",
+                            });
+                            setOfflineSuccess((res as any).donation?.receiptNo || "Recorded");
+                            setDonations(prev => [(res as any).donation, ...prev]);
+                            setOfflineForm(OFFLINE_FORM_INIT);
+                          } catch (e: any) { setOfflineError(e.message || "Failed to record payment"); }
+                          setOfflineSubmitting(false);
+                        }}
+                        className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm text-white transition-all disabled:opacity-60"
+                        style={{ background: "#4338CA", fontWeight: 600 }}>
+                        {offlineSubmitting ? <><Loader2 size={15} className="animate-spin" /> Recording...</> : <><Banknote size={15} /> Record Payment & Send Receipt</>}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
             {activeTab === "leads" && (
               <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
                 <div className="space-y-4">

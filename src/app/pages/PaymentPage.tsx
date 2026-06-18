@@ -49,11 +49,13 @@ export function PaymentPage() {
   const { amount, cause, name, email, phone, pan, frequency, donorType, taxReceipt, address, country, cause80GEnabled } = state;
 
   const getImpact = () => {
-    if (amount <= 150) return `Your ₹${amount} fed 1 child for a week.`;
-    if (amount <= 500) return `Your ₹${amount} supported 1 child's education for a week.`;
-    if (amount <= 1000) return `Your ₹${amount} provided free medical care for ${Math.floor(amount / 300)} people.`;
-    if (amount <= 5000) return `Your ₹${amount.toLocaleString()} provided clean water for ${Math.floor(amount / 2500)} family.`;
-    return `Your ₹${amount.toLocaleString()} is making a huge difference across our programs!`;
+    if (amount <= 150)  return `Your ₹${amount} placed learning tools in one child's hands.`;
+    if (amount <= 500)  return `Your ₹${amount} gave one child a meaningful Beyond Syllabus experience.`;
+    if (amount <= 1000) return `Your ₹${amount.toLocaleString()} equipped a teacher to create better learning for many children.`;
+    if (amount <= 2500) return `Your ₹${amount.toLocaleString()} strengthened one classroom with practical learning tools.`;
+    if (amount <= 5000) return `Your ₹${amount.toLocaleString()} helped build richer reading and learning access for children in one school.`;
+    if (amount <= 10000) return `Your ₹${amount.toLocaleString()} provided meaningful learning support for an entire class.`;
+    return `Your ₹${amount.toLocaleString()} is helping transform a school's learning environment with dignity, resources, and hope.`;
   };
 
   const saveAndRedirect = async (paymentId: string, orderId?: string) => {
@@ -258,7 +260,7 @@ export function PaymentPage() {
           </div>
           {taxReceipt && (donorType === "indian" || donorType === "nri") && (
             <div className="mt-3 bg-white/15 rounded-xl px-3 py-2 text-xs text-white/90 flex items-center gap-2">
-              📜 80G Certificate will be emailed after payment
+              📜 Income Tax Deduction Certificate will be emailed after payment
             </div>
           )}
         </div>
@@ -291,9 +293,6 @@ export function PaymentPage() {
               <div className="flex items-center gap-1 text-xs text-green-600">
                 <Shield size={12} /> PCI-DSS Secure
               </div>
-              <span className="text-xs bg-amber-100 text-amber-700 px-2 py-0.5 rounded-full" style={{ fontWeight: 600 }}>
-                TEST MODE
-              </span>
             </div>
           </div>
 

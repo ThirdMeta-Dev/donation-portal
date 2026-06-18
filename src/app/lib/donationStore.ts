@@ -22,9 +22,11 @@ export interface Donation {
 }
 
 export function generateReceiptNo(): string {
-  const year = new Date().getFullYear();
+  const now = new Date();
+  const fyStart = now.getMonth() >= 3 ? now.getFullYear() : now.getFullYear() - 1;
+  const fy = `${fyStart}-${String(fyStart + 1).slice(2)}`;
   const num = Math.floor(100000 + Math.random() * 900000);
-  return `AKF-${year}-${num}`;
+  return `SRUBF/${fy}/${String(num).padStart(6, "0")}`;
 }
 
 export function generatePaymentId(): string {
