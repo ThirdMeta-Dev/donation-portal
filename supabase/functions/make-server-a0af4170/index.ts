@@ -611,6 +611,101 @@ function generateNormalReceiptHTML(d: any): string {
 </body></html>`;
 }
 
+// ─── Thank-you confirmation email (email body for all donations) ──────────────
+function generateThankYouEmailHTML(d: any, use80G: boolean): string {
+  const dateStr = _formatDate(d.createdAt || new Date().toISOString());
+  const amtFmt = `&#8377;${_formatAmount(d.amount || 0)}`;
+  const donorName = esc(d.userName || "Valued Donor");
+  const causeName = esc(d.causeName || "General Fund");
+  const receiptNo = esc(d.receiptNo || "-");
+  const txnType = (d.paymentId || "").startsWith("pay_") ? "Online / UPI" : "RTGS / NEFT";
+  const attachmentLabel = use80G ? "Income Tax Deduction Certificate (PDF)" : "Donation Receipt (PDF)";
+  const logoSvg = `<svg width="72" height="56" viewBox="0 0 66 51" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M24.9375 6.6929C24.9375 7.55853 25.5701 8.13562 26.4246 8.13562C26.8241 8.13562 27.2237 8.00245 27.5677 7.80268C27.6676 8.06903 27.7231 8.35758 27.7231 8.64612C27.7231 8.91247 27.6898 9.35639 27.5455 9.58944C27.4234 9.48956 27.2681 9.42297 27.1127 9.42297C26.8019 9.42297 26.5578 9.65603 26.5578 9.96677C26.5578 10.3552 26.8796 10.5661 27.2348 10.5661C28.2336 10.5661 28.4777 9.42297 28.4777 8.63502C28.4777 8.2466 28.3778 7.58073 28.1559 7.26999C28.2891 7.09242 28.3556 6.90376 28.3556 6.6929C28.3556 6.35996 28.1226 6.06032 27.7675 6.06032C27.3901 6.06032 27.1016 6.40435 27.1016 6.77058C27.1016 6.89266 27.1349 7.01474 27.1793 7.12572C27.0794 7.25889 26.5578 7.35877 26.3913 7.35877C26.1583 7.35877 25.9696 7.28109 25.8475 7.13681C25.8253 7.11462 25.7365 6.99254 25.6922 6.83717C25.6922 5.49433 28.5665 4.53991 28.6109 3.0306C28.6664 3.16378 28.7885 3.26366 28.9549 3.26366H29.7207V4.5732C29.4654 4.51771 29.2324 4.48442 29.0881 4.48442C28.6886 4.48442 27.5011 4.71748 27.5011 5.25017C27.5011 5.46103 27.6898 5.6164 27.9006 5.6164C28.0782 5.6164 28.4666 5.23908 29.0992 5.23908C29.3545 5.23908 29.5653 5.30566 29.7318 5.38335V6.45984C29.7318 6.6596 29.7096 6.85936 29.7096 7.04803C29.7096 7.64731 29.9426 8.03574 30.5197 8.2244C30.553 8.2244 30.5752 8.2466 30.6196 8.2466C30.8305 8.2466 31.0191 8.06903 31.008 7.85817C31.008 7.45865 30.4753 7.65841 30.4753 7.05913C30.4753 6.63741 30.4975 6.21569 30.4975 5.79397V5.46103C30.5752 5.39445 30.6196 5.29457 30.6196 5.18359C30.6196 5.08371 30.5641 5.00602 30.4975 4.92834V3.26366H31.3521V6.45984C31.3521 6.6596 31.3299 6.85936 31.3299 7.04803C31.3299 7.64731 31.5629 8.03574 32.14 8.2244C32.1733 8.2244 32.1955 8.2466 32.2399 8.2466C32.4508 8.2466 32.6394 8.06903 32.6283 7.85817C32.6283 7.45865 32.0956 7.65841 32.0956 7.05913C32.0956 6.63741 32.1178 6.21569 32.1178 5.79397V3.25256H33.6382C33.616 3.30805 33.5938 3.34134 33.5938 3.40793C33.5938 3.61879 33.7603 3.79635 33.9823 3.79635C34.1265 3.79635 34.2597 3.70757 34.3263 3.5744C34.4595 3.31915 34.8701 3.23036 35.1364 3.23036C35.3806 3.25256 35.6691 3.31915 35.8911 3.50781C35.8467 3.88514C35.7912 4.40674 35.1364 4.98382 34.7036 5.20578C34.4595 5.02822 34.0156 4.76187 33.727 4.76187C33.272 4.76187 32.9613 5.1281 32.9613 5.56092C32.9613 6.03812 33.3386 6.38216 33.8158 6.38216C34.0378 6.38216 34.4262 6.27118 34.6037 6.138C35.1364 6.6596 36.2129 8.49075 36.3572 9.23431C36.0465 9.23431 35.9022 9.44517 35.9022 9.67822C35.9022 9.98896 36.1463 10.2331 36.4571 10.2331C36.901 10.2331 37.123 9.7892 37.123 9.41188C37.123 8.43526 35.9133 6.54862 35.2696 5.76068C35.9244 5.30566 36.6014 4.62869 36.6014 3.78526C36.6014 3.59659 36.557 3.44122 36.5015 3.26366H37.4781V6.45984C37.4781 6.6596 37.4559 6.85936 37.4559 7.04803C37.4559 7.64731 37.689 8.03574 38.266 8.2244C38.2993 8.2244 38.3215 8.2466 38.3659 8.2466C38.5768 8.2466 38.7654 8.06903 38.7543 7.85817C38.7543 7.45865 38.2216 7.65841 38.2216 7.05913C38.2216 6.63741 38.2438 6.21569 38.2438 5.79397V3.25256H43.6374V4.32905H41.3401C41.1626 4.32905 40.9628 4.49552 40.9628 4.68418C40.9628 5.17249 41.3956 5.03931 41.5732 5.1059C41.9949 5.27237 42.1947 5.71628 42.1947 6.04922C42.1947 6.50423 41.9505 6.79278 41.4844 6.79278C40.8518 6.79278 40.2415 6.26008 39.9529 5.71629C40.1083 5.54982 40.2304 5.33896 40.2304 5.117C40.2304 4.81736 39.9862 4.5843 39.6866 4.5843C39.3203 4.5843 39.0873 4.91724 39.0873 5.26127C39.0873 6.41545 40.3635 7.54743 41.4955 7.54743C42.3612 7.54743 42.9604 6.90376 42.9604 6.04922C42.9604 5.72738 42.8495 5.37225 42.6608 5.1059H43.6374V6.47094C43.6374 6.6707 43.6152 6.87046 43.6152 7.05913C43.6152 7.65841 43.8483 8.04684 44.4254 8.2355C44.4587 8.2355 44.4808 8.2577 44.5252 8.2577C44.7361 8.2577 44.9248 8.08013 44.9137 7.86927C44.9137 7.46975 44.381 7.66951 44.381 7.07022C44.381 6.64851 44.4032 6.22679 44.4032 5.80507V3.26366H48.0987V2.509H28.9993C28.8439 2.509 28.6775 2.63108 28.6331 2.78645C28.511 2.16497 27.8784 1.83203 27.257 1.83203C26.3802 1.83203 25.6256 2.46461 25.6256 3.36354C25.6256 3.88514 25.8475 4.40674 26.2581 4.73967C25.6367 5.20578 24.9708 5.86056 24.9708 6.6818L24.9375 6.6929Z" fill="#ffffff"/><path d="M16.3018 3.27387H17.0675V6.47006C17.0675 6.66982 17.0453 6.86958 17.0453 7.05824C17.0453 7.65753 17.2784 8.04596 17.8555 8.23462C17.8888 8.23462 17.911 8.25681 17.9554 8.25681C18.1662 8.25681 18.3549 8.07925 18.3438 7.86839C18.3438 7.46887 17.8111 7.66863 17.8111 7.06934C17.8111 6.64762 17.8333 6.2259 17.8333 5.80419V3.26277H19.7754C19.7754 4.01743 20.3081 4.65001 21.0406 4.79428C21.0184 4.87196 20.4968 5.29368 20.3969 5.34917C20.1083 5.13831 19.8309 4.92745 19.4536 4.92745C18.4326 4.92745 18.4104 6.55884 19.6089 6.55884C19.8309 6.55884 20.1305 6.42567 20.3303 6.31469C20.8741 6.85848 21.8618 8.45658 22.0505 9.18904C21.7841 9.25562 21.6066 9.53307 21.6066 9.78832C21.6066 10.1324 21.8951 10.4098 22.2391 10.4098C22.683 10.4098 22.9161 10.0214 22.9161 9.62185C22.9161 8.67853 21.6066 6.56994 20.9629 5.87077C21.6953 5.32698 22.3945 4.51683 22.3945 3.55132C22.3723 3.26277H23.3489V6.45896C23.3489 6.65872 23.3267 6.85848 23.3267 7.04715C23.3267 7.64643 23.5598 8.03486 24.1369 8.22352C24.1702 8.22352 24.1924 8.24572 24.2367 8.24572C24.4476 8.24572 24.6363 8.06815 24.6252 7.85729C24.6252 7.45777 24.0925 7.65753 24.0925 7.05824C24.0925 6.63653 24.1147 6.21481 24.1147 5.79309V3.25168H24.8582C25.0469 3.25168 25.2467 3.09631 25.2467 2.89654C25.2467 2.67459 25.0913 2.49702 24.8582 2.49702H16.3129C16.1353 2.49702 15.9355 2.66349 15.9355 2.85215C15.9355 3.06301 16.0909 3.25168 16.3129 3.25168L16.3018 3.27387Z" fill="#ffffff"/><path d="M54.0802 26.5897H20.6091C20.1318 26.5897 19.7212 26.9892 19.7212 27.4664C19.7212 27.9436 20.154 28.3431 20.6091 28.3431H22.6511V33.315C21.7299 32.982 20.7311 32.8378 19.81 32.8378C19.7434 31.7835C20.4315 31.3729 21.4636 30.4295 21.4636 29.5417C21.4636 29.0423 21.0974 28.6872 20.6091 28.665C19.9765 28.6539 19.8655 29.353 19.466 29.8192C18.9888 28.1989 18.3229 26.6008 16.3586 26.6008C14.7272 26.6008 13.0625 27.8104 13.0625 29.5417C13.0625 31.5393 14.9269 32.527 16.7248 32.527C17.1576 32.527 17.6015 32.4937 18.0232 32.4161V33.0486C15.9479 33.5147 14.0835 35.1128 14.0835 37.3768C14.0835 38.9305 15.4152 39.9071 16.6915 39.9071C19.6102 39.9071 19.6102 36.9329 19.7656 34.6467C20.72 34.6467 21.7632 34.8132 22.6511 35.2238V35.7676C22.6511 36.2337 22.6178 36.6887 22.6178 37.1548C22.6178 38.5199 23.1505 39.4299 24.4822 39.8738C24.6931 39.9071C25.1925 39.9071 25.6142 39.5076 25.5809 39.0193C25.5698 38.076 24.3601 38.5532 24.3601 37.1659V36.5334C24.4711 36.6332 24.6043 36.6776 24.7375 36.6776C25.2369 36.6776 25.6475 36.267 25.6475 35.7565C25.5365 35.357C25.2258 34.9242 24.8484 34.5468 24.3934 34.2361V28.3653H26.3577V35.7565C26.3577 36.2226 26.3245 36.6776 26.3245 37.1438C26.3245 38.5088 26.8682 39.4188 28.1889 39.8627C28.4219 39.896C28.9214 39.896 29.332 39.4965 29.3098 39.0082C29.2987 38.0649 28.0668 38.5421 28.0668 37.1548C28.0668 36.1782 28.1112 35.2127 28.1112 34.2139V28.3542H38.2436 28.3542H46.8777V31.0288C46.1896 30.4628 45.3573 30.1077 44.414 30.1077C41.1512 30.1077 39.2757 33.3261 39.4421 36.3669C39.5087 37.6653 40.3633 39.3855 41.7394 39.8627C41.9835 39.896C42.483 39.896 42.8714 39.5187 42.8714 39.0193C42.8714 38.6864 42.6605 38.3867 42.3609 38.2313C41.7061 37.854 41.24 36.9773 41.1845 36.3003C41.018 34.336 42.2055 31.8612 44.3696 31.8612C45.4128 31.8612 46.234 32.8378 46.8666 33.5258V35.7565C46.8666 36.2226 46.8333 36.6776 46.8333 37.1438C46.8333 38.5088 47.3771 39.4188 48.6978 39.8627C48.9308 39.896C49.4302 39.896 49.8408 39.4965 49.8186 39.0082C49.8075 38.0649 48.5757 38.5421 48.5757 37.1548C48.5757 36.1782 48.6201 35.2127 48.6201 34.2139V28.3542H54.0358C54.4686 28.3542 54.9237 27.988 54.9237 27.533C54.9237 27.0225 54.5574 26.6119 54.0358 26.6119L54.0802 26.5897Z" fill="#ffffff"/><path d="M10.9425 17.2579C11.8858 16.3145 12.9179 15.2602 12.8291 13.8286C12.5517 12.7854 11.8858 12.0751 11.8858 12.0751C11.2088 11.4648 10.1989 11.2539 9.31111 11.2539C8.42328 11.2539 7.52436 11.3982 6.72531 11.72C6.05944 12.0308C5.38247 12.4636 4.72769 13.0074 4.32817 13.8286C4.07292 14.5944 4.05072 14.7719 4.07292 14.9051C4.05072 15.0494 4.00633 15.1826 4.00633 15.3379C4.00633 16.3922 4.58342 17.613 5.79309 17.613C6.39237 17.613 6.91397 17.2024 6.91397 16.592C6.91397 15.9816 6.34798 15.349 5.7598 15.2713C5.7598 13.5512 8.03486 13.0296 9.3888 13.0296C10.0214 13.0296 10.8759 13.2071 11.0757 13.8397C11.109 14.1394C11.109 14.8829 9.3777 16.3367 8.80061 16.7252C8.53426 16.9027 8.36779 17.1913 8.36779 17.502C8.36779 17.8793 8.64524 18.2456 9.00037 18.3454C10.4653 18.7228 12.1522 19.8437 12.1522 21.5305C12.1522 23.5947 10.1546 24.3827 8.38999 24.3827C5.10502 24.3827 1.75346 22.5182 1.75346 19.0002V18.6562C1.85334 18.6451C2.43043 18.6451 2.99642 17.9237 2.99642 17.3688C2.99642 16.7584 2.5858 16.2479 1.94213 16.2479C0.643677 16.2479 0 17.9126 0 19.0224C0 23.1841 4.53903 26.1361 8.37889 26.1361C11.1312 26.1361 13.9056 24.6823 13.9056 21.5638C13.9056 19.3554 12.6849 18.3122 10.9869 17.269L10.9425 17.2579Z" fill="#ffffff"/><path d="M64.2998 12.0788H14.0154C13.5382 12.0788 13.1387 12.4784 13.1387 12.9556C13.1387 13.4328 13.5493 13.8323 14.0154 13.8323H44.8786V18.5822C44.6788 20.8462 42.77 22.9104 40.4061 22.9104C39.1077 22.9104 38.1311 22.1335 38.1311 20.7796C38.1311 18.9151 39.9289 16.8731 41.8267 16.8731C42.3594 16.9064C42.315 17.5501 42.8366 17.994 43.447 17.994C44.1017 17.994 44.6344 17.4835 44.6344 16.8065C44.6344 15.4748 42.9808 15.1086 41.9265 15.1086C40.2952 15.1086 38.7526 15.9853 37.6983 17.2504C37.6872 16.7399 37.2876 16.3293 36.7882 16.3293H31.0395C30.6067 16.3293 30.1628 16.7066 30.1628 17.1395C30.1628 18.2825 31.1505 17.9607 31.5611 18.1161C32.5377 18.4934 32.9928 19.5366 32.9928 20.2913C32.9928 21.3456 32.4157 22.0114 31.3614 22.0114C29.8965 22.0114 28.5092 20.7685 27.8322 19.5144C28.1763 19.1371 28.4648 18.6377 28.4648 18.1161C28.4648 17.428 27.8877 16.8953 27.2108 16.8953C26.9777 16.5735 26.667 16.3293 26.2896 16.3293H20.5299C20.1192 16.3293 19.6531 16.7066 19.6531 17.1395C19.6531 18.2825 20.6408 17.9607 21.0736 18.1161C22.0503 18.4934 22.5053 19.5366 22.5053 20.2913C22.5053 21.3456 21.9282 22.0114 20.8739 22.0114C19.3868 22.0114 17.9995 20.7685 17.3226 19.5144C17.6888 19.1371 17.9662 18.6377 17.9662 18.1161C17.9662 17.428 17.3892 16.8953 16.7122 16.8953C15.8576 16.8953 15.3139 17.6722 15.3139 18.4601C15.3139 21.1347 18.2881 23.7538 20.8961 23.7538C22.9048 23.7538 24.2809 22.2556 24.2809 20.2913C24.2809 19.5366 24.0146 18.7265 23.5929 18.0939H25.8679C25.8568 18.2049 25.8346 18.338 25.8346 18.4601C25.8346 21.1347 28.8089 23.7538 31.3947 23.7538C33.4034 23.7538 34.7795 22.2556 34.7795 20.2913C34.7795 19.5366 34.5354 18.7265 34.0914 18.0939H36.5996C36.7993 18.0939 37.0102 18.0606 37.1988 17.9829C36.6662 18.8263 36.3776 19.803 36.3776 20.7685C36.3776 23.1101 38.1311 24.6749 40.3839 24.6749C42.0819 24.6749 43.68 23.8981 44.8453 22.6995C44.8564 24.0201 45.4224 24.9302 46.7319 25.3408C46.9428 25.3852C47.4422 25.3852 47.8528 24.9746 47.8306 24.4752C47.8195 23.554 46.5877 24.0312 46.5877 22.6218C46.5877 21.6452 46.632 20.6797 46.632 19.7031V13.8212H58.8286V16.3182C58.1849 16.751 56.8532 17.6167 56.498 17.8497C56.1318 16.1518 54.8334 15.1308 53.0799 15.1308C47.3978 15.1308 46.3102 25.3852 54.7668 25.3852C55.9099 25.3852 57.4525 24.8414 57.4525 23.4542C57.4525 22.8882 57.0418 22.2667 56.4093 22.2667C55.6546 22.2667 55.133 22.8327 55.133 23.5873C54.7224 23.5984C48.5853 23.5984 49.7505 16.8842 53.0244 16.8842C54.1453 16.8842 54.789 17.5723 54.789 18.6488C54.7779 19.0261C54.2785 19.359 53.0799 20.0027 53.0799 20.6575C53.0799 21.1569 53.4794 21.5453 53.9899 21.5453C54.1231 21.5453 54.2674 21.512 54.3894 21.4343C55.5991 20.6131 57.5634 19.2592 58.8286 18.3935V21.2346C58.8286 21.6785 58.7953 22.1446 58.7953 22.5996C58.7953 23.9647 59.328 24.8969 60.6597 25.3186C60.8706 25.363C61.37 25.363 61.7917 24.9524 61.7584 24.453C61.7473 23.5318 60.5377 24.009 60.5377 22.5996C60.5377 21.623 60.571 20.6575 60.571 19.6809V13.8101H64.2888C64.766 13.8101 65.1766 13.4106 65.1766 12.9334C65.1766 12.4562 64.7438 12.0566 64.2888 12.0566L64.2998 12.0788Z" fill="#ffffff"/><path d="M30.6403 42.5047C30.6403 42.2051 30.3962 41.9609 30.0965 41.9609C29.7969 41.9609 29.5527 42.2051 29.5527 42.5047C29.5527 42.8044 29.7969 43.0485 30.0965 43.0485C30.3962 43.0485 30.6403 42.8044 30.6403 42.5047Z" fill="#ffffff"/></svg>`;
+
+  return `<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Thank You - ${donorName}</title></head>
+<body style="margin:0;padding:0;background:#f0f4f8;font-family:Arial,Helvetica,sans-serif">
+<table width="100%" cellpadding="0" cellspacing="0" style="background:#f0f4f8;padding:32px 0">
+<tr><td align="center">
+<table width="600" cellpadding="0" cellspacing="0" style="max-width:600px;width:100%;background:#ffffff;border-radius:12px;overflow:hidden;box-shadow:0 4px 32px rgba(0,0,0,.10)">
+
+  <!-- Header -->
+  <tr><td style="background:linear-gradient(135deg,#0a2036 0%,#13345a 100%);padding:36px 40px;text-align:center">
+    <div style="margin-bottom:16px">${logoSvg}</div>
+    <div style="font-size:26px;font-weight:900;color:#ffffff;letter-spacing:0.5px;line-height:1.2">SHIKSHARAJ,<br>UJJWAL BHARAT FOUNDATION</div>
+    <div style="margin-top:20px;display:inline-block;background:rgba(255,255,255,.12);border-radius:8px;padding:6px 20px">
+      <div style="font-size:11px;color:rgba(255,255,255,.65);letter-spacing:2px;text-transform:uppercase">Donation Received</div>
+      <div style="font-size:36px;font-weight:900;color:#ffffff;margin-top:2px">${amtFmt}</div>
+    </div>
+  </td></tr>
+
+  <!-- Greeting -->
+  <tr><td style="padding:36px 40px 0">
+    <div style="font-size:22px;font-weight:700;color:#0a2036;margin-bottom:12px">Thank you, ${donorName}!</div>
+    <div style="font-size:15px;color:#445566;line-height:1.8">
+      Your generous contribution of <strong>${amtFmt}</strong> towards <strong>${causeName}</strong> has been successfully received.
+      Every rupee you give goes directly toward bringing quality education, practical skills, and brighter futures to children in underserved communities across Maharashtra.
+    </div>
+  </td></tr>
+
+  <!-- Donation Details -->
+  <tr><td style="padding:24px 40px 0">
+    <table width="100%" cellpadding="0" cellspacing="0" style="border:1px solid #e2e8f0;border-radius:8px;overflow:hidden">
+      <tr style="background:#f8fafc">
+        <td colspan="2" style="padding:12px 16px;font-size:11px;font-weight:700;letter-spacing:2px;color:#64748b;text-transform:uppercase">Donation Summary</td>
+      </tr>
+      ${[
+        ["Receipt No.", receiptNo],
+        ["Cause", causeName],
+        ["Amount", amtFmt],
+        ["Payment Method", txnType],
+        ["Date", dateStr],
+      ].map(([l, v]) => `<tr style="border-top:1px solid #f1f5f9">
+        <td style="padding:11px 16px;font-size:13px;color:#64748b;width:45%">${l}</td>
+        <td style="padding:11px 16px;font-size:13px;color:#0f172a;font-weight:600">${v}</td>
+      </tr>`).join("")}
+    </table>
+  </td></tr>
+
+  <!-- Impact -->
+  <tr><td style="padding:24px 40px 0">
+    <div style="background:#f0fdf4;border-left:4px solid #16a34a;border-radius:0 8px 8px 0;padding:16px 20px">
+      <div style="font-size:13px;font-weight:700;color:#15803d;margin-bottom:6px">Your Impact</div>
+      <div style="font-size:13px;color:#166534;line-height:1.8">
+        Your support for <strong>${causeName}</strong> helps provide real, teacher-led learning experiences to children who deserve better opportunities.
+        Together, we are building stronger classrooms, more confident students, and more empowered communities, one donation at a time.
+      </div>
+    </div>
+  </td></tr>
+
+  <!-- Attachment notice -->
+  <tr><td style="padding:24px 40px 0">
+    <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:8px;padding:14px 20px">
+      <div style="font-size:13px;font-weight:700;color:#1e40af;margin-bottom:4px">&#128206; Receipt Attached</div>
+      <div style="font-size:12px;color:#1e3a8a;line-height:1.7">
+        Your <strong>${attachmentLabel}</strong> is attached to this email for your records.
+        ${use80G ? "This certificate is eligible for tax deduction under Section 133(1)(b) of the Income Tax Act, 2025." : "Please keep it for your records."}
+      </div>
+    </div>
+  </td></tr>
+
+  <!-- Footer -->
+  <tr><td style="padding:32px 40px;border-top:1px solid #e2e8f0;margin-top:32px;text-align:center">
+    <div style="font-size:13px;font-weight:700;color:#0a2036;margin-bottom:6px">Shiksharaj, Ujjwal Bharat Foundation</div>
+    <div style="font-size:11px;color:#94a3b8;line-height:1.9">
+      Plot 89, Sr. No. 412, Neharu Nagar, Prasad Apt, Jalgaon, Maharashtra, 425001<br>
+      Reg. No. U85499MR2026NPL474075 &nbsp;&middot;&nbsp; PAN: ABSCS9855K<br>
+      <a href="mailto:team@srubf.com" style="color:#64748b;text-decoration:none">team@srubf.com</a> &nbsp;&middot;&nbsp;
+      <a href="https://www.ujjwalawadekar.com/" style="color:#64748b;text-decoration:none">ujjwalawadekar.com</a><br>
+      <span style="font-size:10px;color:#cbd5e1">This is a computer-generated email. The attached receipt is valid without physical signature as per IT Act 2000.</span>
+    </div>
+  </td></tr>
+
+</table>
+</td></tr>
+</table>
+</body></html>`;
+}
+
 // ─── Cause 80G default set ────────────────────────────────────────────────────
 const DEFAULT_80G_CAUSES = new Set(["ujjwal-sanvaad", "shikshak-unnati", "unhali-shala", "shikshan-saath", "shala-abhiyan"]);
 
@@ -1144,25 +1239,22 @@ app.post("/make-server-a0af4170/donations", async (c) => {
       console.log(`[donations] email decision: cause80G=${cause80GEnabled} donorWants80G=${donorWants80G} send80G=${send80G}`);
 
       if (send80G) {
-        // Formal receipt with PDF certificate attachment
-        const receiptHTML = generateFormalReceiptHTML({ ...donation, certificate80G: true });
+        const emailHTML = generateThankYouEmailHTML(donation, true);
         const subject = `✅ Income Tax Deduction Certificate: ${donation.receiptNo} | ${donation.userName} | ₹${donation.amount.toLocaleString("en-IN")}`;
         generateCertificatePDFBytes(donation)
           .then(pdfBytes => {
-            const pdfBase64 = uint8ToBase64(pdfBytes);
-            const attachments = [{ filename: `Income-Tax-Certificate-${donation.receiptNo.replace(/\//g, "-")}.pdf`, content: pdfBase64 }];
-            return sendEmail(subject, receiptHTML, recipients, attachments);
+            const attachments = [{ filename: `Income-Tax-Certificate-${donation.receiptNo.replace(/\//g, "-")}.pdf`, content: uint8ToBase64(pdfBytes) }];
+            return sendEmail(subject, emailHTML, recipients, attachments);
           })
           .then(r => console.log(`[donations] certificate email ok=${r.ok} to=${recipients.join(",")}`))
           .catch(e => console.log("[donations] certificate email error:", e));
       } else {
-        // Formal donation receipt with PDF attachment
-        const receiptHTML = generateFormalReceiptHTML({ ...donation, certificate80G: false });
+        const emailHTML = generateThankYouEmailHTML(donation, false);
         const subject = `✅ Donation Receipt: ${donation.receiptNo} | ${donation.userName} | ₹${donation.amount.toLocaleString("en-IN")}`;
         generateCertificatePDFBytes(donation)
           .then(pdfBytes => {
             const attachments = [{ filename: `Donation-Receipt-${donation.receiptNo.replace(/\//g, "-")}.pdf`, content: uint8ToBase64(pdfBytes) }];
-            return sendEmail(subject, receiptHTML, recipients, attachments);
+            return sendEmail(subject, emailHTML, recipients, attachments);
           })
           .then(r => console.log(`[donations] receipt email ok=${r.ok}`))
           .catch(e => console.log("[donations] receipt email error:", e));
@@ -1318,7 +1410,7 @@ app.post("/make-server-a0af4170/donations/offline", async (c) => {
       const send80G = cause80GEnabled && donation.certificate80G;
       const recipients = [...NOTIFY_EMAILS, donation.userEmail];
       if (send80G) {
-        const html = generateFormalReceiptHTML({ ...donation, certificate80G: true });
+        const html = generateThankYouEmailHTML(donation, true);
         const offlineSubject = `✅ Income Tax Deduction Certificate: ${receiptNo} | ${donation.userName} | ₹${donation.amount.toLocaleString("en-IN")}`;
         generateCertificatePDFBytes(donation)
           .then(pdfBytes => {
@@ -1327,7 +1419,7 @@ app.post("/make-server-a0af4170/donations/offline", async (c) => {
           })
           .catch(() => sendEmail(offlineSubject, html, recipients));
       } else {
-        const html = generateFormalReceiptHTML({ ...donation, certificate80G: false });
+        const html = generateThankYouEmailHTML(donation, false);
         const offlineSubject = `✅ Donation Receipt: ${receiptNo} | ${donation.userName} | ₹${donation.amount.toLocaleString("en-IN")}`;
         generateCertificatePDFBytes(donation)
           .then(pdfBytes => {
@@ -1357,7 +1449,7 @@ app.post("/make-server-a0af4170/donations/:id/resend-email", async (c) => {
     const cause80GEnabled = await getCause80GEnabled(donation.causeId);
     const use80G = cause80GEnabled && donation.certificate80G;
 
-    const emailHTML = generateFormalReceiptHTML({ ...donation, certificate80G: use80G });
+    const emailHTML = generateThankYouEmailHTML(donation, use80G);
 
     const subject = use80G
       ? `[Resent] ✅ Income Tax Deduction Certificate: ${donation.receiptNo} | ${donation.userName} | ₹${(donation.amount || 0).toLocaleString("en-IN")}`
