@@ -163,12 +163,12 @@ function _wrapText(text: string, maxW: number, font: any, size: number): string[
 async function generateCertificatePDFBytes(d: any): Promise<Uint8Array> {
   // Load Lora + DM Sans from Google Fonts CDN (parallel)
   const fontUrls = [
-    "https://fonts.gstatic.com/s/lora/v37/0QI6MX1D_JOuGQbT0gvTJPa787zAvCJG.ttf",       // Lora SemiBold 600
-    "https://fonts.gstatic.com/s/lora/v37/0QI6MX1D_JOuGQbT0gvTJPa787wsuyJG.ttf",       // Lora Medium 500
-    "https://fonts.gstatic.com/s/dmsans/v17/rP2tp2ywxg089UriI5-g4vlH9VoD8CmcqZG40F9JadbnoEwAopxhTg.ttf", // DM Sans Regular 400
-    "https://fonts.gstatic.com/s/dmsans/v17/rP2tp2ywxg089UriI5-g4vlH9VoD8CmcqZG40F9JadbnoEwA_JxhTg.ttf", // DM Sans Light 300
-    "https://fonts.gstatic.com/s/dmsans/v17/rP2tp2ywxg089UriI5-g4vlH9VoD8CmcqZG40F9JadbnoEwAfJthTg.ttf", // DM Sans SemiBold 600
-    "https://fonts.gstatic.com/s/dmsans/v17/rP2rp2ywxg089UriCZaSExd86J3t9jz86Mvy4qCRAL19DksVat-JDW3z.ttf", // DM Sans Italic 400
+    "https://fonts.gstatic.com/s/lora/v37/0QI6MX1D_JOuGQbT0gvTJPa787zAvCJG.ttf",
+    "https://fonts.gstatic.com/s/lora/v37/0QI6MX1D_JOuGQbT0gvTJPa787wsuyJG.ttf",
+    "https://fonts.gstatic.com/s/dmsans/v17/rP2tp2ywxg089UriI5-g4vlH9VoD8CmcqZG40F9JadbnoEwAopxhTg.ttf",
+    "https://fonts.gstatic.com/s/dmsans/v17/rP2tp2ywxg089UriI5-g4vlH9VoD8CmcqZG40F9JadbnoEwA_JxhTg.ttf",
+    "https://fonts.gstatic.com/s/dmsans/v17/rP2tp2ywxg089UriI5-g4vlH9VoD8CmcqZG40F9JadbnoEwAfJthTg.ttf",
+    "https://fonts.gstatic.com/s/dmsans/v17/rP2rp2ywxg089UriCZaSExd86J3t9jz86Mvy4qCRAL19DksVat-JDW3z.ttf",
   ];
   const [loraSBb, loraMedb, dmRegb, dmLightb, dmSBb, dmItalicb] = await Promise.all(
     fontUrls.map(u => fetch(u).then(r => r.arrayBuffer()).then(b => new Uint8Array(b)))
@@ -182,172 +182,151 @@ async function generateCertificatePDFBytes(d: any): Promise<Uint8Array> {
     pdfDoc.embedFont(dmSBb),   pdfDoc.embedFont(dmItalicb),
   ]);
 
-  // Embed logo + stamp (from base64 constants)
   const logoBytes  = Uint8Array.from(atob(_LOGO_B64),  c => c.charCodeAt(0));
   const stampBytes = Uint8Array.from(atob(_STAMP_B64), c => c.charCodeAt(0));
   const [logoImg, stampImg] = await Promise.all([pdfDoc.embedPng(logoBytes), pdfDoc.embedPng(stampBytes)]);
 
-  // A4 page — exact match to Figma frame (595 × 842)
-  const W = 595, H = 842;
+  // A4: 595×842. LM=32 gives symmetric margins (left=32, right=595-563=32)
+  const W = 595, H = 842, LM = 32, RE = 563; // RE = right edge of content
   const page = pdfDoc.addPage([W, H]);
 
-  // ── Coordinate helpers (Figma=top-down → pdf-lib=bottom-up) ─────────────────
-  // rY: rect/image bottom y when Figma top is at fy, element height is fh
-  const rY = (fy: number, fh: number) => H - fy - fh;
-  // dt: draw text; fy=Figma top of text box, s=font size
-  const dt = (text: string, x: number, fy: number, font: any, s: number, color: ReturnType<typeof rgb>) =>
+  const rY  = (fy: number, fh: number) => H - fy - fh;
+  const dt  = (text: string, x: number, fy: number, font: any, s: number, color: ReturnType<typeof rgb>) =>
     page.drawText(text, { x, y: H - fy - s * 0.82, size: s, font, color });
-  // dtr: draw text right-aligned to edge rx
-  const dtr = (text: string, rx: number, fy: number, font: any, s: number, color: ReturnType<typeof rgb>) => {
-    const tw = font.widthOfTextAtSize(text, s);
-    page.drawText(text, { x: rx - tw, y: H - fy - s * 0.82, size: s, font, color });
-  };
-  // ln: horizontal line at Figma y
-  const ln = (x0: number, x1: number, fy: number, thickness: number, color: ReturnType<typeof rgb>) =>
+  const dtr = (text: string, rx: number, fy: number, font: any, s: number, color: ReturnType<typeof rgb>) =>
+    page.drawText(text, { x: rx - font.widthOfTextAtSize(text, s), y: H - fy - s * 0.82, size: s, font, color });
+  const ln  = (x0: number, x1: number, fy: number, thickness: number, color: ReturnType<typeof rgb>) =>
     page.drawLine({ start: { x: x0, y: H - fy }, end: { x: x1, y: H - fy }, thickness, color });
 
-  // ── Colors (exact Figma hex → RGB) ─────────────────────────────────────────
-  const cGold    = rgb(0.749, 0.475, 0.114);   // #BF791D  (gold bar)
-  const cOrgGold = rgb(0.718, 0.463, 0.028);   // #B77607  (org name)
-  const cBlue    = rgb(0.118, 0.333, 0.541);   // #1E558A  (section headers)
+  const cGold    = rgb(0.749, 0.475, 0.114);
+  const cOrgGold = rgb(0.718, 0.463, 0.028);
+  const cBlue    = rgb(0.118, 0.333, 0.541);
   const cBlk     = rgb(0, 0, 0);
-  const cGray    = rgb(0.553, 0.553, 0.553);   // #8D8D8D  (terms)
-  const cFafa    = rgb(0.980, 0.980, 0.980);   // #FAFAFA  (header bg rows)
-  const cDivider = rgb(0.992, 0.925, 0.808);   // #FDECCE  (horizontal rule)
-  const cBorder  = rgb(0.863, 0.863, 0.863);   // #DCDCDC  (box borders)
-  const cRowLine = rgb(0.918, 0.918, 0.918);   // #EAEAEA  (row separators)
-  const cSecBg   = rgb(0.965, 0.965, 0.965);   // #F6F6F6  (second box bg)
+  const cGray    = rgb(0.553, 0.553, 0.553);
+  const cFafa    = rgb(0.980, 0.980, 0.980);
+  const cDivider = rgb(0.992, 0.925, 0.808);
+  const cBorder  = rgb(0.863, 0.863, 0.863);
+  const cRowLine = rgb(0.918, 0.918, 0.918);
+  const cSecBg   = rgb(0.965, 0.965, 0.965);
 
-  // ── 1. Header bars ──────────────────────────────────────────────────────────
-  // Gold bar: x=126, y=0, w=437, h=7, #BF791D, bottom-left r≈3
-  page.drawRectangle({ x: 126, y: rY(0, 7), width: 437, height: 7, color: cGold, borderRadius: 3 });
-  // Gradient band x=205, y=0, w=358, h=21 — #123557→#174067 (40 slices)
-  const gSteps = 40;
+  // ── 1. Header bars (shifted right by LM so they end flush at right edge) ────
+  page.drawRectangle({ x: 126 + LM, y: rY(0, 7),  width: 437, height: 7,  color: cGold, borderRadius: 3 });
+  const gSteps = 40, gW = 358 / gSteps;
   for (let i = 0; i < gSteps; i++) {
     const t = i / (gSteps - 1);
     page.drawRectangle({
-      x: 205 + i * (358 / gSteps), y: rY(0, 21), width: 358 / gSteps + 0.6, height: 21,
+      x: 205 + LM + i * gW, y: rY(0, 21), width: gW + 0.6, height: 21,
       color: rgb(0.071 + 0.019 * t, 0.209 + 0.042 * t, 0.341 + 0.063 * t),
     });
   }
-  // "Donation Receipt" — DM Sans Light 8px, right-aligned to x=531
-  dtr("Donation Receipt", 531, 28, fDmLight, 8, cBlk);
+  dtr("Donation Receipt", RE, 28, fDmLight, 8, cBlk);
 
-  // ── 2. Logo (x=0, y=48, 65×51) ─────────────────────────────────────────────
-  page.drawImage(logoImg, { x: 0, y: rY(48, 51), width: 65, height: 51 });
+  // ── 2. Logo ──────────────────────────────────────────────────────────────────
+  page.drawImage(logoImg, { x: LM, y: rY(48, 51), width: 65, height: 51 });
 
-  // ── 3. Address block — right-aligned at x=531, DM Sans Regular 8px ─────────
-  dtr("Plot 89, Sr. No. 412, Neharu Nagar, Prasad Apt, Jalgaon, Maharashtra, 425001", 531, 62, fDmReg, 8, cBlk);
-  dtr("+91 9370318308  |  +91 7620688947", 531, 76, fDmReg, 8, cBlk);
-  dtr("ujjwalawadekar.com  |  team@srubf.com", 531, 90, fDmReg, 8, cBlk);
-  // Reg. No. and PAN — DM Sans SemiBold 8px
-  dtr("Reg. No.: U85499MR2026NPL474075", 531, 110, fDmSB, 8, cBlk);
-  dtr("PAN : ABSCS9855K", 531, 122, fDmSB, 8, cBlk);
+  // ── 3. Address block ─────────────────────────────────────────────────────────
+  dtr("Plot 89, Sr. No. 412, Neharu Nagar, Prasad Apt, Jalgaon, Maharashtra, 425001", RE, 62,  fDmReg, 8, cBlk);
+  dtr("+91 9370318308  |  +91 7620688947",                                             RE, 76,  fDmReg, 8, cBlk);
+  dtr("ujjwalawadekar.com  |  team@srubf.com",                                         RE, 90,  fDmReg, 8, cBlk);
+  dtr("Reg. No.: U85499MR2026NPL474075",                                               RE, 110, fDmSB,  8, cBlk);
+  dtr("PAN : ABSCS9855K",                                                              RE, 122, fDmSB,  8, cBlk);
 
-  // ── 4. Organization name — left, Lora SemiBold 10px #B77607 ────────────────
-  dt("SHIKSHARAJ, UJJWAL BHARAT FOUNDATION", 0, 119, fLoraSB, 10, cOrgGold);
-  dt("Reg. No. (CIN)", 0, 135, fLoraSB, 9, cOrgGold);
+  // ── 4. Org name ──────────────────────────────────────────────────────────────
+  dt("SHIKSHARAJ, UJJWAL BHARAT FOUNDATION", LM, 119, fLoraSB, 10, cOrgGold);
+  dt("Reg. No. (CIN)",                       LM, 135, fLoraSB,  9, cOrgGold);
 
-  // ── 5. Horizontal divider y=168.83, #FDECCE ─────────────────────────────────
-  ln(0, 563, 169, 1, cDivider);
+  // ── 5. Divider ───────────────────────────────────────────────────────────────
+  ln(LM, RE, 169, 1, cDivider);
 
-  // ── 6. Receipt No. / Date ───────────────────────────────────────────────────
+  // ── 6. Receipt No. / Date ────────────────────────────────────────────────────
   const receiptNo = d.receiptNo || "—";
   const dateStr   = _formatDate(d.createdAt || new Date().toISOString());
+  const rnoLabel  = "Receipt No.: ";
+  dt(rnoLabel, LM, 189, fLoraSB, 10, cBlk);
+  dt(receiptNo, LM + fLoraSB.widthOfTextAtSize(rnoLabel, 10), 189, fDmReg, 10, cBlk);
+  const dateLabel = "Date : ";
+  dt(dateLabel, LM + 229, 189, fLoraSB, 10, cBlk);
+  dt(dateStr,   LM + 229 + fLoraSB.widthOfTextAtSize(dateLabel, 10), 189, fDmReg, 10, cBlk);
 
-  dt("Receipt No.: ", 0, 189, fLoraSB, 10, cBlk);
-  dt(receiptNo, fLoraSB.widthOfTextAtSize("Receipt No.: ", 10), 189, fDmReg, 10, cBlk);
-  dt("Date : ", 229, 189, fLoraSB, 10, cBlk);
-  dt(dateStr, 229 + fLoraSB.widthOfTextAtSize("Date : ", 10), 189, fDmReg, 10, cBlk);
-
-  // ── 7. Body paragraphs — DM Sans Regular 9px, line height 14.4 ─────────────
-  const BODY_W = 531, LH = 14.4;
+  // ── 7. Body paragraphs ───────────────────────────────────────────────────────
+  const BODY_W = RE - LM, LH = 14.4;
   const donorName = d.userName || "Donor";
 
-  // Para 1
   const p1 = [`Dear ${donorName}`, ..._wrapText(
     "With heartfelt gratitude, we acknowledge your contribution to Shiksha Raj, Ujjwal Bharat Foundation. Your support helps bring meaningful education, dignity, and opportunity closer to children who need it most.",
     BODY_W, fDmReg, 9,
   )];
-  p1.forEach((line, i) => dt(line, 0, 219 + i * LH, fDmReg, 9, cBlk));
+  p1.forEach((line, i) => dt(line, LM, 219 + i * LH, fDmReg, 9, cBlk));
 
-  // Para 2
   const p2 = _wrapText(
     "Donations to Shiksha Raj, Ujjwal Bharat Foundation are eligible for deduction under 133(1)(b) of the Income Tax Act, 2025. URN of registration under 354(4) section - ABSCS9855KF20261",
     BODY_W, fDmReg, 9,
   );
-  p2.forEach((line, i) => dt(line, 0, 267 + i * LH, fDmReg, 9, cBlk));
+  p2.forEach((line, i) => dt(line, LM, 267 + i * LH, fDmReg, 9, cBlk));
 
   // ── 8. Donor Details Box ─────────────────────────────────────────────────────
-  // Box 1: x=0, y=315, w=531, h=247 — border #DCDCDC
-  page.drawRectangle({ x: 0, y: rY(315, 247), width: 531, height: 247, color: rgb(1,1,1), borderColor: cBorder, borderWidth: 1 });
+  const BW = RE - LM; // box width = 531
+  page.drawRectangle({ x: LM, y: rY(315, 247), width: BW, height: 247, color: rgb(1,1,1), borderColor: cBorder, borderWidth: 1 });
+  page.drawRectangle({ x: LM, y: rY(315, 27),  width: BW, height: 27,  color: cFafa });
+  dt("Donor Details", LM + 12, 321, fLoraSB, 10, cBlue);
 
-  // "Donor Details" header row (bg #FAFAFA, h=27)
-  page.drawRectangle({ x: 0, y: rY(315, 27), width: 531, height: 27, color: cFafa });
-  dt("Donor Details", 12, 321, fLoraSB, 10, cBlue);
-
-  // Helper: draw one field row (rowBottom = Figma y of row's bottom edge, h=25)
   const row = (label: string, value: string, rowBottom: number, vFont = fDmReg) => {
     const labelFy = rowBottom - 25 + 5.83;
-    ln(0, 531, rowBottom, 0.5, cRowLine);
-    dt(label, 12, labelFy, fLoraSB, 10, cBlk);
-    if (value) dt(value, 12 + fLoraSB.widthOfTextAtSize(label, 10) + 6, labelFy, vFont, 9, cBlk);
+    ln(LM, RE, rowBottom, 0.5, cRowLine);
+    dt(label, LM + 12, labelFy, fLoraSB, 10, cBlk);
+    if (value) dt(value, LM + 12 + fLoraSB.widthOfTextAtSize(label, 10) + 6, labelFy, vFont, 9, cBlk);
   };
 
-  row("Name :", donorName, 367);
+  row("Name :",    donorName, 367);
   row("PAN No. :", d.pan || "", 392);
   row("Address :", (d.address || "").split("\n")[0] || "", 417);
 
-  // Mobile + Email (two columns on same row, bottom=442)
+  // Mobile + Email two-column row
   const mobFy = 442 - 25 + 5.83;
-  ln(0, 531, 442, 0.5, cRowLine);
-  dt("Mobile No. :", 12, mobFy, fLoraSB, 10, cBlk);
-  dt(d.phone || "", 12 + fLoraSB.widthOfTextAtSize("Mobile No. :", 10) + 6, mobFy, fDmReg, 9, cBlk);
-  dt("Email ID :", 277.5, mobFy, fLoraMed, 10, cBlk);
-  dt(d.userEmail || "", 277.5 + fLoraMed.widthOfTextAtSize("Email ID :", 10) + 6, mobFy, fDmReg, 9, cBlk);
+  ln(LM, RE, 442, 0.5, cRowLine);
+  dt("Mobile No. :", LM + 12, mobFy, fLoraSB, 10, cBlk);
+  dt(d.phone || "", LM + 12 + fLoraSB.widthOfTextAtSize("Mobile No. :", 10) + 6, mobFy, fDmReg, 9, cBlk);
+  dt("Email ID :",   LM + 277.5, mobFy, fLoraMed, 10, cBlk);
+  dt(d.userEmail || "", LM + 277.5 + fLoraMed.widthOfTextAtSize("Email ID :", 10) + 6, mobFy, fDmReg, 9, cBlk);
 
-  // "Payment Details:" header row (bg #FAFAFA, y=442→469, h=27)
-  page.drawRectangle({ x: 0, y: rY(442, 27), width: 531, height: 27, color: cFafa });
-  dt("Payment Details:", 12, 448, fLoraSB, 10, cBlue);
+  // Payment Details header
+  page.drawRectangle({ x: LM, y: rY(442, 27), width: BW, height: 27, color: cFafa });
+  dt("Payment Details:", LM + 12, 448, fLoraSB, 10, cBlue);
 
-  row("Amount In Words :", _amountInWords(d.amount || 0), 494);
+  row("Amount In Words :",    _amountInWords(d.amount || 0), 494);
   row("For the purpose of :", d.causeName || "General Fund", 519);
 
-  // Bank Account row (h=43, bottom=562)
+  // Bank row
   const bankFy = 519 + 5.83;
-  ln(0, 531, 562, 0.5, cRowLine);
-  dt("Received in Our Bank Account :", 12, bankFy, fLoraSB, 10, cBlk);
-  dt("HDFC BANK A/C No. 50200120533381", 200, bankFy, fDmLight, 10, cBlk);
-  dt("IFSC CODE: HDFC0000180", 394, bankFy, fDmLight, 10, cBlk);
-  dt("SHIKSHARAJ, UJJWAL BHARAT FOUNDATION", 200, bankFy + 17, fDmLight, 10, cBlk);
+  ln(LM, RE, 562, 0.5, cRowLine);
+  dt("Received in Our Bank Account :", LM + 12, bankFy, fLoraSB, 10, cBlk);
+  dt("HDFC BANK A/C No. 50200120533381", LM + 200, bankFy,      fDmLight, 10, cBlk);
+  dt("IFSC CODE: HDFC0000180",           LM + 394, bankFy,      fDmLight, 10, cBlk);
+  dt("SHIKSHARAJ, UJJWAL BHARAT FOUNDATION", LM + 200, bankFy + 17, fDmLight, 10, cBlk);
 
-  // ── 9. Watermark — logo at 6% opacity centered over details box ─────────────
-  page.drawImage(logoImg, { x: 173, y: rY(335, 144), width: 184, height: 144, opacity: 0.06 });
+  // ── 9. Watermark ─────────────────────────────────────────────────────────────
+  page.drawImage(logoImg, { x: LM + 173, y: rY(335, 144), width: 184, height: 144, opacity: 0.06 });
 
-  // ── 10. Second box — Date / Transaction Type / Ref. No. ────────────────────
-  page.drawRectangle({ x: 0, y: rY(562, 68), width: 531, height: 68, color: cSecBg, borderColor: cBorder, borderWidth: 1 });
+  // ── 10. Second box ───────────────────────────────────────────────────────────
+  page.drawRectangle({ x: LM, y: rY(562, 68), width: BW, height: 68, color: cSecBg, borderColor: cBorder, borderWidth: 1 });
+  ln(LM, RE, 581, 0.5, cRowLine);
+  dt("Date :", LM + 12, 574, fLoraSB, 10, cBlk);
+  dt(dateStr, LM + 12 + fLoraSB.widthOfTextAtSize("Date :", 10) + 6, 574, fDmReg, 9, cBlk);
 
-  // Date row (label at y=574.83)
-  ln(0, 531, 581, 0.5, cRowLine);
-  dt("Date :", 12, 574, fLoraSB, 10, cBlk);
-  dt(dateStr, 12 + fLoraSB.widthOfTextAtSize("Date :", 10) + 6, 574, fDmReg, 9, cBlk);
-
-  // Transaction Type (label at y=593.83)
-  ln(0, 531, 601, 0.5, cRowLine);
-  dt("Transaction Type :", 12, 593, fLoraSB, 10, cBlk);
+  ln(LM, RE, 601, 0.5, cRowLine);
+  dt("Transaction Type :", LM + 12, 593, fLoraSB, 10, cBlk);
   const txType = d.paymentMethod || ((d.paymentId || "").startsWith("pay_") ? "Online / UPI" : "Offline / Cash");
-  dt(txType, 12 + fLoraSB.widthOfTextAtSize("Transaction Type :", 10) + 6, 593, fDmReg, 9, cBlk);
+  dt(txType, LM + 12 + fLoraSB.widthOfTextAtSize("Transaction Type :", 10) + 6, 593, fDmReg, 9, cBlk);
 
-  // Ref. No. (label at y=612.83)
-  dt("Ref. No. :", 12, 612, fLoraSB, 10, cBlk);
-  dt(d.paymentId || d.razorpayOrderId || "—", 12 + fLoraSB.widthOfTextAtSize("Ref. No. :", 10) + 6, 612, fDmReg, 9, cBlk);
+  dt("Ref. No. :", LM + 12, 612, fLoraSB, 10, cBlk);
+  dt(d.paymentId || d.razorpayOrderId || "—", LM + 12 + fLoraSB.widthOfTextAtSize("Ref. No. :", 10) + 6, 612, fDmReg, 9, cBlk);
 
-  // ── 11. Footer text — DM Sans Regular 9px ───────────────────────────────────
-  dt(`Received with sincere thanks from Shri/Smt./M/S ${donorName}.`, 0, 667, fDmReg, 9, cBlk);
-  dt("Your contribution strengthens better learning opportunities for children through Shiksha Raj, Ujjwal Bharat Foundation.", 0, 681, fDmReg, 9, cBlk);
+  // ── 11. Footer text ──────────────────────────────────────────────────────────
+  dt(`Received with sincere thanks from Shri/Smt./M/S ${donorName}.`, LM, 667, fDmReg, 9, cBlk);
+  dt("Your contribution strengthens better learning opportunities for children through Shiksha Raj, Ujjwal Bharat Foundation.", LM, 681, fDmReg, 9, cBlk);
 
-  // ── 12. Terms and conditions — DM Sans Italic 7px ───────────────────────────
-  dt("Terms and conditions", 0, 747, fDmItalic, 7, cBlk);
+  // ── 12. Terms ────────────────────────────────────────────────────────────────
+  dt("Terms and conditions", LM, 747, fDmItalic, 7, cBlk);
   const terms = [
     "1.   This Receipt is not Transferable or Changeable.",
     "2.   If you have not provided PAN No., you cannot be eligible for tax deduction benefit under",
@@ -355,14 +334,14 @@ async function generateCertificatePDFBytes(d: any): Promise<Uint8Array> {
     "3.   This is a computer-generated receipt. Valid without physical signature as per IT Act 2000.",
     "4.   For queries, contact: team@srubf.com | +91-7620688947, +91-9370318308",
   ];
-  terms.forEach((t, i) => dt(t, 0, 759 + i * 10.64, fDmItalic, 7, cGray));
+  terms.forEach((t, i) => dt(t, LM, 759 + i * 10.64, fDmItalic, 7, cGray));
 
-  // ── 13. Stamp / Seal — x=481, y=729, 48×48 ──────────────────────────────────
-  page.drawImage(stampImg, { x: 481, y: rY(729, 48), width: 48, height: 48 });
+  // ── 13. Stamp (60×60, right-aligned to RE) ──────────────────────────────────
+  page.drawImage(stampImg, { x: RE - 60, y: rY(720, 60), width: 60, height: 60 });
 
-  // ── 14. "Received by" / "Authorised Signatory" — right-aligned ───────────────
-  dtr("Received by",          531, 787, fLoraSB,  10, cBlk);
-  dtr("Authorised Signatory", 531, 803, fDmLight,  8, cBlk);
+  // ── 14. "Received by" / "Authorised Signatory" ───────────────────────────────
+  dtr("Received by",          RE, 787, fLoraSB,  10, cBlk);
+  dtr("Authorised Signatory", RE, 803, fDmLight,   8, cBlk);
 
   return await pdfDoc.save();
 }
@@ -1394,6 +1373,21 @@ app.post("/make-server-a0af4170/donations/:id/resend-email", async (c) => {
   } catch (e) {
     console.log("[resend-email] Error:", e);
     return c.json({ error: "Failed: " + e }, 500);
+  }
+});
+
+// POST /generate-certificate — generate PDF certificate bytes for a donation (no auth required)
+app.post("/make-server-a0af4170/generate-certificate", async (c) => {
+  try {
+    const donation = await c.req.json();
+    if (!donation?.receiptNo || !donation?.userName || donation?.amount == null) {
+      return c.json({ error: "Invalid donation data" }, 400);
+    }
+    const pdfBytes = await generateCertificatePDFBytes(donation);
+    return c.json({ pdf: uint8ToBase64(pdfBytes) });
+  } catch (e) {
+    console.log("[generate-certificate] Error:", e);
+    return c.json({ error: "Failed to generate certificate: " + e }, 500);
   }
 });
 

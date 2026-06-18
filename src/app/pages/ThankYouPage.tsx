@@ -1,6 +1,6 @@
 import { useLocation, Link } from "react-router";
 import { motion } from "motion/react";
-import { CheckCircle2, Download, Share2, Heart, ArrowRight, Mail, Star, Copy, ExternalLink, FileText } from "lucide-react";
+import { CheckCircle2, Share2, Heart, ArrowRight, Star, Copy, FileText } from "lucide-react";
 import { FOUNDATION_NAME } from "../lib/constants";
 import { useState } from "react";
 import { DonationReceiptModal } from "../components/DonationReceiptModal";
@@ -122,7 +122,7 @@ export function ThankYouPage() {
               <div className="space-y-3">
                 {[
                   { icon: "📧", title: "Confirmation Email", desc: "Receipt sent to " + donation.userEmail, time: "Within 5 minutes", done: true },
-                  { icon: "📜", title: "Income Tax Deduction Certificate", desc: "Issued under Section 354(1)(g) of the Income-tax Act, 2025", time: "Within 24 hours", done: donation.certificate80G },
+                  { icon: "📜", title: "Income Tax Deduction Certificate", desc: "PDF certificate attached to your confirmation email", time: "In your inbox", done: donation.certificate80G },
                   { icon: "📸", title: "Impact Update", desc: "Photos and updates from the ground", time: "Within 30 days", done: false },
                   { icon: "📊", title: "Monthly Report", desc: "Detailed utilization report with full transparency", time: "Monthly", done: false },
                 ].map(item => (
