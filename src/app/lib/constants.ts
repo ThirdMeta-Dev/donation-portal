@@ -46,7 +46,7 @@ export const CAUSES = [
   },
   {
     id: "shikshak-unnati",
-    title: "Shikshak Unnati",
+    title: "Shikshak Unnati Manch",
     category: "Education",
     description: "Continuous professional development for ZP government school teachers — workshops, peer learning circles, and resource kits to unlock every teacher's potential.",
     longDescription: `Shikshak Unnati (Teacher Progress) is Ujjwala Wadekar's flagship teacher-upliftment program. It connects 340+ government school teachers across Jalgaon and North Maharashtra for monthly workshops, peer mentoring, and access to a shared resource library.\n\nOne inspired teacher transforms hundreds of students. ₹1,000 funds one teacher's complete monthly training and resource support.`,
@@ -64,7 +64,7 @@ export const CAUSES = [
   },
   {
     id: "unhali-shala",
-    title: "Unhali Shala",
+    title: "Ujjwal Unhali Shibir",
     category: "Education",
     description: "Summer school camps for government school children — keeping learning alive during vacations through activities, experiments, art, and life-skills sessions.",
     longDescription: `Unhali Shala (Summer School) ensures children from marginalized communities don't lose learning momentum during the long summer break. Our camps run hands-on science, language, art, and life-skills sessions across 40+ villages in Jalgaon.\n\nChildren return to school with renewed curiosity and a head start on the next academic year. ₹300 sponsors one child's full Unhali Shala summer camp experience.`,
@@ -82,7 +82,7 @@ export const CAUSES = [
   },
   {
     id: "shikshan-saath",
-    title: "ShikshanSaath",
+    title: "Ujjwal ShikshanSaath",
     category: "Education",
     description: "Peer-learning support groups where older students mentor younger ones — building confidence, reducing dropout, and creating a culture of mutual learning.",
     longDescription: `ShikshanSaath (Learning Together) pairs senior students with struggling juniors within government schools for guided peer-mentoring sessions. This approach not only lifts the younger learners — it deepens the knowledge and leadership skills of the mentors.\n\nEvery ₹200 funds one month of ShikshanSaath mentoring for a pair of students, including session materials and facilitator support.`,
@@ -98,7 +98,7 @@ export const CAUSES = [
   },
   {
     id: "shala-abhiyan",
-    title: "Shala Abhiyan",
+    title: "Ujjwal Shala Abhiyan",
     category: "Education",
     description: "A holistic school transformation campaign — upgrading infrastructure, libraries, labs, and teaching quality in the most under-resourced ZP schools of Jalgaon.",
     longDescription: `Shala Abhiyan (School Campaign) is a comprehensive effort to transform the most under-resourced ZP schools in Jalgaon. Each adopted school receives infrastructure improvements (blackboards, clean toilets, drinking water), a curated library, a science lab kit, and quarterly teacher mentor visits.\n\n₹25,000 fully sponsors one school for an entire academic year — with transparent impact reports shared every term.`,
@@ -200,12 +200,12 @@ export const MILESTONES = [
 
 // ─── Preset amounts ────────────────────────────────────────────────────────────
 export const PRESET_AMOUNTS = [
-  { amount: 150,   label: "₹150",   impact: "1 child's stationery for a term" },
-  { amount: 500,   label: "₹500",   impact: "1 child's Beyond Syllabus experience" },
-  { amount: 1000,  label: "₹1,000", impact: "1 teacher's workshop & resource kit" },
-  { amount: 2500,  label: "₹2,500", impact: "1 classroom learning kit" },
-  { amount: 5000,  label: "₹5,000", impact: "1 school's library expansion" },
-  { amount: 25000, label: "₹25,000", impact: "Adopt 1 school for a full year" },
+  { amount: 150,   label: "₹150",    impact: "Stationery that keeps one child learning" },
+  { amount: 500,   label: "₹500",    impact: "Reading materials for one child's growth" },
+  { amount: 1000,  label: "₹1,000",  impact: "A child's practical learning kit set" },
+  { amount: 5000,  label: "₹5,000",  impact: "A small group's Beyond Syllabus experience" },
+  { amount: 10000, label: "₹10,000", impact: "Meaningful learning support for an entire class" },
+  { amount: 25000, label: "₹25,000", impact: "Help transform a school's learning environment" },
 ];
 
 // ─── Live ticker donations ─────────────────────────────────────────────────────

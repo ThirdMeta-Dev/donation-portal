@@ -100,7 +100,7 @@ export function ThankYouPage() {
                 { label: "Frequency", value: donation.frequency },
                 { label: "Donor Type", value: donation.donorType?.toUpperCase() },
                 { label: "Date", value: new Date(donation.createdAt).toLocaleString("en-IN", { dateStyle: "long", timeStyle: "short" }) },
-                { label: "80G Certificate", value: donation.certificate80G ? "Will be emailed within 24 hrs" : "Not applicable" },
+                { label: "Income Tax Deduction Certificate", value: donation.certificate80G ? "Will be emailed within 24 hrs" : "Not applicable" },
               ].map(row => (
                 <div key={row.label} className="flex justify-between items-center py-1.5 border-b border-slate-200 last:border-0 text-sm">
                   <span className="text-slate-500">{row.label}</span>
@@ -122,7 +122,7 @@ export function ThankYouPage() {
               <div className="space-y-3">
                 {[
                   { icon: "📧", title: "Confirmation Email", desc: "Receipt sent to " + donation.userEmail, time: "Within 5 minutes", done: true },
-                  { icon: "📜", title: "80G Certificate", desc: "Tax exemption certificate with Form 10BE details", time: "Within 24 hours", done: donation.certificate80G },
+                  { icon: "📜", title: "Income Tax Deduction Certificate", desc: "Issued under Section 354(1)(g) of the Income-tax Act, 2025", time: "Within 24 hours", done: donation.certificate80G },
                   { icon: "📸", title: "Impact Update", desc: "Photos and updates from the ground", time: "Within 30 days", done: false },
                   { icon: "📊", title: "Monthly Report", desc: "Detailed utilization report with full transparency", time: "Monthly", done: false },
                 ].map(item => (

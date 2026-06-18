@@ -64,14 +64,21 @@ export function DonatePage() {
     : true; // General fund defaults to true
   const finalAmount = customAmount ? parseFloat(customAmount) : amount;
 
-  const getImpact = () => {
-    if (finalAmount <= 150) return "Feeds 1 child for a week 🍽️";
-    if (finalAmount <= 500) return "1 child's education for a week 📚";
-    if (finalAmount <= 1000) return "Medical care for 3 people 💊";
-    if (finalAmount <= 2500) return "Clean water for 1 family for a year 💧";
-    if (finalAmount <= 5000) return "Skill training for 1 woman 👩‍💼";
-    return "Educate 1 child for a full year 🌟";
+  const IMPACT_MAP: Record<number, { green: string; blue: string }> = {
+    150:   { green: "Your ₹150 can place learning tools in one child's hands this term.", blue: "If eligible under 133(1)(b), your donation may also bring a tax benefit." },
+    500:   { green: "Your ₹500 can give one child a meaningful Beyond Syllabus learning experience.", blue: "If eligible under 133(1)(b), you may save approx. ₹75 in tax." },
+    1000:  { green: "Your ₹1,000 can equip a teacher to create better learning for many children.", blue: "If eligible under 133(1)(b), you may save approx. ₹150 in tax." },
+    2500:  { green: "Your ₹2,500 can strengthen one classroom with practical tools that make learning come alive.", blue: "If eligible under 133(1)(b), you may save approx. ₹375 in tax." },
+    5000:  { green: "Your ₹5,000 can help build richer reading and learning access for children in one school.", blue: "If eligible under 133(1)(b), you may save approx. ₹750 in tax." },
+    10000: { green: "Your ₹10,000 can provide meaningful learning support for an entire class.", blue: "If eligible under 133(1)(b), you may save approx. ₹1,500 in tax." },
+    25000: { green: "Your ₹25,000 can help transform a school's learning environment with dignity, resources, and hope.", blue: "If eligible under 133(1)(b), you may save approx. ₹3,750 in tax." },
   };
+  const DEFAULT_IMPACT = {
+    green: "Your support will go where learning is needed most, for a child, a classroom, or a school.",
+    blue: "If eligible under 133(1)(b), your donation may also bring a tax benefit.",
+  };
+  const getImpact = () => (IMPACT_MAP[finalAmount] || DEFAULT_IMPACT).green;
+  const getImpactObj = () => IMPACT_MAP[finalAmount] || DEFAULT_IMPACT;
 
   const validate = () => {
     const errs: Record<string, string> = {};
@@ -111,10 +118,10 @@ export function DonatePage() {
   const DONOR_TYPE_INFO: Record<DonorType, { title: string; desc: string; icon: React.ReactNode; color: string; note: string }> = {
     indian: {
       title: "Indian Citizen / Resident",
-      desc: "Donate via UPI, cards, net banking. Claim 80G tax deduction.",
+      desc: "Donate via UPI, cards, net banking. Eligible for income tax deduction.",
       icon: <User size={16} />,
       color: "border-orange-400 bg-orange-50",
-      note: "PAN is optional but required to claim 80G deduction on your ITR.",
+      note: "PAN is optional for donating, but required to claim deduction under Section 133(1)(b) of the Income Tax Act, 2025.",
     },
     nri: {
       title: "NRI (Non-Resident Indian)",
@@ -195,7 +202,7 @@ export function DonatePage() {
                         style={{ borderColor: !selectedCause ? "#1B2B3A" : "#C4BDB3", background: !selectedCause ? "#1B2B3A" : "transparent" }}>
                         {!selectedCause && <div className="w-2 h-2 bg-white rounded-full" />}
                       </div>
-                      <span className="text-sm" style={{ color: "#1C1C1A", fontWeight: !selectedCause ? 600 : 400 }}>Where needed most (General Fund)</span>
+                      <span className="text-sm" style={{ color: "#1C1C1A", fontWeight: !selectedCause ? 600 : 400 }}>Where needed most (Maximum Impact)</span>
                     </div>
                   </button>
                 </div>
@@ -256,12 +263,12 @@ export function DonatePage() {
                   {errors.amount && <p className="text-red-500 text-xs mt-1 flex items-center gap-1"><AlertCircle size={12} />{errors.amount}</p>}
                   {finalAmount > 0 && (
                     <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-xl text-sm text-green-700" style={{ fontWeight: 500 }}>
-                      💚 Your {finalAmount >= 1000 ? `₹${(finalAmount/1000).toFixed(1)}K` : `₹${finalAmount}`} {frequency !== "one-time" ? frequency : ""} donation will: {getImpact()}
+                      💚 {getImpactObj().green}
                     </div>
                   )}
                   {donorType === "indian" && finalAmount > 0 && selectedCause80G && (
                     <div className="mt-2 p-2 bg-blue-50 rounded-lg text-xs text-blue-600 flex items-center gap-1.5">
-                      <Shield size={12} /> 80G benefit: You save approx. ₹{Math.floor(finalAmount * 0.5 * 0.3).toLocaleString()} in income tax (at 30% bracket)
+                      <Shield size={12} /> 🛡️ {getImpactObj().blue}
                     </div>
                   )}
                   {finalAmount > 0 && !selectedCause80G && (
@@ -350,7 +357,7 @@ export function DonatePage() {
 
                 <div>
                   <label className="block text-slate-600 text-sm mb-1.5" style={{ fontWeight: 500 }}>
-                    PAN Card Number {donorType === "indian" ? "(for 80G tax deduction)" : "(optional for Indians)"}
+                    PAN Card Number (for tax benefit, if applicable)
                   </label>
                   <input value={pan} onChange={e => setPan(e.target.value.toUpperCase())}
                     maxLength={10}
@@ -358,7 +365,7 @@ export function DonatePage() {
                     placeholder="ABCDE1234F" />
                   {errors.pan && <p className="text-red-500 text-xs mt-1">{errors.pan}</p>}
                   <p className="text-xs text-slate-400 mt-1 flex items-start gap-1">
-                    <Shield size={11} className="mt-0.5" /> PAN is encrypted with AES-256 and used only for Form 10BE / 80G certificate issuance.
+                    <Shield size={11} className="mt-0.5" /> Your PAN stays encrypted and is used only to issue your donation certificate under Section 354(1)(g) of the Income-tax Act, 2025.
                   </p>
                 </div>
 
@@ -386,12 +393,12 @@ export function DonatePage() {
                        style={{ background: taxReceipt ? "#1B2B3A" : "transparent", borderColor: taxReceipt ? "#1B2B3A" : "#C4BDB3" }}>
                         {taxReceipt && <Check size={12} className="text-white" />}
                       </div>
-                      <span className="text-sm text-slate-700">Send me 80G tax certificate via email</span>
+                      <span className="text-sm text-slate-700">Send me Income Tax Deduction Certificate via email</span>
                     </label>
                   ) : (
                     <div className="flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded-xl text-xs text-amber-700">
                       <Info size={13} className="flex-shrink-0" />
-                      <span>This cause does not provide 80G certificates. A payment confirmation receipt will be emailed to you instead.</span>
+                      <span>This cause does not provide Income Tax Deduction Certificates. A payment confirmation receipt will be emailed to you instead.</span>
                     </div>
                   )}
                 </div>
@@ -424,7 +431,7 @@ export function DonatePage() {
                   <div className="text-white/70 text-sm mb-1">Total Donation {frequency !== "one-time" && `(${frequency})`}</div>
                   <div className="text-4xl mb-1" style={{ fontWeight: 800 }}>₹{finalAmount.toLocaleString()}</div>
                   <div className="text-white/80 text-sm">{cause ? cause.title : "General Fund"} · {donorType.toUpperCase()} donor</div>
-                  <div className="mt-3 text-sm bg-white/20 rounded-xl px-3 py-2">💚 Impact: {getImpact()}</div>
+                  <div className="mt-3 text-sm bg-white/20 rounded-xl px-3 py-2">💚 {getImpactObj().green}</div>
                 </div>
 
                 <div className="space-y-2">
@@ -436,7 +443,7 @@ export function DonatePage() {
                     { label: "Cause", value: cause ? cause.title : "General Fund" },
                     { label: "Frequency", value: frequency },
                     {
-                      label: "80G Certificate",
+                      label: "Income Tax Deduction Certificate",
                       value: !selectedCause80G
                         ? "Not available for this cause"
                         : taxReceipt
