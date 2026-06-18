@@ -2,6 +2,7 @@ import { Hono } from "npm:hono";
 import { cors } from "npm:hono/cors";
 import { logger } from "npm:hono/logger";
 import { createClient } from "npm:@supabase/supabase-js";
+import { PDFDocument, StandardFonts, rgb } from "npm:pdf-lib";
 import * as kv from "./kv_store.ts";
 
 const app = new Hono();
@@ -104,18 +105,25 @@ function resolveAuthUser(c: any) {
 const NOTIFY_EMAILS = ["unmesh.wadekar@hexanovate.com", "kalpesh.wadekar@hexanovate.com"];
 const SMTP_FROM     = "noreply@ujjwalawadekar.com";
 
-async function sendEmail(subject: string, html: string, to: string | string[] = NOTIFY_EMAILS) {
+async function sendEmail(
+  subject: string,
+  html: string,
+  to: string | string[] = NOTIFY_EMAILS,
+  attachments?: { filename: string; content: string }[],
+) {
   const apiKey = Deno.env.get("RESEND_API_KEY");
   if (!apiKey) {
     console.log("[EMAIL] RESEND_API_KEY not set — skipping:", subject);
     return { ok: false, reason: "no api key" };
   }
   const recipients = Array.isArray(to) ? to : [to];
+  const payload: Record<string, unknown> = { from: `Ujjwal Bharat <${SMTP_FROM}>`, to: recipients, subject, html };
+  if (attachments?.length) payload.attachments = attachments;
   try {
     const res = await fetch("https://api.resend.com/emails", {
       method: "POST",
       headers: { "Authorization": `Bearer ${apiKey}`, "Content-Type": "application/json" },
-      body: JSON.stringify({ from: `Ujjwal Bharat <${SMTP_FROM}>`, to: recipients, subject, html }),
+      body: JSON.stringify(payload),
     });
     const data = await res.json();
     if (!res.ok) {
@@ -128,6 +136,170 @@ async function sendEmail(subject: string, html: string, to: string | string[] = 
     console.log(`[EMAIL] ❌ FAILED "${subject}" | error=${String(e).slice(0, 400)}`);
     return { ok: false, reason: String(e) };
   }
+}
+
+// ─── PDF Certificate Generator ───────────────────────────────────────────────
+async function generateCertificatePDFBytes(d: any): Promise<Uint8Array> {
+  const pdfDoc = await PDFDocument.create();
+  const page = pdfDoc.addPage([595.28, 841.89]); // A4
+  const { width, height } = page.getSize();
+
+  const boldFont    = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
+  const regularFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
+  const timesFont   = await pdfDoc.embedFont(StandardFonts.TimesRoman);
+  const timesBold   = await pdfDoc.embedFont(StandardFonts.TimesRomanBold);
+
+  const navy    = rgb(0.106, 0.169, 0.227);
+  const gold    = rgb(0.69,  0.49,  0.23);
+  const black   = rgb(0,     0,     0);
+  const darkGray= rgb(0.25,  0.25,  0.25);
+  const gray    = rgb(0.5,   0.5,   0.5);
+  const white   = rgb(1,     1,     1);
+  const lightBg = rgb(0.95,  0.97,  1.0);
+
+  const margin = 48;
+
+  // ── TOP BANNER ──────────────────────────────────────────────────────────────
+  page.drawRectangle({ x: 0, y: height - 72, width, height: 72, color: navy });
+
+  page.drawText("UJJWAL BHARAT", {
+    x: margin, y: height - 30, size: 19, font: boldFont, color: white,
+  });
+  page.drawText("INCOME TAX DEDUCTION CERTIFICATE", {
+    x: margin, y: height - 50, size: 10, font: boldFont, color: rgb(0.8, 0.72, 0.45),
+  });
+  page.drawText("Section 133(1)(b), Income Tax Act 2025", {
+    x: margin, y: height - 64, size: 8, font: regularFont, color: rgb(0.65, 0.65, 0.65),
+  });
+
+  // Receipt no top-right
+  const rNo = `Receipt: ${d.receiptNo || "—"}`;
+  page.drawText(rNo, {
+    x: width - margin - boldFont.widthOfTextAtSize(rNo, 8), y: height - 32,
+    size: 8, font: boldFont, color: white,
+  });
+  const dateStr = _formatDate(d.createdAt || new Date().toISOString());
+  const dLabel  = `Date: ${dateStr}`;
+  page.drawText(dLabel, {
+    x: width - margin - regularFont.widthOfTextAtSize(dLabel, 8), y: height - 47,
+    size: 8, font: regularFont, color: rgb(0.65, 0.65, 0.65),
+  });
+
+  // ── ORG DETAILS ─────────────────────────────────────────────────────────────
+  let y = height - 88;
+  const orgInfo = [
+    "Plot 89, Sr. No. 412, Neharu Nagar, Prasad Apt, Jalgaon, Maharashtra, 425001",
+    "Phone: +91 9370318308  |  +91 7620688947     Email: team@srubf.com     Web: ujjwalawadekar.com",
+    "Reg. No.: U85499MR2026NPL474075     PAN: ABSCS9855K",
+  ];
+  for (const line of orgInfo) {
+    page.drawText(line, { x: margin, y, size: 7.5, font: regularFont, color: gray });
+    y -= 12;
+  }
+
+  // ── GOLD DIVIDER ────────────────────────────────────────────────────────────
+  y -= 4;
+  page.drawLine({ start: { x: margin, y }, end: { x: width - margin, y }, thickness: 1.5, color: gold });
+  y -= 16;
+
+  // ── CERTIFICATE TITLE ───────────────────────────────────────────────────────
+  const titleText = "INCOME TAX DEDUCTION CERTIFICATE";
+  page.drawText(titleText, {
+    x: (width - boldFont.widthOfTextAtSize(titleText, 13)) / 2, y,
+    size: 13, font: boldFont, color: navy,
+  });
+  y -= 14;
+  const subTitle = `Financial Year: ${(() => { const s = new Date(d.createdAt).getMonth() >= 3 ? new Date(d.createdAt).getFullYear() : new Date(d.createdAt).getFullYear() - 1; return `${s}-${String(s+1).slice(2)}`; })()}`;
+  page.drawText(subTitle, {
+    x: (width - regularFont.widthOfTextAtSize(subTitle, 9)) / 2, y,
+    size: 9, font: regularFont, color: gold,
+  });
+  y -= 22;
+
+  // ── DETAILS TABLE ────────────────────────────────────────────────────────────
+  const fyStart = new Date(d.createdAt).getMonth() >= 3 ? new Date(d.createdAt).getFullYear() : new Date(d.createdAt).getFullYear() - 1;
+  const fy = `${fyStart}-${String(fyStart + 1).slice(2)}`;
+  const amtWords = _amountInWords(d.amount || 0);
+  const payMode  = d.paymentMethod || ((d.paymentId || "").startsWith("pay_") ? "Online / UPI" : "Offline / Cash");
+
+  const rows: [string, string][] = [
+    ["Certificate No.",      `ITDC-${d.receiptNo || "—"}`],
+    ["Donor Name",           d.userName || "—"],
+    ["PAN Number",           d.pan || "Not Provided"],
+    ["Donation Amount",      `INR ${_formatAmount(d.amount || 0)} (${amtWords})`],
+    ["Financial Year",       fy],
+    ["Date of Donation",     dateStr],
+    ["Payment Mode",         payMode],
+    ["Cause / Purpose",      d.causeName || "General Fund"],
+    ["Section",              "Section 133(1)(b), Income Tax Act 2025"],
+    ["Org. PAN",             "ABSCS9855K"],
+    ["Org. Reg. No.",        "U85499MR2026NPL474075"],
+  ];
+
+  const colLabelW = 170;
+  const col2X     = margin + colLabelW + 10;
+  const rowH      = 21;
+
+  for (let i = 0; i < rows.length; i++) {
+    const rowY = y - i * rowH;
+    if (i % 2 === 0) {
+      page.drawRectangle({ x: margin, y: rowY - 6, width: width - margin * 2, height: rowH, color: lightBg });
+    }
+    page.drawText(rows[i][0], { x: margin + 6, y: rowY + 3, size: 8.5, font: boldFont,    color: navy });
+    page.drawText(rows[i][1], { x: col2X,        y: rowY + 3, size: 8.5, font: regularFont, color: darkGray });
+  }
+  y -= rows.length * rowH + 18;
+
+  // ── GOLD DIVIDER ────────────────────────────────────────────────────────────
+  page.drawLine({ start: { x: margin, y }, end: { x: width - margin, y }, thickness: 1, color: gold });
+  y -= 16;
+
+  // ── CERTIFICATION TEXT ───────────────────────────────────────────────────────
+  page.drawText("CERTIFICATION", { x: margin, y, size: 10, font: boldFont, color: navy });
+  y -= 14;
+
+  const certLines = [
+    `This is to certify that ${d.userName || "the donor"} has made a voluntary donation of`,
+    `INR ${_formatAmount(d.amount || 0)} (${amtWords}) to Ujjwal Bharat on ${dateStr}.`,
+    "",
+    "This donation qualifies for deduction under Section 133(1)(b) of the Income Tax Act, 2025.",
+    "Please retain this certificate for your Income Tax Return (ITR) filing.",
+    "",
+    "This is a computer-generated certificate and is valid without a physical signature",
+    "as per the provisions of the Information Technology Act, 2000.",
+  ];
+
+  for (const line of certLines) {
+    if (line) page.drawText(line, { x: margin, y, size: 9, font: timesFont, color: black });
+    y -= 13;
+  }
+
+  y -= 16;
+
+  // ── SIGNATURE ────────────────────────────────────────────────────────────────
+  const sigX = width - 200;
+  page.drawLine({ start: { x: sigX, y: y - 20 }, end: { x: width - margin, y: y - 20 }, thickness: 0.8, color: black });
+  page.drawText("For Ujjwal Bharat",   { x: sigX, y: y - 34, size: 8.5, font: boldFont,    color: navy });
+  page.drawText("Authorised Signatory",{ x: sigX, y: y - 47, size: 8,   font: regularFont, color: gray });
+
+  // ── FOOTER ───────────────────────────────────────────────────────────────────
+  page.drawLine({ start: { x: margin, y: 55 }, end: { x: width - margin, y: 55 }, thickness: 0.6, color: rgb(0.8, 0.8, 0.8) });
+  page.drawText(
+    "* This certificate is issued under the Income Tax Act, 2025. Please consult your tax advisor for eligibility.",
+    { x: margin, y: 40, size: 7, font: regularFont, color: gray },
+  );
+  page.drawText("Ujjwal Bharat  |  ujjwalawadekar.com  |  team@srubf.com  |  +91 9370318308", {
+    x: margin, y: 26, size: 7, font: regularFont, color: gray,
+  });
+
+  return await pdfDoc.save();
+}
+
+// helper: Uint8Array → base64 string (safe for large files)
+function uint8ToBase64(bytes: Uint8Array): string {
+  let binary = "";
+  for (let i = 0; i < bytes.length; i++) binary += String.fromCharCode(bytes[i]);
+  return btoa(binary);
 }
 
 // ─── Formal Invoice HTML Generator (server-side, mirrors FormalDonationReceipt) ─
@@ -921,12 +1093,17 @@ app.post("/make-server-a0af4170/donations", async (c) => {
       console.log(`[donations] email decision: cause80G=${cause80GEnabled} donorWants80G=${donorWants80G} send80G=${send80G}`);
 
       if (send80G) {
-        // Formal 80G receipt with certificate section
+        // Formal receipt with PDF certificate attachment
         const receiptHTML = generateFormalReceiptHTML({ ...donation, certificate80G: true });
-        const subject = `✅ 80G Donation Receipt: ${donation.receiptNo} | ${donation.userName} | ₹${donation.amount.toLocaleString("en-IN")}`;
-        sendEmail(subject, receiptHTML, recipients)
-          .then(r => console.log(`[donations] 80G email ok=${r.ok} to=${recipients.join(",")}`))
-          .catch(e => console.log("[donations] 80G email error:", e));
+        const subject = `✅ Income Tax Deduction Certificate: ${donation.receiptNo} | ${donation.userName} | ₹${donation.amount.toLocaleString("en-IN")}`;
+        generateCertificatePDFBytes(donation)
+          .then(pdfBytes => {
+            const pdfBase64 = uint8ToBase64(pdfBytes);
+            const attachments = [{ filename: `Income-Tax-Certificate-${donation.receiptNo.replace(/\//g, "-")}.pdf`, content: pdfBase64 }];
+            return sendEmail(subject, receiptHTML, recipients, attachments);
+          })
+          .then(r => console.log(`[donations] certificate email ok=${r.ok} to=${recipients.join(",")}`))
+          .catch(e => console.log("[donations] certificate email error:", e));
       } else {
         // Normal payment confirmation (no 80G certificate)
         const normalHTML = generateNormalReceiptHTML(donation);
@@ -1087,7 +1264,13 @@ app.post("/make-server-a0af4170/donations/offline", async (c) => {
       const recipients = [...NOTIFY_EMAILS, donation.userEmail];
       if (send80G) {
         const html = generateFormalReceiptHTML({ ...donation, certificate80G: true });
-        sendEmail(`✅ Donation Receipt: ${receiptNo} | ${donation.userName} | ₹${donation.amount.toLocaleString("en-IN")}`, html, recipients).catch(() => {});
+        const offlineSubject = `✅ Income Tax Deduction Certificate: ${receiptNo} | ${donation.userName} | ₹${donation.amount.toLocaleString("en-IN")}`;
+        generateCertificatePDFBytes(donation)
+          .then(pdfBytes => {
+            const attachments = [{ filename: `Income-Tax-Certificate-${receiptNo.replace(/\//g, "-")}.pdf`, content: uint8ToBase64(pdfBytes) }];
+            return sendEmail(offlineSubject, html, recipients, attachments);
+          })
+          .catch(() => sendEmail(offlineSubject, html, recipients));
       } else {
         const html = generateNormalReceiptHTML(donation);
         sendEmail(`✅ Payment Confirmation: ${receiptNo} | ${donation.userName} | ₹${donation.amount.toLocaleString("en-IN")}`, html, recipients).catch(() => {});
@@ -1118,7 +1301,7 @@ app.post("/make-server-a0af4170/donations/:id/resend-email", async (c) => {
       : generateNormalReceiptHTML(donation);
 
     const subject = use80G
-      ? `[Resent 80G] ✅ Receipt: ${donation.receiptNo} | ${donation.userName} | ₹${(donation.amount || 0).toLocaleString("en-IN")}`
+      ? `[Resent] ✅ Income Tax Deduction Certificate: ${donation.receiptNo} | ${donation.userName} | ₹${(donation.amount || 0).toLocaleString("en-IN")}`
       : `[Resent] ✅ Payment Confirmation: ${donation.receiptNo} | ${donation.userName} | ₹${(donation.amount || 0).toLocaleString("en-IN")}`;
 
     const recipients = [...NOTIFY_EMAILS];
@@ -1126,7 +1309,14 @@ app.post("/make-server-a0af4170/donations/:id/resend-email", async (c) => {
       recipients.push(donation.userEmail);
     }
 
-    const result = await sendEmail(subject, emailHTML, recipients);
+    let result;
+    if (use80G) {
+      const pdfBytes = await generateCertificatePDFBytes(donation);
+      const attachments = [{ filename: `Income-Tax-Certificate-${(donation.receiptNo || "").replace(/\//g, "-")}.pdf`, content: uint8ToBase64(pdfBytes) }];
+      result = await sendEmail(subject, emailHTML, recipients, attachments);
+    } else {
+      result = await sendEmail(subject, emailHTML, recipients);
+    }
     console.log(`[resend-email] ok=${result.ok} use80G=${use80G} to=${recipients.join(",")}`);
     return c.json({ success: true, sentTo: recipients.join(", "), use80G, emailResult: result });
   } catch (e) {
