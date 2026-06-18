@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router";
 import { useCmsPage } from "../hooks/useCmsPage";
-// @ts-ignore
-import imgLogo from "@/assets/urw-logo.png";
+import { UBFLogo } from "./UBFLogo";
 // @ts-ignore
 import imgFooterBg from "@/assets/footer_bg_new.png";
 
@@ -214,7 +213,7 @@ export function Footer({ onOpenModal }: { onOpenModal?: () => void }) {
 
           {/* Left: Logo + address + social */}
           <div style={{ width: isMobile ? "100%" : 291, display: "flex", flexDirection: "column", gap: 24, flexShrink: 0 }}>
-            <img src={imgLogo} alt="URW Logo" style={{ height: 54, width: "auto", maxWidth: 160, objectFit: "contain", display: "block", alignSelf: "flex-start" }} />
+            <UBFLogo white height={54} />
             <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
               <p style={{
                 fontFamily: "'DM Sans', sans-serif", fontWeight: 400, fontSize: 14,

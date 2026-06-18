@@ -3,8 +3,7 @@ import { Link, useNavigate, useLocation } from "react-router";
 import { useAuth } from "../lib/AuthContext";
 import { useCmsPage } from "../hooks/useCmsPage";
 import { resolveCmsLink } from "../../lib/cms-types";
-// @ts-ignore
-import imgLogo from "@/assets/urw-logo.png";
+import { UBFLogo } from "./UBFLogo";
 // @ts-ignore
 import imgChevron from "@/assets/8d5928d43f1ad11aaebbaf276ef31f030d752d0e.svg";
 
@@ -387,7 +386,7 @@ export function Navbar({ onOpenModal }: { onOpenModal?: () => void }) {
   const { getSection } = useCmsPage("brand");
   const navData = getSection("NavigationSection");
   const navCtaText  = String(navData.content.ctaText  || "Contribute Now");
-  const navLogoImg  = String(navData.content.logoImage || "") || imgLogo;
+  const navLogoImg  = String(navData.content.logoImage || "");
 
   // Build NavGroup[] from CMS items; fall back to hardcoded NAV_MENU
   const activeNavMenu: NavGroup[] = navData.items.length > 0
@@ -425,7 +424,7 @@ export function Navbar({ onOpenModal }: { onOpenModal?: () => void }) {
       <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%" }}>
           <Link to="/" style={{ textDecoration: "none", flexShrink: 0 }}>
-            <img src={navLogoImg} alt="URW Logo" style={{ height: 48, width: "auto", display: "block" }} />
+            {navLogoImg ? <img src={navLogoImg} alt="URW Logo" style={{ height: 48, width: "auto", display: "block" }} /> : <UBFLogo white height={48} />}
           </Link>
           <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
             {user ? (
@@ -493,7 +492,7 @@ export function Navbar({ onOpenModal }: { onOpenModal?: () => void }) {
   return (
     <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", width: "100%", maxWidth: 1008 }}>
       <Link to="/" style={{ textDecoration: "none", flexShrink: 0 }}>
-        <img src={navLogoImg} alt="URW Logo" style={{ height: 60, width: "auto", display: "block" }} />
+        {navLogoImg ? <img src={navLogoImg} alt="URW Logo" style={{ height: 60, width: "auto", display: "block" }} /> : <UBFLogo white height={60} />}
       </Link>
 
       <div style={{ display: "flex", alignItems: "center", gap: 12, paddingLeft: 28, paddingRight: user ? 8 : 6, height: 59, borderRadius: 60, background: "rgba(255,255,255,0.1)", backdropFilter: "blur(15px)" }}>

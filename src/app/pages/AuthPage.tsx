@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link, useLocation } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
-import { Heart, Eye, EyeOff, Mail, Lock, User, Phone, AlertCircle, Loader2, BookOpen } from "lucide-react";
+import { Heart, Eye, EyeOff, Mail, Lock, User, Phone, AlertCircle, Loader2 } from "lucide-react";
 import { useAuth } from "../lib/AuthContext";
 import { supabase } from "../lib/supabase";
-import { FOUNDATION_NAME } from "../lib/constants";
+import { UBFLogo } from "../components/UBFLogo";
 
 type Mode = "login" | "signup";
 type DonorType = "indian" | "nri" | "foreign";
@@ -100,10 +100,10 @@ export function AuthPage() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-md" style={{ background: "#1B2B3A" }}>
-            <BookOpen size={24} className="text-white" />
+          <div className="flex justify-center mb-4">
+            <UBFLogo height={64} />
           </div>
-          <h1 className="text-2xl" style={{ fontWeight: 800, fontFamily: "var(--font-heading)", color: "#1C1C1A" }}>{FOUNDATION_NAME}</h1>
+          <h1 className="text-xl" style={{ fontWeight: 800, fontFamily: "var(--font-heading)", color: "#1C1C1A", letterSpacing: "0.01em" }}>SHIKSHARAJ, UJJWAL BHARAT FOUNDATION</h1>
           <p className="text-slate-500 text-sm mt-1">
             {mode === "login" ? "Welcome back!" : "Join thousands of changemakers"}
           </p>

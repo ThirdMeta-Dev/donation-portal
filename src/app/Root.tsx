@@ -5,7 +5,7 @@ import { Footer } from "./components/SiteFooter";
 import { AuthProvider } from "./lib/AuthContext";
 
 // Pages that skip ALL chrome (payment flow, oauth callback, etc.)
-const BARE_PAGES = ["/payment", "/thank-you", "/auth/callback"];
+const BARE_PAGES = ["/payment", "/thank-you", "/auth/callback", "/admin"];
 
 // Pages that have their own full-page layout (internal nav/footer built in)
 const BLANK_CANVAS = ["/", "/home-v2", "/home-new-1", "/contact"];

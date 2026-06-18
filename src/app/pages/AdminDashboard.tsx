@@ -10,6 +10,7 @@ import {
 import { useAuth } from "../lib/AuthContext";
 import { donationApi, lmsApi, adminApi, causeApi, Donation, Course, AppUserRecord, CauseFull } from "../lib/api";
 import { DonationReceiptModal } from "../components/DonationReceiptModal";
+import { UBFLogo } from "../components/UBFLogo";
 import { CauseFormDrawer } from "../components/CauseFormDrawer";
 import { DonationEditModal } from "../components/DonationEditModal";
 import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, CartesianGrid } from "recharts";
@@ -381,7 +382,7 @@ export function AdminDashboard() {
       <div className="bg-gradient-to-r from-indigo-800 to-indigo-700 text-white py-5 px-4">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center"><Shield size={20} /></div>
+            <UBFLogo height={40} />
             <div>
               <div className="text-white text-base font-bold">Admin Dashboard</div>
               <div className="text-white/60 text-xs">Shiksha Raj, Ujjwal Bharat Mission · {user.email}</div>
