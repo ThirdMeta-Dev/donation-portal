@@ -329,6 +329,7 @@ export interface Donation {
   pan?: string;
   paymentId: string;
   status: "success" | "pending" | "failed";
+  paymentMode?: "Online" | "Offline";
   certificate80G: boolean;
   createdAt: string;
   receiptNo: string;

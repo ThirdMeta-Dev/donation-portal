@@ -1234,6 +1234,7 @@ app.post("/make-server-a0af4170/donations", async (c) => {
       certificate80G:  body.certificate80G  || false,
       createdAt:       body.createdAt       || new Date().toISOString(),
       receiptNo:       await getNextReceiptNo(),
+      paymentMode:     "Online",
       impactDescription: body.impactDescription || "",
       phone:           body.phone           || "",
       address:         body.address         || "",
@@ -1423,6 +1424,7 @@ app.post("/make-server-a0af4170/donations/offline", async (c) => {
       receiptNo,
       impactDescription: "Your donation will help bring real learning, support, and opportunity closer to a child, a classroom, or a school.",
       paymentMethod:   txnType,
+      paymentMode:     "Offline",
       recordedBy:      authUser.email,
     };
 

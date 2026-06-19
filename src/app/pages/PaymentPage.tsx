@@ -86,6 +86,7 @@ export function PaymentPage() {
       certificate80G: (cause80GEnabled !== false) && taxReceipt && (donorType === "indian" || donorType === "nri"),
       createdAt: new Date().toISOString(),
       receiptNo: generateReceiptNo(),
+      paymentMode: "Online" as const,
       impactDescription: getImpact(),
     };
 
