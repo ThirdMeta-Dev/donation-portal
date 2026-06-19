@@ -245,7 +245,7 @@ async function generateCertificatePDFBytes(d: any): Promise<Uint8Array> {
   page.drawImage(iconPhone, { x: RE - iSz, y: rY(69, iSz), width: iSz, height: iSz });
   dtr("www.ujjwalawadekar.com",                                                         RE - iSz - iGap, 83, fDmReg, 8, cBlk);
   page.drawImage(iconGlobe, { x: RE - iSz, y: rY(83, iSz), width: iSz, height: iSz });
-  dtr("team@srubf.com",                                                                RE - iSz - iGap, 97, fDmReg, 8, cBlk);
+  dtr("contact@shiksharaj.org",                                                                RE - iSz - iGap, 97, fDmReg, 8, cBlk);
   page.drawImage(iconEmail, { x: RE - iSz, y: rY(97, iSz), width: iSz, height: iSz });
 
   // ── 4. Org name ──────────────────────────────────────────────────────────────
@@ -355,7 +355,7 @@ async function generateCertificatePDFBytes(d: any): Promise<Uint8Array> {
     "2.   If you have not provided PAN No., you cannot be eligible for tax deduction benefit under",
     "      section 133(1)(b) of Income Tax Act, 2025.",
     "3.   This is a computer-generated receipt. Valid without physical signature as per IT Act 2000.",
-    "4.   For queries, contact: team@srubf.com | +91-7620688947, +91-9370318308",
+    "4.   For queries, contact: contact@shiksharaj.org | +91-7620688947, +91-9370318308",
   ];
   terms.forEach((t, i) => dt(t, LM, 759 + i * 10.64, fDmItalic, 7, cGray));
 
@@ -479,7 +479,7 @@ function generateFormalReceiptHTML(d: any): string {
     <div style="font-size:22px;font-weight:900;letter-spacing:0.5px;line-height:1.2;font-family:Arial,sans-serif">UJJWAL BHARAT</div>
     <div style="font-size:11px;margin-top:5px;line-height:1.8;font-family:'Times New Roman',serif">
       Plot 89, Sr. No. 412, Neharu Nagar, Prasad Apt, Jalgaon, Maharashtra, 425001<br>
-      Mob.: +91 9370318308 &nbsp;|&nbsp; +91 7620688947 &nbsp;&nbsp; Email: team@srubf.com<br>
+      Mob.: +91 9370318308 &nbsp;|&nbsp; +91 7620688947 &nbsp;&nbsp; Email: contact@shiksharaj.org<br>
       Website: https://www.ujjwalawadekar.com/<br>
       Reg. No. U85499MR2026NPL474075 &nbsp;&nbsp; PAN: ABSCS9855K
     </div>
@@ -564,7 +564,7 @@ function generateFormalReceiptHTML(d: any): string {
       1) This Receipt is not Transferable or Changeable.<br>
       2) If you have not provided your PAN, you cannot claim deduction under Section 133(1)(b) of the Income Tax Act, 2025.<br>
       3) This is a computer-generated receipt. Valid without physical signature as per IT Act 2000.<br>
-      4) For queries, contact: team@srubf.com | +91 9370318308
+      4) For queries, contact: contact@shiksharaj.org | +91 9370318308
     </div>
   </div>
 
@@ -626,7 +626,7 @@ function generateNormalReceiptHTML(d: any): string {
       <div style="font-size:11px;color:#94a3b8;line-height:1.8">
         Ujjwal Bharat &middot; Plot 89, Sr. No. 412, Neharu Nagar, Prasad Apt, Jalgaon, Maharashtra, 425001<br>
         Reg. No. U85499MR2026NPL474075 &middot; PAN: ABSCS9855K<br>
-        <a href="https://www.ujjwalawadekar.com/" style="color:#94a3b8">ujjwalawadekar.com</a> &middot; team@srubf.com<br>
+        <a href="https://www.ujjwalawadekar.com/" style="color:#94a3b8">ujjwalawadekar.com</a> &middot; contact@shiksharaj.org<br>
         This is a computer-generated receipt. Valid without physical signature.
       </div>
     </div>
@@ -718,7 +718,7 @@ function generateThankYouEmailHTML(d: any, use80G: boolean): string {
     <div style="font-size:11px;color:#94a3b8;line-height:1.9">
       Plot 89, Sr. No. 412, Neharu Nagar, Prasad Apt, Jalgaon, Maharashtra, 425001<br>
       Reg. No. U85499MR2026NPL474075 &nbsp;&middot;&nbsp; PAN: ABSCS9855K<br>
-      <a href="mailto:team@srubf.com" style="color:#64748b;text-decoration:none">team@srubf.com</a> &nbsp;&middot;&nbsp;
+      <a href="mailto:contact@shiksharaj.org" style="color:#64748b;text-decoration:none">contact@shiksharaj.org</a> &nbsp;&middot;&nbsp;
       <a href="https://www.ujjwalawadekar.com/" style="color:#64748b;text-decoration:none">ujjwalawadekar.com</a><br>
       <span style="font-size:10px;color:#cbd5e1">This is a computer-generated email. The attached receipt is valid without physical signature as per IT Act 2000.</span>
     </div>
@@ -1232,7 +1232,7 @@ app.post("/make-server-a0af4170/donations", async (c) => {
       status:          body.status          || "success",
       certificate80G:  body.certificate80G  || false,
       createdAt:       body.createdAt       || new Date().toISOString(),
-      receiptNo:       body.receiptNo?.startsWith("SRUBF/") ? body.receiptNo : await getNextReceiptNo(),
+      receiptNo:       await getNextReceiptNo(),
       impactDescription: body.impactDescription || "",
       phone:           body.phone           || "",
       address:         body.address         || "",
