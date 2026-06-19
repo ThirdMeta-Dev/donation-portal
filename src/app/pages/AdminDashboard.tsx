@@ -152,9 +152,16 @@ export function AdminDashboard() {
         causeApi.getSettings(),
         causeApi.getCauses(),
       ]);
+      // Hide offline entries created before this cutoff (test/legacy data cleanup)
+      const OFFLINE_CUTOFF = new Date("2026-06-20T18:00:00.000Z");
       const donations = donRes.status === "fulfilled"
-        ? (donRes.value.donations || []).sort((a: Donation, b: Donation) =>
-            new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        ? (donRes.value.donations || [])
+            .filter((d: Donation) => {
+              const isOffline = d.paymentMode === "Offline" || (!d.paymentMode && !d.paymentId?.startsWith("pay_"));
+              return isOffline ? new Date(d.createdAt) >= OFFLINE_CUTOFF : true;
+            })
+            .sort((a: Donation, b: Donation) =>
+              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
         : _cache?.donations ?? [];
       const courses = crsRes.status === "fulfilled" ? (crsRes.value.courses || []) : _cache?.courses ?? [];
       const causeSettingsData = settingsRes.status === "fulfilled" ? (settingsRes.value.settings || {}) : _cache?.causeSettings ?? {};
