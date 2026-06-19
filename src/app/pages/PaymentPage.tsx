@@ -137,9 +137,9 @@ export function PaymentPage() {
         key: orderData.key,
         amount: orderData.amount,
         currency: orderData.currency || "INR",
-        name: "Ujjwal Bharat",
-        description: `Donation — ${cause?.title || "General Fund"}`,
-        image: "/favicon.png",
+        name: "SHIKSHARAJ, UJJWAL BHARAT FOUNDATION",
+        description: `Donation - ${cause?.title || "General Fund"}`,
+        image: "https://raw.githubusercontent.com/ThirdMeta-Dev/donation-portal/main/public/favicon.png",
         order_id: orderData.orderId,
         handler: async (response: any) => {
           setStep("processing");
