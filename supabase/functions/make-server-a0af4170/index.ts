@@ -245,7 +245,7 @@ async function generateCertificatePDFBytes(d: any): Promise<Uint8Array> {
   page.drawImage(iconPhone, { x: RE - iSz, y: rY(69, iSz), width: iSz, height: iSz });
   dtr("www.ujjwalawadekar.com",                                                         RE - iSz - iGap, 83, fDmReg, 8, cBlk);
   page.drawImage(iconGlobe, { x: RE - iSz, y: rY(83, iSz), width: iSz, height: iSz });
-  dtr("contact@shiksharaj.org",                                                                RE - iSz - iGap, 97, fDmReg, 8, cBlk);
+  dtr("team@srubf.com",                                                                        RE - iSz - iGap, 97, fDmReg, 8, cBlk);
   page.drawImage(iconEmail, { x: RE - iSz, y: rY(97, iSz), width: iSz, height: iSz });
 
   // ── 4. Org name ──────────────────────────────────────────────────────────────
@@ -270,13 +270,13 @@ async function generateCertificatePDFBytes(d: any): Promise<Uint8Array> {
   const donorName = d.userName || "Donor";
 
   const p1 = [`Dear ${donorName}`, ..._wrapText(
-    "With heartfelt gratitude, we acknowledge your contribution to Shiksha Raj, Ujjwal Bharat Foundation. Your support helps bring meaningful education, dignity, and opportunity closer to children who need it most.",
+    "With heartfelt gratitude, we acknowledge your contribution to ShikshaRaj, Ujjwal Bharat Foundation. Your support helps bring meaningful education, dignity, and opportunity closer to children who need it most.",
     BODY_W, fDmReg, 9,
   )];
   p1.forEach((line, i) => dt(line, LM, 219 + i * LH, fDmReg, 9, cBlk));
 
   const p2 = _wrapText(
-    "Donations to Shiksha Raj, Ujjwal Bharat Foundation are eligible for deduction under 133(1)(b) of the Income Tax Act, 2025. URN of registration under 354(4) section - ABSCS9855KF20261",
+    "Donations to ShikshaRaj, Ujjwal Bharat Foundation are eligible for deduction under 133(1)(b) of the Income Tax Act, 2025. URN of registration under 354(4) section - ABSCS9855KF20261",
     BODY_W, fDmReg, 9,
   );
   p2.forEach((line, i) => dt(line, LM, 267 + i * LH, fDmReg, 9, cBlk));
@@ -346,7 +346,7 @@ async function generateCertificatePDFBytes(d: any): Promise<Uint8Array> {
 
   // ── 11. Footer text ──────────────────────────────────────────────────────────
   dt(`Received with sincere thanks from Shri/Smt./M/S ${donorName}.`, LM, 667, fDmReg, 9, cBlk);
-  dt("Your contribution strengthens better learning opportunities for children through Shiksha Raj, Ujjwal Bharat Foundation.", LM, 681, fDmReg, 9, cBlk);
+  dt("Your contribution strengthens better learning opportunities for children through ShikshaRaj, Ujjwal Bharat Foundation.", LM, 681, fDmReg, 9, cBlk);
 
   // ── 12. Terms ────────────────────────────────────────────────────────────────
   dt("Terms and conditions", LM, 747, fDmItalic, 7, cBlk);
@@ -355,7 +355,7 @@ async function generateCertificatePDFBytes(d: any): Promise<Uint8Array> {
     "2.   If you have not provided PAN No., you cannot be eligible for tax deduction benefit under",
     "      section 133(1)(b) of Income Tax Act, 2025.",
     "3.   This is a computer-generated receipt. Valid without physical signature as per IT Act 2000.",
-    "4.   For queries, contact: contact@shiksharaj.org | +91-7620688947, +91-9370318308",
+    "4.   For queries, contact: team@srubf.com | +91-7620688947, +91-9370318308",
   ];
   terms.forEach((t, i) => dt(t, LM, 759 + i * 10.64, fDmItalic, 7, cGray));
 
@@ -364,8 +364,9 @@ async function generateCertificatePDFBytes(d: any): Promise<Uint8Array> {
   page.drawImage(stampImg, { x: RE - 106, y: rY(715, 62), width: 106, height: 62 });
 
   // ── 14. "Received by" / "Authorised Signatory" ───────────────────────────────
-  dtr("Received by",          RE, 787, fLoraSB,  10, cBlk);
-  dtr("Authorised Signatory", RE, 803, fDmLight,   8, cBlk);
+  dtr("Received by",                                    RE, 784, fLoraSB,  10, cBlk);
+  dtr("Kalpesh Wadekar, Director",                     RE, 797, fDmLight,   8, cBlk);
+  dtr("For, ShikshaRaj, Ujjwal Bharat Foundation.",    RE, 809, fDmLight,   8, cBlk);
 
   return await pdfDoc.save();
 }
