@@ -3,13 +3,29 @@ import { useNavigate, useSearchParams } from "react-router";
 import { motion, AnimatePresence } from "motion/react";
 import {
   Heart, ChevronRight, ChevronLeft, Shield, Info, CreditCard,
-  Check, User, Globe, Building2, Repeat, Zap, AlertCircle
+  Check, User, Globe, Building2, Repeat, Zap, AlertCircle, Loader2
 } from "lucide-react";
 import { PRESET_AMOUNTS } from "../lib/constants";
 import { useAuth } from "../lib/AuthContext";
-import { causeApi } from "../lib/api";
+import { causeApi, donationApi } from "../lib/api";
 import type { CauseFull } from "../lib/api";
 import { useCmsPage } from "../hooks/useCmsPage";
+import { generateReceiptNo, generatePaymentId } from "../lib/donationStore";
+import { supabase } from "../lib/supabase";
+import { projectId, publicAnonKey } from "/utils/supabase/info";
+
+declare global { interface Window { Razorpay: any; } }
+
+function loadRazorpayScript(): Promise<boolean> {
+  return new Promise(resolve => {
+    if (window.Razorpay) { resolve(true); return; }
+    const s = document.createElement("script");
+    s.src = "https://checkout.razorpay.com/v1/checkout.js";
+    s.onload = () => resolve(true);
+    s.onerror = () => resolve(false);
+    document.body.appendChild(s);
+  });
+}
 
 type Step = 1 | 2 | 3;
 type Frequency = "one-time" | "monthly" | "annually";
@@ -45,6 +61,8 @@ export function DonatePage() {
   const [isAnonymous, setIsAnonymous] = useState(false);
   const [taxReceipt, setTaxReceipt] = useState(true);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [payProcessing, setPayProcessing] = useState(false);
+  const [payError, setPayError] = useState("");
   const [causeSettings, setCauseSettings] = useState<Record<string, { enable80G: boolean }>>({});
 
   useEffect(() => {
@@ -94,25 +112,108 @@ export function DonatePage() {
     return Object.keys(errs).length === 0;
   };
 
-  const proceedToPayment = () => {
+  const saveAndRedirect = async (paymentId: string, orderId?: string) => {
+    const { data: { session } } = await supabase.auth.getSession();
+    const currentUserId = session?.user?.id || user?.id || "guest";
+    const currentEmail  = session?.user?.email || user?.email || email;
+    const donation = {
+      id: `don-${Date.now()}`,
+      userId:   currentUserId,
+      userName: isAnonymous ? "Anonymous" : name,
+      userEmail: currentEmail,
+      causeId:  cause?.id   || "general",
+      causeName: cause?.title || "General Fund",
+      amount: finalAmount,
+      currency: "INR" as const,
+      frequency,
+      donorType,
+      pan: pan.toUpperCase(),
+      phone: phone || "",
+      address: address || "",
+      country: country || (donorType === "indian" ? "India" : ""),
+      paymentId,
+      razorpayOrderId: orderId || null,
+      status: "success" as const,
+      certificate80G: selectedCause80G && taxReceipt && (donorType === "indian" || donorType === "nri"),
+      createdAt: new Date().toISOString(),
+      receiptNo: generateReceiptNo(),
+      paymentMode: "Online" as const,
+      impactDescription: getImpact(),
+    };
+    try {
+      const result = await donationApi.save(donation);
+      navigate("/thank-you", { state: (result as any).donation || donation });
+    } catch {
+      navigate("/thank-you", { state: donation });
+    }
+  };
+
+  const proceedToPayment = async () => {
     if (!validate()) return;
-    navigate("/payment", {
-      state: {
-        cause,
-        amount: finalAmount,
-        frequency,
-        donorType,
-        name,
-        email,
-        phone,
-        pan: pan.toUpperCase(),
-        address,
-        country,
-        isAnonymous,
-        taxReceipt: selectedCause80G && taxReceipt, // only true if cause supports 80G AND donor opted in
-        cause80GEnabled: selectedCause80G,
+    setPayError("");
+    setPayProcessing(true);
+    await loadRazorpayScript();
+    try {
+      const receiptNo = generateReceiptNo();
+      const orderRes = await fetch(
+        `https://${projectId}.supabase.co/functions/v1/make-server-a0af4170/razorpay/create-order`,
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${publicAnonKey}` },
+          body: JSON.stringify({ amount: finalAmount, currency: "INR", receipt: receiptNo }),
+        }
+      );
+      const orderData = await orderRes.json();
+      if (orderData.error) { setPayError(orderData.error); setPayProcessing(false); return; }
+
+      if (orderData.orderId?.startsWith("order_MOCK") || !window.Razorpay) {
+        await new Promise(r => setTimeout(r, 800));
+        await saveAndRedirect(generatePaymentId(), orderData.orderId);
+        return;
       }
-    });
+
+      const options = {
+        key: orderData.key,
+        amount: orderData.amount,
+        currency: orderData.currency || "INR",
+        name: "SHIKSHARAJ, UJJWAL BHARAT FOUNDATION",
+        description: `Donation - ${cause?.title || "General Fund"}`,
+        image: `${window.location.origin}/favicon.png`,
+        order_id: orderData.orderId,
+        handler: async (response: any) => {
+          setPayProcessing(true);
+          try {
+            await fetch(
+              `https://${projectId}.supabase.co/functions/v1/make-server-a0af4170/razorpay/verify`,
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json", "Authorization": `Bearer ${publicAnonKey}` },
+                body: JSON.stringify({
+                  razorpay_order_id: response.razorpay_order_id,
+                  razorpay_payment_id: response.razorpay_payment_id,
+                  razorpay_signature: response.razorpay_signature,
+                }),
+              }
+            );
+          } catch (_) {}
+          await saveAndRedirect(response.razorpay_payment_id, response.razorpay_order_id);
+        },
+        prefill: { name: name || "", email: email || "", contact: phone || "" },
+        notes: { cause: cause?.title || "General Fund", pan: pan || "", donorType, frequency },
+        theme: { color: "#bf791d" },
+        modal: { ondismiss: () => setPayProcessing(false) },
+      };
+      const rzp = new window.Razorpay(options);
+      rzp.on("payment.failed", (response: any) => {
+        setPayError(response.error?.description || "Payment failed. Please try again.");
+        setPayProcessing(false);
+      });
+      setPayProcessing(false);
+      rzp.open();
+    } catch (e: any) {
+      setPayError(e.message || "Something went wrong. Please try again.");
+      setPayProcessing(false);
+    }
   };
 
   const DONOR_TYPE_INFO: Record<DonorType, { title: string; desc: string; icon: React.ReactNode; color: string; note: string }> = {
@@ -474,14 +575,21 @@ export function DonatePage() {
                   Payment secured by Razorpay · 256-bit SSL · PCI-DSS Compliant · Your data is encrypted
                 </div>
 
+                {payError && (
+                  <div className="flex items-start gap-2 p-3 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
+                    <AlertCircle size={15} className="mt-0.5 flex-shrink-0" /> {payError}
+                  </div>
+                )}
                 <div className="flex gap-3">
-                  <button onClick={() => setStep(2)} className="flex items-center gap-2 border-2 border-slate-200 text-slate-600 px-6 py-3 rounded-xl hover:bg-slate-50 transition-colors" style={{ fontWeight: 500 }}>
+                  <button onClick={() => setStep(2)} disabled={payProcessing} className="flex items-center gap-2 border-2 border-slate-200 text-slate-600 px-6 py-3 rounded-xl hover:bg-slate-50 transition-colors disabled:opacity-50" style={{ fontWeight: 500 }}>
                     <ChevronLeft size={16} /> Back
                   </button>
-                  <button onClick={proceedToPayment}
-                   className="btn-gold flex-1 text-white py-3 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2"
+                  <button onClick={proceedToPayment} disabled={payProcessing}
+                   className="btn-gold flex-1 text-white py-3 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 disabled:opacity-70"
                    style={{ fontWeight: 700, background: "#B07D3A" }}>
-                    <CreditCard size={18} /> Pay ₹{finalAmount.toLocaleString()} Securely
+                    {payProcessing
+                      ? <><Loader2 size={18} className="animate-spin" /> Processing...</>
+                      : <><CreditCard size={18} /> Pay ₹{finalAmount.toLocaleString()} Securely</>}
                   </button>
                 </div>
               </div>

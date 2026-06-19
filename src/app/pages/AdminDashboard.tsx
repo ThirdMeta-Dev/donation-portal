@@ -556,9 +556,9 @@ export function AdminDashboard() {
                     </div>
                   </div>
                   <div className="overflow-x-auto">
-                    <table className="w-full text-sm">
+                    <table className="min-w-max w-full text-sm">
                       <thead className="bg-slate-50">
-                        <tr>{["Donor", "Amount", "Cause", "Type", "Receipt No.", "Date", "Status", "Mode", "80G", "Actions"].map(h => <th key={h} className="text-left px-4 py-2.5 text-xs text-slate-500 font-semibold">{h}</th>)}</tr>
+                        <tr>{["Donor", "Amount", "Cause", "Type", "Receipt No.", "Date", "Status", "Mode", "80G", "Actions"].map(h => <th key={h} className="text-left px-4 py-2.5 text-xs text-slate-500 font-semibold whitespace-nowrap">{h}</th>)}</tr>
                       </thead>
                       <tbody>
                         {pagedDonations.length === 0
@@ -577,7 +577,7 @@ export function AdminDashboard() {
                               </td>
                               <td className="px-4 py-3 text-slate-600 text-xs max-w-[100px] truncate">{d.causeName}</td>
                               <td className="px-4 py-3"><span className="capitalize text-xs bg-slate-100 px-2 py-0.5 rounded">{d.donorType}</span></td>
-                              <td className="px-4 py-3"><code className="text-xs bg-orange-50 text-orange-700 px-1.5 py-0.5 rounded">{d.receiptNo}</code></td>
+                              <td className="px-4 py-3 whitespace-nowrap"><code className="text-xs bg-orange-50 text-orange-700 px-1.5 py-0.5 rounded">{d.receiptNo}</code></td>
                               <td className="px-4 py-3 text-slate-500 text-xs whitespace-nowrap">{new Date(d.createdAt).toLocaleDateString("en-IN")}</td>
                               <td className="px-4 py-3">{statusBadge(d.status)}</td>
                               <td className="px-4 py-3">{modeBadge(d)}</td>
