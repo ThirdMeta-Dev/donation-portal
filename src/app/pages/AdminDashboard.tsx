@@ -373,6 +373,12 @@ export function AdminDashboard() {
     return <span className="text-xs px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-700 font-semibold">{status}</span>;
   };
 
+  const modeBadge = (d: { paymentMode?: string; paymentId?: string }) => {
+    const mode = d.paymentMode || (d.paymentId?.startsWith("pay_") ? "Online" : "Offline");
+    if (mode === "Online")  return <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-semibold">⚡ Online</span>;
+    return <span className="text-xs px-2 py-0.5 rounded-full bg-amber-100 text-amber-700 font-semibold">✎ Offline</span>;
+  };
+
   const fmtAmt = (n: number) =>
     n >= 100000 ? `₹${(n / 100000).toFixed(1)}L` : n >= 1000 ? `₹${(n / 1000).toFixed(0)}K` : `₹${n}`;
 
@@ -552,11 +558,11 @@ export function AdminDashboard() {
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead className="bg-slate-50">
-                        <tr>{["Donor", "Amount", "Cause", "Type", "Receipt No.", "Date", "Status", "80G", "Actions"].map(h => <th key={h} className="text-left px-4 py-2.5 text-xs text-slate-500 font-semibold">{h}</th>)}</tr>
+                        <tr>{["Donor", "Amount", "Cause", "Type", "Receipt No.", "Date", "Status", "Mode", "80G", "Actions"].map(h => <th key={h} className="text-left px-4 py-2.5 text-xs text-slate-500 font-semibold">{h}</th>)}</tr>
                       </thead>
                       <tbody>
                         {pagedDonations.length === 0
-                          ? <tr><td colSpan={9} className="text-center py-12 text-slate-400 text-sm">No records match filters.</td></tr>
+                          ? <tr><td colSpan={10} className="text-center py-12 text-slate-400 text-sm">No records match filters.</td></tr>
                           : pagedDonations.map(d => (
                             <tr key={d.id} className={`border-t border-slate-100 ${d.status === "failed" ? "bg-red-50/30" : "hover:bg-slate-50/50"}`}>
                               <td className="px-4 py-3">
@@ -574,6 +580,7 @@ export function AdminDashboard() {
                               <td className="px-4 py-3"><code className="text-xs bg-orange-50 text-orange-700 px-1.5 py-0.5 rounded">{d.receiptNo}</code></td>
                               <td className="px-4 py-3 text-slate-500 text-xs whitespace-nowrap">{new Date(d.createdAt).toLocaleDateString("en-IN")}</td>
                               <td className="px-4 py-3">{statusBadge(d.status)}</td>
+                              <td className="px-4 py-3">{modeBadge(d)}</td>
                               <td className="px-4 py-3">
                                 {d.certificate80G
                                   ? <span className="text-xs text-teal-600 flex items-center gap-0.5"><CheckCircle2 size={12} /> Yes</span>
