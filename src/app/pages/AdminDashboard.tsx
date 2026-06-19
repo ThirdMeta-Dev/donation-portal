@@ -154,9 +154,12 @@ export function AdminDashboard() {
       ]);
       // Hide offline entries created before this cutoff (test/legacy data cleanup)
       const OFFLINE_CUTOFF = new Date("2026-06-20T18:00:00.000Z");
+      // Hide AKF series entries created before June 2026 (legacy test data)
+      const AKF_CUTOFF = new Date("2026-06-01T00:00:00.000Z");
       const donations = donRes.status === "fulfilled"
         ? (donRes.value.donations || [])
             .filter((d: Donation) => {
+              if (d.receiptNo?.startsWith("AKF-") && new Date(d.createdAt) < AKF_CUTOFF) return false;
               const isOffline = d.paymentMode === "Offline" || (!d.paymentMode && !d.paymentId?.startsWith("pay_"));
               return isOffline ? new Date(d.createdAt) >= OFFLINE_CUTOFF : true;
             })
