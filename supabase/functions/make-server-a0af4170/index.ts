@@ -418,10 +418,12 @@ function _formatAmount(amount: number): string {
 
 function _formatDate(iso: string): string {
   const d = new Date(iso);
-  const dd = String(d.getDate()).padStart(2, "0");
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  const yyyy = d.getFullYear();
-  return `${dd}-${mm}-${yyyy}`;
+  // Format in IST (Asia/Kolkata) so certificate date matches the donor's local date
+  const parts = new Intl.DateTimeFormat("en-IN", {
+    timeZone: "Asia/Kolkata", day: "2-digit", month: "2-digit", year: "numeric"
+  }).formatToParts(d);
+  const get = (t: string) => parts.find(p => p.type === t)?.value || "";
+  return `${get("day")}-${get("month")}-${get("year")}`;
 }
 
 function generateFormalReceiptHTML(d: any): string {
