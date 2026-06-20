@@ -93,7 +93,7 @@ export function AdminDashboard() {
   const [currentPage, setCurrentPage] = useState(1);
 
   // Offline donation form state
-  const OFFLINE_FORM_INIT = { userName: "", userEmail: "", phone: "", pan: "", amount: "", causeId: "", causeName: "", paymentMethod: "cash", referenceNo: "", paymentDate: new Date().toISOString().slice(0, 10), address: "", certificate80G: false };
+  const OFFLINE_FORM_INIT = { userName: "", userEmail: "", phone: "", pan: "", idType: "pan" as "pan" | "aadhaar", amount: "", causeId: "", causeName: "", paymentMethod: "cash", referenceNo: "", paymentDate: new Date().toISOString().slice(0, 10), address: "", certificate80G: false };
   const [offlineForm, setOfflineForm] = useState(OFFLINE_FORM_INIT);
   const [offlineSubmitting, setOfflineSubmitting] = useState(false);
   const [offlineSuccess, setOfflineSuccess] = useState<string | null>(null);
@@ -142,7 +142,7 @@ export function AdminDashboard() {
     loadAll();
   }, [user, authLoading]);
 
-  async function loadAll() {
+  async function loadAll(afterMigration = false) {
     if (!_cache) setLoading(true);
     setError("");
     try {
@@ -152,14 +152,26 @@ export function AdminDashboard() {
         causeApi.getSettings(),
         causeApi.getCauses(),
       ]);
-      // Hide offline entries created before this cutoff (test/legacy data cleanup)
-      const OFFLINE_CUTOFF = new Date("2026-06-20T18:00:00.000Z");
-      // Hide AKF series entries created before June 2026 (legacy test data)
-      const AKF_CUTOFF = new Date("2026-06-01T00:00:00.000Z");
+      // Hide offline entries created before 20 June 2026 00:00 IST (= 19 Jun 18:30 UTC)
+      const OFFLINE_CUTOFF = new Date("2026-06-19T18:30:00.000Z");
+
+      // Auto-migrate offline receipts from SRUBF/ to SRUBF-O/ series (runs once)
+      if (!afterMigration && donRes.status === "fulfilled") {
+        const needsMigration = (donRes.value.donations || []).some((d: Donation) => {
+          const isOffline = d.paymentMode === "Offline" || d.userId === "offline" || (!d.paymentId?.startsWith("pay_"));
+          return isOffline && d.receiptNo?.startsWith("SRUBF/");
+        });
+        if (needsMigration) {
+          await donationApi.migrateOfflineReceipts().catch(() => {});
+          return loadAll(true);
+        }
+      }
+
       const donations = donRes.status === "fulfilled"
         ? (donRes.value.donations || [])
             .filter((d: Donation) => {
-              if (d.receiptNo?.startsWith("AKF-") && new Date(d.createdAt) < AKF_CUTOFF) return false;
+              // Hide AKF entries before 17 Jun 2026 00:00 IST (= 16 Jun 18:30 UTC)
+              if (d.receiptNo?.startsWith("AKF-") && new Date(d.createdAt) < new Date("2026-06-16T18:30:00.000Z")) return false;
               const isOffline = d.paymentMode === "Offline" || (!d.paymentMode && !d.paymentId?.startsWith("pay_"));
               return isOffline ? new Date(d.createdAt) >= OFFLINE_CUTOFF : true;
             })
@@ -348,7 +360,7 @@ export function AdminDashboard() {
       return matchSearch && matchStatus && matchType;
     });
 
-  const PAGE_SIZE = 15;
+  const PAGE_SIZE = 20;
   const totalPages = Math.max(1, Math.ceil(filteredDonations.length / PAGE_SIZE));
   const safePage = Math.min(currentPage, totalPages);
   const pagedDonations = filteredDonations.slice((safePage - 1) * PAGE_SIZE, safePage * PAGE_SIZE);
@@ -524,7 +536,10 @@ export function AdminDashboard() {
                                 <td className={`px-4 py-3 font-bold text-sm ${d.status === "failed" ? "text-red-500" : "text-teal-700"}`}>₹{d.amount.toLocaleString()}</td>
                                 <td className="px-4 py-3 text-slate-600 max-w-32 truncate text-xs">{d.causeName}</td>
                                 <td className="px-4 py-3"><span className="capitalize text-xs bg-slate-100 px-2 py-0.5 rounded">{d.donorType}</span></td>
-                                <td className="px-4 py-3 text-slate-500 text-xs whitespace-nowrap">{new Date(d.createdAt).toLocaleDateString("en-IN")}</td>
+                                <td className="px-4 py-3 whitespace-nowrap">
+                                  <div className="text-slate-600 text-xs">{new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", day: "2-digit", month: "2-digit", year: "numeric" }).format(new Date(d.createdAt))}</div>
+                                  <div className="text-slate-400 text-xs">{new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit", hour12: true }).format(new Date(d.createdAt))}</div>
+                                </td>
                                 <td className="px-4 py-3">{statusBadge(d.status)}</td>
                               </tr>
                             ))}
@@ -588,7 +603,10 @@ export function AdminDashboard() {
                               <td className="px-4 py-3 text-slate-600 text-xs max-w-[100px] truncate">{d.causeName}</td>
                               <td className="px-4 py-3"><span className="capitalize text-xs bg-slate-100 px-2 py-0.5 rounded">{d.donorType}</span></td>
                               <td className="px-4 py-3 whitespace-nowrap"><code className="text-xs bg-orange-50 text-orange-700 px-1.5 py-0.5 rounded">{d.receiptNo}</code></td>
-                              <td className="px-4 py-3 text-slate-500 text-xs whitespace-nowrap">{new Date(d.createdAt).toLocaleDateString("en-IN")}</td>
+                              <td className="px-4 py-3 whitespace-nowrap">
+                                <div className="text-slate-600 text-xs">{new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", day: "2-digit", month: "2-digit", year: "numeric" }).format(new Date(d.createdAt))}</div>
+                                <div className="text-slate-400 text-xs">{new Intl.DateTimeFormat("en-IN", { timeZone: "Asia/Kolkata", hour: "2-digit", minute: "2-digit", hour12: true }).format(new Date(d.createdAt))}</div>
+                              </td>
                               <td className="px-4 py-3">{statusBadge(d.status)}</td>
                               <td className="px-4 py-3">{modeBadge(d)}</td>
                               <td className="px-4 py-3">
@@ -1070,14 +1088,40 @@ export function AdminDashboard() {
                           className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-400" placeholder="Receipt will be sent here" />
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-slate-600 mb-1.5">Phone Number</label>
-                        <input value={offlineForm.phone} onChange={e => setOfflineForm(f => ({ ...f, phone: e.target.value }))}
-                          className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-400" placeholder="+91 9876543210" />
+                        <label className="block text-xs font-semibold text-slate-600 mb-1.5">Phone Number *</label>
+                        <div className="flex">
+                          <span className="flex items-center px-2.5 border border-r-0 rounded-l-xl text-xs text-slate-600 bg-slate-50 font-medium border-slate-200">+91</span>
+                          <input value={offlineForm.phone}
+                            onChange={e => setOfflineForm(f => ({ ...f, phone: e.target.value.replace(/\D/g, "").slice(0, 10) }))}
+                            className="flex-1 px-3 py-2.5 border border-slate-200 rounded-r-xl text-sm focus:outline-none focus:border-indigo-400"
+                            placeholder="9876543210" maxLength={10} inputMode="numeric" />
+                        </div>
                       </div>
                       <div>
-                        <label className="block text-xs font-semibold text-slate-600 mb-1.5">PAN Card Number</label>
-                        <input value={offlineForm.pan} onChange={e => setOfflineForm(f => ({ ...f, pan: e.target.value.toUpperCase() }))}
-                          maxLength={10} className="w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-400 uppercase font-mono tracking-widest" placeholder="ABCDE1234F" />
+                        <label className="block text-xs font-semibold text-slate-600 mb-1.5">PAN / Aadhaar *</label>
+                        <div className="flex gap-2 mb-1.5">
+                          <button type="button"
+                            onClick={() => setOfflineForm(f => ({ ...f, idType: "pan", pan: "" }))}
+                            className={`flex-1 py-1.5 rounded-lg border text-xs transition-all ${offlineForm.idType === "pan" ? "border-indigo-500 bg-indigo-50 text-indigo-700 font-semibold" : "border-slate-200 text-slate-500"}`}>
+                            PAN Card
+                          </button>
+                          <button type="button"
+                            onClick={() => setOfflineForm(f => ({ ...f, idType: "aadhaar", pan: "" }))}
+                            className={`flex-1 py-1.5 rounded-lg border text-xs transition-all ${offlineForm.idType === "aadhaar" ? "border-indigo-500 bg-indigo-50 text-indigo-700 font-semibold" : "border-slate-200 text-slate-500"}`}>
+                            Aadhaar
+                          </button>
+                        </div>
+                        <input value={offlineForm.pan}
+                          onChange={e => setOfflineForm(f => ({
+                            ...f,
+                            pan: f.idType === "pan"
+                              ? e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 10)
+                              : e.target.value.replace(/\D/g, "").slice(0, 12)
+                          }))}
+                          maxLength={offlineForm.idType === "pan" ? 10 : 12}
+                          inputMode={offlineForm.idType === "aadhaar" ? "numeric" : "text"}
+                          className={`w-full px-3 py-2.5 border border-slate-200 rounded-xl text-sm focus:outline-none focus:border-indigo-400 font-mono tracking-widest ${offlineForm.idType === "pan" ? "uppercase" : ""}`}
+                          placeholder={offlineForm.idType === "pan" ? "ABCDE1234F" : "9xxx-5xxxx-9xxx"} />
                       </div>
                       <div>
                         <label className="block text-xs font-semibold text-slate-600 mb-1.5">Amount (₹) *</label>
@@ -1141,7 +1185,7 @@ export function AdminDashboard() {
                         Reset
                       </button>
                       <button
-                        disabled={offlineSubmitting || !offlineForm.userName || !offlineForm.amount}
+                        disabled={offlineSubmitting || !offlineForm.userName || !offlineForm.amount || !/^\d{10}$/.test(offlineForm.phone) || (offlineForm.idType === "pan" ? !/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(offlineForm.pan) : !/^\d{12}$/.test(offlineForm.pan))}
                         onClick={async () => {
                           setOfflineSubmitting(true); setOfflineError(""); setOfflineSuccess(null);
                           try {

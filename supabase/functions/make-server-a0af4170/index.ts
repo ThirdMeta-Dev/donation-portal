@@ -49,6 +49,16 @@ async function getNextReceiptNo(): Promise<string> {
   await kv.set(key, next);
   return `SRUBF/${fy}/${String(next).padStart(6, "0")}`;
 }
+async function getNextOfflineReceiptNo(): Promise<string> {
+  const now = new Date();
+  const fyStart = now.getMonth() >= 3 ? now.getFullYear() : now.getFullYear() - 1;
+  const fy = `${fyStart}-${String(fyStart + 1).slice(2)}`;
+  const key = `receipt_seq_offline:${fy}`;
+  const current = ((await kv.get(key)) as number | null) || 0;
+  const next = current + 1;
+  await kv.set(key, next);
+  return `SRUBF-O/${fy}/${String(next).padStart(6, "0")}`;
+}
 const payId   = () => `pay_${crypto.randomUUID().replace(/-/g,"").slice(0,14).toUpperCase()}`;
 const esc = (s: string) => String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 
@@ -118,7 +128,7 @@ async function sendEmail(
     return { ok: false, reason: "no api key" };
   }
   const recipients = Array.isArray(to) ? to : [to];
-  const payload: Record<string, unknown> = { from: `Ujjwal Bharat <${SMTP_FROM}>`, to: recipients, subject, html };
+  const payload: Record<string, unknown> = { from: `SRUBF <${SMTP_FROM}>`, to: recipients, subject, html, reply_to: "team@srubf.com" };
   if (attachments?.length) payload.attachments = attachments;
   try {
     const res = await fetch("https://api.resend.com/emails", {
@@ -1169,6 +1179,39 @@ app.post("/make-server-a0af4170/admin/users/:id/toggle", async (c) => {
   } catch (e) { return c.json({ error: "Failed: " + e }, 500); }
 });
 
+// ─── Admin: Migrate offline receipts to SRUBF-O/ series ──────────────────────
+app.post("/make-server-a0af4170/admin/migrate-offline-receipts", async (c) => {
+  try {
+    const authUser = resolveAuthUser(c);
+    if (!authUser || !isAdmin(authUser.email)) return c.json({ error: "Admin access required" }, 401);
+
+    const all = await kv.getByPrefix("donation:");
+    const toMigrate = (all as any[])
+      .filter((d: any) => {
+        const isOffline = d.paymentMode === "Offline" || d.userId === "offline" || (!d.paymentId?.startsWith("pay_"));
+        return isOffline && d.receiptNo?.startsWith("SRUBF/") && !d.receiptNo?.startsWith("SRUBF-O/");
+      })
+      .sort((a: any, b: any) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+
+    if (toMigrate.length === 0) return c.json({ success: true, migrated: 0 });
+
+    const now = new Date();
+    const fyStart = now.getMonth() >= 3 ? now.getFullYear() : now.getFullYear() - 1;
+    const fy = `${fyStart}-${String(fyStart + 1).slice(2)}`;
+    const offlineKey = `receipt_seq_offline:${fy}`;
+    let counter = ((await kv.get(offlineKey)) as number | null) || 0;
+
+    for (const d of toMigrate) {
+      counter++;
+      const newReceipt = `SRUBF-O/${fy}/${String(counter).padStart(6, "0")}`;
+      await kv.set(`donation:${d.id}`, { ...d, receiptNo: newReceipt });
+    }
+    await kv.set(offlineKey, counter);
+    console.log(`[migrate] Updated ${toMigrate.length} offline receipts to SRUBF-O series, counter=${counter}`);
+    return c.json({ success: true, migrated: toMigrate.length, newCounter: counter });
+  } catch (e: any) { return c.json({ error: String(e) }, 500); }
+});
+
 // ═══════════════ RAZORPAY ═════════════════════════════════════════════════════
 app.post("/make-server-a0af4170/razorpay/create-order", async (c) => {
   try {
@@ -1393,7 +1436,7 @@ app.post("/make-server-a0af4170/donations/offline", async (c) => {
     const body = await c.req.json();
     if (!body.userName || !body.amount) return c.json({ error: "Donor name and amount are required" }, 400);
 
-    const receiptNo = await getNextReceiptNo();
+    const receiptNo = await getNextOfflineReceiptNo();
     const now = body.paymentDate ? new Date(body.paymentDate).toISOString() : new Date().toISOString();
     const paymentMethodMap: Record<string, string> = {
       cash: "CASH",
