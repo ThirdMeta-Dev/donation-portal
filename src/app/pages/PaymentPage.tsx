@@ -58,7 +58,7 @@ export function PaymentPage() {
     return `Your ₹${amount.toLocaleString()} is helping transform a school's learning environment with dignity, resources, and hope.`;
   };
 
-  const saveAndRedirect = async (paymentId: string, orderId?: string) => {
+  const saveAndRedirect = async (paymentId: string, orderId?: string, razorpaySignature?: string) => {
     // Always get the freshest possible session token before saving
     const { data: { session } } = await supabase.auth.getSession();
     const currentUserId = session?.user?.id || user?.id || "guest";
@@ -81,6 +81,7 @@ export function PaymentPage() {
       country: country || (donorType === "indian" ? "India" : ""),
       paymentId,
       razorpayOrderId: orderId || null,
+      razorpay_signature: razorpaySignature || null,
       status: "success" as const,
       // certificate80G is only true if: cause supports 80G AND donor opted in AND donor is indian/nri
       certificate80G: (cause80GEnabled !== false) && taxReceipt && (donorType === "indian" || donorType === "nri"),
@@ -164,7 +165,7 @@ export function PaymentPage() {
               return;
             }
           } catch (_) {}
-          await saveAndRedirect(response.razorpay_payment_id, response.razorpay_order_id);
+          await saveAndRedirect(response.razorpay_payment_id, response.razorpay_order_id, response.razorpay_signature);
         },
         prefill: { name: name || "", email: email || "", contact: phone || "" },
         notes: { cause: cause?.title || "General Fund", pan: pan || "", donorType: donorType || "", frequency: frequency || "one-time" },

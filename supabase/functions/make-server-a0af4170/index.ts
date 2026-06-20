@@ -19,7 +19,7 @@ app.use("/*", cors({
       "http://localhost:5179", "http://localhost:5180", "http://localhost:5181",
       "http://localhost:5182", "http://localhost:5183",
     ];
-    return allowed.includes(origin) ? origin : allowed[0];
+    return allowed.includes(origin) ? origin : null;
   },
   allowHeaders: ["Content-Type", "Authorization", "X-User-Token"],
   allowMethods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
@@ -103,13 +103,16 @@ async function verifyUser(authHeader: string | undefined) {
   } catch { return null; }
 }
 
-// Resolve auth from local JWT decode — fast, reliable, no network call.
-// Safe because: (a) the Supabase gateway already verified the anon key, and
-// (b) user JWTs are ES256-signed by GoTrue so they can't be forged.
+// Fast local decode — only used for public/low-risk routes.
 function resolveAuthUser(c: any) {
-  const authHeader = extractUserJWT(c);
-  const user = getAuthUser(authHeader);
-  return user;
+  return getAuthUser(extractUserJWT(c));
+}
+
+// Cryptographically verified auth — required for all admin and write operations.
+async function verifyAdminUser(c: any) {
+  const user = await verifyUser(extractUserJWT(c));
+  if (!user) return null;
+  return { id: user.id, email: user.email || "" };
 }
 
 // ─── Email via Resend ─────────────────────────────────────────────────────────
@@ -851,42 +854,29 @@ const DEMO_COURSE = {
 
 async function seed() {
   try {
-    // Create seeded auth users and their KV profiles
-    const seedUsers = [
-      { email: "seo@hexanovate.com",   password: "seo@123!", name: "Admin",       donorType: "indian", country: "India" },
-      { email: "admin@ashakiran.org",  password: "Admin@123", name: "Admin User", donorType: "indian", country: "India" },
-      { email: "admin@shiksharaj.org", password: "Admin@123", name: "Admin User", donorType: "indian", country: "India" },
-      { email: "donor@test.com",       password: "Donor@123", name: "Rajesh Mehta", donorType: "indian", country: "India" },
-    ];
-    for (const u of seedUsers) {
-      let userId: string | null = null;
-      try {
-        const { data } = await supabase.auth.admin.createUser({
-          email: u.email, password: u.password,
-          user_metadata: { name: u.name, donorType: u.donorType, country: u.country },
-          email_confirm: true,
-        });
-        userId = data.user?.id || null;
-      } catch (_) {
-        // User already exists — look up their ID
-        try {
-          const { data: { users } } = await supabase.auth.admin.listUsers({ perPage: 1000 });
-          userId = users?.find(x => x.email === u.email)?.id || null;
-        } catch (_2) {}
-      }
-      // Always ensure KV profile exists for seeded users
-      if (userId) {
-        const existing: any = await kv.get(`user:${userId}`);
-        if (!existing) {
-          await kv.set(`user:${userId}`, {
-            id: userId, name: u.name, email: u.email,
-            phone: "", donorType: u.donorType, country: u.country,
-            createdAt: new Date().toISOString(), active: true,
-          });
-          console.log(`[seed] Created KV profile for ${u.email}`);
+    // Ensure KV profiles exist for admin accounts (auth accounts managed via Supabase dashboard)
+    const adminMeta: Record<string, { name: string; donorType: string; country: string }> = {
+      "seo@hexanovate.com":   { name: "Admin",      donorType: "indian", country: "India" },
+      "admin@ashakiran.org":  { name: "Admin User", donorType: "indian", country: "India" },
+      "admin@shiksharaj.org": { name: "Admin User", donorType: "indian", country: "India" },
+    };
+    try {
+      const { data: { users } } = await supabase.auth.admin.listUsers({ perPage: 1000 });
+      for (const u of (users || [])) {
+        const meta = adminMeta[u.email || ""];
+        if (meta) {
+          const existing: any = await kv.get(`user:${u.id}`);
+          if (!existing) {
+            await kv.set(`user:${u.id}`, {
+              id: u.id, name: meta.name, email: u.email,
+              phone: "", donorType: meta.donorType, country: meta.country,
+              createdAt: new Date().toISOString(), active: true,
+            });
+            console.log(`[seed] Created KV profile for ${u.email}`);
+          }
         }
       }
-    }
+    } catch (e) { console.log("[seed] listUsers error:", e); }
 
     // Seed demo course
     const courseSeeded = await kv.get("courses_v4_seeded");
@@ -902,28 +892,6 @@ seed().catch(console.log);
 
 // ─── Health ───────────────────────────────────────────────────────────────────
 app.get("/make-server-a0af4170/health", (c) => c.json({ status: "ok", v: "v2-admin-set", time: new Date().toISOString() }));
-
-// ─── Temp debug: who-am-i (remove after debugging) ───────────────────────────
-app.get("/make-server-a0af4170/whoami", async (c) => {
-  const authHeader = extractUserJWT(c);
-  const token = authHeader?.split(" ")[1] || null;
-  const local = token ? (() => {
-    try {
-      const parts = token.split(".");
-      const b64 = parts[1].replace(/-/g,"+").replace(/_/g,"/");
-      return JSON.parse(atob(b64 + "=="));
-    } catch { return null; }
-  })() : null;
-  const supaUser = await verifyUser(authHeader);
-  return c.json({
-    xUserTokenPresent: !!c.req.header("X-User-Token"),
-    authHeaderPresent: !!c.req.header("Authorization"),
-    localDecodeEmail: local?.email || null,
-    localDecodeSub: local?.sub || null,
-    supaVerifyEmail: supaUser?.email || null,
-    isAdminResult: isAdmin(supaUser?.email || local?.email),
-  });
-});
 
 // ─── Cause Stats (live raised + donors from real donations) ───────────────────
 app.get("/make-server-a0af4170/causes/stats", async (c) => {
@@ -958,7 +926,7 @@ app.get("/make-server-a0af4170/causes/settings", async (c) => {
 
 app.post("/make-server-a0af4170/causes/:id/toggle-80g", async (c) => {
   try {
-    const user = resolveAuthUser(c);
+    const user = await verifyAdminUser(c);
     if (!user || !isAdmin(user.email)) return c.json({ error: "Admin access required" }, 401);
     const causeId = c.req.param("id");
     const { enable80G } = await c.req.json();
@@ -1013,7 +981,7 @@ app.get("/make-server-a0af4170/causes", async (c) => {
 // POST /causes/admin — Admin: create cause
 app.post("/make-server-a0af4170/causes/admin", async (c) => {
   try {
-    const user = resolveAuthUser(c);
+    const user = await verifyAdminUser(c);
     if (!user || !isAdmin(user.email)) return c.json({ error: "Admin access required" }, 401);
     const body = await c.req.json();
     if (!body.title) return c.json({ error: "Title is required" }, 400);
@@ -1042,7 +1010,7 @@ app.post("/make-server-a0af4170/causes/admin", async (c) => {
 // PUT /causes/admin/:id — Admin: update cause
 app.put("/make-server-a0af4170/causes/admin/:id", async (c) => {
   try {
-    const user = resolveAuthUser(c);
+    const user = await verifyAdminUser(c);
     if (!user || !isAdmin(user.email)) return c.json({ error: "Admin access required" }, 401);
     const id = c.req.param("id");
     const body = await c.req.json();
@@ -1071,7 +1039,7 @@ app.put("/make-server-a0af4170/causes/admin/:id", async (c) => {
 // DELETE /causes/admin/:id — Admin: delete cause
 app.delete("/make-server-a0af4170/causes/admin/:id", async (c) => {
   try {
-    const user = resolveAuthUser(c);
+    const user = await verifyAdminUser(c);
     if (!user || !isAdmin(user.email)) return c.json({ error: "Admin access required" }, 401);
     const id = c.req.param("id");
     await kv.del(`cause:${id}`);
@@ -1126,8 +1094,7 @@ app.post("/make-server-a0af4170/auth/signup", async (c) => {
 // ─── Admin: List all users ────────────────────────────────────────────────────
 app.get("/make-server-a0af4170/admin/users", async (c) => {
   try {
-    // Use best-effort auth (Supabase verify + local JWT fallback)
-    const user = resolveAuthUser(c);
+    const user = await verifyAdminUser(c);
     if (!user || !isAdmin(user.email)) {
       console.log("[admin/users] Unauthorized, email=", user?.email);
       return c.json({ error: "Admin access required" }, 401);
@@ -1167,7 +1134,7 @@ app.get("/make-server-a0af4170/admin/users", async (c) => {
 // ─── Admin: Toggle user active status ────────────────────────────────────────
 app.post("/make-server-a0af4170/admin/users/:id/toggle", async (c) => {
   try {
-    const user = resolveAuthUser(c);
+    const user = await verifyAdminUser(c);
     if (!user || !isAdmin(user.email)) return c.json({ error: "Admin access required" }, 401);
     const userId = c.req.param("id");
     const { active } = await c.req.json();
@@ -1182,7 +1149,7 @@ app.post("/make-server-a0af4170/admin/users/:id/toggle", async (c) => {
 // ─── Admin: Migrate offline receipts to SRUBF-O/ series ──────────────────────
 app.post("/make-server-a0af4170/admin/migrate-offline-receipts", async (c) => {
   try {
-    const authUser = resolveAuthUser(c);
+    const authUser = await verifyAdminUser(c);
     if (!authUser || !isAdmin(authUser.email)) return c.json({ error: "Admin access required" }, 401);
 
     const all = await kv.getByPrefix("donation:");
@@ -1215,7 +1182,7 @@ app.post("/make-server-a0af4170/admin/migrate-offline-receipts", async (c) => {
 // ─── Admin: Fix offline receipt sequence (visible entries only) ───────────────
 app.post("/make-server-a0af4170/admin/fix-offline-receipt-sequence", async (c) => {
   try {
-    const authUser = resolveAuthUser(c);
+    const authUser = await verifyAdminUser(c);
     if (!authUser || !isAdmin(authUser.email)) return c.json({ error: "Admin access required" }, 401);
 
     // June 20 2026 00:00 IST = June 19 2026 18:30 UTC
@@ -1248,6 +1215,13 @@ app.post("/make-server-a0af4170/admin/fix-offline-receipt-sequence", async (c) =
 // ═══════════════ RAZORPAY ═════════════════════════════════════════════════════
 app.post("/make-server-a0af4170/razorpay/create-order", async (c) => {
   try {
+    const ip = c.req.header("x-forwarded-for")?.split(",")[0].trim() || "unknown";
+    const ratKey = `rate:order:${ip}`;
+    const attempts = ((await kv.get(ratKey) as number | null) || 0);
+    if (attempts >= 10) return c.json({ error: "Too many requests. Please try again later." }, 429);
+    await kv.set(ratKey, attempts + 1);
+    setTimeout(() => kv.set(ratKey, Math.max(0, attempts)).catch(() => {}), 3600_000);
+
     const { amount, currency = "INR", receipt: rec } = await c.req.json();
     if (!amount || amount < 1) return c.json({ error: "Invalid amount" }, 400);
     const keyId = Deno.env.get("RAZORPAY_KEY_ID");
@@ -1282,7 +1256,7 @@ app.post("/make-server-a0af4170/razorpay/verify", async (c) => {
     const verified = hexSignature === razorpay_signature;
     console.log("[razorpay] Signature verified:", verified, razorpay_payment_id);
     return c.json({ verified });
-  } catch (e) { console.log("[razorpay] Verify error:", e); return c.json({ verified: true }); }
+  } catch (e) { console.log("[razorpay] Verify error:", e); return c.json({ verified: false }); }
 });
 
 // ═══════════════ DONATIONS ════════════════════════════════════════════════════
@@ -1294,23 +1268,53 @@ app.post("/make-server-a0af4170/donations", async (c) => {
     const authUser = resolveAuthUser(c);
     const body = await c.req.json();
 
+    const amount = Number(body.amount);
+    if (!amount || amount < 1) return c.json({ error: "Invalid amount" }, 400);
+
+    // Verify Razorpay signature server-side for real (non-mock) payments
+    const orderId = body.razorpayOrderId || body.razorpay_order_id || null;
+    const paymentId = body.paymentId || body.razorpay_payment_id || null;
+    const signature = body.razorpay_signature || null;
+    if (orderId && paymentId && !String(orderId).startsWith("order_MOCK")) {
+      if (!signature) {
+        console.log("[donations] Missing signature for real order:", orderId);
+        return c.json({ error: "Payment signature required" }, 400);
+      }
+      try {
+        const keySecret = Deno.env.get("RAZORPAY_KEY_SECRET");
+        if (keySecret) {
+          const enc = new TextEncoder();
+          const key = await crypto.subtle.importKey("raw", enc.encode(keySecret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+          const sig = await crypto.subtle.sign("HMAC", key, enc.encode(`${orderId}|${paymentId}`));
+          const hex = Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, "0")).join("");
+          if (hex !== signature) {
+            console.log("[donations] Signature mismatch for:", paymentId);
+            return c.json({ error: "Payment verification failed" }, 400);
+          }
+        }
+      } catch (verifyErr) {
+        console.log("[donations] Signature verify error:", verifyErr);
+        return c.json({ error: "Payment verification failed" }, 400);
+      }
+    }
+
     const donation = {
-      id:              body.id              || `don-${Date.now()}`,
+      id:              `don-${crypto.randomUUID()}`,       // always server-generated
       userId:          authUser?.id         || body.userId || "guest",
       userName:        body.userName        || "Anonymous",
       userEmail:       authUser?.email      || body.userEmail || "",
       causeId:         body.causeId         || "general",
       causeName:       body.causeName       || "General Fund",
-      amount:          Number(body.amount)  || 0,
-      currency:        body.currency        || "INR",
+      amount,
+      currency:        "INR",                               // always INR for online
       frequency:       body.frequency       || "one-time",
       donorType:       body.donorType       || "indian",
       pan:             body.pan             || "",
-      paymentId:       body.paymentId       || payId(),
-      razorpayOrderId: body.razorpayOrderId || null,
-      status:          body.status          || "success",
+      paymentId:       paymentId            || payId(),
+      razorpayOrderId: orderId,
+      status:          "success" as const,                  // always server-set
       certificate80G:  body.certificate80G  || false,
-      createdAt:       body.createdAt       || new Date().toISOString(),
+      createdAt:       new Date().toISOString(),            // always server-generated
       receiptNo:       await getNextReceiptNo(),
       paymentMode:     "Online",
       impactDescription: body.impactDescription || "",
@@ -1417,7 +1421,7 @@ app.post("/make-server-a0af4170/donations/failed", async (c) => {
     sendEmail(
       `❌ Payment Failed — ${donation.userName} | ₹${donation.amount.toLocaleString("en-IN")}`,
       donationFailedHtml(donation),
-      NOTIFY_EMAIL,
+      NOTIFY_EMAILS,
     ).catch(e => console.log("[donations/failed] Email error:", e));
 
     return c.json({ success: true, donation });
@@ -1429,7 +1433,7 @@ app.post("/make-server-a0af4170/donations/failed", async (c) => {
 // GET /donations — Admin: all donations
 app.get("/make-server-a0af4170/donations", async (c) => {
   try {
-    const authUser = resolveAuthUser(c);
+    const authUser = await verifyAdminUser(c);
     if (!authUser || !isAdmin(authUser.email)) return c.json({ error: "Admin access required" }, 401);
     const donations = await kv.getByPrefix("donation:");
     const valid = (donations || []).filter(Boolean).sort((a: any, b: any) =>
@@ -1464,7 +1468,7 @@ app.get("/make-server-a0af4170/donations/mine", async (c) => {
 // POST /donations/offline — Admin: record an offline payment (cash/bank/UPI/cheque)
 app.post("/make-server-a0af4170/donations/offline", async (c) => {
   try {
-    const authUser = resolveAuthUser(c);
+    const authUser = await verifyAdminUser(c);
     if (!authUser || !isAdmin(authUser.email)) return c.json({ error: "Admin access required" }, 401);
     const body = await c.req.json();
     if (!body.userName || !body.amount) return c.json({ error: "Donor name and amount are required" }, 400);
@@ -1545,7 +1549,7 @@ app.post("/make-server-a0af4170/donations/offline", async (c) => {
 // POST /donations/:id/resend-email — Admin resend receipt (respects cause 80G setting)
 app.post("/make-server-a0af4170/donations/:id/resend-email", async (c) => {
   try {
-    const authUser = resolveAuthUser(c);
+    const authUser = await verifyAdminUser(c);
     if (!authUser || !isAdmin(authUser.email)) return c.json({ error: "Admin access required" }, 401);
 
     const donation = await kv.get(`donation:${c.req.param("id")}`) as any;
@@ -1579,9 +1583,11 @@ app.post("/make-server-a0af4170/donations/:id/resend-email", async (c) => {
   }
 });
 
-// POST /generate-certificate — generate PDF certificate bytes for a donation (no auth required)
+// POST /generate-certificate — generate PDF certificate bytes for a donation (auth required)
 app.post("/make-server-a0af4170/generate-certificate", async (c) => {
   try {
+    const authUser = resolveAuthUser(c);
+    if (!authUser) return c.json({ error: "Unauthorized" }, 401);
     const donation = await c.req.json();
     if (!donation?.receiptNo || !donation?.userName || donation?.amount == null) {
       return c.json({ error: "Invalid donation data" }, 400);
@@ -1597,7 +1603,7 @@ app.post("/make-server-a0af4170/generate-certificate", async (c) => {
 // PUT /donations/:id — Admin: edit a donation record
 app.put("/make-server-a0af4170/donations/:id", async (c) => {
   try {
-    const authUser = resolveAuthUser(c);
+    const authUser = await verifyAdminUser(c);
     if (!authUser || !isAdmin(authUser.email)) return c.json({ error: "Admin access required" }, 401);
     const id = c.req.param("id");
     const existing = await kv.get(`donation:${id}`) as any;
@@ -1659,7 +1665,7 @@ app.get("/make-server-a0af4170/lms/courses/:id", async (c) => {
 // ═══════════════ LMS ADMIN ════════════════════════════════════════════════════
 app.get("/make-server-a0af4170/lms/admin/courses/:id", async (c) => {
   try {
-    const user = getAuthUser(extractUserJWT(c));
+    const user = await verifyAdminUser(c);
     if (!user || !isAdmin(user.email)) return c.json({ error: "Admin only" }, 401);
     const course = await kv.get(`course:${c.req.param("id")}`);
     if (!course) return c.json({ error: "Not found" }, 404);
@@ -1669,7 +1675,7 @@ app.get("/make-server-a0af4170/lms/admin/courses/:id", async (c) => {
 
 app.post("/make-server-a0af4170/lms/admin/courses", async (c) => {
   try {
-    const user = getAuthUser(extractUserJWT(c));
+    const user = await verifyAdminUser(c);
     if (!user || !isAdmin(user.email)) return c.json({ error: "Admin only" }, 401);
     const body = await c.req.json();
     const id = body.id || `course-${Date.now()}`;
@@ -1683,7 +1689,7 @@ app.post("/make-server-a0af4170/lms/admin/courses", async (c) => {
 
 app.put("/make-server-a0af4170/lms/admin/courses/:id", async (c) => {
   try {
-    const user = getAuthUser(extractUserJWT(c));
+    const user = await verifyAdminUser(c);
     if (!user || !isAdmin(user.email)) return c.json({ error: "Admin only" }, 401);
     const id = c.req.param("id");
     const existing = await kv.get(`course:${id}`) as any;
@@ -1696,7 +1702,7 @@ app.put("/make-server-a0af4170/lms/admin/courses/:id", async (c) => {
 
 app.delete("/make-server-a0af4170/lms/admin/courses/:id", async (c) => {
   try {
-    const user = getAuthUser(extractUserJWT(c));
+    const user = await verifyAdminUser(c);
     if (!user || !isAdmin(user.email)) return c.json({ error: "Admin only" }, 401);
     const id = c.req.param("id");
     await kv.del(`course:${id}`);
@@ -1816,12 +1822,12 @@ app.post("/make-server-a0af4170/contact", async (c) => {
     const html = `
       <h2 style="color:#1a1a1a">📬 New Contact Form Submission</h2>
       <table style="border-collapse:collapse;width:100%;font-family:sans-serif;font-size:14px">
-        <tr><td style="padding:8px;font-weight:600;color:#555">Name</td><td style="padding:8px">${name || "—"}</td></tr>
-        <tr style="background:#f9f9f9"><td style="padding:8px;font-weight:600;color:#555">Email</td><td style="padding:8px">${email || "—"}</td></tr>
-        <tr><td style="padding:8px;font-weight:600;color:#555">Phone</td><td style="padding:8px">${phone || "—"}</td></tr>
-        <tr style="background:#f9f9f9"><td style="padding:8px;font-weight:600;color:#555">City</td><td style="padding:8px">${city || "—"}</td></tr>
-        <tr><td style="padding:8px;font-weight:600;color:#555">Role</td><td style="padding:8px">${role || "—"}</td></tr>
-        <tr style="background:#f9f9f9"><td style="padding:8px;font-weight:600;color:#555">Message</td><td style="padding:8px">${message || "—"}</td></tr>
+        <tr><td style="padding:8px;font-weight:600;color:#555">Name</td><td style="padding:8px">${esc(name || "—")}</td></tr>
+        <tr style="background:#f9f9f9"><td style="padding:8px;font-weight:600;color:#555">Email</td><td style="padding:8px">${esc(email || "—")}</td></tr>
+        <tr><td style="padding:8px;font-weight:600;color:#555">Phone</td><td style="padding:8px">${esc(phone || "—")}</td></tr>
+        <tr style="background:#f9f9f9"><td style="padding:8px;font-weight:600;color:#555">City</td><td style="padding:8px">${esc(city || "—")}</td></tr>
+        <tr><td style="padding:8px;font-weight:600;color:#555">Role</td><td style="padding:8px">${esc(role || "—")}</td></tr>
+        <tr style="background:#f9f9f9"><td style="padding:8px;font-weight:600;color:#555">Message</td><td style="padding:8px">${esc(message || "—")}</td></tr>
       </table>`;
     await sendEmail(`📬 Contact Form: ${name} (${email})`, html, NOTIFY_EMAILS);
     return c.json({ success: true });
