@@ -54,8 +54,9 @@ export function DonatePage() {
 
   const [name, setName] = useState(user?.name || "");
   const [email, setEmail] = useState(user?.email || "");
-  const [phone, setPhone] = useState(user?.phone || "");
+  const [phone, setPhone] = useState((user?.phone || "").replace(/^\+91/, "").trim());
   const [pan, setPan] = useState(user?.pan || "");
+  const [idType, setIdType] = useState<"pan" | "aadhaar">("pan");
   const [address, setAddress] = useState("");
   const [country, setCountry] = useState(donorType === "indian" ? "India" : "");
   const [isAnonymous, setIsAnonymous] = useState(false);
@@ -102,9 +103,13 @@ export function DonatePage() {
     const errs: Record<string, string> = {};
     if (!name.trim()) errs.name = "Name is required";
     if (!email.trim() || !/\S+@\S+\.\S+/.test(email)) errs.email = "Valid email required";
-    if (!phone.trim()) errs.phone = "Phone number is required";
-    if (donorType === "indian" && taxReceipt && pan.length > 0 && !/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(pan.toUpperCase())) {
+    if (!phone.trim() || !/^\d{10}$/.test(phone.trim())) errs.phone = "Enter a valid 10-digit mobile number";
+    if (!pan.trim()) {
+      errs.pan = idType === "pan" ? "PAN card number is required" : "Aadhaar number is required";
+    } else if (idType === "pan" && !/^[A-Z]{5}[0-9]{4}[A-Z]$/.test(pan.toUpperCase())) {
       errs.pan = "Invalid PAN format (e.g. ABCDE1234F)";
+    } else if (idType === "aadhaar" && !/^\d{12}$/.test(pan)) {
+      errs.pan = "Aadhaar must be exactly 12 digits";
     }
     if (donorType !== "indian" && !country) errs.country = "Country is required";
     if (!finalAmount || finalAmount <= 0) errs.amount = "Please enter a donation amount";
@@ -357,7 +362,12 @@ export function DonatePage() {
                       type="number"
                       placeholder="Enter custom amount"
                       value={customAmount}
-                      onChange={e => { setCustomAmount(e.target.value); setAmount(0); }}
+                      min="1"
+                      onWheel={e => (e.target as HTMLInputElement).blur()}
+                      onChange={e => {
+                        const v = e.target.value;
+                        if (v === "" || parseFloat(v) > 0) { setCustomAmount(v); setAmount(0); }
+                      }}
                       className="w-full pl-8 pr-4 py-3 border-2 border-slate-200 rounded-xl focus:border-orange-400 focus:outline-none text-slate-900 bg-white"
                     />
                   </div>
@@ -382,8 +392,8 @@ export function DonatePage() {
                 {/* Donor Type */}
                 <div>
                   <label className="block text-slate-700 text-sm mb-3" style={{ fontWeight: 600 }}>Donor Type</label>
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                    {(Object.entries(DONOR_TYPE_INFO) as [DonorType, typeof DONOR_TYPE_INFO[DonorType]][]).map(([type, info]) => (
+                  <div className="grid grid-cols-1 gap-3">
+                    {(Object.entries(DONOR_TYPE_INFO) as [DonorType, typeof DONOR_TYPE_INFO[DonorType]][]).filter(([type]) => type === "indian").map(([type, info]) => (
                       <button
                         key={type}
                         onClick={() => setDonorType(type)}
@@ -440,9 +450,13 @@ export function DonatePage() {
                   </div>
                   <div>
                     <label className="block text-slate-600 text-sm mb-1.5" style={{ fontWeight: 500 }}>Phone Number *</label>
-                    <input value={phone} onChange={e => setPhone(e.target.value)}
-                      className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none ${errors.phone ? "border-red-300 focus:border-red-400" : "border-slate-200 focus:border-orange-400"}`}
-                      placeholder="+91 9876543210" />
+                    <div className="flex">
+                      <span className={`flex items-center px-3 border-2 border-r-0 rounded-l-xl text-sm text-slate-600 bg-slate-50 ${errors.phone ? "border-red-300" : "border-slate-200"}`} style={{ fontWeight: 500 }}>+91</span>
+                      <input value={phone}
+                        onChange={e => { const v = e.target.value.replace(/\D/g, "").slice(0, 10); setPhone(v); }}
+                        className={`flex-1 px-4 py-3 border-2 rounded-r-xl focus:outline-none ${errors.phone ? "border-red-300 focus:border-red-400" : "border-slate-200 focus:border-orange-400"}`}
+                        placeholder="9876543210" maxLength={10} inputMode="numeric" />
+                    </div>
                     {errors.phone && <p className="text-red-500 text-xs mt-1">{errors.phone}</p>}
                   </div>
                   {donorType !== "indian" && (
@@ -458,15 +472,34 @@ export function DonatePage() {
 
                 <div>
                   <label className="block text-slate-600 text-sm mb-1.5" style={{ fontWeight: 500 }}>
-                    PAN Card Number (for tax benefit, if applicable)
+                    PAN / Aadhaar Number *
                   </label>
-                  <input value={pan} onChange={e => setPan(e.target.value.toUpperCase())}
-                    maxLength={10}
-                    className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none uppercase tracking-widest font-mono ${errors.pan ? "border-red-300 focus:border-red-400" : "border-slate-200 focus:border-orange-400"}`}
-                    placeholder="ABCDE1234F" />
+                  <div className="flex gap-2 mb-2">
+                    <button type="button"
+                      onClick={() => { setIdType("pan"); setPan(""); }}
+                      className={`flex-1 py-2 rounded-xl border-2 text-sm transition-all ${idType === "pan" ? "border-orange-500 bg-orange-50 text-orange-700 font-semibold" : "border-slate-200 text-slate-600 hover:border-slate-300"}`}>
+                      PAN Card
+                    </button>
+                    <button type="button"
+                      onClick={() => { setIdType("aadhaar"); setPan(""); }}
+                      className={`flex-1 py-2 rounded-xl border-2 text-sm transition-all ${idType === "aadhaar" ? "border-orange-500 bg-orange-50 text-orange-700 font-semibold" : "border-slate-200 text-slate-600 hover:border-slate-300"}`}>
+                      Aadhaar Number
+                    </button>
+                  </div>
+                  <input
+                    value={pan}
+                    onChange={e => {
+                      if (idType === "pan") setPan(e.target.value.toUpperCase().replace(/[^A-Z0-9]/g, "").slice(0, 10));
+                      else setPan(e.target.value.replace(/\D/g, "").slice(0, 12));
+                    }}
+                    maxLength={idType === "pan" ? 10 : 12}
+                    inputMode={idType === "aadhaar" ? "numeric" : "text"}
+                    className={`w-full px-4 py-3 border-2 rounded-xl focus:outline-none tracking-widest font-mono ${idType === "pan" ? "uppercase" : ""} ${errors.pan ? "border-red-300 focus:border-red-400" : "border-slate-200 focus:border-orange-400"}`}
+                    placeholder={idType === "pan" ? "ABCDE1234F" : "9xxx-5xxxx-9xxx"}
+                  />
                   {errors.pan && <p className="text-red-500 text-xs mt-1">{errors.pan}</p>}
                   <p className="text-xs text-slate-400 mt-1 flex items-start gap-1">
-                    <Shield size={11} className="mt-0.5" /> Your PAN stays encrypted and is used only to issue your donation certificate under Section 354(1)(g) of the Income-tax Act, 2025.
+                    <Shield size={11} className="mt-0.5" /> {idType === "pan" ? "PAN is recommended for income tax deduction benefit under Section 80G." : "Aadhaar is accepted. PAN is recommended for 80G tax benefit."}
                   </p>
                 </div>
 

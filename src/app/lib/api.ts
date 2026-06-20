@@ -151,6 +151,8 @@ export const donationApi = {
     ),
   saveOffline: (data: unknown) =>
     request<{ success: boolean; donation: Donation }>("POST", "/donations/offline", data, true),
+  migrateOfflineReceipts: () =>
+    request<{ success: boolean; migrated: number }>("POST", "/admin/migrate-offline-receipts", {}, true),
 };
 
 // ─── Causes ───────────────────────────────────────────────────────────────────
