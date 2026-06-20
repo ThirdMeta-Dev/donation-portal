@@ -153,6 +153,8 @@ export const donationApi = {
     request<{ success: boolean; donation: Donation }>("POST", "/donations/offline", data, true),
   migrateOfflineReceipts: () =>
     request<{ success: boolean; migrated: number }>("POST", "/admin/migrate-offline-receipts", {}, true),
+  fixOfflineReceiptSequence: () =>
+    request<{ success: boolean; renumbered: number }>("POST", "/admin/fix-offline-receipt-sequence", {}, true),
 };
 
 // ─── Causes ───────────────────────────────────────────────────────────────────

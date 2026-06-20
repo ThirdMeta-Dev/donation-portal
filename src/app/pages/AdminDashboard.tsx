@@ -157,12 +157,28 @@ export function AdminDashboard() {
 
       // Auto-migrate offline receipts from SRUBF/ to SRUBF-O/ series (runs once)
       if (!afterMigration && donRes.status === "fulfilled") {
-        const needsMigration = (donRes.value.donations || []).some((d: Donation) => {
-          const isOffline = d.paymentMode === "Offline" || d.userId === "offline" || (!d.paymentId?.startsWith("pay_"));
+        const allDons = donRes.value.donations || [];
+        // Step 1: migrate any SRUBF/ offline entries to SRUBF-O/
+        const needsMigration = allDons.some((d: Donation) => {
+          const isOffline = d.paymentMode === "Offline" || (d as any).userId === "offline" || (!d.paymentId?.startsWith("pay_"));
           return isOffline && d.receiptNo?.startsWith("SRUBF/");
         });
         if (needsMigration) {
           await donationApi.migrateOfflineReceipts().catch(() => {});
+          return loadAll(true);
+        }
+        // Step 2: fix sequence if visible offline entries are numbered higher than their count
+        const VISIBLE_CUTOFF_IST = new Date("2026-06-19T18:30:00.000Z");
+        const visibleOffline = allDons.filter((d: Donation) => {
+          const isOffline = d.paymentMode === "Offline" || (d as any).userId === "offline" || (!d.paymentId?.startsWith("pay_"));
+          return isOffline && new Date(d.createdAt) >= VISIBLE_CUTOFF_IST && d.receiptNo?.startsWith("SRUBF-O/");
+        });
+        const needsSeqFix = visibleOffline.length > 0 && visibleOffline.some((d: Donation) => {
+          const num = parseInt(d.receiptNo?.split("/").pop() || "0");
+          return num > visibleOffline.length;
+        });
+        if (needsSeqFix) {
+          await donationApi.fixOfflineReceiptSequence().catch(() => {});
           return loadAll(true);
         }
       }
