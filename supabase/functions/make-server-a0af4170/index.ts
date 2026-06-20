@@ -1212,6 +1212,39 @@ app.post("/make-server-a0af4170/admin/migrate-offline-receipts", async (c) => {
   } catch (e: any) { return c.json({ error: String(e) }, 500); }
 });
 
+// ─── Admin: Fix offline receipt sequence (visible entries only) ───────────────
+app.post("/make-server-a0af4170/admin/fix-offline-receipt-sequence", async (c) => {
+  try {
+    const authUser = resolveAuthUser(c);
+    if (!authUser || !isAdmin(authUser.email)) return c.json({ error: "Admin access required" }, 401);
+
+    // June 20 2026 00:00 IST = June 19 2026 18:30 UTC
+    const VISIBLE_CUTOFF = new Date("2026-06-19T18:30:00.000Z");
+    const now = new Date();
+    const fyStart = now.getMonth() >= 3 ? now.getFullYear() : now.getFullYear() - 1;
+    const fy = `${fyStart}-${String(fyStart + 1).slice(2)}`;
+
+    const all = await kv.getByPrefix("donation:");
+    const visibleOffline = (all as any[])
+      .filter((d: any) => {
+        const isOffline = d.paymentMode === "Offline" || d.userId === "offline" || (!d.paymentId?.startsWith("pay_"));
+        return isOffline && new Date(d.createdAt) >= VISIBLE_CUTOFF;
+      })
+      .sort((a: any, b: any) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+
+    const offlineKey = `receipt_seq_offline:${fy}`;
+    let counter = 0;
+    for (const d of visibleOffline) {
+      counter++;
+      const newReceipt = `SRUBF-O/${fy}/${String(counter).padStart(6, "0")}`;
+      await kv.set(`donation:${d.id}`, { ...d, receiptNo: newReceipt });
+    }
+    await kv.set(offlineKey, counter);
+    console.log(`[fix-seq] Re-numbered ${counter} visible offline receipts from SRUBF-O/000001`);
+    return c.json({ success: true, renumbered: counter });
+  } catch (e: any) { return c.json({ error: String(e) }, 500); }
+});
+
 // ═══════════════ RAZORPAY ═════════════════════════════════════════════════════
 app.post("/make-server-a0af4170/razorpay/create-order", async (c) => {
   try {
