@@ -262,8 +262,8 @@ async function generateCertificatePDFBytes(d: any): Promise<Uint8Array> {
   page.drawImage(iconEmail, { x: RE - iSz, y: rY(97, iSz), width: iSz, height: iSz });
 
   // ── 4. Org name ──────────────────────────────────────────────────────────────
-  dt("SHIKSHARAJ, UJJWAL BHARAT FOUNDATION",           LM, 142, fLoraSB, 13, cOrgGold);
-  dt("Reg. No. (CIN) : U85499MR2026NPL474075   |   PAN : ABSCS9855K", LM, 158, fDmReg, 9, cOrgGold);
+  dt("SHIKSHARAJ, UJJWAL BHARAT FOUNDATION",           LM, 142, fLoraSB, 10, cOrgGold);
+  dt("Reg. No. (CIN) : U85499MR2026NPL474075   |   PAN : ABSCS9855K", LM, 158, fDmReg, 8, cOrgGold);
 
   // ── 5. Divider ───────────────────────────────────────────────────────────────
   ln(LM, RE, 169, 1, cDivider);
@@ -288,11 +288,59 @@ async function generateCertificatePDFBytes(d: any): Promise<Uint8Array> {
   )];
   p1.forEach((line, i) => dt(line, LM, 219 + i * LH, fDmReg, 9, cBlk));
 
-  const p2 = _wrapText(
-    "Donations to ShikshaRaj, Ujjwal Bharat Foundation are eligible for deduction under 133(1)(b) of the Income Tax Act, 2025. URN of registration under 354(4) section - ABSCS9855KF20261",
-    BODY_W, fDmReg, 9,
-  );
-  p2.forEach((line, i) => dt(line, LM, 267 + i * LH, fDmReg, 9, cBlk));
+  // Mixed-font word-wrapping renderer (handles bold spans inline)
+  const drawMixed = (
+    segs: { t: string; f: any }[],
+    startX: number, startFy: number, sz: number, maxW: number
+  ): number => {
+    const toks: { t: string; f: any }[] = [];
+    for (const seg of segs) {
+      const words = seg.t.split(" ");
+      for (let i = 0; i < words.length; i++) {
+        toks.push({ t: i === 0 ? words[i] : " " + words[i], f: seg.f });
+      }
+    }
+    const lines: { t: string; f: any }[][] = [];
+    let cur: { t: string; f: any }[] = [];
+    let curW = 0;
+    for (const tok of toks) {
+      const tw = tok.f.widthOfTextAtSize(tok.t, sz);
+      if (curW + tw > maxW && cur.length > 0) {
+        lines.push(cur);
+        const s = tok.t.trimStart();
+        cur = s ? [{ t: s, f: tok.f }] : [];
+        curW = s ? tok.f.widthOfTextAtSize(s, sz) : 0;
+      } else if (cur.length > 0 && cur[cur.length - 1].f === tok.f) {
+        cur[cur.length - 1].t += tok.t; curW += tw;
+      } else {
+        cur.push({ t: tok.t, f: tok.f }); curW += tw;
+      }
+    }
+    if (cur.length > 0) lines.push(cur);
+    for (let li = 0; li < lines.length; li++) {
+      let cx = startX;
+      for (const s of lines[li]) {
+        if (s.t) page.drawText(s.t, { x: cx, y: H - (startFy + li * LH) - sz * 0.82, size: sz, font: s.f, color: cBlk });
+        cx += s.f.widthOfTextAtSize(s.t, sz);
+      }
+    }
+    return lines.length;
+  };
+
+  // Bullet line 1 — with bold spans
+  const b1Lines = drawMixed([
+    { t: "• Donations to ShikshaRaj, Ujjwal Bharat Foundation are ", f: fDmReg },
+    { t: "eligible for deduction",                                         f: fDmSB  },
+    { t: " under ",                                                         f: fDmReg },
+    { t: "133(1)(b)",                                                       f: fDmSB  },
+    { t: " of the Income Tax Act, 2025.",                                   f: fDmReg },
+  ], LM, 267, 9, BODY_W);
+
+  // Bullet line 2 — with bold URN
+  drawMixed([
+    { t: "• URN of registration under 354(4) section – ", f: fDmReg },
+    { t: "ABSCS9855KF20261",                                         f: fDmSB  },
+  ], LM, 267 + b1Lines * LH, 9, BODY_W);
 
   // ── 8. Donor Details Box ─────────────────────────────────────────────────────
   const BW = RE - LM; // box width = 531
@@ -378,7 +426,7 @@ async function generateCertificatePDFBytes(d: any): Promise<Uint8Array> {
 
   // ── 14. "Received by" / "Authorised Signatory" ───────────────────────────────
   dtr("Received by",                                    RE, 784, fLoraSB,  10, cBlk);
-  dtr("Kalpesh Wadekar, Director",                     RE, 797, fDmLight,   8, cBlk);
+  dtr("Kalpesh Wadekar, Director",                     RE, 797, fDmReg,     8, cBlk);
   dtr("For, ShikshaRaj, Ujjwal Bharat Foundation.",    RE, 809, fDmLight,   8, cBlk);
 
   return await pdfDoc.save();
