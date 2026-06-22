@@ -155,6 +155,8 @@ export const donationApi = {
     request<{ success: boolean; migrated: number }>("POST", "/admin/migrate-offline-receipts", {}, true),
   fixOfflineReceiptSequence: () =>
     request<{ success: boolean; renumbered: number }>("POST", "/admin/fix-offline-receipt-sequence", {}, true),
+  generateCertificate: (donation: unknown) =>
+    request<{ pdf: string }>("POST", "/generate-certificate", donation, false),
 };
 
 // ─── Causes ───────────────────────────────────────────────────────────────────
