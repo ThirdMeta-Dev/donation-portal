@@ -1,8 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { X, Download, Shield, Mail, Loader2, AlertCircle, CheckCircle2, ExternalLink } from "lucide-react";
+import { X, Download, Shield, Mail, Loader2, AlertCircle, CheckCircle2, ExternalLink, FileText } from "lucide-react";
 import { donationApi } from "../lib/api";
-import { projectId, publicAnonKey } from "/utils/supabase/info";
 
 interface Donation {
   id: string; userName: string; userEmail: string; amount: number;
@@ -27,35 +26,36 @@ export function DonationReceiptModal({ donation, onClose, isAdminView = false }:
   const [resendMsg,   setResendMsg]   = useState("");
   const prevUrlRef = useRef<string | null>(null);
 
+  // Reset PDF state when donation changes (don't auto-generate — let user trigger it)
   useEffect(() => {
-    if (!donation) return;
-    // Revoke previous blob URL to avoid memory leak
     if (prevUrlRef.current) URL.revokeObjectURL(prevUrlRef.current);
+    prevUrlRef.current = null;
     setPdfUrl(null);
     setPdfError("");
-    setPdfLoading(true);
-
-    fetch(`https://${projectId}.supabase.co/functions/v1/make-server-a0af4170/generate-certificate`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "Authorization": `Bearer ${publicAnonKey}` },
-      body: JSON.stringify(donation),
-    })
-      .then(r => r.json())
-      .then(({ pdf, error }) => {
-        if (error) throw new Error(error);
-        const bytes = Uint8Array.from(atob(pdf), c => c.charCodeAt(0));
-        const blob  = new Blob([bytes], { type: "application/pdf" });
-        const url   = URL.createObjectURL(blob);
-        prevUrlRef.current = url;
-        setPdfUrl(url);
-      })
-      .catch(e => setPdfError(e.message || "Failed to load certificate"))
-      .finally(() => setPdfLoading(false));
-
+    setPdfLoading(false);
     return () => {
       if (prevUrlRef.current) URL.revokeObjectURL(prevUrlRef.current);
     };
   }, [donation?.id]);
+
+  const generatePdf = async () => {
+    if (!donation) return;
+    setPdfError("");
+    setPdfLoading(true);
+    try {
+      const { pdf } = await donationApi.generateCertificate(donation);
+      const bytes = Uint8Array.from(atob(pdf), c => c.charCodeAt(0));
+      const blob  = new Blob([bytes], { type: "application/pdf" });
+      const url   = URL.createObjectURL(blob);
+      if (prevUrlRef.current) URL.revokeObjectURL(prevUrlRef.current);
+      prevUrlRef.current = url;
+      setPdfUrl(url);
+    } catch (e: any) {
+      setPdfError(e.message || "Failed to generate certificate");
+    } finally {
+      setPdfLoading(false);
+    }
+  };
 
   if (!donation) return null;
 
@@ -125,23 +125,42 @@ export function DonationReceiptModal({ donation, onClose, isAdminView = false }:
           </div>
 
           {/* PDF viewer */}
-          <div className="flex-1 overflow-hidden bg-slate-200 relative" style={{ minHeight: 400 }}>
+          <div className="flex-1 overflow-hidden bg-slate-100 relative" style={{ minHeight: 400 }}>
             {pdfLoading && (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
                 <Loader2 size={32} className="animate-spin" style={{ color: "#1B2B3A" }} />
                 <p className="text-sm text-slate-500">Generating certificate…</p>
+                <p className="text-xs text-slate-400">This may take 5–10 seconds</p>
               </div>
             )}
-            {pdfError && (
+            {!pdfLoading && pdfError && (
               <div className="absolute inset-0 flex flex-col items-center justify-center gap-3 p-6">
                 <AlertCircle size={32} className="text-red-400" />
                 <p className="text-sm text-red-600 text-center">{pdfError}</p>
                 <button
-                  onClick={() => { setPdfError(""); setPdfLoading(true); /* re-trigger via key */ }}
+                  onClick={generatePdf}
                   className="text-xs px-4 py-2 rounded-lg"
                   style={{ background: "#1B2B3A", color: "#fff" }}
                 >
                   Retry
+                </button>
+              </div>
+            )}
+            {!pdfLoading && !pdfError && !pdfUrl && (
+              <div className="absolute inset-0 flex flex-col items-center justify-center gap-4">
+                <div className="w-16 h-16 rounded-2xl flex items-center justify-center" style={{ background: "#E8E3DC" }}>
+                  <FileText size={28} style={{ color: "#1B2B3A" }} />
+                </div>
+                <div className="text-center">
+                  <p className="text-sm font-semibold text-slate-700 mb-1">Certificate not loaded</p>
+                  <p className="text-xs text-slate-400">Click below to generate the PDF</p>
+                </div>
+                <button
+                  onClick={generatePdf}
+                  className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm"
+                  style={{ fontWeight: 600, background: "#1B2B3A", color: "#F8F5EF" }}
+                >
+                  <FileText size={14} /> Generate Certificate
                 </button>
               </div>
             )}

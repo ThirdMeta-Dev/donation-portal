@@ -176,10 +176,12 @@ function _wrapText(text: string, maxW: number, font: any, size: number): string[
   return lines;
 }
 
-// ─── PDF Certificate Generator (Figma-accurate: Lora + DM Sans, A4) ──────────
-async function generateCertificatePDFBytes(d: any): Promise<Uint8Array> {
-  // Load Lora + DM Sans from Google Fonts CDN (parallel)
-  const fontUrls = [
+// ─── Font byte cache — warm once per Deno instance, reused across requests ──
+let _fontCache: Uint8Array[] | null = null;
+
+async function loadFontBytes(): Promise<Uint8Array[]> {
+  if (_fontCache) return _fontCache;
+  const urls = [
     "https://fonts.gstatic.com/s/lora/v37/0QI6MX1D_JOuGQbT0gvTJPa787zAvCJG.ttf",
     "https://fonts.gstatic.com/s/lora/v37/0QI6MX1D_JOuGQbT0gvTJPa787wsuyJG.ttf",
     "https://fonts.gstatic.com/s/dmsans/v17/rP2tp2ywxg089UriI5-g4vlH9VoD8CmcqZG40F9JadbnoEwAopxhTg.ttf",
@@ -187,9 +189,15 @@ async function generateCertificatePDFBytes(d: any): Promise<Uint8Array> {
     "https://fonts.gstatic.com/s/dmsans/v17/rP2tp2ywxg089UriI5-g4vlH9VoD8CmcqZG40F9JadbnoEwAfJthTg.ttf",
     "https://fonts.gstatic.com/s/dmsans/v17/rP2rp2ywxg089UriCZaSExd86J3t9jz86Mvy4qCRAL19DksVat-JDW3z.ttf",
   ];
-  const [loraSBb, loraMedb, dmRegb, dmLightb, dmSBb, dmItalicb] = await Promise.all(
-    fontUrls.map(u => fetch(u).then(r => r.arrayBuffer()).then(b => new Uint8Array(b)))
+  _fontCache = await Promise.all(
+    urls.map(u => fetch(u).then(r => r.arrayBuffer()).then(b => new Uint8Array(b)))
   );
+  return _fontCache;
+}
+
+// ─── PDF Certificate Generator (Figma-accurate: Lora + DM Sans, A4) ──────────
+async function generateCertificatePDFBytes(d: any): Promise<Uint8Array> {
+  const [loraSBb, loraMedb, dmRegb, dmLightb, dmSBb, dmItalicb] = await loadFontBytes();
 
   const pdfDoc = await PDFDocument.create();
   pdfDoc.registerFontkit(fontkit);
