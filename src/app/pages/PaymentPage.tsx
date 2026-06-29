@@ -114,7 +114,24 @@ export function PaymentPage() {
         {
           method: "POST",
           headers: { "Content-Type": "application/json", "Authorization": `Bearer ${publicAnonKey}` },
-          body: JSON.stringify({ amount, currency: "INR", receipt: receiptNo }),
+          body: JSON.stringify({
+          amount,
+          currency: "INR",
+          receipt: receiptNo,
+          // Donor details stored server-side so webhook can reconstruct the donation
+          // if the browser closes before the client-side save fires.
+          userName:      name,
+          userEmail:     email,
+          phone:         phone         || "",
+          pan:           pan           || "",
+          address:       address       || "",
+          country:       country       || (donorType === "indian" ? "India" : ""),
+          causeId:       cause?.id     || "general",
+          causeName:     cause?.title  || "General Fund",
+          frequency,
+          donorType,
+          certificate80G: (cause80GEnabled !== false) && !!taxReceipt && (donorType === "indian" || donorType === "nri"),
+        }),
         }
       );
       const orderData = await orderRes.json();

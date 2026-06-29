@@ -1278,7 +1278,8 @@ app.post("/make-server-a0af4170/razorpay/create-order", async (c) => {
     await kv.set(ratKey, attempts + 1);
     setTimeout(() => kv.set(ratKey, Math.max(0, attempts)).catch(() => {}), 3600_000);
 
-    const { amount, currency = "INR", receipt: rec } = await c.req.json();
+    const body = await c.req.json();
+    const { amount, currency = "INR", receipt: rec } = body;
     if (!amount || amount < 1) return c.json({ error: "Invalid amount" }, 400);
     const keyId = Deno.env.get("RAZORPAY_KEY_ID");
     const keySecret = Deno.env.get("RAZORPAY_KEY_SECRET");
@@ -1295,6 +1296,23 @@ app.post("/make-server-a0af4170/razorpay/create-order", async (c) => {
     const data = await res.json();
     if (!res.ok) return c.json({ error: data?.error?.description || "Razorpay order creation failed" }, 500);
     console.log("[razorpay] Order created:", data.id);
+
+    // Store donor intent keyed by orderId so the webhook can reconstruct the full donation
+    // if the browser closes before the client-side save fires.
+    await kv.set(`donation-intent:${data.id}`, {
+      userName:      body.userName      || "Anonymous",
+      userEmail:     body.userEmail     || "",
+      causeId:       body.causeId       || "general",
+      causeName:     body.causeName     || "General Fund",
+      frequency:     body.frequency     || "one-time",
+      donorType:     body.donorType     || "indian",
+      pan:           body.pan           || "",
+      phone:         body.phone         || "",
+      address:       body.address       || "",
+      country:       body.country       || "India",
+      certificate80G: !!body.certificate80G,
+    }).catch(e => console.log("[razorpay] Failed to save donation intent:", e));
+
     return c.json({ orderId: data.id, amount: data.amount, currency: data.currency, key: keyId });
   } catch (e) { return c.json({ error: "Order creation failed: " + e }, 500); }
 });
@@ -1315,6 +1333,110 @@ app.post("/make-server-a0af4170/razorpay/verify", async (c) => {
   } catch (e) { console.log("[razorpay] Verify error:", e); return c.json({ verified: false }); }
 });
 
+// POST /razorpay/webhook — Server-side fallback: records donations that the
+// browser failed to save (tab closed, network drop, crash after payment).
+// Configure in Razorpay Dashboard → Webhooks → payment.captured event.
+app.post("/make-server-a0af4170/razorpay/webhook", async (c) => {
+  try {
+    const rawBody = await c.req.text();
+
+    // Verify Razorpay webhook signature
+    const webhookSecret = Deno.env.get("RAZORPAY_WEBHOOK_SECRET");
+    if (webhookSecret) {
+      const signature = c.req.header("x-razorpay-signature") || "";
+      const enc = new TextEncoder();
+      const key = await crypto.subtle.importKey("raw", enc.encode(webhookSecret), { name: "HMAC", hash: "SHA-256" }, false, ["sign"]);
+      const sig = await crypto.subtle.sign("HMAC", key, enc.encode(rawBody));
+      const hex = Array.from(new Uint8Array(sig)).map(b => b.toString(16).padStart(2, "0")).join("");
+      if (hex !== signature) {
+        console.log("[webhook] Invalid signature — rejected");
+        return c.json({ error: "Invalid signature" }, 400);
+      }
+    } else {
+      console.log("[webhook] RAZORPAY_WEBHOOK_SECRET not set — skipping signature check");
+    }
+
+    const event = JSON.parse(rawBody);
+    const eventType = event?.event;
+    console.log("[webhook] Event received:", eventType);
+
+    if (eventType === "payment.captured") {
+      const payment = event?.payload?.payment?.entity;
+      if (!payment) return c.json({ received: true });
+
+      const paymentId = payment.id;
+      const orderId   = payment.order_id;
+      const amountINR = Math.round(payment.amount / 100);
+
+      // Idempotency: skip if this payment was already recorded (client-side or earlier webhook)
+      const alreadyRecorded = await kv.get(`payment-recorded:${paymentId}`);
+      if (alreadyRecorded) {
+        console.log("[webhook] Already recorded:", paymentId);
+        return c.json({ received: true });
+      }
+
+      // Look up the donation intent stored when the Razorpay order was created
+      const intent = (await kv.get(`donation-intent:${orderId}`)) as any || {};
+
+      const donationId = `don-${Date.now()}`;
+      const receiptNo  = await getNextReceiptNo();
+      const donation = {
+        id:               donationId,
+        userId:           "guest",
+        userName:         intent.userName   || payment.email?.split("@")[0] || "Donor",
+        userEmail:        intent.userEmail  || payment.email || "",
+        causeId:          intent.causeId    || "general",
+        causeName:        intent.causeName  || "General Fund",
+        amount:           amountINR,
+        currency:         "INR",
+        frequency:        intent.frequency  || "one-time",
+        donorType:        intent.donorType  || "indian",
+        pan:              intent.pan        || "",
+        phone:            intent.phone      || payment.contact || "",
+        address:          intent.address    || "",
+        country:          intent.country    || "India",
+        paymentId,
+        razorpayOrderId:  orderId,
+        status:           "success" as const,
+        certificate80G:   !!intent.certificate80G,
+        createdAt:        new Date().toISOString(),
+        receiptNo,
+        paymentMode:      "Online",
+        impactDescription: "",
+      };
+
+      await kv.set(`donation:${donationId}`, donation);
+      await kv.set(`payment-recorded:${paymentId}`, { donationId, ts: Date.now() });
+      await kv.del(`donation-intent:${orderId}`).catch(() => {});
+      console.log(`[webhook] ✅ Donation saved via webhook: ${donationId} paymentId=${paymentId} amount=${amountINR}`);
+
+      // Send receipt email (non-blocking)
+      const recipients = [...NOTIFY_EMAILS];
+      if (donation.userEmail && !NOTIFY_EMAILS.includes(donation.userEmail)) recipients.push(donation.userEmail);
+      const cause80GEnabled = await getCause80GEnabled(donation.causeId);
+      const send80G = cause80GEnabled && donation.certificate80G;
+      const emailHTML = generateThankYouEmailHTML(donation, send80G);
+      const subject = send80G
+        ? `✅ Income Tax Deduction Certificate: ${receiptNo} | ${donation.userName} | ₹${amountINR.toLocaleString("en-IN")}`
+        : `✅ Donation Receipt: ${receiptNo} | ${donation.userName} | ₹${amountINR.toLocaleString("en-IN")}`;
+      generateCertificatePDFBytes(donation)
+        .then(pdfBytes => {
+          const fname = send80G
+            ? `Income-Tax-Certificate-${receiptNo.replace(/\//g, "-")}.pdf`
+            : `Donation-Receipt-${receiptNo.replace(/\//g, "-")}.pdf`;
+          return sendEmail(subject, emailHTML, recipients, [{ filename: fname, content: uint8ToBase64(pdfBytes) }]);
+        })
+        .then(r => console.log(`[webhook] email ok=${r.ok}`))
+        .catch(e => console.log("[webhook] email error:", e));
+    }
+
+    return c.json({ received: true });
+  } catch (e) {
+    console.log("[webhook] Error:", e);
+    return c.json({ error: "Webhook processing failed" }, 500);
+  }
+});
+
 // ═══════════════ DONATIONS ════════════════════════════════════════════════════
 
 // POST /donations — Save a successful donation
@@ -1331,6 +1453,17 @@ app.post("/make-server-a0af4170/donations", async (c) => {
     const orderId = body.razorpayOrderId || body.razorpay_order_id || null;
     const paymentId = body.paymentId || body.razorpay_payment_id || null;
     const signature = body.razorpay_signature || null;
+
+    // Idempotency: if the webhook already recorded this payment, return the existing donation
+    if (paymentId && !String(paymentId).startsWith("pay_MOCK") && !String(paymentId).startsWith("PAY-")) {
+      const alreadyRecorded = await kv.get(`payment-recorded:${paymentId}`) as any;
+      if (alreadyRecorded?.donationId) {
+        console.log(`[donations] Already recorded by webhook: ${paymentId}`);
+        const existing = await kv.get(`donation:${alreadyRecorded.donationId}`);
+        return c.json({ success: true, donation: existing });
+      }
+    }
+
     if (orderId && paymentId && !String(orderId).startsWith("order_MOCK")) {
       if (!signature) {
         console.log("[donations] Missing signature for real order:", orderId);
@@ -1381,6 +1514,10 @@ app.post("/make-server-a0af4170/donations", async (c) => {
 
     // 1. Save donation to KV
     await kv.set(`donation:${donation.id}`, donation);
+    // Mark payment as recorded so the webhook skips it if it arrives later
+    if (paymentId) await kv.set(`payment-recorded:${paymentId}`, { donationId: donation.id, ts: Date.now() }).catch(() => {});
+    // Clean up the intent (no longer needed)
+    if (orderId) await kv.del(`donation-intent:${orderId}`).catch(() => {});
     console.log(`[donations] ✅ Saved: id=${donation.id} userId=${donation.userId} email=${donation.userEmail} amount=${donation.amount} status=${donation.status}`);
 
     // 2. Index by userId
