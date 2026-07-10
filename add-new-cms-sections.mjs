@@ -7,9 +7,33 @@
  */
 
 import { createClient } from "@supabase/supabase-js";
+import { readFileSync } from "node:fs";
 
-const SUPABASE_URL = "https://vfvhqzvqmpqfcwemusnx.supabase.co";
-const SERVICE_KEY  = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZmdmhxenZxbXBxZmN3ZW11c254Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MjY5NjA1OCwiZXhwIjoyMDg4MjcyMDU4fQ.sRh_NXY54IRk4_gpgnctGt2Mc1PO2jF0UD7o1MS0RYc";
+function loadLocalEnv(path = ".env.local") {
+  try {
+    const text = readFileSync(path, "utf8");
+    for (const rawLine of text.split(/\r?\n/)) {
+      const line = rawLine.trim();
+      if (!line || line.startsWith("#")) continue;
+      const eq = line.indexOf("=");
+      if (eq === -1) continue;
+      const key = line.slice(0, eq).trim();
+      const value = line.slice(eq + 1).trim().replace(/^(['"])(.*)\1$/, "$2");
+      if (!process.env[key]) process.env[key] = value;
+    }
+  } catch {
+    // Environment variables may already be provided by the shell/CI.
+  }
+}
+
+loadLocalEnv();
+
+const SUPABASE_PROJECT_ID = process.env.SUPABASE_PROJECT_ID;
+const SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
+if (!SUPABASE_PROJECT_ID || !SERVICE_KEY) {
+  throw new Error("Missing SUPABASE_PROJECT_ID or SUPABASE_SERVICE_ROLE_KEY in .env.local");
+}
+const SUPABASE_URL = `https://${SUPABASE_PROJECT_ID}.supabase.co`;
 const ENV = "staging";
 
 const db = createClient(SUPABASE_URL, SERVICE_KEY);
