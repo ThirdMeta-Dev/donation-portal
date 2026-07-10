@@ -35,6 +35,12 @@ app.use("/*", cors({
 const supabase = createClient(Deno.env.get("SUPABASE_URL")!, Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!);
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
+function cachedJson(c: any, body: unknown, maxAgeSeconds = 120) {
+  const res = c.json(body);
+  res.headers.set("Cache-Control", `public, max-age=${maxAgeSeconds}, s-maxage=${maxAgeSeconds}, stale-while-revalidate=${maxAgeSeconds * 5}`);
+  return res;
+}
+
 const ADMIN_EMAILS = new Set(["seo@hexanovate.com", "admin@ashakiran.org", "admin@shiksharaj.org"]); // v2
 const isAdmin = (email: string | undefined) =>
   !!email && (ADMIN_EMAILS.has(email) || email.endsWith("@ashakiran.org") || email.endsWith("@shiksharaj.org"));
@@ -970,7 +976,7 @@ app.get("/make-server-a0af4170/causes/stats", async (c) => {
     for (const [cid, s] of Object.entries(stats)) {
       result[cid] = { raised: s.raised, donors: s.donorEmails.size };
     }
-    return c.json({ stats: result });
+    return cachedJson(c, { stats: result }, 30);
   } catch (e) { return c.json({ error: "Failed: " + e }, 500); }
 });
 
@@ -982,7 +988,7 @@ app.get("/make-server-a0af4170/causes/settings", async (c) => {
     for (const id of CAUSE_IDS) {
       settings[id] = { enable80G: await getCause80GEnabled(id) };
     }
-    return c.json({ settings });
+    return cachedJson(c, { settings }, 120);
   } catch (e) { return c.json({ error: "Failed: " + e }, 500); }
 });
 
@@ -1036,7 +1042,7 @@ app.get("/make-server-a0af4170/causes", async (c) => {
     await seedCausesIfEmpty();
     const index = (await kv.get("causes_index") as string[] | null) || [];
     const causes = await kv.mget(index.map((id: string) => `cause:${id}`));
-    return c.json({ causes: (causes || []).filter(Boolean) });
+    return cachedJson(c, { causes: (causes || []).filter(Boolean) }, 120);
   } catch (e) { return c.json({ error: "Failed: " + e }, 500); }
 });
 
@@ -1845,7 +1851,7 @@ app.get("/make-server-a0af4170/lms/courses", async (c) => {
       lessons: (c.lessons || []).map((l: any) => ({ ...l })),
       quiz: { id: c.quiz?.id, title: c.quiz?.title, questionCount: c.quiz?.questions?.length, passingScore: c.quiz?.passingScore },
     }));
-    return c.json({ courses: safe });
+    return cachedJson(c, { courses: safe }, 300);
   } catch (e) { return c.json({ error: "Failed: " + e }, 500); }
 });
 
@@ -1857,7 +1863,7 @@ app.get("/make-server-a0af4170/lms/courses/:id", async (c) => {
       ...course,
       quiz: { ...course.quiz, questions: (course.quiz?.questions || []).map((q: any) => ({ id: q.id, question: q.question, options: q.options })) },
     };
-    return c.json({ course: safe });
+    return cachedJson(c, { course: safe }, 300);
   } catch (e) { return c.json({ error: "Failed: " + e }, 500); }
 });
 
